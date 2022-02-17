@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/components/toast_widget.dart';
-import 'package:scet_check/page/home_page.dart';
+import 'package:scet_check/page/environmental_stewardship/home_page.dart';
+import 'package:scet_check/page/module_login/login_page.dart';
 
 
 // 配置静态路由
 final routes = {
   '/': (context) =>  HomePage(), //引导页 根路由
+  '/logIn': (context) =>  LoginPage(), //登录页面
 };
 
 // 使用

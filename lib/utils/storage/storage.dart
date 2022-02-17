@@ -5,16 +5,14 @@ import 'package:shared_preferences/shared_preferences.dart';
   本地存储工具类封装 
 */
 class StorageUtil {
-  static StorageUtil _instance = new StorageUtil._();
+  static final StorageUtil _instance = StorageUtil._();
   factory StorageUtil() => _instance;
   static SharedPreferences? _prefs;
 
   StorageUtil._();
 
   static Future<void> init() async {
-    if (_prefs == null) {
-      _prefs = await SharedPreferences.getInstance();
-    }
+    _prefs ??= await SharedPreferences.getInstance();
   }
 
   // 緩存字符串
@@ -24,8 +22,8 @@ class StorageUtil {
 
   // 读取緩存字符串
   dynamic getString(String key) {
-    String? Str = _prefs?.getString(key);
-    return Str == null ? null : Str;
+    String str = _prefs?.getString(key) ?? '';
+    return str;
   }
 
   // 緩存json
@@ -48,7 +46,7 @@ class StorageUtil {
   // 读取緩存布尔
   bool getBool(String key) {
     bool? val = _prefs?.getBool(key);
-    return val == null ? false : val;
+    return val ?? false;
   }
 
   // 移除某个缓存key值

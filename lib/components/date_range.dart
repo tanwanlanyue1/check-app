@@ -5,11 +5,11 @@ import 'package:scet_check/utils/screen/screen.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class DateRange extends StatefulWidget {
-  final DateTime? start;
-  final DateTime? end;
+  final DateTime start;
+  final DateTime end;
   final bool showTime;
-  final callBack;
-  DateRange({Key? key, this.start, this.end, this.callBack, this.showTime = true}):super(key: key);
+  final Function? callBack;
+  const DateRange({Key? key, required this.start,required  this.end, this.callBack, this.showTime = true}):super(key: key);
 
   @override
   _DateRangeState createState() => _DateRangeState();
@@ -31,9 +31,11 @@ class _DateRangeState extends State<DateRange> {
     return Container(
       height: ScreenUtil().setHeight(60.0),
       color: Color(0xffF5F6FA),
-      child: OutlineButton(
-        borderSide: BorderSide(color: Color(0XffF5F6FA)),
-        padding: EdgeInsets.fromLTRB(px(10.0), 0.0, px(5.0), 0.0),
+      child: OutlinedButton(
+        style: ButtonStyle(
+          padding: ButtonStyleButton.allOrNull<EdgeInsetsGeometry>(EdgeInsets.fromLTRB(px(10.0), 0.0, px(5.0), 0.0)),
+          side: ButtonStyleButton.allOrNull<BorderSide>(BorderSide(color: Color(0XffF5F6FA)))
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -46,16 +48,14 @@ class _DateRangeState extends State<DateRange> {
                 )
               ) 
             :
-              Container(
-                child: Text(
-                  '$startTime ~ $endTime',
-                  style: TextStyle(
-                      fontSize: ScreenUtil().setSp(22.0),
-                      color: Color(0XFF585858)
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.justify,
+              Text(
+                '$startTime ~ $endTime',
+                style: TextStyle(
+                    fontSize: ScreenUtil().setSp(22.0),
+                    color: Color(0XFF585858)
                 ),
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.justify,
               ),
             Padding(
               padding: EdgeInsets.only(right: px(10)),
@@ -68,46 +68,41 @@ class _DateRangeState extends State<DateRange> {
           ],
         ),
         onPressed: () async {
-          DateTime start = widget.start ?? DateTime.now();
-          DateTime end = widget.end ?? DateTime.now().add(Duration(days: 7));
-          DateTime initFirstDate = DateTime(start.year-50,start.month,);
-          DateTime initLastDate = DateTime(start.year+50,start.month,);
+          DateTime start = widget.start;
+          DateTime end = widget.end;
           return showDialog(context: context, builder: (context){
             return GestureDetector(
-              child: Container(
-                  color: Colors.transparent,
-                  child: Center(
-                    child: Container(
-                      height: px(750),
-                      width: px(550),
-                      child: SfDateRangePicker(
-                        selectionMode: DateRangePickerSelectionMode.range,
-                        headerHeight: 50,
-                        showActionButtons: true,
-                        backgroundColor: Colors.white,
-                        initialSelectedRange: PickerDateRange(start, end),
-                        cancelText: "取消",
-                        confirmText: "确定",
-                        minDate: initFirstDate,
-                        maxDate: initLastDate,
-                        onCancel: (){
-                          Navigator.pop(context);
-                        },
-                        onSubmit: (val) async{
-                          Navigator.pop(context);
-                          if (val is PickerDateRange) {
-                            var picked = [
-                              val.startDate,
-                              val.endDate,];
-                            widget.callBack(picked);
-                            startTime = formatTime(val.startDate);
-                            endTime = formatTime(val.endDate);
-                            setState(() {});
-                          }
-                        },
-                      ),
-                    ),
-                  )
+              child: Center(
+                child: SizedBox(
+                  height: px(750),
+                  width: px(550),
+                  child: SfDateRangePicker(
+                    selectionMode: DateRangePickerSelectionMode.range,
+                    headerHeight: 50,
+                    showActionButtons: true,
+                    backgroundColor: Colors.white,
+                    initialSelectedRange: PickerDateRange(start, end),
+                    cancelText: "取消",
+                    confirmText: "确定",
+                    minDate: DateTime(start.year-15,start.month,),
+                    maxDate: DateTime(start.year+1,start.month,),
+                    onCancel: (){
+                      Navigator.pop(context);
+                    },
+                    onSubmit: (val) async{
+                      Navigator.pop(context);
+                      if (val is PickerDateRange) {
+                        var picked = [
+                          val.startDate,
+                          val.endDate,];
+                        widget.callBack?.call(picked);
+                        startTime = formatTime(val.startDate);
+                        endTime = formatTime(val.endDate);
+                        setState(() {});
+                      }
+                    },
+                  ),
+                ),
               ),
               onTap: (){
                 Navigator.pop(context);

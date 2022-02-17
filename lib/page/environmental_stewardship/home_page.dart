@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:scet_check/page/enterprise/enterprise_page.dart';
-import 'package:scet_check/page/law/law_page.dart';
-import 'package:scet_check/page/message/message_page.dart';
+import 'package:provider/provider.dart';
+import 'package:scet_check/model/provider/provider_details.dart';
+import 'package:scet_check/page/environmental_stewardship/check/check_page.dart';
+import 'package:scet_check/page/environmental_stewardship/enterprise/enterprise_page.dart';
+import 'package:scet_check/page/environmental_stewardship/law/law_page.dart';
+import 'package:scet_check/page/environmental_stewardship/message/message_page.dart';
 import 'package:scet_check/utils/logOut/log_out.dart';
 import 'package:scet_check/utils/screen/adapter.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
-import 'check/check_page.dart';
 
 class HomePage extends StatefulWidget {
   // const HomePage({Key? key}) : super(key: key);
@@ -21,7 +23,7 @@ class _HomePageState extends State<HomePage> {
 
   int _tabIndex = 0;  // 默认索引第一个tab
 
-  List _tabTitles = ['首页', '预警', '监测', '信息'];   // 菜单文案
+  ProviderDetaild? _roviderDetaild;
 
   final List _pageList = [
     const CheckPage(),
@@ -51,6 +53,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height),
+        designSize: Size(Adapter.designWidth, Adapter.designHeight),
+        orientation: Orientation.portrait,
+    context: context);
     return WillPopScope(
       onWillPop: LogOut.onWillPop,
       child: Scaffold(
@@ -98,9 +106,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildItemMenu({required int index, required String commonImage, required String activeImage}) {
+    _roviderDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     Widget menuItem = GestureDetector(
         onTap: () {
           _pageController.jumpToPage(index);
+          _roviderDetaild!.initOffest();
           setState(() {
             _tabIndex = index;
           });

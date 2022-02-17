@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/utils/listView/unListview.dart';
+import 'package:scet_check/utils/listView/un_listview.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 // 下拉选择器 支持 单选 多选操作
@@ -14,7 +14,7 @@ class DownInput extends StatefulWidget {
   final bool more;    // 是否开启多选状态 默认单选
   final bool readOnly;    // 是否开启只读
 
-  DownInput({
+  const DownInput({Key? key,
     this.hitStr = '请选择内容',
     this.value, this.data,
     this.currentData,
@@ -23,7 +23,7 @@ class DownInput extends StatefulWidget {
     this.beforeClick,
     this.more = false,
     this.readOnly = false
-  });
+  }) : super(key: key);
 
   @override
   _DownInputState createState() => _DownInputState();
@@ -80,7 +80,7 @@ class _DownInputState extends State<DownInput> {
       } else {
         _currentDataList.add(val);
       }
-      widget.callback(_currentDataList);
+      widget.callback?.call(_currentDataList);
     } else { //单选
       if(_currentData.toString() == val.toString()
           || ( _currentData.containsKey('id')
@@ -88,10 +88,10 @@ class _DownInputState extends State<DownInput> {
       ) {
         // _currentData = null; //下次重复点击 则清空已选择
         _currentData = val;//不清空已选
-        widget.callback(_currentData);
+        widget.callback?.call(_currentData);
       }else{
         _currentData = val;
-        widget.callback(_currentData);
+        widget.callback?.call(_currentData);
       }
       Navigator.pop(context);
     }
@@ -101,11 +101,11 @@ class _DownInputState extends State<DownInput> {
   void onChange(){
     if(_more){  //多选
       for(int i = 0; i < _currentDataList.length; i++){
-        _data.forEach((item2) {
+        for (var item2 in _data) {
           if(_currentDataList[i].containsKey('id') && _currentDataList[i]['id'] == item2['id']){
             _currentDataList[i] = item2;
           }
-        });
+        }
       }
     }
     setState(() {});
@@ -150,7 +150,7 @@ class _DownInputState extends State<DownInput> {
                             '${_value == null || _value == '' ? _hitStr : _value?.replaceAll("\n", " ")}',
                             style: TextStyle(
                                 fontSize:sp(28.0),
-                                color: _currentData.isEmpty && _currentDataList.length == 0 ? Color(0XFFA8ABB3) : Color(0XFF45474D)
+                                color: _currentData.isEmpty && _currentDataList.isEmpty ? Color(0XFFA8ABB3) : Color(0XFF45474D)
                             ),
                           ),
                         ),
@@ -158,7 +158,7 @@ class _DownInputState extends State<DownInput> {
                     )
                 )
             ),
-            Container(
+            SizedBox(
               width: px(50.0),
               height: px(56.0),
               child: Icon(Icons.expand_more,color: Color(0xff8A8E99)),
@@ -176,7 +176,7 @@ class _DownInputState extends State<DownInput> {
         if(widget.value ==null ) {
           print('未设置value---->\nvalue：选中后的内容，设置为您变量中的参数\nhitStr:默认提示',);
         }
-        if(_data.length <= 0 ) {
+        if(_data.isEmpty ) {
           return;
         }
         RenderBox renderBox = _globalKey!.currentContext!.findRenderObject() as RenderBox;
@@ -223,6 +223,7 @@ class DropDownMenuRouteLayout extends SingleChildLayoutDelegate {
     return true;
   }
 }
+
 class DropDownMenuRoute extends PopupRoute {
   final Rect position; //出現的位置
   final double? menuHeight; //下拉顯示的高度 已设置默认 4*px（58）
@@ -288,13 +289,13 @@ class WindowsPop extends StatefulWidget {
   final List? currentDataList;//多选内容
   final bool more;//多选状态
   final callback;
-  WindowsPop({
+  const WindowsPop({Key? key,
     required this.data,
     this.currentData,
     this.currentDataList,
     required this.more,
     this.callback
-  });
+  }) : super(key: key);
   @override
   _WindowsPopState createState() => _WindowsPopState();
 }

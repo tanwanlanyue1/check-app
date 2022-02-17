@@ -18,8 +18,17 @@ class OverScrollBehavior extends ScrollBehavior{
           //不显示尾部水波纹
           showTrailing: false,
           axisDirection: axisDirection,
-          color: Theme.of(context).accentColor,
+          color: Colors.transparent,
         );
+      case TargetPlatform.linux:
+        // TODO: Handle this case.
+        break;
+      case TargetPlatform.macOS:
+        // TODO: Handle this case.
+        break;
+      case TargetPlatform.windows:
+        // TODO: Handle this case.
+        break;
     }
     return Container();
   }

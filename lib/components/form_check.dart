@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/components/Status.dart';
+import 'package:scet_check/components/status.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 class FormCheck {
@@ -13,8 +13,7 @@ class FormCheck {
   static Widget miniTitle(String title) {
     return Container(
       margin: EdgeInsets.fromLTRB(px(6.0), px(24.0), 0.0, px(12.0)),
-      child: Text(
-        '$title',
+      child: Text(title,
         style: TextStyle(
           fontSize: sp(34),
           fontFamily: 'M'
@@ -23,6 +22,7 @@ class FormCheck {
     );
   }
 
+  //表单卡片
   static Widget fromCard({Widget? child,Function? close}) {
     return Card(
       color: Colors.white,
@@ -53,34 +53,33 @@ class FormCheck {
       )
     );
   }
-
-  static Widget formRowItem({ bool? reading, bool alignStart = false, bool? padding, String? title,required Widget child}) {
+  //表格行项目
+  static Widget rowItem({bool alignStart = false, bool padding = true, bool expanded = true, String? title,required Widget child}) {
     return Padding(
-      padding: EdgeInsets.only(bottom: px(16.0)),
-      child: Row(
-        crossAxisAlignment: alignStart ? CrossAxisAlignment.start : CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            width: px(170.0),
-            child: Text(
-                title != null ? '$title：' :'',
-              textAlign: TextAlign.justify,
-              style: TextStyle(
-                color: reading == true? Colors.red : Color(0XFF45474D),
-                fontSize: sp(30.0),
-                fontFamily: 'M',
-              )
-            )
-          ),
-          Expanded(
-            child: child
-          )
-        ]
-      )
+        padding: padding ? EdgeInsets.symmetric(vertical: px(24.0)) : EdgeInsets.zero,
+        child: Row(
+            crossAxisAlignment: alignStart ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(
+                  width: px(145.0),
+                  child: Text(
+                      '$title：',
+                      textAlign: TextAlign.justify,
+                      style: TextStyle(
+                          color: Color(0XFF787A80),
+                          fontSize: sp(28.0),
+                          fontWeight: FontWeight.w500
+                      )
+                  )
+              ),
+              expanded ? Expanded(child: child) : child
+            ]
+        )
     );
   }
 
+  //输入框
   static Widget inputWidget({bool? disabled, String? hintText, Function? onChanged, String? unit}) {
     return Row(
       children: [
@@ -109,14 +108,13 @@ class FormCheck {
           ),
         ),
         if(unit != null)Text(
-            unit,style: TextStyle( fontSize: sp(28.0)),
+          unit,style: TextStyle( fontSize: sp(28.0)),
         )
       ],
     );
   }
-
+  //下拉选择
   static Widget selectWidget({String? hintText, required List items, String? value, Function? onChanged}) {
-    // TextEditingController _controller = TextEditingController();
     return Container(
       padding: EdgeInsets.only(left: px(8.0)),
       height: px(54.0),
@@ -128,19 +126,20 @@ class FormCheck {
         isExpanded: true,
         underline: Container(),
         items: items.map((item) => DropdownMenuItem(
-          child: Text('${item['name']}'),
-          value: '${item['value']}')
+            child: Text('${item['name']}'),
+            value: '${item['name']}'
+        )
         ).toList(),
         hint: Text(
-          '$hintText',
-          style: TextStyle(
-            color: Color(0XFFB0B2B8),
-            fontSize: sp(24.0)
-          )
+            '$hintText',
+            style: TextStyle(
+                color: Color(0XFFB0B2B8),
+                fontSize: sp(24.0)
+            )
         ),
         style: TextStyle(
-          color: Color(0XFF45474D),
-          fontSize: sp(28.0)
+            color: Color(0XFF45474D),
+            fontSize: sp(28.0)
         ),
         onChanged: (val){
           onChanged?.call(val);
@@ -151,7 +150,7 @@ class FormCheck {
       ),
     );
   }
-
+  //输入框可以展示四行
   static Widget textAreaWidget({String? hintText, Function? onChanged}) {
     return TextFormField(
       maxLines: 4,
@@ -166,10 +165,6 @@ class FormCheck {
         contentPadding: EdgeInsets.all(px(10.0)),
         filled: true,
         fillColor: Color(0X29B8BDCC),
-        // border: OutlineInputBorder(
-        //   borderRadius: BorderRadius.circular(px(4.0)),
-        //   borderSide: BorderSide(color: Color(0X29B8BDCC))
-        // ),
         border: InputBorder.none
       ),
       style: TextStyle(
@@ -181,21 +176,7 @@ class FormCheck {
       }
     );
   }
-
-  static Widget textData({String? data,bool? color}) {
-    return Padding(
-      padding: EdgeInsets.only(left: px(12.0)),
-      child: Text(
-        '$data',
-        style: TextStyle(
-          color: color == true ? Colors.red : Color(0XFF2E2F33),
-          fontSize: sp(28.0),
-          fontWeight: FontWeight.w500
-        )
-      )
-    );
-  }
-
+  //每一行卡片
   static Widget dataCard({int? status,String? title,required List<Widget> children}){
     return Container(
       width: px(702),
@@ -204,7 +185,7 @@ class FormCheck {
       decoration: BoxDecoration(
           color: Color(0xffffffff),
           borderRadius: BorderRadius.circular(px(15)),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
                 color: Color(0xffE9EBF3),
                 offset: Offset(2.0, 2.0),
@@ -252,6 +233,21 @@ class FormCheck {
       ),
     );
   }
+
+  static Widget textData({String? data,bool? color}) {
+    return Padding(
+      padding: EdgeInsets.only(left: px(12.0)),
+      child: Text(
+        '$data',
+        style: TextStyle(
+          color: color == true ? Colors.red : Color(0XFF2E2F33),
+          fontSize: sp(28.0),
+          fontWeight: FontWeight.w500
+        )
+      )
+    );
+  }
+
   static Widget tabText({String? title, String? str,bool colors = false}){
     return Row(
       children: [

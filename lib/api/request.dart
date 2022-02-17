@@ -1,10 +1,10 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:scet_check/components/Loading.dart';
+import 'package:scet_check/components/loading.dart';
 import 'package:scet_check/components/toast_widget.dart';
 import 'package:scet_check/main.dart';
-import 'package:scet_check/utils/storage/data_storageKey.dart';
+import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 import 'api.dart';
 

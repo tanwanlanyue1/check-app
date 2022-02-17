@@ -4,7 +4,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 
 class MyToast {
 
-  static Map<String, OverlayEntry> _toasts = Map();
+  static final Map<String, OverlayEntry> _toasts = {};
 
   static int _times = 5;
 
@@ -25,7 +25,7 @@ class MyToast {
             decoration: BoxDecoration(
                 color: Color(0xFFFFFFFF),
                 borderRadius: BorderRadius.all(Radius.circular(px(76))),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
                     blurRadius: 2, //阴影范围
                     spreadRadius: 1, //阴影浓度
@@ -82,7 +82,7 @@ class MyToast {
   static startTimer(String name){
     _times = 10;
     Timer.periodic(Duration(milliseconds: 1000), (timer) async{
-      if(_toasts.length>0){
+      if(_toasts.isNotEmpty){
         _toasts[name]!.markNeedsBuild();
         _times -= 1;
         if (_times <= 0) {
@@ -98,7 +98,7 @@ class MyToast {
   }
 
   static hide(String name) {
-    if(_toasts.length>0){
+    if(_toasts.isNotEmpty){
       MyToast._toasts[name]!.remove();
       _toasts.remove(name);
     }

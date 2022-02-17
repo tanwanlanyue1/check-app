@@ -4,11 +4,10 @@ import 'package:scet_check/utils/screen/screen.dart';
 class HeadPhoto extends StatefulWidget {
   final String img;
   final double width;
-
-  HeadPhoto({
+  const HeadPhoto({Key? key,
     this.width = 120.0,// 默认宽高 120 * 120
     this.img = 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=855439901,3130950228&fm=26&gp=0.jpg'
-  });
+  }) : super(key: key);
 
   @override
   _HeadPhotoState createState() => _HeadPhotoState();

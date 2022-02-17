@@ -16,6 +16,7 @@ class ToastWidget {
       )
     );
   }
+  //弹窗
   static showDialog({String? msg, Function? cancel, Function? ok}) {
     BotToast.showWidget(
         toastBuilder: (cancelFunc){

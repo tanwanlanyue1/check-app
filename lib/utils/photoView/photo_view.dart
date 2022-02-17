@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:scet_check/utils/photoView/save_util.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
+// ignore: must_be_immutable
 class PhotoViewGalleryScreen extends StatefulWidget {
   List images = [];//格式['','']
   int index = 0;
@@ -40,35 +40,28 @@ class _PhotoViewGalleryScreenState extends State<PhotoViewGalleryScreen> {
             left: 0,
             bottom: 0,
             right: 0,
-            child: Container(
-              child: PhotoViewGallery.builder(
-                scrollPhysics: const BouncingScrollPhysics(),
-                builder: (BuildContext context, int index) {
-                  return PhotoViewGalleryPageOptions(
-                    imageProvider: CachedNetworkImageProvider(widget.images[index]),
-                    // heroAttributes: (widget.heroTag?.isNotEmpty ?? false) ? PhotoViewHeroAttributes(tag: widget.heroTag!):null,
-                  );
-                },
-                itemCount: widget.images.length,
-                loadingBuilder: (context, event) => Center(
-                  child: Container(
-                    width: 20.0,
-                    height: 20.0,
-                    child: CircularProgressIndicator(
-                      // value: event == null
-                      //     ? 0
-                      //     // : event.cumulativeBytesLoaded / event.expectedTotalBytes,
-                      //     : event.cumulativeBytesLoaded / event.expectedTotalBytes,
-                    ),
-                  ),
+            child: PhotoViewGallery.builder(
+              scrollPhysics: const BouncingScrollPhysics(),
+              builder: (BuildContext context, int index) {
+                return PhotoViewGalleryPageOptions(
+                  imageProvider: CachedNetworkImageProvider(widget.images[index]),
+                  // heroAttributes: (widget.heroTag?.isNotEmpty ?? false) ? PhotoViewHeroAttributes(tag: widget.heroTag!):null,
+                );
+              },
+              itemCount: widget.images.length,
+              loadingBuilder: (context, event) => Center(
+                child: SizedBox(
+                  width: 20.0,
+                  height: 20.0,
+                  child: CircularProgressIndicator(),
                 ),
-                backgroundDecoration: null,
-                pageController: widget.controller,
-                enableRotation: true,
-                onPageChanged: (index){
-                  setState(() {currentIndex=index;});
-                },
-              )
+              ),
+              backgroundDecoration: null,
+              pageController: widget.controller,
+              enableRotation: true,
+              onPageChanged: (index){
+                setState(() {currentIndex=index;});
+              },
             ),
           ),
           // 图片index显示
@@ -100,17 +93,17 @@ class _PhotoViewGalleryScreenState extends State<PhotoViewGalleryScreen> {
                 var status = await Permission.photos.status;
                 if (status.isDenied) {
                   showDialog(context: context,builder: (context){
-                    return new AlertDialog(
-                      title: new Text("温馨提示",style: TextStyle(fontSize:sp(30) ),),
-                      content: new Text("您当前没有开启相册权限",style: TextStyle(fontSize:sp(25)),),
+                    return AlertDialog(
+                      title: Text("温馨提示",style: TextStyle(fontSize:sp(30) ),),
+                      content: Text("您当前没有开启相册权限",style: TextStyle(fontSize:sp(25)),),
                       actions: <Widget>[
-                        new FlatButton(
+                        TextButton(
                           onPressed: () {openAppSettings();},
-                          child: new Text("去开启"),
+                          child: Text("去开启"),
                         ),
-                        new FlatButton(
+                        TextButton(
                           onPressed: () {Navigator.of(context).pop();},
-                          child: new Text("取消"),
+                          child: Text("取消"),
                         ),
                       ],
                     );

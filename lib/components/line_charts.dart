@@ -6,7 +6,7 @@ class LineCharts extends StatelessWidget {
   final String? unit;
   final int? warnLevel;
   final List? valueData;
-  LineCharts({this.facName, this.warnLevel,this.unit, this.valueData});
+  LineCharts({Key? key, this.facName, this.warnLevel,this.unit, this.valueData}) : super(key: key);
 
   var themeColor; 
   void _colorSelect(int? level) {

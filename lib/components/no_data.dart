@@ -6,7 +6,7 @@ class NoData extends StatelessWidget {
   bool margin;
   bool timeType;
   String? state;
-  NoData({this.margin = true, this.timeType = false, this.state});
+  NoData({Key? key, this.margin = true, this.timeType = false, this.state}) : super(key: key);
   
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class NoData extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(px(10.0))),
           gradient: LinearGradient(
-            colors: [Color(0XFF3992F5), Color(0XFF8267F0)]
+            colors: const [Color(0XFF3992F5), Color(0XFF8267F0)]
           ),
         ),
         child: timeType 
@@ -34,7 +34,7 @@ class NoData extends StatelessWidget {
                   color: Colors.white)
               ),
               Text(
-                '${DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now())}', 
+                DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()),
                 style: TextStyle(
                   fontSize: sp(24.0), 
                   color: Colors.white

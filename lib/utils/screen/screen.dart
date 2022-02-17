@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, unused_local_variable
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
@@ -13,12 +15,12 @@ screen(num, context) {
 
 class Adapt {
   static MediaQueryData mediaQuery = MediaQueryData.fromWindow(window);
-  static double _width = mediaQuery.size.width;
-  static double _height = mediaQuery.size.height;
-  static double _topbarH = mediaQuery.padding.top;
-  static double _botbarH = mediaQuery.padding.bottom;
-  static double _pixelRatio = mediaQuery.devicePixelRatio;
-  static var _ratio;
+  static final double _width = mediaQuery.size.width;
+  static final double _height = mediaQuery.size.height;
+  static final double _topbarH = mediaQuery.padding.top;
+  static final double _botbarH = mediaQuery.padding.bottom;
+  static final double _pixelRatio = mediaQuery.devicePixelRatio;
+  static double? _ratio;
   static init(int number) {
     int uiwidth = number is int ? number : 750;
     _ratio = _width / uiwidth;

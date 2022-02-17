@@ -1,4 +1,6 @@
 // 配置全局本地缓存的key
+// ignore_for_file: constant_identifier_names
+
 class StorageKey {
   static const String AppVersion = 'appVersion'; // App端 企业/政府/第三方
 
@@ -9,6 +11,8 @@ class StorageKey {
   static const String STORAGE_DEVICE_ALREADY_OPEN_KEY = 'device_already_open1'; // 设备是否第一次打开
 
   static const String Token = 'token'; // 用户token
+
+  static const String allCompany = 'allCompany'; // 全部公司
 
   static const String FontBold = 'Alibaba-PuHuiTi-Bold.ttf'; // 阿里巴巴 Alibaba-PuHuiTi-Bold.ttf字体缓存
 

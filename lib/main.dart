@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:scet_check/model/data/data_global.dart';
+import 'package:scet_check/model/provider/provider_details.dart';
 import 'package:scet_check/routers/routes.dart';
 import 'package:scet_check/utils/screen/adapter.dart';
 
@@ -36,6 +37,8 @@ void main() {
       MultiProvider(
         providers: [
           ChangeNotifierProvider<AppState>.value(value: Global.appState,),
+          // ChangeNotifierProvider<ProviderDetaild>.value(value: ,),
+          ChangeNotifierProvider(create: (_) => ProviderDetaild(),)
         ],
         child:const MyApp(),
       ),

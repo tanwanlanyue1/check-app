@@ -4,11 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/toast_widget.dart';
-import 'package:scet_check/routers/router_animate/router_FadeRoute.dart';
+import 'package:scet_check/routers/router_animate/router_fade_route.dart';
 import 'package:scet_check/utils/photoView/cached_network.dart';
-import 'package:scet_check/utils/photoView/photoView.dart';
+import 'package:scet_check/utils/photoView/photo_view.dart';
 import 'package:scet_check/utils/screen/screen.dart';
-import 'package:scet_check/utils/storage/data_storageKey.dart';
+import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:multi_image_picker2/multi_image_picker2.dart';
@@ -67,7 +67,7 @@ class _UploadImageState extends State<UploadImage> {
       ToastWidget.showToastMsg(e.toString());
     }
     if (!mounted) return;
-    if (resultList.length != 0) {
+    if (resultList.isNotEmpty) {
       // _imagesAsset = (resultList == null) ? [] : resultList;
       //   _imagesList = [];
       _upImg(resultList);
@@ -86,7 +86,7 @@ class _UploadImageState extends State<UploadImage> {
         filename:li[i].name,
         contentType: MediaType("image",_type),// 文件类型
       );
-      FormData formData = new  FormData.fromMap({
+      FormData formData =  FormData.fromMap({
         "file": multipartFile,
         "kind":_type
       });
@@ -138,10 +138,9 @@ class _UploadImageState extends State<UploadImage> {
             ),
           );
         }
-        if(_imagesList.isNotEmpty) return _createGridViewItem(
-          // AssetThumb(asset: _images[index], width: 300, height: 300),
-          // Image.network(Api.BASE_URL_APP + '/' + _imagesList[index]['path'], width: 300, height: 300,fit: BoxFit.cover,),
-            Container(
+        if(_imagesList.isNotEmpty) {
+          return _createGridViewItem(
+            SizedBox(
               width: 300, height: 300,
               child: CachedNetwork(
                   url:Api.baseUrlApp + '/' + _imagesList[index]['path'],
@@ -150,6 +149,7 @@ class _UploadImageState extends State<UploadImage> {
             ),
             index
         );
+        }
         return Container();
       },
     );
@@ -166,9 +166,9 @@ class _UploadImageState extends State<UploadImage> {
                 child: child,
                 onTap: (){
                   List _img = [];
-                  _imagesList.forEach((item) {
+                  for (var item in _imagesList) {
                     _img.add(Api.baseUrlApp + '/' + item['path']);
-                  });
+                  }
                   Navigator.of(context).push(FadeRoute(page: PhotoViewGalleryScreen(
                     images:_img,//传入图片list
                     index: index,//传入当前点击的图片的index

@@ -5,13 +5,12 @@ class LogOut {
   static int popTrue = 0;
 
   static Future<bool> onWillPop() {
-    print('123');
-    print(popTrue);
+    // print(popTrue);
     popTrue = popTrue + 1;
     ToastWidget.showToastMsg('再按一次退出园区预警');
 
     if (popTrue == 3) {
-      print('3');
+      // print('3');
       pop();
     }
 
