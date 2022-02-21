@@ -4,17 +4,17 @@ import 'package:scet_check/utils/screen/screen.dart';
 class Search extends StatefulWidget {
   final Color bgColor;
   final Color textFieldColor;
-  final hintText;
+  final String hintText;
   final Function? search;
   final Function? screen;
 
-  Search({
+  const Search({Key? key,
     this.bgColor = Colors.white,
     this.textFieldColor = Colors.white,
     this.hintText ='搜索',
     this.search,
     this.screen,
-  });
+  }) : super(key: key);
 
   @override
   _SearchState createState() => _SearchState();
@@ -22,7 +22,7 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
   final TextEditingController _controller = TextEditingController(); //输入框控制器
-  FocusNode _contentFocusNode = FocusNode();
+  final FocusNode _contentFocusNode = FocusNode();
 @override
   void initState() {
     // TODO: implement initState
@@ -95,7 +95,7 @@ class _SearchState extends State<Search> {
             ),
           ),
           InkWell(
-            child: Container(
+            child: SizedBox(
               width: px(139),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

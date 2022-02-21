@@ -1,6 +1,5 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 class ToastWidget {
@@ -41,50 +40,48 @@ class ToastWidget {
                         ),
                       ),
                       // CircularProgressIndicator(),
-                      Container(
-                        child:Row(
-                          children: [
-                            Expanded(
-                              child: InkWell(
-                                onTap: (){
-                                  BotToast.cleanAll();
-                                  if(cancel != null ) {
-                                    cancel();
-                                  }
-                                },
-                                child: Container(
-                                  height:px(80),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                      top: BorderSide(width: px(1.0),color: Color(0X99A1A6B3)),
-                                      right: BorderSide(width: px(1.0),color: Color(0X99A1A6B3)),
-                                    ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: InkWell(
+                              onTap: (){
+                                BotToast.cleanAll();
+                                if(cancel != null ) {
+                                  cancel();
+                                }
+                              },
+                              child: Container(
+                                height:px(80),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    top: BorderSide(width: px(1.0),color: Color(0X99A1A6B3)),
+                                    right: BorderSide(width: px(1.0),color: Color(0X99A1A6B3)),
                                   ),
-                                  child: Text('取消',style: TextStyle(fontSize: sp(25)),),
                                 ),
+                                child: Text('取消',style: TextStyle(fontSize: sp(25)),),
                               ),
                             ),
-                            Expanded(
-                              child: InkWell(
-                                onTap: (){
-                                  if(ok != null ) {
-                                    ok();
-                                  }
-                                  BotToast.cleanAll();
-                                },
-                                child: Container(
-                                  height:px(80),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    border: Border(top: BorderSide(width: px(1.0),color: Color(0X99A1A6B3))),
-                                  ),
-                                  child: Text('确定',style: TextStyle(fontSize: sp(25),color: Colors.blue),),
+                          ),
+                          Expanded(
+                            child: InkWell(
+                              onTap: (){
+                                if(ok != null ) {
+                                  ok();
+                                }
+                                BotToast.cleanAll();
+                              },
+                              child: Container(
+                                height:px(80),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  border: Border(top: BorderSide(width: px(1.0),color: Color(0X99A1A6B3))),
                                 ),
+                                child: Text('确定',style: TextStyle(fontSize: sp(25),color: Colors.blue),),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       )
                     ],
                   ),

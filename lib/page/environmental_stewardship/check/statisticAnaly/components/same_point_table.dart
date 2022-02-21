@@ -249,6 +249,8 @@ class _SamePointTableState extends State<SamePointTable> {
       case '企业': {
         return topRow(companyHeader);
       }
+      default:
+        return topRow(industryHeader);
     }
   }
 

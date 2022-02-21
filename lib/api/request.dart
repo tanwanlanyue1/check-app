@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +12,7 @@ import 'api.dart';
 
 class Request {
 
-  static Request _instance = Request._internal();
+  static final Request _instance = Request._internal();
 
   factory Request() => _instance;
 
@@ -69,7 +71,7 @@ class Request {
   }
 
   // post请求 默认json 如果是from表单 true
-  post(url, {data, isForm: false,Function? downloadProgress}) async {
+  post(url, {data, isForm = false,Function? downloadProgress}) async {
     print('===>$url');
     Response response;
     Options option = Options();
@@ -265,6 +267,7 @@ class ErrorEntity implements Exception {
 
   ErrorEntity({this.code, this.message});
 
+  @override
   String toString() {
     if (message == null) return "Exception";
     return "Exception: code $code, $message";

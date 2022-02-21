@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/components/toast_widget.dart';
+import 'package:scet_check/page/environmental_stewardship/check/hiddenParame/rectification_problem.dart';
 import 'package:scet_check/page/environmental_stewardship/home_page.dart';
 import 'package:scet_check/page/module_login/login_page.dart';
 
@@ -8,6 +9,7 @@ import 'package:scet_check/page/module_login/login_page.dart';
 final routes = {
   '/': (context) =>  HomePage(), //引导页 根路由
   '/logIn': (context) =>  LoginPage(), //登录页面
+  '/rectificationProblem': (context) =>  RectificationProblem(), //企业台账详情
 };
 
 // 使用

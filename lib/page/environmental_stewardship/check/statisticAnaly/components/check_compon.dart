@@ -38,7 +38,7 @@ class CheckCompon {
 
   //背景
   static Widget bagColor(
-      {required int pageIndex, double offestLeft = 0, double right = 20}) {
+      {required int pageIndex, double offestLeft = 0, double right = 30}) {
     return Padding(
       padding: EdgeInsets.only(
         top: px(19),

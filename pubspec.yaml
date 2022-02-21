@@ -56,11 +56,9 @@ dependencies:
   date_format: ^2.0.4 #时间处理
   multi_image_picker2: ^5.0.2 #图片选择
   geolocator: ^7.0.2 #定位
-  azlistview: ^2.0.0-nullsafety.0 #列表排序
-  lpinyin: ^2.0.0 # 汉字转拼音
-  common_utils:
-    git:
-      url: https://github.com/jinfagang/common_utils
+  azlistview: ^2.0.0 #列表排序
+  lpinyin: ^2.0.0  #汉字转拼音
+  common_utils: ^2.1.0 #工具类库
 dev_dependencies:
   flutter_test:
     sdk: flutter

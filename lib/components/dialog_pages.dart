@@ -12,7 +12,7 @@ class DialogPages {
     Function? back, //返回按钮回调
     Function? succeed, //成功按钮回调
   }) {
-    return showDialog<Null>(
+    return showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
@@ -20,75 +20,73 @@ class DialogPages {
             onTap: () {
               Navigator.of(context).pop(); //退出弹出框
             },
-            child: Container(
-              child: Material(
-                color: Color.fromRGBO(0, 0, 0, 0.5),
-                child: Center(
-                  child: Container(
-                    width: px(540),
-                    height: px(625),
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage('lib/assets/images/home/bgImage.png'),
-                            fit: BoxFit.fill
-                        )
-                    ),
-                    child: Stack(
-                      children: [
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(bottom: px(20)),
-                                child: Text(
-                                  '$title',
-                                  style: TextStyle(
-                                      fontSize: sp(32),
-                                      fontFamily: "M",
-                                      color: Color(0xFF2E2F33)),
+            child: Material(
+              color: Color.fromRGBO(0, 0, 0, 0.5),
+              child: Center(
+                child: Container(
+                  width: px(540),
+                  height: px(625),
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage('lib/assets/images/home/bgImage.png'),
+                          fit: BoxFit.fill
+                      )
+                  ),
+                  child: Stack(
+                    children: [
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(bottom: px(20)),
+                              child: Text(
+                                title,
+                                style: TextStyle(
+                                    fontSize: sp(32),
+                                    fontFamily: "M",
+                                    color: Color(0xFF2E2F33)),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: px(40)),
+                              child: Text(
+                                subTitle,
+                                style: TextStyle(
+                                    fontSize: sp(22),
+                                    fontFamily: "M",
+                                    color: Color(0xFFA8ABB3)),
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                succeedDialogBtn(
+                                  str: backStr,
+                                  bgColor:  Color(0xFF8F98B3),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    if (back != null) {
+                                      back();
+                                    }
+                                  },
                                 ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(bottom: px(40)),
-                                child: Text(
-                                  '$subTitle',
-                                  style: TextStyle(
-                                      fontSize: sp(22),
-                                      fontFamily: "M",
-                                      color: Color(0xFFA8ABB3)),
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  succeedDialogBtn(
-                                    str: backStr,
-                                    bgColor:  Color(0xFF8F98B3),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      if (back != null) {
-                                        back();
-                                      }
-                                    },
-                                  ),
-                                  succeedDialogBtn(
-                                    str: succeedStr,
-                                    bgColor:  Color(0xFF4D7CFF),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      if (succeed != null) {
-                                        succeed();
-                                      }
-                                    },
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
+                                succeedDialogBtn(
+                                  str: succeedStr,
+                                  bgColor:  Color(0xFF4D7CFF),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    if (succeed != null) {
+                                      succeed();
+                                    }
+                                  },
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
                   ),
                 ),
               ),
@@ -128,7 +126,7 @@ class DialogPages {
     Function? back, //返回按钮回调
     Function? succeed, //成功按钮回调
   }) {
-    return showDialog<Null>(
+    return showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
@@ -144,7 +142,7 @@ class DialogPages {
                   height: px(625),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                      borderRadius: BorderRadius.only(
+                    borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(px(15)),
                         topRight: Radius.circular(px(15)),
                       )

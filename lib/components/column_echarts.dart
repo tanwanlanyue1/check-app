@@ -72,9 +72,6 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
       ''';
     pie =  '''
 {
-// tooltip: {
-//     trigger: 'item'
-//   },
   legend: {
     bottom: '5%',
     left: 'center',
@@ -96,15 +93,18 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
         borderColor: '#fff',
         borderWidth: 2
       },
-      
       label: {
         show: false, /*是否一直显示*/
-        position: 'center'
+        position: 'center',
+         formatter: function (value) {
+                            return `\${value['name']}`+
+                            `\\n`+`\${value['value']}`;
+                          },
       },
       emphasis: {
         label: {
           show: true,
-          fontSize: '24',
+          fontSize: '12',
           fontColor:'#323233'
         }
       },
@@ -199,9 +199,6 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
       ''';
     pie =  '''
 {
-// tooltip: {
-//     trigger: 'item'
-//   },
   legend: {
     bottom: '5%',
     left: 'center',
@@ -226,12 +223,16 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
       
       label: {
         show: false, /*是否一直显示*/
-        position: 'center'
+        position: 'center',
+                 formatter: function (value) {
+                            return `\${value['name']}`+
+                            `\\n`+`\${value['value']}`;
+                          },
       },
       emphasis: {
         label: {
           show: true,
-          fontSize: '24',
+          fontSize: '12',
           fontColor:'#323233'
         }
       },

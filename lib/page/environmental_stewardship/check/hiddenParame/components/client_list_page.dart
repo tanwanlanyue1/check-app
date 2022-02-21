@@ -83,7 +83,7 @@ class _ClientListPageState extends State<ClientListPage> {
     // A-Z sort.
     SuspensionUtil.sortListBySuspensionTag(dataList);
 
-    // show sus tag.
+    //显示sus标签。
     SuspensionUtil.setShowSuspensionStatus(dataList);
 
     setState(() {});
@@ -137,7 +137,7 @@ class _ClientListPageState extends State<ClientListPage> {
         ),
       ),
       onTap: (){
-        widget.callBack?.call(model.id,model.name);
+          widget.callBack?.call(model.id,model.name);
         // widget.callBack!(model.region);
         // setState(() {});
       },
@@ -157,6 +157,7 @@ class _ClientListPageState extends State<ClientListPage> {
     }
   }
 
+  //搜索某一个字段
   // void _labSearch(String text) {
   //   if (ObjectUtil.isEmpty(text)) {
   //     _handleList(originList);
@@ -167,6 +168,7 @@ class _ClientListPageState extends State<ClientListPage> {
   //     _handleList(list);
   //   }
   // }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -199,7 +201,7 @@ class _ClientListPageState extends State<ClientListPage> {
                   child: InkWell(
                     onTap: () {
                       textEditingController.clear();
-                      _search('');
+                      // _search('');
                     },
                     child: Icon(
                       Icons.cancel,

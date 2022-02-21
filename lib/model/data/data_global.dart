@@ -58,21 +58,21 @@ class Global {
 
     // 读取离线用户token
     var _token = StorageUtil().getString(StorageKey.Token);
-    // if (_token != null && _token != 'null'  &&  _token != '') {
-    //   token = _token;
-    //   isOfflineLogin = true;
-    //   Map? _personalData = StorageUtil().getJSON(StorageKey.PersonalData);
-    //   if (_personalData != null) {
-    //     switch(_personalData['roleId']) {
-    //       case 1: router = '/EnterpriseIndexPage';break;
-    //       case 2: router = '/AdminIndexPage';break;
-    //       case 3: router = '/GovernmentIndexPage';break;
-    //       default: router = '/';break;
-    //     }
-    //   }else{
-    //     router = '/';
-    //   }
-    // }
+    if (_token != null && _token != 'null'  &&  _token != '') {
+      token = _token;
+      isOfflineLogin = true;
+      Map? _personalData = StorageUtil().getJSON(StorageKey.PersonalData);
+      if (_personalData != null) {
+        // switch(_personalData['roleId']) {
+        //   case 1: router = '/EnterpriseIndexPage';break;
+        //   case 2: router = '/AdminIndexPage';break;
+        //   case 3: router = '/GovernmentIndexPage';break;
+        //   default: router = '/';break;
+        // }
+      }else{
+        router = '/';
+      }
+    }
 
     // //读取离线用户信息
     // Map _personalData = StorageUtil().getJSON(StorageKey.PersonalData);

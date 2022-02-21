@@ -1,11 +1,9 @@
 import 'dart:collection';
-import 'dart:convert';
 
 class LanguageHelper {
 
   static Map<String, String>? languageMap ;
   static List? language ;
-  // static Map<String, String> languageMap = getResource(githubLanguageColors);
 
   static Map<String, String> getResource(List? list) {
     Map<String, String> map = HashMap();
@@ -24,30 +22,13 @@ class LanguageHelper {
     return map;
   }
 
-  // static List<GithubLanguage>? getGithubLanguages() {
-  //   List<GithubLanguage>? list =
-  //   language?.map((v) => GithubLanguage.fromJson(v)).toList();
-  //   // githubLanguageColors.map((v) => GithubLanguage.fromJson(v)).toList();
-  //   return list;
-  // }
-  //
-  // static List<GithubLanguage> getGithubSpokenLanguages() {
-  //   List<GithubLanguage> list =
-  //       githubSpokenLanguage.map((v) => GithubLanguage.fromJson(v)).toList();
-  //   return list;
-  // }
   static List<Contact>? getGithubLanguages() {
     List<Contact>? list =
     language?.map((v) => Contact.fromJson(v)).toList();
-    // githubLanguageColors.map((v) => GithubLanguage.fromJson(v)).toList();
+    // language.map((v) => GithubLanguage.fromJson(v)).toList();
     return list;
   }
 
-  static List<Contact> getGithubSpokenLanguages() {
-    List<Contact> list =
-    githubSpokenLanguage.map((v) => Contact.fromJson(v)).toList();
-    return list;
-  }
   static String getGithubLanguageColor(String language,
       {String defColor = ''}) {
     return languageMap?[language] ?? defColor;
@@ -83,14 +64,3 @@ class Contact {
   }
 
 }
-const List githubSpokenLanguage = [
-  {"urlParam": "ab", "name": "Abkhazian"},
-  {"urlParam": "aa", "name": "Afar"},
-  {"urlParam": "af", "name": "Afrikaans"},
-  {"urlParam": "ak", "name": "Akan"},
-  {"urlParam": "ho", "name": "Hiri Motu"},
-  {"urlParam": "hu", "name": "Hungarian"},
-  {"urlParam": "ia", "name": "Interlingua (International Auxil..."},
-  {"urlParam": "za", "name": "Zhuang, Chuang"},
-  {"urlParam": "zu", "name": "Zulu"}
-];

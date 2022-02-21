@@ -28,9 +28,11 @@ class _TimeSelectState extends State<TimeSelect> {
     return Container(
       height: px(56.0),
       color: Color(0xffF5F6FA),
-      child: OutlineButton(
-          borderSide:BorderSide(color:Color(0xffF5F6FA) ),
-        padding: EdgeInsets.fromLTRB(px(10.0), 0.0, px(10.0), 0.0),
+      child: OutlinedButton(
+        style: ButtonStyle(
+            padding: ButtonStyleButton.allOrNull<EdgeInsetsGeometry>(EdgeInsets.fromLTRB(px(10.0), 0.0, px(10.0), 0.0)),
+            side: ButtonStyleButton.allOrNull<BorderSide>(BorderSide(color: Color(0xffF5F6FA)))
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[

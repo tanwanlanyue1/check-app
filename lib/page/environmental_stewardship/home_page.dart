@@ -70,7 +70,7 @@ class _HomePageState extends State<HomePage> {
           ),
           bottomNavigationBar: BottomAppBar(
             shape: const CircularNotchedRectangle(),
-            child:  Container(
+            child:  SizedBox(
               height: px(Adapter.bottomBarHeight),
               child: Row(
                 mainAxisSize: MainAxisSize.max,

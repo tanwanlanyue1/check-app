@@ -37,7 +37,6 @@ void main() {
       MultiProvider(
         providers: [
           ChangeNotifierProvider<AppState>.value(value: Global.appState,),
-          // ChangeNotifierProvider<ProviderDetaild>.value(value: ,),
           ChangeNotifierProvider(create: (_) => ProviderDetaild(),)
         ],
         child:const MyApp(),

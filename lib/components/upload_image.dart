@@ -28,7 +28,7 @@ class UploadImage extends StatefulWidget {
 
 class _UploadImageState extends State<UploadImage> {
 
-  List<Asset> _imagesAsset = <Asset>[]; // 本地选择的图片数组
+  final List<Asset> _imagesAsset = <Asset>[]; // 本地选择的图片数组
 
   List _imagesList = []; // 图片数组
 

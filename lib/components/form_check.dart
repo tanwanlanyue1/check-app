@@ -248,17 +248,44 @@ class FormCheck {
     );
   }
 
-  static Widget tabText({String? title, String? str,bool colors = false}){
+  static Widget tabText({String? title, String? str,}){
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text('$title：',style: TextStyle(color: Color(0xff787A80),fontSize: sp(26)),),
-        Text(
-          '$str',
-          style: TextStyle(
-              color: colors ? Colors.red : Color(0xff2E2F33),
-              fontSize: sp(30.0)
+        Container(
+          margin: EdgeInsets.only(left: px(24),right: px(12)),
+          child: Text("$title",style: TextStyle(
+              fontSize: sp(28.0),
+              color: Color(0xff4D7FFF),
+            fontWeight: FontWeight.bold
+          )),
+        ),
+        Container(
+          child: Text("$str",style: TextStyle(
+              fontSize: sp(28.0),
+              color: Color(0XFF323233)
+          )),
+        ),
+        Expanded(
+          child: Container(
+          alignment: Alignment.topLeft,
+          height: px(32),
+          width: px(32),
+          child: Icon(Icons.star,color: Color(0xffE65C5C),size: px(36),),
+        )),
+        Container(
+          height: px(48),
+          width: px(100),
+          color: Color(0xff95C758),
+          alignment: Alignment.center,
+          child: Text(
+            '已整改',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: sp(22.0)
+            ),
           ),
-        )
+        ),
       ],
     );
   }

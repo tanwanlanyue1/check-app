@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/toast_widget.dart';
@@ -92,10 +90,8 @@ class _LoginPageState extends State<LoginPage> {
                 FocusScope.of(context).requestFocus(FocusNode());
               },
               child: SingleChildScrollView(
-                child: Container(
-                  child: Stack(
-                    children: [_topLogos(), _loginInput()],
-                  ),
+                child: Stack(
+                  children: [_topLogos(), _loginInput()],
                 ),
               ),
             )));
@@ -142,7 +138,6 @@ class _LoginPageState extends State<LoginPage> {
           width: double.infinity,
           margin: EdgeInsets.only(top: px(438)),
           padding: EdgeInsets.only(top: px(200)),
-          // alignment: Alignment.center,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(

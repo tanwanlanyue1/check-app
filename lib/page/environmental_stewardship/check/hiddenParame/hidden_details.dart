@@ -33,8 +33,11 @@ class _HiddenDetailsState extends State<HiddenDetails> {
       setState(() {});
     }
   }
-  DateTime start = DateTime.now().add(Duration(days: -7));
-  DateTime end = DateTime.now();
+
+  DateTime start = DateTime.now().add(Duration(days: -7));//默认初始日期
+  DateTime end = DateTime.now();//结束日期
+  Position? position;//坐标
+
   @override
   void initState() {
     // TODO: implement initState
@@ -49,83 +52,6 @@ class _HiddenDetailsState extends State<HiddenDetails> {
         topBar(),
         Column(
           children: List.generate(companyDetails.length, (i) => rectifyRow(i: i)),
-        ),
-        FormCheck.tabText(title: "标题",str: '内容阿达adqeq'),
-        FormCheck.rowItem(
-          title: "表单标题",
-          alignStart: true,
-          child: Container(
-            height: px(170),
-            color: Colors.brown,
-            child: Text("asd"),
-          )
-        ),
-        FormCheck.selectWidget(
-          hintText: '提示',
-          items: [{'name':'selectWidget','value':'452'},{'name':'名字','value':'42'},{'name':'选项','value':'1452'}],
-          value: '名字'
-        ),
-        FormCheck.dataCard(
-          children: [
-            DownInput(
-              data: [{'name':'123','id':1},{'name':'asd'}],
-              callback: (val){
-                ToastWidget.showDialog(
-                  msg: '是否选择这一项？+ $val',
-                );
-              },
-              currentData:{'name':'asd'},
-              value: '123',
-            ),
-          ]
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 8.0),
-          child: Row(
-            children: [
-              SizedBox(
-                height: 24.0,
-                child: ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(Color(0XFF2288F4)),
-                    ),
-                  onPressed: () async{
-                    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-                        // .then((value){});
-                    print(position);
-                  },
-                  child: Text(
-                    '获取定位',
-                    style: TextStyle(
-                        color: Colors.white,
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-        Container(
-          width: px(300),
-          height: px(120),
-          color: Colors.teal,
-          alignment: Alignment.center,
-          child:DialogPages.succeedDialogBtn(
-            str: '弹窗',
-            bgColor: Color(0xFF8F98B3),
-            onTap: () {
-              DialogPages.dialog(context);
-            },
-          ),
-        ),
-        DateRange(
-          start: start,
-          end: end,
-          callBack: (val){
-            start = val[0];
-            end = val[1];
-            setState(() {});
-          },
         ),
       ],
     );
@@ -204,33 +130,38 @@ class _HiddenDetailsState extends State<HiddenDetails> {
                     )
                   ],
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: px(20)),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: px(18),
-                        width: px(18),
-                        margin: EdgeInsets.only(left: px(12)),
-                        child: Icon(Icons.widgets_outlined,color: Color(0xffC8C9CC),size: 18,),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(left: px(24),right: px(80)),
-                        child: Text('${companyDetails[i]["tag"]}',style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),),
-                      ),
-                      SizedBox(
-                        height: px(18),
-                        width: px(18),
-                        child: Icon(Icons.access_time,color: Color(0xffC8C9CC),size: 18,),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(left: px(24),right: px(80)),
-                        child: Text(formatTime(companyDetails[i]["updateTime"]),style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),),
-                      ),
-                    ],
+                InkWell(
+                  child: Container(
+                    margin: EdgeInsets.only(top: px(20)),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: px(18),
+                          width: px(18),
+                          margin: EdgeInsets.only(left: px(12)),
+                          child: Icon(Icons.widgets_outlined,color: Color(0xffC8C9CC),size: 18,),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: px(24),right: px(80)),
+                          child: Text('${companyDetails[i]["tag"]}',style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),),
+                        ),
+                        SizedBox(
+                          height: px(18),
+                          width: px(18),
+                          child: Icon(Icons.access_time,color: Color(0xffC8C9CC),size: 18,),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: px(24),right: px(80)),
+                          child: Text(formatTime(companyDetails[i]["updateTime"]),style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),),
+                        ),
+                      ],
+                    ),
                   ),
+                  onTap: (){
+                    Navigator.pushNamed(context, '/rectificationProblem');
+                  },
                 ),
               ],
             ),
