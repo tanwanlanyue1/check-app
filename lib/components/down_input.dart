@@ -158,11 +158,13 @@ class _DownInputState extends State<DownInput> {
                     )
                 )
             ),
+            !widget.readOnly?
             SizedBox(
               width: px(50.0),
               height: px(56.0),
               child: Icon(Icons.expand_more,color: Color(0xff8A8E99)),
-            ),
+            ):
+            Container(),
           ],
         ),
       ),

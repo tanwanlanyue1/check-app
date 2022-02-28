@@ -1,145 +1,94 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/components/down_input.dart';
 import 'package:scet_check/components/form_check.dart';
-import 'package:scet_check/components/toast_widget.dart';
+import 'package:scet_check/page/environmental_stewardship/check/hiddenParame/components/rectify_components.dart';
+import 'package:scet_check/page/environmental_stewardship/check/potentialRisks/enterprise_reform.dart';
+import 'package:scet_check/page/environmental_stewardship/check/potentialRisks/fill_in_form.dart';
+import 'package:scet_check/page/environmental_stewardship/check/potentialRisks/review_situation.dart';
+import 'package:scet_check/utils/dateUtc/date_utc.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 class RectificationProblem extends StatefulWidget {
-  const RectificationProblem({Key? key}) : super(key: key);
+  final arguments;
+  const RectificationProblem({Key? key,this.arguments}) : super(key: key);
 
   @override
   _RectificationProblemState createState() => _RectificationProblemState();
 }
 
 //企业台账详情
-
 class _RectificationProblemState extends State<RectificationProblem> {
+
+  List imgDetails = ['https://img2.baidu.com/it/u=1814268193,3619863984&fm=253&fmt=auto&app=138&f=JPEG?w=632&h=500',
+    'https://img0.baidu.com/it/u=857510153,4267238650&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=675',
+    'https://img1.baidu.com/it/u=2374960005,3369337623&fm=253&fmt=auto&app=120&f=JPEG?w=499&h=312',
+    'https://img0.baidu.com/it/u=857510153,4267238650&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=675',
+  ];
+
+  int choice  = 0; //单选
+  bool declare = false;//申报
+  List imgDetail = [];
+
+  bool readOnly = true; //是否为只读
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    declare = widget.arguments['check'] ?? false;
+    readOnly = widget.arguments['readOnly'] ?? false;
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      key: _scaffoldKey,
+      body: ListView(
+        padding: EdgeInsets.only(top: 0),
         children: [
-          topBar(),
+          RectifyComponents.topBar(
+              title: '隐患排查问题整改详情',
+              callBack: (){
+                Navigator.pop(context);
+              }
+          ),
           Container(
             color: Colors.white,
-            child: FormCheck.tabText(title: "01",str: '废气治理设施巡检记录不完善'),
-          ),
-          FormCheck.rowItem(
-            title: "表单标题",
-            alignStart: true,
-            child: Container(
-              height: px(170),
-              color: Colors.brown,
-              child: Text("asd"),
-            )
-          ),
-          FormCheck.selectWidget(
-            hintText: '提示',
-            items: [{'name':'selectWidget','value':'452'},{'name':'名字','value':'42'},{'name':'选项','value':'1452'}],
-            value: '名字'
-          ),
-          FormCheck.dataCard(
-            children: [
-              DownInput(
-                data: [{'name':'123','id':1},{'name':'asd'}],
-                callback: (val){
-                  ToastWidget.showDialog(
-                    msg: '是否选择这一项？+ $val',
-                  );
-                },
-                currentData:{'name':'asd'},
-                value: '123',
-              ),
-            ]
-          ),
-          // Padding(
-          //   padding: EdgeInsets.symmetric(vertical: 8.0),
-          //   child: Row(
-          //     children: [
-          //       SizedBox(
-          //         height: 24.0,
-          //         child: ElevatedButton(
-          //             style: ButtonStyle(
-          //                 backgroundColor: MaterialStateProperty.all<Color>(Color(0XFF2288F4)),
-          //             ),
-          //           onPressed: () async{
-          //             position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-          //                 // .then((value){});
-          //             print('纬度===${position!.latitude}');
-          //             print('经度===${position!.longitude}');
-          //             setState(() {});
-          //           },
-          //           child: Text(
-          //             '获取定位',
-          //             style: TextStyle(
-          //                 color: Colors.white,
-          //             ),
-          //           ),
-          //         ),
-          //       ),
-          //       Text('纬度:${position?.latitude},经度:${position?.longitude}')
-          //     ],
-          //   ),
-          // ),
-          // Container(
-          //   width: px(300),
-          //   height: px(120),
-          //   color: Colors.teal,
-          //   alignment: Alignment.center,
-          //   child:DialogPages.succeedDialogBtn(
-          //     str: '弹窗',
-          //     bgColor: Color(0xFF8F98B3),
-          //     onTap: () {
-          //       DialogPages.dialog(context);
-          //     },
-          //   ),
-          // ),
-          // DateRange(
-          //   start: start,
-          //   end: end,
-          //   callBack: (val){
-          //     start = val[0];
-          //     end = val[1];
-          //     setState(() {});
-          //   },
-          // ),
-        ],
-      ),
-    );
-  }
-
-  //头部
-  Widget topBar(){
-    return Container(
-      color: Colors.white,
-      height: px(88),
-      child: Row(
-        children: [
-          InkWell(
-            child: Container(
-              height: px(40),
-              width: px(41),
-              margin: EdgeInsets.only(left: px(20)),
-              child: Image.asset('lib/assets/icons/other/chevronLeft.png',fit: BoxFit.fill,),
+            margin: EdgeInsets.only(top: px(5)),
+            child: FormCheck.tabText(
+              title: "01",
+              str: '废气治理设施巡检记录不完善',
             ),
-            onTap: (){
+          ),
+          //问题详情与申报
+          FillInForm(
+            arguments:{
+              'declare':declare,//申报
+              'key':_scaffoldKey
+            },
+            callBack: (){
             },
           ),
-          Expanded(
-            flex: 1,
-            child: Center(
-              child: Text("标题",style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
-            ),
+          //企业整改详情
+          EnterpriseReform(),
+          //现场复查情况
+           ReviewSituation(
+            arguments:{
+              'readOnly':readOnly,
+              'key':_scaffoldKey
+            },
           ),
-          Container(
-            width: px(40),
-            height: px(41),
-            margin: EdgeInsets.only(right: px(20)),
-            color: Colors.transparent,
+          Visibility(
+            visible: declare,
+            child: FormCheck.submit(),
           ),
         ],
       ),
     );
   }
 
+
+  //日期转换
+  String formatTime(time) {
+    return dateUtc(time.toString()).substring(0,10);
+  }
 }

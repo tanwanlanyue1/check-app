@@ -3,7 +3,7 @@ class Api {
   static const baseUrl = 'https://cz.scet.com.cn:1443/api';
 
   // static const baseUrlApp = 'http://10.10.1.217:9750';
-  static const baseUrlApp = 'http://10.10.1.147:3000/';
+  static const baseUrlApp = 'http://10.10.1.217:8687/';
 
   static const baseWs = 'wss://cz.scet.com.cn:1443/api/wfws';
 
@@ -19,6 +19,10 @@ class Api {
     'statistics': baseUrlApp + 'hiddenLedger/statistics',//公司统计
 
     'all': baseUrlApp + 'company/all',//公司
+
+    'lawFile': baseUrlApp + 'lawFile',//法律文件
+
+    'fileSearch': baseUrlApp + 'lawFile/search',//法律文件搜索
 
     'columns': baseUrlApp + 'company/columns',//表头
 

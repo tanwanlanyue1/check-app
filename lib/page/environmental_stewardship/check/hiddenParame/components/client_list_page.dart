@@ -138,7 +138,6 @@ class _ClientListPageState extends State<ClientListPage> {
       ),
       onTap: (){
           widget.callBack?.call(model.id,model.name);
-        // widget.callBack!(model.region);
         // setState(() {});
       },
     );
@@ -243,7 +242,6 @@ class _ClientListPageState extends State<ClientListPage> {
                 indexHintTextStyle: TextStyle(fontSize: 24.0, color: Color(0xff374766)),
                 indexHintOffset: Offset(-30, 0),
               ),
-
             ),
           ),
         ],

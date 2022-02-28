@@ -21,12 +21,16 @@ class _HiddenParameterState extends State<HiddenParameter> {
   int _companyId = 0;//公司
   String _companyName = '';//公司名称
   List companyList = [];//全部公司数据
+  int pageIndex = 0;
 
   bool details = false;//详情
 
   // 获取全部公司
   void _getLatestData() async {
-    var response = await Request().get(Api.url['all']);
+    Map<String, dynamic> params = pageIndex == 0 ? {}: {'area':pageIndex};
+    var response = await Request().get(Api.url['all'],
+        data: params
+    );
     if(response['code'] == 200) {
       setState(() {
         companyList = response["data"];
@@ -46,6 +50,15 @@ class _HiddenParameterState extends State<HiddenParameter> {
     return LayoutPage(
       tabBar: tabBar,
       pageBody: [
+        details ?
+        HiddenDetails(
+          companyId: _companyId,
+          companyName: _companyName,
+          callBack: (){
+            details = false;
+            setState(() {});
+          },
+        ):
         Column(
           children: [
             Container(
@@ -55,18 +68,22 @@ class _HiddenParameterState extends State<HiddenParameter> {
             ),
             Visibility(
               visible: companyList.isNotEmpty,
-              child: ClientListPage(
-                companyList: companyList,
-                callBack: (id,name){
-                  _companyId = id;
-                  _companyName = name;
-                  details = true;
-                  setState(() {});
-                },
+              child: Expanded(
+                child: ClientListPage(
+                  companyList: companyList,
+                  callBack: (id,name){
+                    _companyId = id;
+                    _companyName = name;
+                    details = true;
+                    setState(() {});
+                  },
+                ),
               ),
             ),
           ],
         ),
+
+        details ?
         HiddenDetails(
           companyId: _companyId,
           companyName: _companyName,
@@ -74,10 +91,103 @@ class _HiddenParameterState extends State<HiddenParameter> {
             details = false;
             setState(() {});
           },
+        ):
+        Column(
+          children: [
+            Container(
+              height: px(24),
+              margin: EdgeInsets.only(left:px(20),right: px(20)),
+              color: Colors.white,
+            ),
+            Visibility(
+              visible: companyList.isNotEmpty,
+              child: Expanded(
+                child: ClientListPage(
+                  companyList: companyList,
+                  callBack: (id,name){
+                    _companyId = id;
+                    _companyName = name;
+                    details = true;
+                    setState(() {});
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
-        Container(),
-        Container(),
+
+        details ?
+        HiddenDetails(
+          companyId: _companyId,
+          companyName: _companyName,
+          callBack: (){
+            details = false;
+            setState(() {});
+          },
+        ):
+        Column(
+          children: [
+            Container(
+              height: px(24),
+              margin: EdgeInsets.only(left:px(20),right: px(20)),
+              color: Colors.white,
+            ),
+            Visibility(
+              visible: companyList.isNotEmpty,
+              child: Expanded(
+                child: ClientListPage(
+                  companyList: companyList,
+                  callBack: (id,name){
+                    _companyId = id;
+                    _companyName = name;
+                    details = true;
+                    setState(() {});
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        details ?
+        HiddenDetails(
+          companyId: _companyId,
+          companyName: _companyName,
+          callBack: (){
+            details = false;
+            setState(() {});
+          },
+        ):
+        Column(
+          children: [
+            Container(
+              height: px(24),
+              margin: EdgeInsets.only(left:px(20),right: px(20)),
+              color: Colors.white,
+            ),
+            Visibility(
+              visible: companyList.isNotEmpty,
+              child: Expanded(
+                child: ClientListPage(
+                  companyList: companyList,
+                  callBack: (id,name){
+                    _companyId = id;
+                    _companyName = name;
+                    details = true;
+                    setState(() {});
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
       ],
+      callBack: (val){
+        pageIndex = val;
+        details = false;
+        _getLatestData();
+        setState(() {});
+      },
     );
   }
 

@@ -61,7 +61,8 @@ class Global {
     if (_token != null && _token != 'null'  &&  _token != '') {
       token = _token;
       isOfflineLogin = true;
-      Map? _personalData = StorageUtil().getJSON(StorageKey.PersonalData);
+      // Map? _personalData = StorageUtil().getJSON(StorageKey.PersonalData);
+      Map? _personalData = StorageUtil().getJSON(StorageKey.port);
       if (_personalData != null) {
         // switch(_personalData['roleId']) {
         //   case 1: router = '/EnterpriseIndexPage';break;
@@ -96,7 +97,7 @@ class Global {
   }
 
   static Future<ByteData> getCustomFont(String path) async {
-    var byteData = await new File(path).readAsBytes();
+    var byteData = await File(path).readAsBytes();
     return ByteData.view(byteData.buffer);
   }
 }

@@ -28,7 +28,7 @@ class NoData extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Text(
-                '${state}', 
+                '$state',
                 style: TextStyle(
                   fontSize: sp(32.0), 
                   color: Colors.white)
@@ -45,7 +45,7 @@ class NoData extends StatelessWidget {
         :
           Center(
             child: Text(
-              '${state}',
+              '$state',
               style: TextStyle(
                 fontSize: sp(32.0),
                 color: Color(0XFFFFFFFF)

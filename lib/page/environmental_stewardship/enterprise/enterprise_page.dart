@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/page/environmental_stewardship/check/hiddenParame/Components/client_list_page.dart';
-import 'package:scet_check/page/environmental_stewardship/check/hiddenParame/hidden_details.dart';
 import 'package:scet_check/page/environmental_stewardship/check/statisticAnaly/components/layout_page.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
@@ -20,7 +19,8 @@ class _EnterprisePageState extends State<EnterprisePage> {
 
   // 获取全部公司
   void _getLatestData() async {
-    var response = await Request().get(Api.url['all']);
+    Map<String, dynamic> params = pageIndex == 0 ? {}: {'area':pageIndex};
+    var response = await Request().get(Api.url['all'],data: params);
     if(response['code'] == 200) {
       setState(() {
         companyList = response["data"];
@@ -55,16 +55,41 @@ class _EnterprisePageState extends State<EnterprisePage> {
                   companyList: companyList,
                   callBack: (id,name){
                     print("id===$id");
-                    print("name===$name");
+                    // Navigator.pushNamed(context, '/hiddenDetails');
                   },
                 ),
               ),
-              HiddenDetails(
-                companyId: 1,
-                companyName: '公司',
+              Visibility(
+                visible: companyList.isNotEmpty,
+                child: ClientListPage(
+                  companyList: companyList,
+                  callBack: (id,name){
+                    print("id===$id");
+                  },
+                ),
               ),
-              Container(),
-              Container(),
+              Visibility(
+                visible: companyList.isNotEmpty,
+                child: ClientListPage(
+                  companyList: companyList,
+                  callBack: (id,name){
+                    print("id===$id");
+                  },
+                ),
+              ),
+              Visibility(
+                visible: companyList.isNotEmpty,
+                child: ClientListPage(
+                  companyList: companyList,
+                  callBack: (id,name){
+                    print("id===$id");
+                  },
+                ),
+              ),
+              // HiddenDetails(
+              //   companyId: 1,
+              //   companyName: '公司',
+              // ),
             ],
           ),
         ),

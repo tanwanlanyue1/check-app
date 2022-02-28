@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scet_check/model/provider/provider_details.dart';
-import 'package:scet_check/page/environmental_stewardship/check/potential_risks_indentification.dart';
+import 'package:scet_check/page/environmental_stewardship/check/potentialRisks/potential_risks_indentification.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 import 'StatisticAnaly/statistic_analysis.dart';

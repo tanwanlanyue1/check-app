@@ -14,6 +14,8 @@ class StorageKey {
 
   static const String allCompany = 'allCompany'; // 全部公司
 
+  static const String port = 'port'; // 判断是哪一端
+
   static const String FontBold = 'Alibaba-PuHuiTi-Bold.ttf'; // 阿里巴巴 Alibaba-PuHuiTi-Bold.ttf字体缓存
 
   static const String FontMedium = 'Alibaba-PuHuiTi-Medium.ttf'; // 阿里巴巴 Alibaba-PuHuiTi-Medium.ttf字体缓存

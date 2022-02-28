@@ -8,7 +8,7 @@ class TimeSelect extends StatefulWidget {
   final DateTime? time;
   final String? hintText;
   final callBack;
-  TimeSelect({Key? key, this.scaffoldKey, this.time, this.hintText, this.callBack}):super(key: key);
+  const TimeSelect({Key? key, required this.scaffoldKey, this.time, this.hintText, this.callBack}):super(key: key);
 
   @override
   _TimeSelectState createState() => _TimeSelectState();
@@ -37,17 +37,17 @@ class _TimeSelectState extends State<TimeSelect> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Expanded(
-              child: currentTime == null ? 
+              child: currentTime == null ?
               Text(
-                '${widget.hintText}', 
+                '${widget.hintText}',
                 style: TextStyle(
                   fontSize: sp(28.0),
                   color: Color(0XFFB0B2B8)
                 )
-              ) 
-              : 
+              )
+              :
               Text(
-                '$currentTime', 
+                '$currentTime',
                 style: TextStyle(
                   fontSize: sp(26.0),
                   color: Color(0XFF585858)
@@ -58,7 +58,7 @@ class _TimeSelectState extends State<TimeSelect> {
             Padding(
               padding: EdgeInsets.only(left: 2.0),
               child: Icon(
-                Icons.date_range, 
+                Icons.date_range,
                 size: sp(24.0),
                 color: Color(0XFF8A8E99)
               ),

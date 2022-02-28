@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 
 //适配像素类工具封装
-screen(num, context) {
+screen(number, context) {
   MediaQueryData mediaQuery = MediaQuery.of(context);
   var _pixelRatio = mediaQuery.devicePixelRatio; //密度比
   var widths = mediaQuery.size.width;
-  double dp = num * widths / 1334;
+  double dp = number * widths / 1334;
   return dp;
 }
 

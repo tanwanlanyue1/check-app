@@ -8,8 +8,6 @@ import 'package:scet_check/routers/router_animate/router_fade_route.dart';
 import 'package:scet_check/utils/photoView/cached_network.dart';
 import 'package:scet_check/utils/photoView/photo_view.dart';
 import 'package:scet_check/utils/screen/screen.dart';
-import 'package:scet_check/utils/storage/data_storage_key.dart';
-import 'package:scet_check/utils/storage/storage.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:multi_image_picker2/multi_image_picker2.dart';
 
@@ -17,11 +15,11 @@ class UploadImage extends StatefulWidget {
   final Function? callback;
   final bool closeIcon;
   final List imgList;
-  UploadImage({
+  const UploadImage({Key? key,
     this.callback,
     this.closeIcon = true,
     required this.imgList,
-  });
+  }) : super(key: key);
   @override
   _UploadImageState createState() => _UploadImageState();
 }
@@ -36,13 +34,6 @@ class _UploadImageState extends State<UploadImage> {
   Future<void> _uploadImages() async {
     List<Asset> resultList = <Asset>[];
     String _primaryColor = '';
-    // 切换主题颜色
-    switch(StorageUtil().getJSON(StorageKey.PersonalData)['roleId']) {
-      case 1: _primaryColor = '#4E7AFF'; break;
-      case 2: _primaryColor = '#49B8A4'; break;
-      case 3: _primaryColor = '#2E71A2'; break;
-      default: _primaryColor = '#4E7AFF'; break;
-    }
     //处理图片
     try {
       resultList = await MultiImagePicker.pickImages(
@@ -63,13 +54,10 @@ class _UploadImageState extends State<UploadImage> {
           )
       );
     } on Exception catch (e) {
-      // e.toString();
       ToastWidget.showToastMsg(e.toString());
     }
     if (!mounted) return;
     if (resultList.isNotEmpty) {
-      // _imagesAsset = (resultList == null) ? [] : resultList;
-      //   _imagesList = [];
       _upImg(resultList);
     }
   }
@@ -123,18 +111,15 @@ class _UploadImageState extends State<UploadImage> {
         mainAxisSpacing: 2,
       ),
       itemCount: widget.closeIcon ? _imagesList.length + 1 : _imagesList.length,
-      // ignore: missing_return
       itemBuilder: (BuildContext context, int index) {
         if(index == _imagesList.length && widget.closeIcon) {
           return GestureDetector(
             onTap: _uploadImages,
             child: Container(
-              width: 300,
-              height: 300,
+              width: px(169),
+              height: px(169),
               color: Color(0XFFF5F6FA),
-              child: Center(
-                  child: Icon( Icons.add, color: Theme.of(context).primaryColor, size: px(80.0),)
-              ),
+              child: Image.asset('lib/assets/icons/form/camera.png'),
             ),
           );
         }
@@ -143,7 +128,8 @@ class _UploadImageState extends State<UploadImage> {
             SizedBox(
               width: 300, height: 300,
               child: CachedNetwork(
-                  url:Api.baseUrlApp + '/' + _imagesList[index]['path'],
+                url:  _imagesList[index],
+                  // url:Api.baseUrlApp + '/' + _imagesList[index]['path'],
                   fits: BoxFit.cover,
               ),
             ),
@@ -186,7 +172,6 @@ class _UploadImageState extends State<UploadImage> {
                           _imagesList.removeAt(index);
                           widget.callback?.call(_imagesList);
                         });
-
                       },
                       child: Icon( Icons.close, color: Colors.redAccent, size: px(40.0),)
                   )

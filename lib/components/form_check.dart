@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/components/status.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 class FormCheck {
@@ -21,53 +20,52 @@ class FormCheck {
       )
     );
   }
-
-  //表单卡片
-  static Widget fromCard({Widget? child,Function? close}) {
-    return Card(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(px(16.0)))
-      ),
-      child: Stack(
+  static Widget formTitle(String title) {
+    return Container(
+      margin: EdgeInsets.fromLTRB(px(6.0), px(24.0), 0.0, px(12.0)),
+      child: Row(
         children: [
           Container(
-            width: Adapt.screenW(),
-            padding: EdgeInsets.symmetric(
-              horizontal: px(16.0),
-              vertical: px(32.0),
+            margin: EdgeInsets.only(right: px(8)),
+            width: px(4),
+            height: px(24),
+            decoration: BoxDecoration(
+                color: Color(0xFF4D7FFF),
+                borderRadius: BorderRadius.all(Radius.circular(px(1)))
             ),
-            child: child
           ),
-          if( close != null ) Positioned(
-            right: 0.0,
-            top: 0.0,
-            child: InkWell(
-              onTap: (){
-                close();
-              },
-              child: Image.asset('lib/assets/icons/form/close.png',width: px(50),height: px(34),),
-            ),
-          )
+          Text(title,
+              style: TextStyle(
+                  fontSize: sp(26),
+                  fontFamily: 'M',
+                  color: Color(0xff323233),
+              )
+          ),
         ],
-      )
+      ),
     );
   }
   //表格行项目
-  static Widget rowItem({bool alignStart = false, bool padding = true, bool expanded = true, String? title,required Widget child}) {
+  static Widget rowItem({
+    Color? titleColor,
+    bool alignStart = false,
+    bool padding = true,
+    bool expanded = true,
+    String? title,
+    required Widget child}) {
     return Padding(
-        padding: padding ? EdgeInsets.symmetric(vertical: px(24.0)) : EdgeInsets.zero,
+        padding: padding ? EdgeInsets.only(top: px(12),bottom: px(12)) : EdgeInsets.zero,
         child: Row(
             crossAxisAlignment: alignStart ? CrossAxisAlignment.start : CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
-                  width: px(145.0),
+                  width: px(145),
                   child: Text(
                       '$title：',
                       textAlign: TextAlign.justify,
                       style: TextStyle(
-                          color: Color(0XFF787A80),
+                          color: titleColor ?? Color(0XFF969799),
                           fontSize: sp(28.0),
                           fontWeight: FontWeight.w500
                       )
@@ -80,7 +78,7 @@ class FormCheck {
   }
 
   //输入框
-  static Widget inputWidget({bool? disabled, String? hintText, Function? onChanged, String? unit}) {
+  static Widget inputWidget({bool? disabled, String? hintText = '请输入', Function? onChanged, String? unit}) {
     return Row(
       children: [
         Expanded(
@@ -176,52 +174,29 @@ class FormCheck {
       }
     );
   }
-  //每一行卡片
+
+  //表单卡片
   static Widget dataCard({int? status,String? title,required List<Widget> children}){
     return Container(
-      width: px(702),
-      margin: EdgeInsets.only(left: px(24),right: px(24),bottom: px(16),top: px(16)),
+      width: px(750),
+      margin: EdgeInsets.only(top: px(4)),
       padding: EdgeInsets.all(px(16)),
       decoration: BoxDecoration(
           color: Color(0xffffffff),
-          borderRadius: BorderRadius.circular(px(15)),
-          boxShadow: const [
-            BoxShadow(
-                color: Color(0xffE9EBF3),
-                offset: Offset(2.0, 2.0),
-                blurRadius: 1.0,
-                spreadRadius: 2.0
-            ),
-          ]
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                "$title",
-                style: TextStyle(
-                  color: Color(0xff4D7CFF),
-                  fontSize: sp(32),
-                  fontFamily: "M",
-                ),
+          Visibility(
+            visible: title?.isNotEmpty ?? false,
+            child: Text(
+              "$title",
+              style: TextStyle(
+                color: Color(0xff323233),
+                fontSize: sp(28),
+                fontFamily: "M",
               ),
-              Spacer(),
-              Status(status),
-              Container(
-                margin: EdgeInsets.only(left: px(14)),
-                child: Row(
-                  children: [
-                    Text(
-                      '详情',
-                      style: TextStyle(color: Color(0xff8A9099),fontSize: sp(22)),
-                    ),
-                    Icon(Icons.keyboard_arrow_right,color: Color(0xffB5B8BD),size: sp(35),)
-                  ],
-                ),
-              )
-            ],
+            ),
           ),
           Container(
             padding: EdgeInsets.only(top: px(10.0)),
@@ -234,60 +209,111 @@ class FormCheck {
     );
   }
 
-  static Widget textData({String? data,bool? color}) {
-    return Padding(
-      padding: EdgeInsets.only(left: px(12.0)),
-      child: Text(
-        '$data',
-        style: TextStyle(
-          color: color == true ? Colors.red : Color(0XFF2E2F33),
-          fontSize: sp(28.0),
-          fontWeight: FontWeight.w500
-        )
-      )
-    );
-  }
-
+//状态
   static Widget tabText({String? title, String? str,}){
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          margin: EdgeInsets.only(left: px(24),right: px(12)),
-          child: Text("$title",style: TextStyle(
-              fontSize: sp(28.0),
-              color: Color(0xff4D7FFF),
-            fontWeight: FontWeight.bold
-          )),
-        ),
-        Container(
-          child: Text("$str",style: TextStyle(
+    return SizedBox(
+      height: px(82),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            margin: EdgeInsets.only(left: px(24),right: px(12)),
+            child: Text("$title",style: TextStyle(
+                fontSize: sp(28.0),
+                color: Color(0xff4D7FFF),
+                fontWeight: FontWeight.bold
+            )),
+          ),
+          Text("$str",style: TextStyle(
               fontSize: sp(28.0),
               color: Color(0XFF323233)
           )),
-        ),
-        Expanded(
-          child: Container(
-          alignment: Alignment.topLeft,
-          height: px(32),
-          width: px(32),
-          child: Icon(Icons.star,color: Color(0xffE65C5C),size: px(36),),
-        )),
-        Container(
-          height: px(48),
-          width: px(100),
-          color: Color(0xff95C758),
-          alignment: Alignment.center,
-          child: Text(
-            '已整改',
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: sp(22.0)
+          Container(
+            alignment: Alignment.topLeft,
+            height: px(32),
+            width: px(32),
+            child: Image.asset('lib/assets/icons/form/star.png'),
+          ),
+          Spacer(),
+          Container(
+            height: px(48),
+            width: px(100),
+            alignment: Alignment.center,
+            child: Text(
+              '已整改',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: sp(22.0)
+              ),
+            ),
+            decoration: BoxDecoration(
+                color: Color(0xff95C758),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(px(20)),
+                  bottomLeft: Radius.circular(px(20)),
+                )
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
-  
+  //提交按钮
+ static Widget submit({Function? cancel,Function? submit}){
+    return Container(
+        height: px(88),
+        margin: EdgeInsets.only(top: px(4)),
+        color: Colors.white,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              child: Container(
+                width: px(240),
+                height: px(56),
+                alignment: Alignment.center,
+                child: Text(
+                  '取消',
+                  style: TextStyle(
+                      fontSize: sp(24),
+                      fontFamily: "R",
+                      color: Color(0xFF323233)),
+                ),
+                decoration: BoxDecoration(
+                  border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
+                  borderRadius: BorderRadius.all(Radius.circular(px(28))),
+                ),
+              ),
+              onTap: (){
+                cancel?.call();
+              },
+            ),
+            GestureDetector(
+              child: Container(
+                width: px(240),
+                height: px(56),
+                alignment: Alignment.center,
+                margin: EdgeInsets.only(left: px(40)),
+                child: Text(
+                  '提交',
+                  style: TextStyle(
+                      fontSize: sp(24),
+                      fontFamily: "R",
+                      color: Colors.white),
+                ),
+                decoration: BoxDecoration(
+                  color: Color(0xff4D7FFF),
+                  border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
+                  borderRadius: BorderRadius.all(Radius.circular(px(28))),
+                ),
+              ),
+              onTap: (){
+                submit?.call();
+                },
+            ),
+          ],
+        ),
+      );
+  }
+
 }

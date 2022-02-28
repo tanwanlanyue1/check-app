@@ -19,18 +19,17 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String _userName = ''; // 账号
   String _password = ''; // 密码
-  int _PopTrue = 1; //记录返回次数 为3就是退出app
+  int _popTrue = 1; //记录返回次数 为3就是退出app
 
-  int _versions = 0; //单选
   //监听返回
   Future<bool> _onWillPop() {
-    _PopTrue = _PopTrue + 1;
+    _popTrue = _popTrue + 1;
     ToastWidget.showToastMsg('再按一次退出');
-    if (_PopTrue == 3) {
+    if (_popTrue == 3) {
       pop();
     }
     return Future.delayed(Duration(seconds: 2), () {
-      _PopTrue = 1;
+      _popTrue = 1;
       setState(() {});
       return false;
     });
@@ -177,50 +176,5 @@ class _LoginPageState extends State<LoginPage> {
           )),
     );
   }
-  //单选择
-  Widget _radio() {
-    return Container(
-      margin: EdgeInsets.only(left: px(120)),
-      child: Row(
-        children: [
-          Text(
-            '请选择:',
-            style: TextStyle(fontSize: sp(30), color: Color(0xFFA8ABB3)),
-          ),
-          SizedBox(
-            child: Radio(
-              value: 0,
-              groupValue: _versions,
-              onChanged: (value) {
-                setState(() {
-                  _versions = value as int;
-                });
-              },
-            ),
-            width: px(70),
-          ),
-          Text(
-            "1",
-            style: TextStyle(fontSize: sp(28)),
-          ),
-          SizedBox(
-            child: Radio(
-              value: 1,
-              groupValue: _versions,
-              onChanged: (value) {
-                setState(() {
-                  _versions = value as int;
-                });
-              },
-            ),
-            width: px(70),
-          ),
-          Text(
-            "2",
-            style: TextStyle(fontSize: sp(28)),
-          )
-        ],
-      ),
-    );
-  }
+
 }
