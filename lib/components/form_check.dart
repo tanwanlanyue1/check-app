@@ -20,37 +20,55 @@ class FormCheck {
       )
     );
   }
-  static Widget formTitle(String title) {
-    return Container(
-      margin: EdgeInsets.fromLTRB(px(6.0), px(24.0), 0.0, px(12.0)),
-      child: Row(
-        children: [
-          Container(
-            margin: EdgeInsets.only(right: px(8)),
-            width: px(4),
-            height: px(24),
-            decoration: BoxDecoration(
-                color: Color(0xFF4D7FFF),
-                borderRadius: BorderRadius.all(Radius.circular(px(1)))
+
+  //标签头部
+  static Widget formTitle(String title,{bool showUp = false,Function? onTaps,bool packups = true}){
+    return Row(
+      children: [
+        Container(
+          margin: EdgeInsets.only(right: px(8)),
+          width: px(4),
+          height: px(24),
+          decoration: BoxDecoration(
+              color: Color(0xFF4D7FFF),
+              borderRadius: BorderRadius.all(Radius.circular(px(1)))
+          ),
+        ),
+        Text(title,
+            style: TextStyle(
+              fontSize: sp(26),
+              fontFamily: 'M',
+              color: Color(0xff323233),
+            )
+        ),
+        Spacer(),
+        Visibility(
+          visible: showUp,
+          child: GestureDetector(
+            child: SizedBox(
+              height: px(50),
+              width: px(50),
+              child: Icon(packups?
+              Icons.keyboard_arrow_up:
+              Icons.keyboard_arrow_down,
+                color: Colors.grey,),
             ),
+            onTap: (){
+              onTaps?.call();
+            },
           ),
-          Text(title,
-              style: TextStyle(
-                  fontSize: sp(26),
-                  fontFamily: 'M',
-                  color: Color(0xff323233),
-              )
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
+
   //表格行项目
   static Widget rowItem({
     Color? titleColor,
     bool alignStart = false,
     bool padding = true,
     bool expanded = true,
+    bool expandedLeft = false,
     String? title,
     required Widget child}) {
     return Padding(
@@ -59,10 +77,24 @@ class FormCheck {
             crossAxisAlignment: alignStart ? CrossAxisAlignment.start : CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              expandedLeft?
+              Expanded(
+                child: SizedBox(
+                    child: Text(
+                        '$title',
+                        textAlign: TextAlign.justify,
+                        style: TextStyle(
+                            color: titleColor ?? Color(0XFF969799),
+                            fontSize: sp(28.0),
+                            fontWeight: FontWeight.w500
+                        )
+                    )
+                ),
+              ):
               SizedBox(
-                  width: px(145),
+                  width: px(150),
                   child: Text(
-                      '$title：',
+                      '$title',
                       textAlign: TextAlign.justify,
                       style: TextStyle(
                           color: titleColor ?? Color(0XFF969799),

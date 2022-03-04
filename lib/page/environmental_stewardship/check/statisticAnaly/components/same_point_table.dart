@@ -15,7 +15,7 @@ class SamePointTable extends StatefulWidget {
   @override
   _SamePointTableState createState() => _SamePointTableState();
 }
-
+// route.config.table.includes=['name','id']
 class _SamePointTableState extends State<SamePointTable> {
   List tableBody = [];//表单
   List industryHeader = ['序号','行业','百分比','问题','已整改','未整改'];//行业表头
@@ -62,12 +62,14 @@ class _SamePointTableState extends State<SamePointTable> {
       });
     }
 
-    echartData = [ {
-      'name':'问题:$issueTotal',
-      'type': 'bar',
-      'data': issue,
-      'color':'#D68184'
-    }, {
+    echartData = [
+      {
+        'name':'问题:$issueTotal',
+        'type': 'bar',
+        'data': issue,
+        'color':'#D68184'
+      },
+      {
         'name':'未整改:$notCorrectedTotal',
         'type': 'bar',
         'data': notCorrected,
@@ -282,13 +284,15 @@ class _SamePointTableState extends State<SamePointTable> {
                    Image.asset('lib/assets/images/home/chartSwitch.png'),
                 ),
                 onTap: () async{
-                  _homeModel.setPie();
-                  if(echart != 2){
-                    echart++;
-                  }else{
-                    echart = 0;
-                  }
-                  setState(() {});
+                  // Navigator.pushNamed(context, '/enterpriseDetails');
+                  Navigator.pushNamed(context, '/stewardCheck');
+                  // _homeModel.setPie();
+                  // if(echart != 2){
+                  //   echart++;
+                  // }else{
+                  //   echart = 0;
+                  // }
+                  // setState(() {});
                 },
               ),
             ],
@@ -337,7 +341,7 @@ class _SamePointTableState extends State<SamePointTable> {
                 flex: 1,
                 child: _homeModel.pieChart ?
                   SizedBox(
-                  height: px(500),
+                  height: px(700),
                   width: px(550),
                   child: ColumnEcharts(
                     erectName: name,

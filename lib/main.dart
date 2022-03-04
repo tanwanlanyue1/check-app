@@ -39,7 +39,7 @@ void main() {
           ChangeNotifierProvider<AppState>.value(value: Global.appState,),
           ChangeNotifierProvider(create: (_) => ProviderDetaild(),)
         ],
-        child:const MyApp(),
+        child:MyApp(routerStr: Global.router,),
       ),
     );
   }, (Object error, StackTrace stack) {
@@ -50,12 +50,13 @@ void main() {
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final String? routerStr;
+  MyApp({this.routerStr,});
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
         designSize: const Size(Adapter.designWidth, Adapter.designHeight),
-        minTextAdapt: true,
+        minTextAdapt: false,
         splitScreenMode: true,
         builder: () => MaterialApp(
           navigatorKey: navigatorKey,
@@ -79,7 +80,7 @@ class MyApp extends StatelessWidget {
               scaffoldBackgroundColor: const Color(0XFFF2F4FA),
               fontFamily: "R"
           ),
-          initialRoute: '/',
+          initialRoute: routerStr,
           // onGenerateRoute: onGenerateRoute(RouteSettings settings),
           onGenerateRoute:(RouteSettings settings) =>onGenerateRoute(settings),
         ),

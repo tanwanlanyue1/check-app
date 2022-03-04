@@ -51,7 +51,7 @@ class _EssentialDetailsState extends State<EssentialDetails> {
           Container(
             padding: EdgeInsets.only(top: px(5),bottom: px(20)),
             margin: EdgeInsets.only(left: px(32),right: px(24),),
-            child: Text('核对企业所有项目皮肤，喝茶是否存在未批先建。'*3,style: TextStyle(color: Color(0xff323233),fontSize: sp(26),fontFamily: 'R'),),
+            child: Text('核对企业所有项目皮肤，核查是否存在未批先建。'*3,style: TextStyle(color: Color(0xff323233),fontSize: sp(26),fontFamily: 'R'),),
             decoration: BoxDecoration(
               border: Border(bottom: BorderSide(width: px(1.0),color: Color(0X99A1A6B3))),
             ),

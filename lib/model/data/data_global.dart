@@ -47,14 +47,8 @@ class Global {
 
     appDownload = (await getApplicationDocumentsDirectory()).path + "/fontDownload/";
 
-
     // 读取设备是否已经打开过
     isFirstOpen = StorageUtil().getBool(StorageKey.STORAGE_DEVICE_ALREADY_OPEN_KEY);
-    // if (isFirstOpen) { // ios禁用
-    //   await readFont(fontFileM,"M");
-    //   await readFont(fontFileB,"B");
-    //   await readFont(fontFileR,"R");
-    // }
 
     // 读取离线用户token
     var _token = StorageUtil().getString(StorageKey.Token);
@@ -65,7 +59,7 @@ class Global {
       Map? _personalData = StorageUtil().getJSON(StorageKey.port);
       if (_personalData != null) {
         // switch(_personalData['roleId']) {
-        //   case 1: router = '/EnterpriseIndexPage';break;
+        //   case 1: router = '/steward';break;
         //   case 2: router = '/AdminIndexPage';break;
         //   case 3: router = '/GovernmentIndexPage';break;
         //   default: router = '/';break;

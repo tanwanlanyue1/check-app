@@ -115,7 +115,7 @@ class _FillInFormState extends State<FillInForm> {
             child: DownInput(
               value: '中华人民共和国环境影响',
               readOnly: !declare,
-              data: [
+              data: const[
                 {'name': '中华人民共和国环境影响'},
                 {"name": "废物中华人民共和国环境影响"}
               ],
@@ -142,10 +142,10 @@ class _FillInFormState extends State<FillInForm> {
                 fontFamily: 'Roboto-Condensed'),) :
             FormCheck.inputWidget(hintText: '填报人员'),
           ),
-          // Visibility(
-          //   visible: !_readOnly,
-          //   child: FormCheck.submit(),
-          // )
+          Visibility(
+            visible: declare,
+            child: FormCheck.submit(),
+          )
         ]
     );
   }

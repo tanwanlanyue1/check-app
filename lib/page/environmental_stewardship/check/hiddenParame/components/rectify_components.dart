@@ -70,9 +70,9 @@ class RectifyComponents{
                     child: Text('${company[i]["tag"]}',style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),),
                   ),
                   SizedBox(
-                    height: px(18),
-                    width: px(18),
-                    child: Icon(Icons.access_time,color: Color(0xffC8C9CC),size: 18,),
+                    height: px(32),
+                    width: px(32),
+                    child: Image.asset('lib/assets/icons/check/time.png'),
                   ),
                   Container(
                     margin: EdgeInsets.only(left: px(24),right: px(80)),
@@ -117,6 +117,7 @@ class RectifyComponents{
    return Container(
      color: Colors.white,
      height: px(88),
+     margin: EdgeInsets.only(top: Adapt.padTopH()),
      child: Row(
        children: [
          InkWell(
@@ -134,7 +135,7 @@ class RectifyComponents{
          Expanded(
            flex: 1,
            child: Center(
-             child: Text("$title",style: TextStyle(color: Color(0xff323233),fontSize: sp(36),fontFamily: 'M'),),
+             child: Text("$title",style: TextStyle(color: Color(0xff323233),fontSize: sp(32),fontFamily: 'M'),),
            ),
          ),
          Container(

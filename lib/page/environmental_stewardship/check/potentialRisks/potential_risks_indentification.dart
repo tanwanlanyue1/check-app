@@ -24,7 +24,6 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
   String _companyName = '';//公司名称
   List companyList = [];//全部公司数据
   Position? position;//定位
-  bool details = false;//详情
   int pageIndex = 0;
 
   // 获取全部公司
@@ -143,21 +142,19 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
       tabBar: tabBar,
       callBack: (val){
         pageIndex = val;
-        details = false;
         _getLatestData();
         setState(() {});
       },
       pageBody: [
-        details ?
-        HiddenDetails(
-          companyId: _companyId,
-          companyName: _companyName,
-          check: true,
-          callBack: (){
-            details = false;
-            setState(() {});
-          },
-        ):
+        // HiddenDetails(
+        //   companyId: _companyId,
+        //   companyName: _companyName,
+        //   check: true,
+        //   callBack: (){
+        //     details = false;
+        //     setState(() {});
+        //   },
+        // ):
         Column(
           children: [
             Container(
@@ -173,7 +170,9 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
                   callBack: (id,name){
                     _companyId = id;
                     _companyName = name;
-                    details = true;
+                    Navigator.pushNamed(context, '/hiddenDetails',
+                        arguments: {'companyId': _companyId,'companyName': _companyName,'check':true}
+                        );
                     setState(() {});
                   },
                 ),
@@ -182,16 +181,6 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
           ],
         ),
 
-        details ?
-        HiddenDetails(
-          companyId: _companyId,
-          companyName: _companyName,
-          check: true,
-          callBack: (){
-            details = false;
-            setState(() {});
-          },
-        ):
         Column(
           children: [
             Container(
@@ -217,16 +206,6 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
           ],
         ),
 
-        details ?
-        HiddenDetails(
-          companyId: _companyId,
-          companyName: _companyName,
-          check: true,
-          callBack: (){
-            details = false;
-            setState(() {});
-          },
-        ):
         Column(
           children: [
             Container(
@@ -242,7 +221,9 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
                   callBack: (id,name){
                     _companyId = id;
                     _companyName = name;
-                    details = true;
+                    Navigator.pushNamed(context, '/hiddenDetails',
+                        arguments: {'companyId': _companyId,'companyName': _companyName,'check':true}
+                    );
                     setState(() {});
                   },
                 ),
@@ -251,16 +232,6 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
           ],
         ),
 
-        details ?
-        HiddenDetails(
-          companyId: _companyId,
-          companyName: _companyName,
-          check: true,
-          callBack: (){
-            details = false;
-            setState(() {});
-          },
-        ):
         Column(
           children: [
             Container(
@@ -276,7 +247,9 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
                   callBack: (id,name){
                     _companyId = id;
                     _companyName = name;
-                    details = true;
+                    Navigator.pushNamed(context, '/hiddenDetails',
+                        arguments: {'companyId': _companyId,'companyName': _companyName,'check':true}
+                    );
                     setState(() {});
                   },
                 ),

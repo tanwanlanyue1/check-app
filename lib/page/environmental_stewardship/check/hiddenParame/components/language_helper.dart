@@ -8,16 +8,6 @@ class LanguageHelper {
   static Map<String, String> getResource(List? list) {
     Map<String, String> map = HashMap();
     List<MapEntry<String, String>> mapEntryList = [];
-    // for (int i = 0, length = list.length; i < length; i++) {
-    //   Map<String, String> tokens = list[i];
-    //   String? name = tokens['name'];
-    //   String? color = tokens['color'];
-    //   // if (color != null && name != null) {
-    //   if (color != null && name != null) {
-    //     MapEntry<String, String> mapEntry = MapEntry(name, color,);
-    //     mapEntryList.add(mapEntry);
-    //   }
-    // }
     map.addEntries(mapEntryList);
     return map;
   }

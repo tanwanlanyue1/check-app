@@ -46,12 +46,13 @@ class LawComponents{
       ),
     );
   }
+
  //一行俩个
- static Widget rowTwo({String? title,Widget? child,required Widget textChild}){
+ static Widget rowTwo({Widget? child,required Widget textChild}){
    return Row(
      children: [
        Container(
-         width: px(29),
+         width: px(30),
          height: px(30),
          margin: EdgeInsets.only(right: px(8)),
          child: child,

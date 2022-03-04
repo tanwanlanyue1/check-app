@@ -373,7 +373,6 @@ class _WindowsPopState extends State<WindowsPop> {
                         alignment: Alignment.centerLeft,
                         decoration: BoxDecoration(
                             border: Border(bottom: BorderSide(width: px(1.0),color: Color(0X99A1A6B3))),
-                            // color: (_bools(index) ? Color(0XFFe6f7ff) : Colors.transparent)
                             color: (_bools(index) ? Theme.of(context).primaryColor : Colors.transparent)
                         ),
                         child: ListView(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
-import 'package:scet_check/page/environmental_stewardship/check/hiddenParame/hidden_details.dart';
 import 'package:scet_check/page/environmental_stewardship/check/statisticAnaly/components/layout_page.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
@@ -22,8 +21,6 @@ class _HiddenParameterState extends State<HiddenParameter> {
   String _companyName = '';//公司名称
   List companyList = [];//全部公司数据
   int pageIndex = 0;
-
-  bool details = false;//详情
 
   // 获取全部公司
   void _getLatestData() async {
@@ -50,15 +47,6 @@ class _HiddenParameterState extends State<HiddenParameter> {
     return LayoutPage(
       tabBar: tabBar,
       pageBody: [
-        details ?
-        HiddenDetails(
-          companyId: _companyId,
-          companyName: _companyName,
-          callBack: (){
-            details = false;
-            setState(() {});
-          },
-        ):
         Column(
           children: [
             Container(
@@ -74,7 +62,7 @@ class _HiddenParameterState extends State<HiddenParameter> {
                   callBack: (id,name){
                     _companyId = id;
                     _companyName = name;
-                    details = true;
+                    Navigator.pushNamed(context, '/hiddenDetails',arguments: {'companyId': _companyId,'companyName': _companyName,});
                     setState(() {});
                   },
                 ),
@@ -83,15 +71,6 @@ class _HiddenParameterState extends State<HiddenParameter> {
           ],
         ),
 
-        details ?
-        HiddenDetails(
-          companyId: _companyId,
-          companyName: _companyName,
-          callBack: (){
-            details = false;
-            setState(() {});
-          },
-        ):
         Column(
           children: [
             Container(
@@ -107,7 +86,7 @@ class _HiddenParameterState extends State<HiddenParameter> {
                   callBack: (id,name){
                     _companyId = id;
                     _companyName = name;
-                    details = true;
+                    Navigator.pushNamed(context, '/hiddenDetails',arguments: {'companyId': _companyId,'companyName': _companyName,});
                     setState(() {});
                   },
                 ),
@@ -116,15 +95,6 @@ class _HiddenParameterState extends State<HiddenParameter> {
           ],
         ),
 
-        details ?
-        HiddenDetails(
-          companyId: _companyId,
-          companyName: _companyName,
-          callBack: (){
-            details = false;
-            setState(() {});
-          },
-        ):
         Column(
           children: [
             Container(
@@ -140,7 +110,7 @@ class _HiddenParameterState extends State<HiddenParameter> {
                   callBack: (id,name){
                     _companyId = id;
                     _companyName = name;
-                    details = true;
+                    Navigator.pushNamed(context, '/hiddenDetails',arguments: {'companyId': _companyId,'companyName': _companyName,});
                     setState(() {});
                   },
                 ),
@@ -149,15 +119,6 @@ class _HiddenParameterState extends State<HiddenParameter> {
           ],
         ),
 
-        details ?
-        HiddenDetails(
-          companyId: _companyId,
-          companyName: _companyName,
-          callBack: (){
-            details = false;
-            setState(() {});
-          },
-        ):
         Column(
           children: [
             Container(
@@ -173,7 +134,7 @@ class _HiddenParameterState extends State<HiddenParameter> {
                   callBack: (id,name){
                     _companyId = id;
                     _companyName = name;
-                    details = true;
+                    Navigator.pushNamed(context, '/hiddenDetails',arguments: {'companyId': _companyId,'companyName': _companyName,});
                     setState(() {});
                   },
                 ),
@@ -184,7 +145,6 @@ class _HiddenParameterState extends State<HiddenParameter> {
       ],
       callBack: (val){
         pageIndex = val;
-        details = false;
         _getLatestData();
         setState(() {});
       },

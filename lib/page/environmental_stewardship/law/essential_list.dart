@@ -23,8 +23,12 @@ class _EssentialListState extends State<EssentialList> {
                 Navigator.pop(context);
               }
           ),
-          essentList(),
-          essentList(),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.only(top: 0,bottom: px(24)),
+              children: List.generate(3, (index) => essentList()),
+            ),
+          )
         ],
       ),
     );

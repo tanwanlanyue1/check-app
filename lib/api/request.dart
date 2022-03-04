@@ -55,7 +55,7 @@ class Request {
           ToastWidget.showToastMsg('用户信息过时，请重新登录！');
           BuildContext context = navigatorKey.currentState!.overlay!.context;
           Future.delayed(const Duration(seconds: 0)).then((onValue) {
-            Navigator.pushNamedAndRemoveUntil(context, '/LoginPage', (route) => false);
+            Navigator.pushNamedAndRemoveUntil(context, '/logIn', (route) => false);
           });
         }
         BotToast.closeAllLoading();

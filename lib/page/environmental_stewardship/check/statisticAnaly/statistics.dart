@@ -7,11 +7,8 @@ import 'Components/same_point_table.dart';
 
 //统计
 class Statistics extends StatefulWidget {
-  String? type;
-  Function? callBack;//下一页
-  Function? callPrevious;//上一页
   int pageIndex;//当前页面下表
-  Statistics({Key? key,this.type,this.callBack,this.callPrevious,required this.pageIndex}) : super(key: key);
+  Statistics({Key? key,required this.pageIndex}) : super(key: key);
 
   @override
   _StatisticsState createState() => _StatisticsState();
@@ -27,13 +24,14 @@ class _StatisticsState extends State<Statistics> {
   int questionTotal = 0;//问题总数
   int companyTotal = 0;//企业总数
   int _pageIndex = 0;//企业总数
-  List number = [];
+  List number = [];//整改数
 
   @override
   void initState() {
     super.initState();
     _pageIndex = widget.pageIndex;
     _getStatistics(); // 获取园区统计
+    _getcolumns(); // 获取表头
   }
 
   // 获取园区统计
@@ -55,21 +53,28 @@ class _StatisticsState extends State<Statistics> {
       judge();
     }
   }
+  // 获取园区统计
+  void _getcolumns() async {
+    var response = await Request().get(Api.url['columns']);
+    if(response['code'] == 200) {
+      print(response);
+    }
+  }
 
   //判断表单的数据
   judge(){
     switch (tabIndex){
-      case 0: {//行业
+      case 0: {
         type = '行业';
         setState((){});
         return _tableBody = gardenStatistics['rank_industry_total_views'] ?? [];
       }
-      case 1: {//片区
+      case 1: {
         type = '片区';
         setState((){});
         return _tableBody = gardenStatistics['rank_area_total_view'] ?? [];
       }
-      case 2: {//企业
+      case 2: {
         type = '企业';
         setState((){});
         return _tableBody = gardenStatistics['rank_company_total_views'] ?? [];
@@ -86,7 +91,7 @@ class _StatisticsState extends State<Statistics> {
         children: [
           abarbeitung(),
           SamePointTable(
-            tableHeader: widget.type ?? '',
+            tableHeader: type,
             tableBody: _tableBody,
             callBack: (){
               judge();

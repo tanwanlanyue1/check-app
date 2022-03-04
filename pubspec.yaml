@@ -91,6 +91,7 @@ flutter:
     - lib/assets/icons/my/
     - lib/assets/icons/login/
     - lib/assets/icons/form/
+    - lib/assets/icons/check/
     - lib/assets/icons/other/
     - lib/assets/images/login/
     - lib/assets/images/home/

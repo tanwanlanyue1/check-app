@@ -26,6 +26,7 @@ class LoginComponents{
             '$icon',
             width: px(40),
             height: px(40),
+            color: Color(0xff6089F0),
           ),
           Expanded(
             child: TextField(

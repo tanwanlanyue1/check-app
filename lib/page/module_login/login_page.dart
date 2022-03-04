@@ -4,10 +4,10 @@ import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/toast_widget.dart';
 import 'package:scet_check/page/module_login/components/login_components.dart';
+import 'package:scet_check/utils/logOut/log_out.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
-
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -21,23 +21,6 @@ class _LoginPageState extends State<LoginPage> {
   String _password = ''; // 密码
   int _popTrue = 1; //记录返回次数 为3就是退出app
 
-  //监听返回
-  Future<bool> _onWillPop() {
-    _popTrue = _popTrue + 1;
-    ToastWidget.showToastMsg('再按一次退出');
-    if (_popTrue == 3) {
-      pop();
-    }
-    return Future.delayed(Duration(seconds: 2), () {
-      _popTrue = 1;
-      setState(() {});
-      return false;
-    });
-  }
-
-  static Future<void> pop() async {
-    await SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-  }
 
   //登录
   void _postLogin(String userName, String passWord) async {
@@ -52,7 +35,13 @@ class _LoginPageState extends State<LoginPage> {
       };
       var response = await Request().post(Api.url['login'], data: _data);
       if (response['code'] == 200) {
-
+        saveInfo(response['data']['token'], _data['name'], _data['password'], response['data']['user']);
+          switch(response['data']){
+            case 1 :
+              Navigator.pushNamedAndRemoveUntil(context,'/steward', (Route route)=>false);//删除所有，只留下steward
+              // Navigator.of(context).pushAndRemoveUntil(CustomRoute(steward()), (router) => router == null);break;
+              break;
+          }
       } else if (response['code'] == 500) {
         if (response['status'] == null) {
           ToastWidget.showToastMsg('用户名或密码错误！');
@@ -71,7 +60,6 @@ class _LoginPageState extends State<LoginPage> {
     StorageUtil().setString('password', passWord.toString());
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -80,101 +68,107 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        onWillPop: _onWillPop,
+        onWillPop: LogOut.onWillPop,
         child: Scaffold(
-            backgroundColor: Colors.white,
             body: GestureDetector(
-              behavior: HitTestBehavior.translucent,
               onTap: () {
                 FocusScope.of(context).requestFocus(FocusNode());
               },
-              child: SingleChildScrollView(
-                child: Stack(
-                  children: [_topLogos(), _loginInput()],
-                ),
+              child: ListView(
+                children: [
+                  SizedBox(
+                    height: Adapt.screenH(),
+                    child: Stack(
+                      children: [
+                        _bottomLogos(),
+                        _topLogos(),
+                        _loginInput()
+                      ],
+                    ),
+                  )
+                ],
               ),
-            )));
+            ),
+        )
+    );
   }
 
-  ///顶部背景logo
+  //顶部背景logo
   Widget _topLogos() {
-    return Container(
-      height: px(518),
-      padding: EdgeInsets.only(left: px(60)),
-      alignment: Alignment.bottomLeft,
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('lib/assets/images/login/bgImage.png'),
-              fit: BoxFit.fill)),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Image.asset(
-            'lib/assets/images/login/logos.png',
-            width: px(120),
-            height: px(121),
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-              top: px(23),
-              bottom: px(124),
+    return Positioned(
+      child: Container(
+        height: px(829),
+        width: double.infinity,
+        margin: EdgeInsets.only(left: px(32),right: px(32),top: px(52)),
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('lib/assets/images/login/loginBg.png'),
             ),
-            child: Text(
-              '隐患排查与整改服务APP',
-              style: TextStyle(
-                  fontSize: sp(30), fontFamily: "M", color: Color(0xFFFFFFFF)),
-            ),
-          )
-        ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              width: px(160),
+              height: px(160),
+              margin: EdgeInsets.only(top: px(130)),
+              child: Image.asset('lib/assets/images/login/logo.png',),
+            )
+          ],
+        ),
       ),
     );
   }
 
-  ///登录框
+  //登录框
   Widget _loginInput() {
-    return Positioned(
-      child: Container(
-          width: double.infinity,
-          margin: EdgeInsets.only(top: px(438)),
-          padding: EdgeInsets.only(top: px(200)),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(
-                px(46),
-              ),
-              topRight: Radius.circular(
-                px(46),
-              ),
-            ),
-            color: Colors.white,
+    return Container(
+        width: double.infinity,
+        margin: EdgeInsets.only(top: px(438)),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(px(46),),
+            topRight: Radius.circular(px(46),),
           ),
-          child: Column(
-            children: [
-              // _type(),
-              LoginComponents.loginInput(
-                  icon: 'lib/assets/icons/login/people.png',
-                  hitStr: '请输入账号',
-                  onChange: (val) {
-                    _userName = val;
-                    setState(() {});
-                  }),
-              LoginComponents.loginInput(
-                  icon: 'lib/assets/icons/login/password.png',
-                  hitStr: '请输入密码',
-                  isPassWord: true,
-                  onChange: (val) {
-                    _password = val;
-                    setState(() {});
-                  }),
-              LoginComponents.loginBtn(
-                onTap: () {
-                  Navigator.pushNamed(context, '/');
-                  // _postLogin(_userName, _password);
-                },
-              )
-            ],
-          )),
+        ),
+        child: Column(
+          children: [
+            LoginComponents.loginInput(
+                icon: 'lib/assets/icons/login/people.png',
+                hitStr: '请输入账号',
+                onChange: (val) {
+                  _userName = val;
+                  setState(() {});
+                }),
+            LoginComponents.loginInput(
+                icon: 'lib/assets/icons/login/password.png',
+                hitStr: '请输入密码',
+                isPassWord: true,
+                onChange: (val) {
+                  _password = val;
+                  setState(() {});
+                }),
+            LoginComponents.loginBtn(
+              onTap: () {
+                Navigator.pushNamed(context, '/steward');
+                // _postLogin(_userName, _password);
+              },
+            )
+          ],
+        ));
+  }
+  //底部背景logo
+  Widget _bottomLogos() {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        height: px(860),
+        width: Adapt.screenW(),
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('lib/assets/images/login/bgImage.png'),
+                fit: BoxFit.fill)
+        ),
+      ),
     );
   }
-
 }

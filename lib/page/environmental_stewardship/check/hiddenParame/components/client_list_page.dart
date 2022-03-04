@@ -24,7 +24,6 @@ class ClientListPage extends StatefulWidget {
 }
 
 class _ClientListPageState extends State<ClientListPage> {
-
   /// 控制器滚动或跳转到特定项目。
   final ItemScrollController itemScrollController = ItemScrollController();
   List<Languages> originList = [];
@@ -35,7 +34,7 @@ class _ClientListPageState extends State<ClientListPage> {
   @override
   void initState() {
     super.initState();
-    LanguageHelper.languageMap = LanguageHelper.getResource(widget.companyList);
+    // LanguageHelper.languageMap = LanguageHelper.getResource(widget.companyList);
     LanguageHelper.language = widget.companyList;
     textEditingController = TextEditingController();
     loadData();
@@ -60,7 +59,7 @@ class _ClientListPageState extends State<ClientListPage> {
     }).toList();
     _handleList(originList);
   }
-
+  //处理列表
   void _handleList(List<Languages> list) {
     dataList.clear();
     if (ObjectUtil.isEmpty(list)) {
@@ -180,8 +179,7 @@ class _ClientListPageState extends State<ClientListPage> {
             height: px(56),
             margin: EdgeInsets.only(left: px(16),right: px(18)),
             decoration: BoxDecoration(
-                border: Border.all(
-                    color: Color.fromARGB(255, 225, 226, 230), width: 0.33),
+                border: Border.all(color: Color.fromARGB(255, 225, 226, 230), width: 0.33),
                 color: Color(0xffF5F6FA),
                 borderRadius: BorderRadius.circular(4)),
             child: TextField(
