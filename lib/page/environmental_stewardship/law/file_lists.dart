@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:scet_check/page/environmental_stewardship/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
-//文件列表
+///文件列表
+/// arguments: type类型 0 国家，1 地方，2 行业 3 通知 4 其他
+/// file: 文件数据
 class FileLists extends StatefulWidget {
   final Map? arguments;
   const FileLists({Key? key,this.arguments}) : super(key: key);
@@ -12,10 +14,11 @@ class FileLists extends StatefulWidget {
 }
 
 class _FileListsState extends State<FileLists> {
-  List standardFile  = [{'title':"中华人们共和国大气污染防治法","subTitle":"中华人民共和国主席令第三十一号"},
-    {'title':"中华人们共和国大气污染防治法","subTitle":"中华人民共和国主席令第三十一号"}];
-  String title = '国家';
+  List standardFile  = [];//文件数据
+  String title = '国家';//标题
 
+  ///初始化判断头部标题
+  ///type 类型 具体看arguments
   void hierarchySelect(int? type) {
     switch(type) {
       case 0: title = '国家标准文件';break;
@@ -52,7 +55,8 @@ class _FileListsState extends State<FileLists> {
     );
   }
 
-  //文件列表
+  ///文件列表
+  ///callBack:回调
   Widget rectifyRow({Function? callBack}){
     return Column(
       children: List.generate(standardFile.length, (i) => Container(

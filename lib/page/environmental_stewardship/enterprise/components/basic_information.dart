@@ -5,7 +5,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 
 import 'enterprise_compon.dart';
 
-//基本信息
+///基本信息
 class BasicInformation  extends StatefulWidget {
    BasicInformation ({Key? key}) : super(key: key);
 
@@ -14,9 +14,9 @@ class BasicInformation  extends StatefulWidget {
 }
 
 class _BasicInformationState extends State<BasicInformation > {
-  bool packups = true;
-  bool prou = true;//生产情况
-  List Colunms = ['主要产品名称','生产线','批复产能'];
+  bool tidy = true;
+  bool prou = true; ///生产情况
+  List colunms = ['主要产品名称','生产线','批复产能'];///表头
   List bodyList = [
     {
       'data':[
@@ -36,6 +36,7 @@ class _BasicInformationState extends State<BasicInformation > {
   @override
   Widget build(BuildContext context) {
     return Material(
+      color: Colors.black12,
       child: ListView(
         padding: EdgeInsets.only(top: 0),
         children: [
@@ -52,66 +53,28 @@ class _BasicInformationState extends State<BasicInformation > {
         padding: EdgeInsets.only(left: px(24),right: px(24)),
         color: Colors.white,
         child: Visibility(
-          visible: packups,
+          visible: tidy,
           child: FormCheck.dataCard(
               children: [
                 FormCheck.formTitle(
                     '基本信息',
                     showUp: true,
-                    packups: packups,
+                    tidy: tidy,
                     onTaps: (){
-                      packups = !packups;
+                      tidy = !tidy;
                       setState(() {});
                     }
                 ),
-                FormCheck.rowItem(
-                  title: "企业名称",
-                  child: Text('陈秋好',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right),
-                ),
-                FormCheck.rowItem(
-                  title: "行业类型",
-                  child: Text('2644染料制造',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right),
-                ),
-                FormCheck.rowItem(
-                  title: "企业地址",
-                  alignStart: true,
-                  child: Text('工打到以南、经四路以东',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,),
-                ),
-                FormCheck.rowItem(
-                  title: "环保负责人",
-                  expandedLeft: true,
-                  child: Text('张文里',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,),
-                ),
-                FormCheck.rowItem(
-                  title: "联系电话",
-                  expandedLeft: true,
-                  child: Text('18797379866',style: TextStyle(color: Color(0xff6089F0),fontSize: sp(28)),textAlign: TextAlign.right,),
-                ),
-                FormCheck.rowItem(
-                  title: "排污许可编号",
-                  expandedLeft: true,
-                  child: Text('18797379866',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,),
-                ),
-                FormCheck.rowItem(
-                  title: "许可证管理类型",
-                  expandedLeft: true,
-                  child: Text('重点',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,),
-                ),
-                FormCheck.rowItem(
-                  title: "许可证下发时间",
-                  expandedLeft: true,
-                  child: Text('2021-4-19',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,),
-                ),
-                FormCheck.rowItem(
-                  title: "许可证有效日期",
-                  expandedLeft: true,
-                  child: Text('2021-4-19',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,),
-                ),
-                FormCheck.rowItem(
-                  title: "现有生产线是否全部纳入排污许可",
-                  expandedLeft: true,
-                  child: Text('2021-4-19',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,),
-                ),
+                EnterPriseCompon.surveyItem( '企业名称', '陈秋好'),
+                EnterPriseCompon.surveyItem( '行业类型', '2644染料制造'),
+                EnterPriseCompon.surveyItem( '企业地址', '工打到以南、经四路以东'),
+                EnterPriseCompon.surveyItem( '环保负责人', '张文里'),
+                EnterPriseCompon.surveyItem( '联系电话', '18797379866',color: true),
+                EnterPriseCompon.surveyItem( '排污许可编号', '18797379866'),
+                EnterPriseCompon.surveyItem(' 许可证管理类型', '重点'),
+                EnterPriseCompon.surveyItem(' 许可证下发时间', '2021-4-19'),
+                EnterPriseCompon.surveyItem(' 许可证有效日期', '2021-4-19'),
+                EnterPriseCompon.surveyItem(' 现有生产线是否全部纳入排污许可', '2021-4-19'),
               ]
           ),
           replacement: SizedBox(
@@ -119,9 +82,9 @@ class _BasicInformationState extends State<BasicInformation > {
             child: FormCheck.formTitle(
                 '基本信息',
                 showUp: true,
-                packups: packups,
+                tidy: tidy,
                 onTaps: (){
-                  packups = !packups;
+                  tidy = !tidy;
                   setState(() {});
                 }
             ),
@@ -133,7 +96,7 @@ class _BasicInformationState extends State<BasicInformation > {
   //生产情况
   Widget production(){
     return Container(
-      margin: EdgeInsets.only(top: px(4)),
+      margin: EdgeInsets.only(top: px(2)),
         padding: EdgeInsets.only(left: px(24),right: px(24)),
         color: Colors.white,
         child: Visibility(
@@ -143,14 +106,14 @@ class _BasicInformationState extends State<BasicInformation > {
                 FormCheck.formTitle(
                     '生产情况',
                     showUp: true,
-                    packups: prou,
+                    tidy: prou,
                     onTaps: (){
                       prou = !prou;
                       setState(() {});
                     }
                 ),
                 Row(
-                  children: EnterPriseCompon.topRow(Colunms),
+                  children: EnterPriseCompon.topRow(colunms),
                 ),
                 Column(
                   children: EnterPriseCompon.bodyRow(bodyList),
@@ -162,7 +125,7 @@ class _BasicInformationState extends State<BasicInformation > {
             child: FormCheck.formTitle(
                 '生产情况',
                 showUp: true,
-                packups: prou,
+                tidy: prou,
                 onTaps: (){
                   prou = !prou;
                   setState(() {});

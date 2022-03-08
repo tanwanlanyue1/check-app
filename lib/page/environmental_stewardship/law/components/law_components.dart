@@ -3,7 +3,9 @@ import 'package:scet_check/utils/screen/screen.dart';
 
 class LawComponents{
 
-  //搜索
+  ///搜索
+  ///callBack:回调函数
+  ///textEditingController:TextField控制器
  static Widget search({Function? callBack,required TextEditingController textEditingController}){
     return Container(
       height: px(56),
@@ -47,7 +49,9 @@ class LawComponents{
     );
   }
 
- //一行俩个
+ ///一行俩个
+ ///child : 左组件
+ ///textChild : 右组件
  static Widget rowTwo({Widget? child,required Widget textChild}){
    return Row(
      children: [
@@ -69,10 +73,6 @@ class LawComponents{
      padding: EdgeInsets.only(left: px(30),top: px(26),bottom: px(12)),
      child: Column(
        children: [
-         LawComponents.rowTwo(
-             child: Image.asset('lib/assets/icons/other/rhombus.png'),
-             textChild: Text('备注',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),fontFamily: 'R'),)
-         ),
          Container(
            height: px(56),
            margin: EdgeInsets.only(left: px(32),right: px(24)),

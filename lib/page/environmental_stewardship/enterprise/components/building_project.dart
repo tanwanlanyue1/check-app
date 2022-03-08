@@ -4,6 +4,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 
 import 'enterprise_compon.dart';
 
+///建设项目情况
 class BuildingProject extends StatefulWidget {
   const BuildingProject({Key? key}) : super(key: key);
 

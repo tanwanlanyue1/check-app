@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/api/api.dart';
-import 'package:scet_check/api/request.dart';
 import 'package:scet_check/page/environmental_stewardship/check/StatisticAnaly/statistics.dart';
 import 'package:scet_check/page/environmental_stewardship/check/statisticAnaly/components/layout_page.dart';
 

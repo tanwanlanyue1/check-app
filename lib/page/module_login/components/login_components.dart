@@ -3,7 +3,12 @@ import 'package:scet_check/utils/screen/screen.dart';
 
 /// 登录页组件
 class LoginComponents{
-  // 输入框
+  /// 登录输入框
+  /// icon: 图标
+  /// hitStr: 默认值
+  /// isPassWord: 是否是密码
+  /// onChange: 回调事件
+  /// isPassWord:  true-变为省略号，false-正常渲染
   static Widget loginInput({
     String? icon,
     String? hitStr,
@@ -53,7 +58,8 @@ class LoginComponents{
     );
   }
 
-  // 登录按钮
+  /// 登录按钮
+  /// onTap: 回调事件
   static Widget loginBtn({Function? onTap}){
     return Padding(
       padding: EdgeInsets.only(top: px(120)),
@@ -63,8 +69,12 @@ class LoginComponents{
           height: px(76),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: Color(0xffFF4D7CFF),
-            borderRadius: BorderRadius.all(Radius.circular(px(38)))
+            borderRadius: BorderRadius.all(Radius.circular(px(20))),
+            gradient: LinearGradient(//渐变位置
+                begin: Alignment.topCenter,end: Alignment.bottomCenter,
+                stops: const [0.0, 1.0], //[渐变起始点, 渐变结束点]
+                colors: const [Color(0xff99C0FF), Color(0xff4D7CFF)]//渐变颜色[始点颜色, 结束颜色]
+            ),
           ),
           child: Text(
             '登录',

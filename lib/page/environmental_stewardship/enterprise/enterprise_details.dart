@@ -8,6 +8,7 @@ import 'components/contingency_plan.dart';
 import 'components/hazardous_wastes.dart';
 import 'components/pollution_discharge.dart';
 
+///企业管理详情
 class EnterpriseDetails extends StatefulWidget {
   Map? arguments;
   EnterpriseDetails({Key? key,this.arguments}) : super(key: key);
@@ -17,10 +18,10 @@ class EnterpriseDetails extends StatefulWidget {
 }
 
 class _EnterpriseDetailsState extends State<EnterpriseDetails> {
-  List tabBar = ["企业基本信息","建设项目情况",'排污许可情况','危险废物','应急预案'];
-   PageController pagesController = PageController();
-  ScrollController _tabScrController = ScrollController();
-  int pageIndex = 0;
+  List tabBar = ["企业基本信息","建设项目情况",'排污许可情况','危险废物','应急预案']; //tab标题
+  PageController pagesController = PageController(); //page控制器
+  final ScrollController _tabScrController = ScrollController(); //tab控制器
+  int pageIndex = 0; //下标
 
   @override
   Widget build(BuildContext context) {
@@ -38,11 +39,11 @@ class _EnterpriseDetailsState extends State<EnterpriseDetails> {
             child: PageView(
               controller: pagesController,
               children: [
-                BasicInformation(),//基本信息
-                BuildingProject(),//建设项目情况
-                PollutionDischarge(),//排污许可
-                HazardousWastes(),//危险废物
-                ContingencyPlan(),//应急预案
+                BasicInformation(),///基本信息
+                BuildingProject(),///建设项目情况
+                PollutionDischarge(),///排污许可
+                HazardousWastes(),///危险废物
+                ContingencyPlan(),///应急预案
               ],
               onPageChanged: (i) async{
                 pageIndex = i;

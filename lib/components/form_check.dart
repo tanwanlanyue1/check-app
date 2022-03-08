@@ -21,8 +21,13 @@ class FormCheck {
     );
   }
 
-  //标签头部
-  static Widget formTitle(String title,{bool showUp = false,Function? onTaps,bool packups = true}){
+  ///标签头部
+  ///title : 标题
+  ///showUp : 是否展示
+  ///onTaps : 回调
+  ///tidy : 图标样式
+  ///showUp ：是否显示图标，tidy：显示上图标/下图标
+  static Widget formTitle(String title,{bool showUp = false,Function? onTaps,bool tidy = true}){
     return Row(
       children: [
         Container(
@@ -48,7 +53,7 @@ class FormCheck {
             child: SizedBox(
               height: px(50),
               width: px(50),
-              child: Icon(packups?
+              child: Icon(tidy?
               Icons.keyboard_arrow_up:
               Icons.keyboard_arrow_down,
                 color: Colors.grey,),
@@ -77,9 +82,23 @@ class FormCheck {
             crossAxisAlignment: alignStart ? CrossAxisAlignment.start : CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              expandedLeft?
-              Expanded(
-                child: SizedBox(
+              Visibility(
+                visible: expandedLeft,
+                child: Expanded(
+                  child: SizedBox(
+                      child: Text(
+                          '$title',
+                          textAlign: TextAlign.justify,
+                          style: TextStyle(
+                              color: titleColor ?? Color(0XFF969799),
+                              fontSize: sp(28.0),
+                              fontWeight: FontWeight.w500
+                          )
+                      )
+                  ),
+                ),
+                replacement: SizedBox(
+                    width: px(150),
                     child: Text(
                         '$title',
                         textAlign: TextAlign.justify,
@@ -90,18 +109,6 @@ class FormCheck {
                         )
                     )
                 ),
-              ):
-              SizedBox(
-                  width: px(150),
-                  child: Text(
-                      '$title',
-                      textAlign: TextAlign.justify,
-                      style: TextStyle(
-                          color: titleColor ?? Color(0XFF969799),
-                          fontSize: sp(28.0),
-                          fontWeight: FontWeight.w500
-                      )
-                  )
               ),
               expanded ? Expanded(child: child) : child
             ]

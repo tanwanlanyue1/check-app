@@ -24,9 +24,9 @@ class _HiddenParameterState extends State<HiddenParameter> {
 
   // 获取全部公司
   void _getLatestData() async {
-    Map<String, dynamic> params = pageIndex == 0 ? {}: {'area':pageIndex};
+    // Map<String, dynamic> params = pageIndex == 0 ? {}: {'area':pageIndex};
     var response = await Request().get(Api.url['all'],
-        data: params
+        // data: params
     );
     if(response['code'] == 200) {
       setState(() {

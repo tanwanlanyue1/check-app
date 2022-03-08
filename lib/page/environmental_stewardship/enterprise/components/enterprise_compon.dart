@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scet_check/components/form_check.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 
@@ -21,8 +22,29 @@ class EnterPriseCompon{
       ],
     );
   }
-  //表头
-  static List<Widget> topRow(item){
+
+  /// 概况列表
+  /// title：左边标题
+  /// data：右边标题
+  /// color： true 蓝色  false 白色
+  /// color：判断字体
+  static Widget surveyItem(String? title,String? data,{color = false}){
+    return Container(
+      height: px(96),
+      child: FormCheck.rowItem(
+        title: title,
+        expandedLeft: true,
+        child: Text('$data',style: TextStyle(color: Color(color ? 0xff6089F0 : 0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,),
+      ),
+      decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: Color(0xffE8E8E8),width: px(2)))
+      ),
+    );
+  }
+
+  ///表头
+  ///item List
+  static List<Widget> topRow(List item){
     List<Widget> bodyRow = [];
     for(var i = 0; i < item.length; i++){
       bodyRow.add(
@@ -46,6 +68,7 @@ class EnterPriseCompon{
     }
     return bodyRow;
   }
+
   //表单
   static List<Widget> bodyRow(item){
     List<Widget> bodyRow = [];

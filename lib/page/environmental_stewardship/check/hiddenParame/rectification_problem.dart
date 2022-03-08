@@ -26,7 +26,6 @@ class _RectificationProblemState extends State<RectificationProblem> {
 
   int choice  = 0; //单选
   bool declare = false;//申报
-  List imgDetail = [];
 
   bool readOnly = true; //是否为只读
 

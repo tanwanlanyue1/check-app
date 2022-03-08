@@ -4,6 +4,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 
 import 'components/law_components.dart';
 
+///排查要点依据
 class EssentialGist extends StatefulWidget {
   const EssentialGist({Key? key}) : super(key: key);
 
@@ -12,8 +13,9 @@ class EssentialGist extends StatefulWidget {
 }
 
 class _EssentialGistState extends State<EssentialGist> {
-  late TextEditingController textEditingController;
-  List<Map<String,dynamic>> mess = [
+  late TextEditingController textEditingController;//输入框控制器
+  ///依据数据
+  List<Map<String,dynamic>> gistData = [
     {"text":"环境监测",
       'data':[
         {'name':'企业环境信息披露'},
@@ -49,13 +51,15 @@ class _EssentialGistState extends State<EssentialGist> {
     // TODO: implement initState
     super.initState();
     textEditingController = TextEditingController();
-    for(var i=0; i< mess.length;i++){
-      mess[i]['packups'] = false;
+    ///添加一个展开收起的属性
+    for(var i=0; i< gistData.length;i++){
+      gistData[i]['tidy'] = false;
     }
   }
 
-  //计算高度
-  calculateHeight(int i){
+  ///计算高度
+  ///i:数量
+ double calculateHeight(int i){
     if( i == 0){
       return px(120);
     }else if( i == 1){
@@ -81,13 +85,13 @@ class _EssentialGistState extends State<EssentialGist> {
           ),
         ),
         Column(
-          children: List.generate(mess.length, (i) => messageCard(
-            title: mess[i]["text"],
-            packup: mess[i]["packups"],
+          children: List.generate(gistData.length, (i) => gistDataCard(
+            title: gistData[i]["text"],
+            packup: gistData[i]["tidy"],
             index: i,
-            data: mess[i]['data'],
+            data: gistData[i]['data'],
             onTaps: (){
-              mess[i]["packups"] = !mess[i]["packups"];
+              gistData[i]["tidy"] = !gistData[i]["tidy"];
               setState(() {});
             },
           ),
@@ -97,8 +101,13 @@ class _EssentialGistState extends State<EssentialGist> {
     );
   }
 
-  //信息卡片
-  Widget messageCard({int? index,List? data,String? title,bool packup = false,Function? onTaps,}){
+  /// 要点卡片
+  /// index:下标
+  /// data:数据
+  /// title:标题
+  /// packup:是否渲染
+  /// onTaps:回调
+  Widget gistDataCard({int? index,List? data,String? title,bool packup = false,Function? onTaps,}){
     return AnimatedCrossFade(
       duration: Duration(milliseconds: 500),
       crossFadeState:
@@ -118,7 +127,7 @@ class _EssentialGistState extends State<EssentialGist> {
                 "0${index + 1} $title":
                 "${index + 1} $title",
                 showUp: true,
-                packups: packup,
+                tidy: packup,
                 onTaps: onTaps,
               ),
               Expanded(
@@ -157,7 +166,7 @@ class _EssentialGistState extends State<EssentialGist> {
               "0${index + 1} $title":
               "${index + 1} $title",
                 showUp: true,
-                packups: packup,
+                tidy: packup,
                 onTaps: onTaps,
             ),
           ],

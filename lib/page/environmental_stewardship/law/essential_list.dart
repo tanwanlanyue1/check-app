@@ -4,6 +4,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 
 import 'components/law_components.dart';
 
+///排查要点列表
 class EssentialList extends StatefulWidget {
   const EssentialList({Key? key}) : super(key: key);
 
@@ -34,7 +35,7 @@ class _EssentialListState extends State<EssentialList> {
     );
   }
 
-//列表
+///列表
  Widget essentList(){
     return InkWell(
       child: Container(

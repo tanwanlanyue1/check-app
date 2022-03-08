@@ -22,7 +22,7 @@ class _HiddenDetailsState extends State<HiddenDetails> {
 
   // 获取公司台账详情
   void _getProfile() async {
-    var response = await Request().get(Api.url['getByCompanyId'] + '?company_id=${companyId}');
+    var response = await Request().get(Api.url['getByCompanyId'] + '?company_id=$companyId');
     if(response['code'] == 200) {
       companyDetails = response["data"];
       setState(() {});

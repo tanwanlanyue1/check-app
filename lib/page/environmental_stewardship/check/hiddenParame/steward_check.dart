@@ -4,7 +4,8 @@ import 'package:scet_check/page/environmental_stewardship/law/components/law_com
 import 'package:scet_check/utils/dateUtc/date_utc.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
-import 'components/rectify_components.dart';
+import 'components/drop_down_menu_route.dart';
+
 
 //管家排查
 class StewardCheck extends StatefulWidget {
@@ -16,21 +17,39 @@ class StewardCheck extends StatefulWidget {
 
 class _StewardCheckState extends State<StewardCheck> {
   int type = 0;
-  bool packups = true;
+  bool tidy = true;
+  bool show = false;
+  GlobalKey _globalKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: Color(0xffF5F6FA),
-      child: ListView(
-        padding: EdgeInsets.only(top: 0),
+      child: Stack(
         children: [
-          topBar(
-            '2021-12-14管家排查'
+          Column(
+            children: [
+              topBar(
+                  '2021-12-14管家排查'
+              ),
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.only(top: 0),
+                  children: [
+                    survey(),
+                    concerns(),
+                    rectification(),
+                  ],
+                ),
+              ),
+            ],
           ),
-          survey(),
-          concerns(),
-          rectification(),
+          Visibility(
+            visible: show,
+            child: Container(
+              color: Colors.black12,
+            ),
+          ),
         ],
       ),
     );
@@ -40,6 +59,7 @@ class _StewardCheckState extends State<StewardCheck> {
     return Container(
       color: Colors.white,
       height: px(88),
+      key: _globalKey,
       margin: EdgeInsets.only(top: Adapt.padTopH()),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -52,8 +72,26 @@ class _StewardCheckState extends State<StewardCheck> {
             margin: EdgeInsets.only(left: px(20)),
             child: Image.asset('lib/assets/icons/other/chevronLeft.png',fit: BoxFit.fill,),
           ),
-          onTap: (){
-            Navigator.pop(context);
+          onTap: ()async{
+            RenderBox renderBox = _globalKey.currentContext!.findRenderObject() as RenderBox;
+            Rect box = renderBox.localToGlobal(Offset.zero) & renderBox.size;
+            show = true;
+            setState(() {});
+            var res = await Navigator.push(
+                context,
+                DropDownMenuRoute(
+                  position: box, //位置
+                  callback:(val) {
+                    show = false;
+                    setState(() {});
+                  },
+                )
+            );
+            if(res == null){
+              show = false;
+              setState(() {});
+            }
+            // Navigator.pop(context);
           },
         ),
           Expanded(
@@ -81,15 +119,15 @@ class _StewardCheckState extends State<StewardCheck> {
       padding: EdgeInsets.only(left: px(24),right: px(24)),
       color: Colors.white,
       child: Visibility(
-        visible: packups,
+        visible: tidy,
         child: FormCheck.dataCard(
             children: [
               FormCheck.formTitle(
                   '排查概况',
                   showUp: true,
-                  packups: packups,
+                  tidy: tidy,
                   onTaps: (){
-                    packups = !packups;
+                    tidy = !tidy;
                     setState(() {});
                   }
               ),
@@ -108,9 +146,9 @@ class _StewardCheckState extends State<StewardCheck> {
           child: FormCheck.formTitle(
               '排查概况',
               showUp: true,
-              packups: packups,
+              tidy: tidy,
               onTaps: (){
-                packups = !packups;
+                tidy = !tidy;
                 setState(() {});
               }
           ),

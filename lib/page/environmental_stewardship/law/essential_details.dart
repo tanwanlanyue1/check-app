@@ -5,6 +5,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 
 import 'components/law_components.dart';
 
+///排查要点详情
 class EssentialDetails extends StatefulWidget {
   const EssentialDetails({Key? key}) : super(key: key);
 
@@ -37,7 +38,7 @@ class _EssentialDetailsState extends State<EssentialDetails> {
       ),
     );
   }
-  //排查表单
+  ///排查表单
   Widget checkFrom(){
     return Container(
       padding: EdgeInsets.only(left: px(30),top: px(26),bottom: px(12)),
@@ -61,7 +62,7 @@ class _EssentialDetailsState extends State<EssentialDetails> {
     );
   }
 
-  //备注
+  ///备注
   Widget remark(){
     return Container(
       color: Colors.white,

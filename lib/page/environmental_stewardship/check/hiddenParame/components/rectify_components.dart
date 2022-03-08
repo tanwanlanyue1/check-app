@@ -5,7 +5,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 //整改插件
 class RectifyComponents{
 
-  //整改表单
+  ///整改表单
  static Widget rectifyRow({required List company,required int i,bool review = false,Function? callBack}){
     return Container(
       margin: EdgeInsets.only(top: px(20),left: px(20),right: px(20)),
@@ -72,7 +72,7 @@ class RectifyComponents{
                   SizedBox(
                     height: px(32),
                     width: px(32),
-                    child: Image.asset('lib/assets/icons/check/time.png'),
+                    child: Image.asset('lib/assets/icons/check/sandClock.png'),
                   ),
                   Container(
                     margin: EdgeInsets.only(left: px(24),right: px(80)),
@@ -112,7 +112,12 @@ class RectifyComponents{
     );
   }
 
-  //头部
+  ///头部
+ /// title :标题名
+ /// left :左侧按钮/图标
+ /// right :右侧按钮/图标
+ /// callBack :回调
+ /// left/right: true-展示，false-隐藏，
  static Widget topBar({String? title,bool left = true,bool right = false,Function? callBack}){
    return Container(
      color: Colors.white,
@@ -149,6 +154,8 @@ class RectifyComponents{
      ),
    );
  }
+ ///时间格式
+ ///time:时间
  static String formatTime(time) {
     return dateUtc(time.toString()).substring(0,10);
   }

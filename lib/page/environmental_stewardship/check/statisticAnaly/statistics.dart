@@ -25,6 +25,7 @@ class _StatisticsState extends State<Statistics> {
   int companyTotal = 0;//企业总数
   int _pageIndex = 0;//企业总数
   List number = [];//整改数
+  List columns = [];//表头
 
   @override
   void initState() {
@@ -53,11 +54,13 @@ class _StatisticsState extends State<Statistics> {
       judge();
     }
   }
-  // 获取园区统计
+
+  // 获取表头
   void _getcolumns() async {
     var response = await Request().get(Api.url['columns']);
     if(response['code'] == 200) {
       print(response);
+      // columns = response['data'];
     }
   }
 

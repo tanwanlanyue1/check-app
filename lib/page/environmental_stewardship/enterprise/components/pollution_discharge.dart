@@ -5,6 +5,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 
 import 'enterprise_compon.dart';
 
+///排污许可
 class PollutionDischarge extends StatefulWidget {
   const PollutionDischarge({Key? key}) : super(key: key);
 
@@ -13,7 +14,7 @@ class PollutionDischarge extends StatefulWidget {
 }
 
 class _PollutionDischargeState extends State<PollutionDischarge> {
-  List Colunms = ['在线监测设备名称','排口编号','监测因子','是否联网'];
+  List colunms = ['在线监测设备名称','排口编号','监测因子','是否联网'];
   List bodyList = [
     {
       'data':[
@@ -27,7 +28,7 @@ class _PollutionDischargeState extends State<PollutionDischarge> {
       'data':[
         {'name':'分散蓝291：1'},
         {'name':'氟氮'},
-        {'name':'doog'},
+        {'name':'good'},
         {'name':'否'},
       ]
     },
@@ -59,7 +60,7 @@ class _PollutionDischargeState extends State<PollutionDischarge> {
             FormCheck.formTitle(
               '排放口信息',
               showUp: true,
-              packups: true,
+              tidy: true,
               onTaps: (){}
             ),
             Container(
@@ -227,11 +228,11 @@ class _PollutionDischargeState extends State<PollutionDischarge> {
             FormCheck.formTitle(
                 '在线监测设备情况',
                 showUp: true,
-                packups: true,
+                tidy: true,
                 onTaps: (){}
             ),
             Row(
-              children: EnterPriseCompon.topRow(Colunms),
+              children: EnterPriseCompon.topRow(colunms),
             ),
             Column(
               children: EnterPriseCompon.bodyRow(bodyList),
@@ -256,7 +257,7 @@ class _PollutionDischargeState extends State<PollutionDischarge> {
             FormCheck.formTitle(
                 '污染物类型',
                 showUp: true,
-                packups: false,
+                tidy: false,
                 onTaps: (){}
             ),
             Column(

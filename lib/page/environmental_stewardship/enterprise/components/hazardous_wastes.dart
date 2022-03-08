@@ -5,7 +5,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 
 import 'enterprise_compon.dart';
 
-
+///危险废物
 class HazardousWastes extends StatefulWidget {
   const HazardousWastes({Key? key}) : super(key: key);
 

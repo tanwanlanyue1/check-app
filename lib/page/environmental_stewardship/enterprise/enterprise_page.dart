@@ -5,6 +5,7 @@ import 'package:scet_check/page/environmental_stewardship/check/hiddenParame/Com
 import 'package:scet_check/page/environmental_stewardship/check/statisticAnaly/components/layout_page.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
+///企业管理
 class EnterprisePage extends StatefulWidget {
   const EnterprisePage({Key? key}) : super(key: key);
 

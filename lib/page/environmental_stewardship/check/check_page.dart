@@ -7,6 +7,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 import 'StatisticAnaly/statistic_analysis.dart';
 import 'hiddenParame/hidden_parameter.dart';
 
+///隐患排查
 class CheckPage extends StatefulWidget {
   const CheckPage({Key? key}) : super(key: key);
 

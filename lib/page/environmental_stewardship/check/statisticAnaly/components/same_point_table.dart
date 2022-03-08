@@ -284,8 +284,8 @@ class _SamePointTableState extends State<SamePointTable> {
                    Image.asset('lib/assets/images/home/chartSwitch.png'),
                 ),
                 onTap: () async{
-                  // Navigator.pushNamed(context, '/enterpriseDetails');
-                  Navigator.pushNamed(context, '/stewardCheck');
+                  Navigator.pushNamed(context, '/enterpriseDetails');
+                  // Navigator.pushNamed(context, '/stewardCheck');
                   // _homeModel.setPie();
                   // if(echart != 2){
                   //   echart++;

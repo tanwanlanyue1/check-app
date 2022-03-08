@@ -5,6 +5,7 @@ import 'package:scet_check/api/request.dart';
 
 import 'components/law_components.dart';
 
+///政策标准规范
 class PolicyStand extends StatefulWidget {
   const PolicyStand({Key? key}) : super(key: key);
 
@@ -13,9 +14,10 @@ class PolicyStand extends StatefulWidget {
 }
 
 class _PolicyStandState extends State<PolicyStand> {
-  late TextEditingController textEditingController;
-  List lawList = [];
-  List nationList = [];//国家文件
+  late TextEditingController textEditingController;//输入框控制器
+  List lawList = []; //全部法律文件
+  List nationList = [];//分类文件
+  ///分类的图标
   List icons = [
     {'name':'国家标准文件','icon':'lib/assets/icons/other/country.png'},
     {'name':'地方标准文件','icon':'lib/assets/icons/other/place.png'},
@@ -24,7 +26,7 @@ class _PolicyStandState extends State<PolicyStand> {
     {'name':'其他文件','icon':'lib/assets/icons/other/acronym.png'},
   ];
 
-  // 获取法律文件
+  /// 获取法律文件
   void _getProfile() async {
     var response = await Request().get(Api.url['lawFile']);
     if(response['statusCode'] == 200) {
@@ -60,7 +62,10 @@ class _PolicyStandState extends State<PolicyStand> {
       ],
     );
   }
-//文件行
+
+  ///文件行
+  ///i: 每一项的下标
+  ///方法拿到每一项的分类数据，并赋值传承到下一个页面
   Widget rowFile(int i){
     return InkWell(
       child: Container(
@@ -93,7 +98,7 @@ class _PolicyStandState extends State<PolicyStand> {
         ),
       ),
       onTap: (){
-        nationList = [];
+        nationList = [];//清空分类文件
         for(var j=0; j<lawList.length; j++){
           if(lawList[j]['type'] == i){
             nationList.add(lawList[j]);
@@ -102,48 +107,5 @@ class _PolicyStandState extends State<PolicyStand> {
         Navigator.pushNamed(context, '/fileLists',arguments: {'type':i,'file':nationList});
       },
     );
-  }
-
-  //搜索
-  Widget search(){
-    return Container(
-        height: px(56),
-        margin: EdgeInsets.only(left: px(16),right: px(18)),
-        decoration: BoxDecoration(
-            // border: Border.all(color: Color.fromARGB(255, 225, 226, 230), width: 0.33),
-            color: Color(0xffF5F6FA),
-            borderRadius: BorderRadius.circular(4)),
-        child: TextField(
-          autofocus: false,
-          onChanged: (value) {},
-          controller: textEditingController,
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            prefixIcon: Image.asset(
-              'lib/assets/icons/other/search.png',
-              color: Color(0xffC8C9CC),),
-            suffixIcon: Offstage(
-              offstage: textEditingController.text.isEmpty,
-              child: InkWell(
-                onTap: () {
-                  textEditingController.clear();
-                },
-                child: Icon(
-                  Icons.cancel,
-                  color: Colors.grey,
-                ),
-              ),
-            ),
-            hintText: '搜索',
-            hintStyle: TextStyle(
-                height: 0.8,
-                fontSize: sp(24),
-                color: Color(0xffC8C9CC),
-                fontFamily: 'R',
-                decorationStyle: TextDecorationStyle.dashed
-            ),
-          ),
-        ),
-      );
   }
 }

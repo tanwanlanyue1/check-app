@@ -4,6 +4,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 
 import 'essential_gist.dart';
 
+///法律法规
 class LawPage extends StatefulWidget {
   const LawPage({Key? key}) : super(key: key);
 
@@ -12,8 +13,8 @@ class LawPage extends StatefulWidget {
 }
 
 class _LawPageState extends State<LawPage>  with SingleTickerProviderStateMixin{
-  List tabBar = ["政策标准规范","排查要点依据"];
-  late TabController _tabController;
+  List tabBar = ["政策标准规范","排查要点依据"];//tab列表
+  late TabController _tabController; //TabBar控制器
 
   @override
   void initState() {
@@ -52,8 +53,8 @@ class _LawPageState extends State<LawPage>  with SingleTickerProviderStateMixin{
             child: TabBarView(
                 controller: _tabController,
                 children: const <Widget>[
-                  PolicyStand(),
-                  EssentialGist(),
+                  PolicyStand(),//政策标准规范
+                  EssentialGist(),//排查要点依据
                 ]
             ),
           )
@@ -62,7 +63,7 @@ class _LawPageState extends State<LawPage>  with SingleTickerProviderStateMixin{
     );
   }
 
-  //头部
+  ///头部
   Widget topBar(){
     return Container(
       color: Colors.white,

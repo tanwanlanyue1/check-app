@@ -9,6 +9,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 
+///登录页
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -19,10 +20,11 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String _userName = ''; // 账号
   String _password = ''; // 密码
-  int _popTrue = 1; //记录返回次数 为3就是退出app
 
 
-  //登录
+  ///登录事件
+  ///userName 用户名
+  ///passWord 登录密码
   void _postLogin(String userName, String passWord) async {
     if (userName.isEmpty) {
       ToastWidget.showToastMsg('请输入您的登录账号！');
@@ -35,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
       };
       var response = await Request().post(Api.url['login'], data: _data);
       if (response['code'] == 200) {
-        saveInfo(response['data']['token'], _data['name'], _data['password'], response['data']['user']);
+        saveInfo(response['data']['token'], _data['name']!, _data['password']!, response['data']['user']);
           switch(response['data']){
             case 1 :
               Navigator.pushNamedAndRemoveUntil(context,'/steward', (Route route)=>false);//删除所有，只留下steward
@@ -52,8 +54,12 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  //  缓存token
-  void saveInfo(token, userName, passWord, Map personalData) {
+  /// 缓存事件
+  /// token
+  /// userName 用户名
+  /// passWord 登录密码
+  /// personalData 个人信息
+  void saveInfo(String token,String userName,String passWord, Map personalData) {
     StorageUtil().setString(StorageKey.Token, token.toString());
     StorageUtil().setJSON(StorageKey.PersonalData, personalData);
     StorageUtil().setString('userName', userName.toString());
@@ -93,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  //顶部背景logo
+  ///顶部背景logo
   Widget _topLogos() {
     return Positioned(
       child: Container(
@@ -119,11 +125,11 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  //登录框
+  ///登录框
   Widget _loginInput() {
     return Container(
         width: double.infinity,
-        margin: EdgeInsets.only(top: px(438)),
+        margin: EdgeInsets.only(top: px(380)),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(px(46),),
@@ -156,7 +162,8 @@ class _LoginPageState extends State<LoginPage> {
           ],
         ));
   }
-  //底部背景logo
+
+  ///底部背景logo
   Widget _bottomLogos() {
     return Align(
       alignment: Alignment.bottomCenter,

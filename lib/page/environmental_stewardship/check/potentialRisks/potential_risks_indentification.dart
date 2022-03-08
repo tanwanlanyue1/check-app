@@ -5,7 +5,6 @@ import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/down_input.dart';
 import 'package:scet_check/components/form_check.dart';
 import 'package:scet_check/page/environmental_stewardship/check/hiddenParame/components/client_list_page.dart';
-import 'package:scet_check/page/environmental_stewardship/check/hiddenParame/hidden_details.dart';
 import 'package:scet_check/page/environmental_stewardship/check/statisticAnaly/components/layout_page.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
@@ -39,7 +38,7 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
 
 //签到
   void singIn(){
- var res =  showModalBottomSheet(
+    showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
           return StatefulBuilder(builder: (context,state){

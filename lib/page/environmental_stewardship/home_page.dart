@@ -19,19 +19,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _pageController = PageController();
+  final _pageController = PageController();//PageView控制器
 
   int _tabIndex = 0;  // 默认索引第一个tab
 
+  ///全局变量
+  /// initOffest : 初始化tab偏移量
   ProviderDetaild? _roviderDetaild;
 
   final List _pageList = [
-    const CheckPage(),
-    const EnterprisePage(),
-    const LawPage(),
-    const MessagePage(),
+    const CheckPage(),//隐患排查
+    const EnterprisePage(),//企业管理
+    const LawPage(),//法律法规
+    const MessagePage(),//通知中心
   ];
 
+  ///底部tab图标
   List tabIcons = [
     [
       const Icon(Icons.map, size: 20.0,color: Color(0XFFB9B9B9)),
@@ -105,6 +108,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+///每一项菜单
   Widget _buildItemMenu({required int index, required String commonImage, required String activeImage}) {
     _roviderDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     Widget menuItem = GestureDetector(
