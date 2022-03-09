@@ -54,47 +54,25 @@ class Global {
     // 读取离线用户token
     var _token = StorageUtil().getString(StorageKey.Token);
 
-    if (_token != null && _token != 'null'  &&  _token != '') {
-      token = _token;
-      isOfflineLogin = true;
-      // Map? _personalData = StorageUtil().getJSON(StorageKey.PersonalData);
-      Map? _personalData = StorageUtil().getJSON(StorageKey.port);
-      if (_personalData != null) {
-        // switch(_personalData['roleId']) {
-        //   case 1: router = '/steward';break;
-        //   case 2: router = '/AdminIndexPage';break;
-        //   case 3: router = '/GovernmentIndexPage';break;
-        //   default: router = '/';break;
-        // }
+    if(isFirstOpen){
+      if (_token != null && _token != 'null'  &&  _token != '') {
+        token = _token;
+        isOfflineLogin = true;
+        Map? _personalData = StorageUtil().getJSON(StorageKey.PersonalData);
+        if (_personalData != null) {
+          switch(_personalData['role']['name']){
+            case '环保管家' :
+              router = '/steward';
+              break;
+            default: router = '/';break;
+          }
+        }
       }else{
-        router = '/';
+        router = '/logIn';
       }
+    }else{
+      router = '/';
     }
-    // if(isFirstOpen){
-    //   if (_token != null && _token != 'null'  &&  _token != '') {
-    //     token = _token;
-    //     isOfflineLogin = true;
-    //     Map? _personalData = StorageUtil().getJSON(StorageKey.PersonalData);
-    //     if (_personalData != null) {
-    //       switch(_personalData['role']['name']){
-    //         case '环保管家' :
-    //           router = '/steward';
-    //           break;
-    //         default: router = '/';break;
-    //       }
-    //       // switch(_personalData['roleId']) {
-    //       //   case 1: router = '/steward';break;
-    //       //   case 2: router = '/AdminIndexPage';break;
-    //       //   case 3: router = '/GovernmentIndexPage';break;
-    //       //   default: router = '/';break;
-    //       // }
-    //     }
-    //   }else{
-    //     router = '/logIn';
-    //   }
-    // }else{
-    //   router = '/';
-    // }
 
     // //读取离线用户信息
     // Map _personalData = StorageUtil().getJSON(StorageKey.PersonalData);

@@ -6,13 +6,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/my_painter.dart';
-import 'package:scet_check/routers/router_animate/router_animate.dart';
 import 'package:scet_check/utils/screen/adapter.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
-
-import 'login_page.dart';
 
 ///引导页
 class GuidePage extends StatefulWidget {
@@ -21,7 +18,6 @@ class GuidePage extends StatefulWidget {
 }
 
 class _GuidePageState extends State<GuidePage> {
-
 
   @override
   Widget build(BuildContext context) {
