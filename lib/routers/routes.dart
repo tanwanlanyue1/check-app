@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
+import 'package:scet_check/components/pertinence/companyFile/company_file.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/hidden_details.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/rectification_problem.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/steward_check.dart';
@@ -26,6 +27,7 @@ final routes = {
   '/essentialList': (context,{arguments}) =>  EssentialList(), //排查要点列表
   '/essentialDetails': (context,{arguments}) =>  EssentialDetails(), //排查要点详情
   '/stewardCheck': (context,{arguments}) =>  StewardCheck(), //管家排查
+  '/CompanyFile': (context,{arguments}) =>  CompanyFile(arguments:arguments), //一企一档
 };
 
 // 使用

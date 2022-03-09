@@ -69,6 +69,7 @@ class MyApp extends StatelessWidget {
               child: child,
             );
           },
+          title: '隐患排查与整改',
           navigatorObservers: [BotToastNavigatorObserver()],
           debugShowCheckedModeBanner: false,
           localizationsDelegates: const [
