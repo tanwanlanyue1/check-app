@@ -13,11 +13,11 @@ import 'package:scet_check/page/module_login/guide_page.dart';
 import 'package:scet_check/page/module_login/login_page.dart';
 
 
-// 配置静态路由
+/// 配置静态路由
 final routes = {
-  '/': (context) =>  GuidePage(), //引导页
-  '/steward': (context) =>  HomePage(), //管家 根路由
+  '/': (context) =>  GuidePage(), //引导页  GuidePage
   '/logIn': (context) =>  LoginPage(), //登录页面
+  '/steward': (context) =>  HomePage(), //管家 根路由
   '/rectificationProblem': (context,{arguments}) =>  RectificationProblem(arguments:arguments), //企业台账详情
   '/hiddenDetails': (context,{arguments}) =>  HiddenDetails(arguments:arguments), //隐患公司详情
   '/enterpriseDetails': (context,{arguments}) =>  EnterpriseDetails(arguments:arguments), //企业管理详情

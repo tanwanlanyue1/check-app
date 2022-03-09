@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+///缓存图片
+///url: 图片地址
+///fits: 是否充满
 class CachedNetwork extends StatefulWidget {
   final String? url;
   final BoxFit? fits;
@@ -15,15 +18,6 @@ class _CachedNetworkState extends State<CachedNetwork> {
   Widget build(BuildContext context) {
     return CachedNetworkImage(
       imageUrl: '${widget.url}',
-      // imageBuilder: (context, imageProvider) => Container(
-      //   decoration: BoxDecoration(
-      //     image: DecorationImage(
-      //         image: imageProvider,
-      //         fit: BoxFit.cover,
-      //         colorFilter:
-      //         ColorFilter.mode(Colors.red, BlendMode.colorBurn)),
-      //   ),
-      // ),
       placeholder: (context, url) => CircularProgressIndicator(),
       errorWidget: (context, url, error) => Icon(Icons.error),
       fit: widget.fits,

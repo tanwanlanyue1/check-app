@@ -5,6 +5,11 @@ import 'package:scet_check/utils/screen/screen.dart';
 
 class EnterPriseCompon{
 
+  ///分类
+  ///title:标题
+  ///type:类型
+  ///color: 颜色分类
+  /// 0：未验收/否，1: 黑色 2: 已验收/确定 蓝色
   static Widget classify({required String title,required String type,int color = 1}){
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -69,7 +74,8 @@ class EnterPriseCompon{
     return bodyRow;
   }
 
-  //表单
+  ///表单内容
+  ///item: 数据
   static List<Widget> bodyRow(item){
     List<Widget> bodyRow = [];
     for(var i = 0; i < item.length; i++){

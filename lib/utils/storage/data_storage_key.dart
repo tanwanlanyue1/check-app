@@ -1,6 +1,5 @@
-// 配置全局本地缓存的key
 // ignore_for_file: constant_identifier_names
-
+/// 配置全局本地缓存的key
 class StorageKey {
   static const String AppVersion = 'appVersion'; // App端 企业/政府/第三方
 

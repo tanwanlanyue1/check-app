@@ -8,13 +8,14 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'language_helper.dart';
 import 'models.dart';
 
+///城市/公司列表
+///callBack: 回调
+///companyList: 城市数据
 class ClientListPage extends StatefulWidget {
-  final int? fromType;
   final List? companyList;
   Function? callBack;
   ClientListPage({
     Key? key,
-    this.fromType,
     this.callBack,
     this.companyList,
   }) : super(key: key);
@@ -26,10 +27,10 @@ class ClientListPage extends StatefulWidget {
 class _ClientListPageState extends State<ClientListPage> {
   /// 控制器滚动或跳转到特定项目。
   final ItemScrollController itemScrollController = ItemScrollController();
-  List<Languages> originList = [];
-  List<Languages> dataList = [];
+  List<Languages> originList = [];//字母列表
+  List<Languages> dataList = [];//数据列表
 
-  late TextEditingController textEditingController;
+  late TextEditingController textEditingController; //输入框控制器
 
   @override
   void initState() {
@@ -46,6 +47,8 @@ class _ClientListPageState extends State<ClientListPage> {
     super.dispose();
   }
 
+  ///处理数据
+  ///添加 tag，重新排序
   void loadData() async {
     originList = LanguageHelper.getGithubLanguages()!.map((v) {
       Languages model = Languages.fromJson(v.toJson());
@@ -59,7 +62,8 @@ class _ClientListPageState extends State<ClientListPage> {
     }).toList();
     _handleList(originList);
   }
-  //处理列表
+
+  ///处理列表
   void _handleList(List<Languages> list) {
     dataList.clear();
     if (ObjectUtil.isEmpty(list)) {
@@ -91,7 +95,7 @@ class _ClientListPageState extends State<ClientListPage> {
       itemScrollController.jumpTo(index: 0);
     }
   }
-
+///标签组件
   Widget getSusItem(BuildContext context, String? tag, {double susHeight = 40}) {
     return Container(
       height: px(52),
@@ -110,7 +114,7 @@ class _ClientListPageState extends State<ClientListPage> {
     );
   }
 
-  //渲染
+  ///渲染每一项
   Widget getListItem(BuildContext context, Languages model,
       {double susHeight = 50}) {
     return GestureDetector(
@@ -142,7 +146,7 @@ class _ClientListPageState extends State<ClientListPage> {
     );
   }
 
-  //搜索方法
+  ///搜索方法
   void _search(String text) {
     if (ObjectUtil.isEmpty(text)) {
       _handleList(originList);
@@ -155,17 +159,6 @@ class _ClientListPageState extends State<ClientListPage> {
     }
   }
 
-  //搜索某一个字段
-  // void _labSearch(String text) {
-  //   if (ObjectUtil.isEmpty(text)) {
-  //     _handleList(originList);
-  //   } else {
-  //     List<Languages> list = originList.where((v) {
-  //       return v.region.toString().toLowerCase().contains(text.toLowerCase());
-  //     }).toList();
-  //     _handleList(list);
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:scet_check/utils/screen/screen.dart';
-
+///无状态页
 class NoData extends StatelessWidget {
   bool margin;
   bool timeType;

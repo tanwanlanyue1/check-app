@@ -32,23 +32,22 @@ class _LoginPageState extends State<LoginPage> {
       ToastWidget.showToastMsg('请输入您的登录密码！');
     } else if (userName.isNotEmpty && passWord.isNotEmpty) {
       Map<String, String> _data = {
-        'account': userName,
+        'username': userName,
         'password': passWord,
       };
       var response = await Request().post(Api.url['login'], data: _data);
-      if (response['code'] == 200) {
-        saveInfo(response['data']['token'], _data['name']!, _data['password']!, response['data']['user']);
-          switch(response['data']){
-            case 1 :
-              Navigator.pushNamedAndRemoveUntil(context,'/steward', (Route route)=>false);//删除所有，只留下steward
-              // Navigator.of(context).pushAndRemoveUntil(CustomRoute(steward()), (router) => router == null);break;
+      if (response['statusCode'] == 200) {
+        saveInfo(response['data']['access_token'], _data['username']!, _data['password']!, response['data']);
+          switch(response['data']['role']['name']){
+            case '环保管家' :
+              Navigator.pushNamedAndRemoveUntil(context,'/steward', (Route route)=>false);
               break;
           }
-      } else if (response['code'] == 500) {
-        if (response['status'] == null) {
+      } else if (response['statusCode'] == 500) {
+        if (response['message'] == null) {
           ToastWidget.showToastMsg('用户名或密码错误！');
         } else {
-          ToastWidget.showToastMsg('${response['status']}！');
+          ToastWidget.showToastMsg('${response['message']}！');
         }
       }
     }

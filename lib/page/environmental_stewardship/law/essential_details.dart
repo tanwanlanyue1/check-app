@@ -84,7 +84,7 @@ class _EssentialDetailsState extends State<EssentialDetails> {
     );
   }
 
-  //示例
+  ///示例
   Widget example(){
     return Container(
       color: Colors.white,

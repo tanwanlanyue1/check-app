@@ -5,6 +5,8 @@ import 'package:scet_check/api/request.dart';
 import 'package:scet_check/page/environmental_stewardship/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
+///隐患台账企业排查清单
+///arguments:{companyId:公司id，companyName：公司名称}
 class HiddenDetails extends StatefulWidget {
   Map? arguments;
   HiddenDetails({Key? key,this.arguments, }) : super(key: key);
@@ -20,7 +22,8 @@ class _HiddenDetailsState extends State<HiddenDetails> {
   bool readOnly = true; //是否为只读
   bool check = true; //查验
 
-  // 获取公司台账详情
+  /// 获取公司台账详情
+  /// companyId:公司id
   void _getProfile() async {
     var response = await Request().get(Api.url['getByCompanyId'] + '?company_id=$companyId');
     if(response['code'] == 200) {
@@ -47,7 +50,7 @@ class _HiddenDetailsState extends State<HiddenDetails> {
           topBar(),
           Column(
             children: List.generate(companyDetails.length, (i) => RectifyComponents.rectifyRow(
-                company: companyDetails,
+                company: companyDetails[i],
                 i: i,
                 review: check,
                 callBack:(){
@@ -60,7 +63,7 @@ class _HiddenDetailsState extends State<HiddenDetails> {
     );
   }
 
-  //头部
+  ///头部
   Widget topBar(){
     return Container(
       color: Colors.white,

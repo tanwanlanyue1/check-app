@@ -13,6 +13,7 @@ class BuildingProject extends StatefulWidget {
 }
 
 class _BuildingProjectState extends State<BuildingProject> {
+  ///项目数据
   List bodyList = [
     {
       'data':[
@@ -32,6 +33,7 @@ class _BuildingProjectState extends State<BuildingProject> {
       ]
     },
   ];
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -44,7 +46,7 @@ class _BuildingProjectState extends State<BuildingProject> {
     );
   }
 
-  //建设
+  ///建设
   Widget building(){
     return Container(
       padding: EdgeInsets.only(left: px(24),right: px(24)),
@@ -69,6 +71,8 @@ class _BuildingProjectState extends State<BuildingProject> {
     );
   }
 
+  ///每一项分类
+  ///data: 数据
   Widget itemClassly(List data){
     return  Column(
       children: List.generate((data.length/2).ceil(), (j) {

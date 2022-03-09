@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scet_check/api/Request.dart';
 import 'package:scet_check/model/provider/provider_app.dart';
+import 'package:scet_check/page/module_login/login_page.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 import 'package:path_provider/path_provider.dart';
 
-// 全局配置
+/// 全局配置
 class Global {
   // 是否第一次打开
   static bool isFirstOpen = false;
@@ -52,6 +53,7 @@ class Global {
 
     // 读取离线用户token
     var _token = StorageUtil().getString(StorageKey.Token);
+
     if (_token != null && _token != 'null'  &&  _token != '') {
       token = _token;
       isOfflineLogin = true;
@@ -68,6 +70,31 @@ class Global {
         router = '/';
       }
     }
+    // if(isFirstOpen){
+    //   if (_token != null && _token != 'null'  &&  _token != '') {
+    //     token = _token;
+    //     isOfflineLogin = true;
+    //     Map? _personalData = StorageUtil().getJSON(StorageKey.PersonalData);
+    //     if (_personalData != null) {
+    //       switch(_personalData['role']['name']){
+    //         case '环保管家' :
+    //           router = '/steward';
+    //           break;
+    //         default: router = '/';break;
+    //       }
+    //       // switch(_personalData['roleId']) {
+    //       //   case 1: router = '/steward';break;
+    //       //   case 2: router = '/AdminIndexPage';break;
+    //       //   case 3: router = '/GovernmentIndexPage';break;
+    //       //   default: router = '/';break;
+    //       // }
+    //     }
+    //   }else{
+    //     router = '/logIn';
+    //   }
+    // }else{
+    //   router = '/';
+    // }
 
     // //读取离线用户信息
     // Map _personalData = StorageUtil().getJSON(StorageKey.PersonalData);

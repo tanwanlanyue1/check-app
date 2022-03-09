@@ -1,4 +1,4 @@
-
+/// 常用设计稿大小
 class Adapter{
   static const double designWidth = 750.0; // 设计稿宽度
   static const double designHeight = 1334.0; // 设计稿高度

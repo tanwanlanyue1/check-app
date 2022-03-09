@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
-//适配像素类工具封装
+///适配像素类工具封装
 screen(number, context) {
   MediaQueryData mediaQuery = MediaQuery.of(context);
   var _pixelRatio = mediaQuery.devicePixelRatio; //密度比
@@ -13,6 +13,7 @@ screen(number, context) {
   return dp;
 }
 
+///适配像素类工具封装
 class Adapt {
   static MediaQueryData mediaQuery = MediaQueryData.fromWindow(window);
   static final double _width = mediaQuery.size.width;

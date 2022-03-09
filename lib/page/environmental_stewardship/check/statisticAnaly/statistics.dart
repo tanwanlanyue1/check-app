@@ -5,7 +5,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 
 import 'Components/same_point_table.dart';
 
-//统计
+///统计
 class Statistics extends StatefulWidget {
   int pageIndex;//当前页面下表
   Statistics({Key? key,required this.pageIndex}) : super(key: key);
@@ -35,11 +35,11 @@ class _StatisticsState extends State<Statistics> {
     _getcolumns(); // 获取表头
   }
 
-  // 获取园区统计
+  /// 获取园区统计
   void _getStatistics() async {
     Map<String, dynamic> params = _pageIndex == 0 ? {}: {'area':_pageIndex};
     var response = await Request().get(Api.url['statistics'], data: params);
-    if(response['code'] == 200) {
+    if(response['statusCode'] == 200) {
       setState(() {
         gardenStatistics = response["data"];
         questionTotal = gardenStatistics['question_total'] ?? 0;
@@ -54,17 +54,23 @@ class _StatisticsState extends State<Statistics> {
       judge();
     }
   }
-
-  // 获取表头
+  /// 获取user
+  void _getUser() async {
+    var response = await Request().get(Api.url['user']);
+    if(response['statusCode'] == 200) {
+      print(response);
+    }
+  }
+  /// 获取表头
   void _getcolumns() async {
     var response = await Request().get(Api.url['columns']);
-    if(response['code'] == 200) {
+    if(response['statusCode'] == 200) {
       print(response);
       // columns = response['data'];
     }
   }
 
-  //判断表单的数据
+  ///判断表单的数据
   judge(){
     switch (tabIndex){
       case 0: {
@@ -120,7 +126,7 @@ class _StatisticsState extends State<Statistics> {
     );
   }
 
-  //整改
+  ///整改
   Widget abarbeitung(){
     return Container(
       width: px(710),
@@ -185,7 +191,7 @@ class _StatisticsState extends State<Statistics> {
     );
   }
 
-  //整改数
+  ///整改数
   Widget numberRectification(){
     return Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,

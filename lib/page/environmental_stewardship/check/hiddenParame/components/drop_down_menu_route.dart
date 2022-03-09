@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/components/down_input.dart';
 
+///筛选下拉组件
+///position: 出現的位置
+///callback: 回调
 class DropDownMenuRoute extends PopupRoute {
-  final Rect position; //出現的位置
+  final Rect position;
   final callback;
   DropDownMenuRoute({
     required this.position,

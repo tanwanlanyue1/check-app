@@ -22,21 +22,6 @@ class GuidePage extends StatefulWidget {
 
 class _GuidePageState extends State<GuidePage> {
 
-  @override
-  void initState() {
-    super.initState();
-    initData();
-    var _token = StorageUtil().getString(StorageKey.Token);
-    // 第一次打开应用时引导页图片自动切换下一张
-     if (StorageUtil().getBool(StorageKey.STORAGE_DEVICE_ALREADY_OPEN_KEY) == true &&
-         (_token == null || _token == 'null' || _token == '')) {
-      // 第一次打开未登录，下次打开直接跳过引导页直接进入登陆页
-      Future.microtask(() {
-        Navigator.of(context).pushAndRemoveUntil(
-            CustomRoute(LoginPage()), (router) => router == null);
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +66,6 @@ class _GuidePageState extends State<GuidePage> {
                     GestureDetector(
                       onTap: (){
                         _tap();
-                        // Navigator.pushNamed(context, '/logIn');
                       },
                       child: _icon(),
                     )
@@ -107,9 +91,8 @@ class _GuidePageState extends State<GuidePage> {
   /// 箭头icon的点击事件
   void _tap() {
     StorageUtil().setBool(StorageKey.STORAGE_DEVICE_ALREADY_OPEN_KEY, true); // 设置本机为非首次打开app的状态
-    // StorageUtil().remove(StorageKey.Token);
     /// 跳转至登陆页面
-    Navigator.of(context).pushAndRemoveUntil(CustomRoute(LoginPage()), (router) => router == null);
+    Navigator.pushNamedAndRemoveUntil(context, '/logIn', (route) => true);
   }
 
   void initData() async {

@@ -14,14 +14,16 @@ class EnterprisePage extends StatefulWidget {
 }
 
 class _EnterprisePageState extends State<EnterprisePage> {
-  List tabBar = ["全园区","第一片区","第二片区","第三片区"];
-  int pageIndex = 0;
-  List companyList = [];
+  List tabBar = ["全园区","第一片区","第二片区","第三片区"];//tab
+  int pageIndex = 0;//页面下标
+  List companyList = [];//公司列表
 
-  // 获取全部公司
+  /// 获取全部公司
   void _getLatestData() async {
-    Map<String, dynamic> params = pageIndex == 0 ? {}: {'area':pageIndex};
-    var response = await Request().get(Api.url['all'],data: params);
+    // Map<String, dynamic> params = pageIndex == 0 ? {}: {'area':pageIndex};
+    var response = await Request().get(Api.url['all'],
+        // data: params
+    );
     if(response['code'] == 200) {
       setState(() {
         companyList = response["data"];
@@ -55,8 +57,7 @@ class _EnterprisePageState extends State<EnterprisePage> {
                 child: ClientListPage(
                   companyList: companyList,
                   callBack: (id,name){
-                    print("id===$id");
-                    // Navigator.pushNamed(context, '/hiddenDetails');
+                    Navigator.pushNamed(context, '/enterpriseDetails');
                   },
                 ),
               ),
@@ -65,7 +66,7 @@ class _EnterprisePageState extends State<EnterprisePage> {
                 child: ClientListPage(
                   companyList: companyList,
                   callBack: (id,name){
-                    print("id===$id");
+                    Navigator.pushNamed(context, '/enterpriseDetails');
                   },
                 ),
               ),
@@ -74,7 +75,7 @@ class _EnterprisePageState extends State<EnterprisePage> {
                 child: ClientListPage(
                   companyList: companyList,
                   callBack: (id,name){
-                    print("id===$id");
+                    Navigator.pushNamed(context, '/enterpriseDetails');
                   },
                 ),
               ),
@@ -83,14 +84,10 @@ class _EnterprisePageState extends State<EnterprisePage> {
                 child: ClientListPage(
                   companyList: companyList,
                   callBack: (id,name){
-                    print("id===$id");
+                    Navigator.pushNamed(context, '/enterpriseDetails');
                   },
                 ),
               ),
-              // HiddenDetails(
-              //   companyId: 1,
-              //   companyName: '公司',
-              // ),
             ],
           ),
         ),
@@ -98,35 +95,4 @@ class _EnterprisePageState extends State<EnterprisePage> {
     );
   }
 
-  //头部切换
-  Widget tabCut({int index = 0,List? tabBar,Function? onTap}){
-    return SizedBox(
-      height: px(84),
-      child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(tabBar?.length ?? 0, (i){
-            return GestureDetector(
-              child:  Container(
-                height: px(64),
-                alignment:  Alignment.centerRight,
-                child: Text(
-                  i == 3 ?
-                  "${tabBar![i]}   " :
-                  "${tabBar![i]}",
-                  style: TextStyle(
-                    fontSize: sp(28),
-                    color: index == i ? Color(0xff84A7FF):Color(0xff969799),
-                    fontFamily: 'R',
-                    fontWeight: index == i ? FontWeight.bold : FontWeight.w100,
-                  ),
-                ),
-              ),
-              onTap: (){
-                onTap?.call(i);
-              },
-            );}
-          )),
-    );
-  }
 }

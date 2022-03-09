@@ -33,7 +33,7 @@ class _HazardousWastesState extends State<HazardousWastes> {
   }
 
 
-  //污染物类型循环
+  ///污染物类型循环
   List<Widget> type(){
     List<Widget> itemRow = [];
     for(var i = 0; i < 2; i++){
@@ -44,7 +44,7 @@ class _HazardousWastesState extends State<HazardousWastes> {
               children: [
                 Container(
                   child: FormCheck.rowItem(
-                      title: '1.硫酸雾',
+                      title: '1.污泥',
                       titleColor: Color(0xff323233),
                       child: Text('危废编码：264-012-12',style: TextStyle(color: Color(0xff323233),fontSize: sp(26)),textAlign: TextAlign.right,)
                   ),

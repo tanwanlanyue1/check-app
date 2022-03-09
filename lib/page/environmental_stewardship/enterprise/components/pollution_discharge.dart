@@ -14,7 +14,8 @@ class PollutionDischarge extends StatefulWidget {
 }
 
 class _PollutionDischargeState extends State<PollutionDischarge> {
-  List colunms = ['在线监测设备名称','排口编号','监测因子','是否联网'];
+  List colunms = ['在线监测设备名称','排口编号','监测因子','是否联网'];//表头
+  ///表单数据
   List bodyList = [
     {
       'data':[
@@ -45,7 +46,7 @@ class _PollutionDischargeState extends State<PollutionDischarge> {
     );
   }
 
-  //排放口信息
+  ///排放口信息
   Widget building(){
     return Container(
       padding: EdgeInsets.only(left: px(24),right: px(24)),
@@ -213,7 +214,7 @@ class _PollutionDischargeState extends State<PollutionDischarge> {
     );
   }
 
-  //在线监测设备情况
+  ///在线监测设备情况
   Widget monitoringFacility(){
     return Container(
       padding: EdgeInsets.only(left: px(24),right: px(24)),
@@ -242,7 +243,7 @@ class _PollutionDischargeState extends State<PollutionDischarge> {
     );
   }
 
-  //污染物类型
+  ///污染物类型
   Widget contaminant(){
     return Container(
       padding: EdgeInsets.only(left: px(24),right: px(24)),
@@ -268,7 +269,7 @@ class _PollutionDischargeState extends State<PollutionDischarge> {
     );
   }
 
-  //污染物类型循环
+  ///污染物类型循环
   List<Widget> type(){
     List<Widget> itemRow = [];
     for(var i = 0; i < 2; i++){

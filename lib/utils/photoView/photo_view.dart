@@ -6,6 +6,11 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
 // ignore: must_be_immutable
+///画廊
+///images: 图片数组
+///index: 图片下标
+///heroTag: 图片标签
+///controller: 控制器
 class PhotoViewGalleryScreen extends StatefulWidget {
   List images = [];//格式['','']
   int index = 0;
@@ -21,7 +26,7 @@ class PhotoViewGalleryScreen extends StatefulWidget {
 }
 
 class _PhotoViewGalleryScreenState extends State<PhotoViewGalleryScreen> {
-  int currentIndex=0;
+  int currentIndex = 0;//下标
 
   @override
   void initState() {

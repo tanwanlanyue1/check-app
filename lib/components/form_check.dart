@@ -67,7 +67,10 @@ class FormCheck {
     );
   }
 
-  //表格行项目
+  ///表格行项目
+  ///titleColor:标题颜色
+  ///title:标题
+  ///alignStart:居上
   static Widget rowItem({
     Color? titleColor,
     bool alignStart = false,
@@ -214,8 +217,10 @@ class FormCheck {
     );
   }
 
-  //表单卡片
-  static Widget dataCard({int? status,String? title,required List<Widget> children}){
+  ///表单卡片
+  ///title：标题
+  ///children：表单内容
+  static Widget dataCard({String? title,required List<Widget> children}){
     return Container(
       width: px(750),
       margin: EdgeInsets.only(top: px(4)),
@@ -248,8 +253,11 @@ class FormCheck {
     );
   }
 
-//状态
-  static Widget tabText({String? title, String? str,}){
+  ///状态
+  ///title:标题
+  ///str:内容
+  ///star:是否星标
+  static Widget tabText({String? title, String? str,bool star = false}){
     return SizedBox(
       height: px(82),
       child: Row(
@@ -267,11 +275,14 @@ class FormCheck {
               fontSize: sp(28.0),
               color: Color(0XFF323233)
           )),
-          Container(
-            alignment: Alignment.topLeft,
-            height: px(32),
-            width: px(32),
-            child: Image.asset('lib/assets/icons/form/star.png'),
+          Visibility(
+            visible: star,
+            child: Container(
+              alignment: Alignment.topLeft,
+              height: px(32),
+              width: px(32),
+              child: Image.asset('lib/assets/icons/form/star.png'),
+            ),
           ),
           Spacer(),
           Container(
@@ -297,7 +308,10 @@ class FormCheck {
       ),
     );
   }
-  //提交按钮
+
+  ///提交按钮
+  ///cancel:取消回调
+  ///submit:提交回调
  static Widget submit({Function? cancel,Function? submit}){
     return Container(
         height: px(88),

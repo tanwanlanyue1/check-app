@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+///转json
 class LanguageHelper {
 
   static Map<String, String>? languageMap ;

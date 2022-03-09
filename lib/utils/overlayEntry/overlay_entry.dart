@@ -2,11 +2,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
+///弹窗展示
 class MyToast {
 
-  static final Map<String, OverlayEntry> _toasts = {};
+  static final Map<String, OverlayEntry> _toasts = {};//展示内容
 
-  static int _times = 5;
+  static int _times = 5; //展示时间
 
   static initToast(BuildContext context,{ String? str,required String name}) {
 

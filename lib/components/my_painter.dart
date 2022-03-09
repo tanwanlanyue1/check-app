@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/utils/screen/screen.dart';
-
+///登录背景半圆
 class MyPainter extends CustomPainter {
   Rect rect2 = Rect.fromCircle(center: Offset(200.0, Adapt.screenH()+px(50)), radius: px(600));
 

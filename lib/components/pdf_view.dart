@@ -3,6 +3,8 @@ import 'package:scet_check/utils/screen/adapter.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
+///pdf页
+///pathPDF ： PDF地址
 class PDFView extends StatelessWidget {
   final String? pathPDF;
    const PDFView({Key? key, this.pathPDF}) : super(key: key);

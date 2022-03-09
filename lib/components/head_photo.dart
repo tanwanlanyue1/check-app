@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/utils/screen/screen.dart';
-//圆角头像
+///圆角头像
 class HeadPhoto extends StatefulWidget {
   final String img;
   final double width;

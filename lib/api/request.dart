@@ -42,10 +42,9 @@ class Request {
         );
         dio.lock();
          Future(() async {
-          // print(StorageUtil().getString(StorageKey.Token));
           return StorageUtil().getString(StorageKey.Token) ?? '';
         }).then((value) {
-          options.headers["token"] = value;
+          options.headers["Authorization"] = 'Bearer '+value;
           return options;
         }).whenComplete(() => dio.unlock());
         return handler.next(options);

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scet_check/page/environmental_stewardship/check/StatisticAnaly/statistics.dart';
 import 'package:scet_check/page/environmental_stewardship/check/statisticAnaly/components/layout_page.dart';
 
-
+///统计分析
 class StatisticAnalysis extends StatefulWidget {
   const StatisticAnalysis({Key? key}) : super(key: key);
 
@@ -13,7 +13,7 @@ class StatisticAnalysis extends StatefulWidget {
 class _StatisticAnalysisState extends State<StatisticAnalysis> {
 
   final PageController pagesController = PageController();
-  List tabBar = ["园区统计","第一片区","第二片区","第三片区"];
+  List tabBar = ["园区统计","第一片区","第二片区","第三片区"];//表头
   int _pageIndex = 0;//下标
 
   @override

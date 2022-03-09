@@ -3,6 +3,8 @@ import 'package:scet_check/routers/router_animate/router_fade_route.dart';
 import 'package:scet_check/utils/photoView/cached_network.dart';
 import 'package:scet_check/utils/photoView/photo_view.dart';
 
+///画廊
+///imageList:图片列表
 class ImageWidget extends StatelessWidget {
   final List imageList;
   ImageWidget({required this.imageList});

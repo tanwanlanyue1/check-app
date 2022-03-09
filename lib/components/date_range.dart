@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
+///日期范围选择
 class DateRange extends StatefulWidget {
   final DateTime start;
   final DateTime end;
@@ -17,7 +18,7 @@ class DateRange extends StatefulWidget {
 
 class _DateRangeState extends State<DateRange> {
 
-  String? startTime, endTime;
+  String? startTime, endTime;//默认选择的时间范围
 
   @override
   void initState() {

@@ -1,7 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:scet_check/utils/screen/screen.dart';
-
+///toast弹窗
 class ToastWidget {
   static showToastMsg(String? msg) {
     BotToast.showText(
@@ -15,7 +15,7 @@ class ToastWidget {
       )
     );
   }
-  //弹窗
+  ///弹窗
   static showDialog({String? msg, Function? cancel, Function? ok}) {
     BotToast.showWidget(
         toastBuilder: (cancelFunc){

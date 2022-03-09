@@ -9,6 +9,7 @@ import 'components/hazardous_wastes.dart';
 import 'components/pollution_discharge.dart';
 
 ///企业管理详情
+///arguments
 class EnterpriseDetails extends StatefulWidget {
   Map? arguments;
   EnterpriseDetails({Key? key,this.arguments}) : super(key: key);
@@ -56,7 +57,8 @@ class _EnterpriseDetailsState extends State<EnterpriseDetails> {
       ),
     );
   }
-  //头部切换
+
+  ///头部切换
   Widget tabCut() {
     return Column(
       children: [

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/utils/screen/screen.dart';
-
+///状态
 class Status extends StatelessWidget {
   final int? status;
   Status(this.status);

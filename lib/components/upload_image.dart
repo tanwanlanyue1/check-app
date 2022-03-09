@@ -11,6 +11,10 @@ import 'package:scet_check/utils/screen/screen.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:multi_image_picker2/multi_image_picker2.dart';
 
+///上传图片
+///callback:回调
+///closeIcon:是否开启修改
+///imgList:数据
 class UploadImage extends StatefulWidget {
   final Function? callback;
   final bool closeIcon;

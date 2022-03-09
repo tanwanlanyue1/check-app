@@ -66,7 +66,10 @@ class LawComponents{
    );
  }
 
- //单行输入框
+ ///单行输入框
+ ///callBack: 回调
+ ///hint: 默认值
+ ///textEditingController: 控制器
  static Widget uniline({Function? callBack,String? hint,required TextEditingController textEditingController}){
    return Container(
      color: Colors.white,

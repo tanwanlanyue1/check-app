@@ -3,6 +3,7 @@ import 'package:scet_check/components/form_check.dart';
 import 'package:scet_check/components/image_widget.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
+///企业整改详情
 class EnterpriseReform extends StatefulWidget {
   const EnterpriseReform({Key? key}) : super(key: key);
 
@@ -11,6 +12,7 @@ class EnterpriseReform extends StatefulWidget {
 }
 
 class _EnterpriseReformState extends State<EnterpriseReform> {
+  //图片列表
   List imgDetails = ['https://img2.baidu.com/it/u=1814268193,3619863984&fm=253&fmt=auto&app=138&f=JPEG?w=632&h=500',
     'https://img0.baidu.com/it/u=857510153,4267238650&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=675',
     'https://img1.baidu.com/it/u=2374960005,3369337623&fm=253&fmt=auto&app=120&f=JPEG?w=499&h=312',

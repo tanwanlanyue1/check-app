@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/components/form_check.dart';
 import 'package:scet_check/page/environmental_stewardship/law/components/law_components.dart';
-import 'package:scet_check/utils/dateUtc/date_utc.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/time/utc_tolocal.dart';
 
 import 'components/drop_down_menu_route.dart';
 
 
-//管家排查
+///管家排查
 class StewardCheck extends StatefulWidget {
   const StewardCheck({Key? key}) : super(key: key);
 
@@ -16,10 +16,11 @@ class StewardCheck extends StatefulWidget {
 }
 
 class _StewardCheckState extends State<StewardCheck> {
+  /// 状态；-1：未处理;0:处理完；1：处理中
   int type = 0;
-  bool tidy = true;
-  bool show = false;
-  GlobalKey _globalKey = GlobalKey();
+  bool tidy = true; //展开/收起
+  bool show = false; //筛选的显示
+  GlobalKey _globalKey = GlobalKey(); //获取盒子位值
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +56,7 @@ class _StewardCheckState extends State<StewardCheck> {
     );
   }
 
+  ///头部
   Widget topBar(String title){
     return Container(
       color: Colors.white,
@@ -113,7 +115,7 @@ class _StewardCheckState extends State<StewardCheck> {
     );
   }
 
-  //排查概况
+  ///排查概况
   Widget survey(){
     return Container(
       padding: EdgeInsets.only(left: px(24),right: px(24)),
@@ -157,7 +159,9 @@ class _StewardCheckState extends State<StewardCheck> {
     );
   }
 
-//概况列表
+  ///概况列表
+  ///title: 左标题
+  ///data: 右数据
   Widget surveyItem(String title,String data){
     return Container(
       margin: EdgeInsets.only(top: px(24)),
@@ -169,7 +173,7 @@ class _StewardCheckState extends State<StewardCheck> {
     );
   }
 
-  //隐患问题
+  ///隐患问题
   Widget concerns(){
     return Container(
       margin: EdgeInsets.only(top: px(4)),
@@ -363,7 +367,8 @@ class _StewardCheckState extends State<StewardCheck> {
       ),
     );
   }
-  //整改报告
+
+  ///整改报告
   Widget rectification(){
     return Container(
       margin: EdgeInsets.only(top: px(4),bottom: px(20)),
@@ -440,8 +445,8 @@ class _StewardCheckState extends State<StewardCheck> {
       ),
     );
   }
-  //日期转换
+  ///日期转换
   String formatTime(time) {
-    return dateUtc(time.toString()).substring(0,10);
+    return utcToLocal(time.toString()).substring(0,10);
   }
 }

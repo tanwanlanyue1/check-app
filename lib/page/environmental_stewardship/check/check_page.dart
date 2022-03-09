@@ -16,10 +16,11 @@ class CheckPage extends StatefulWidget {
 }
 
 class _CheckPageState extends State<CheckPage> {
-  List tabBar = ["统计分析","隐患台帐","隐患排查",];
-  PageController pagesController = PageController();
-  int pageIndex = 0;
-  List _pageList = [];
+  List tabBar = ["统计分析","隐患台帐","隐患排查",];//头部
+  PageController pagesController = PageController();//控制器
+  int pageIndex = 0;//下标
+  List _pageList = [];//页面数组
+  ///全局变量 初始化偏移量
   ProviderDetaild? _roviderDetaild;
 
   void _initData() {
@@ -64,7 +65,7 @@ class _CheckPageState extends State<CheckPage> {
     );
   }
 
-  //头部切换
+  ///头部切换
   Widget tabCut(){
     return Container(
         width: px(750),

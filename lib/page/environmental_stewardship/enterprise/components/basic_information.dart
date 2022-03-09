@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/components/form_check.dart';
-import 'package:scet_check/utils/dateUtc/date_utc.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/time/utc_tolocal.dart';
 
 import 'enterprise_compon.dart';
 
@@ -14,9 +14,10 @@ class BasicInformation  extends StatefulWidget {
 }
 
 class _BasicInformationState extends State<BasicInformation > {
-  bool tidy = true;
-  bool prou = true; ///生产情况
-  List colunms = ['主要产品名称','生产线','批复产能'];///表头
+  bool tidy = true; //基本信息 收起/展示
+  bool prou = true; //生产情况 收起/展示
+  List colunms = ['主要产品名称','生产线','批复产能'];//表头
+  ///表单数据
   List bodyList = [
     {
       'data':[
@@ -47,7 +48,7 @@ class _BasicInformationState extends State<BasicInformation > {
     );
   }
 
-  //基本信息
+  ///基本信息
   Widget info(){
     return Container(
         padding: EdgeInsets.only(left: px(24),right: px(24)),
@@ -93,7 +94,7 @@ class _BasicInformationState extends State<BasicInformation > {
       );
   }
 
-  //生产情况
+  ///生产情况
   Widget production(){
     return Container(
       margin: EdgeInsets.only(top: px(2)),
@@ -139,6 +140,6 @@ class _BasicInformationState extends State<BasicInformation > {
 
   //日期转换
   String formatTime(time) {
-    return dateUtc(time.toString()).substring(0,10);
+    return utcToLocal(time.toString()).substring(0,10);
   }
 }

@@ -1,7 +1,8 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+///加载中
+///cancelFunc:取消回调
 class Loading extends StatefulWidget {
   final CancelFunc? cancelFunc;
 

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-/*
-* $作用：去除ListView 滑動波紋
-* $參考：https://blog.csdn.net/u013894711/article/details/102572581
-* */
+
+///去除ListView 滑動波紋
 class OverScrollBehavior extends ScrollBehavior{
 
   @override

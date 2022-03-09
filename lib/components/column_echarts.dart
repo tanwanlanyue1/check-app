@@ -6,8 +6,10 @@ import 'package:provider/provider.dart';
 import 'package:scet_check/model/provider/provider_details.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
-//echarts 图表
-
+///echarts 图表
+///erectName:标题
+///pieData:饼图data
+///data:竖状图data
 class ColumnEcharts extends StatefulWidget {
   final List? erectName;//标题
   final List? pieData;//饼图data
@@ -19,14 +21,7 @@ class ColumnEcharts extends StatefulWidget {
 }
 
 class _ColumnEchartsState extends State<ColumnEcharts> {
-  ///
-  ///  xAxis 改为yAxis 就是竖轴
-  ///  饼图  radius: ['40%', '70%'], 控制内外圈的大小
-  ///  label: {
-  ///         show: false, 点击是否显示
-  ///    fontSize: '40',大小
-  ///         position: 'center' 显示的位置
-  ///       },
+
   List erectName = []; //柱状图标题
   List series =  []; //柱状图，数据
   List datas = []; // 饼图所需数据
@@ -35,6 +30,8 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
   String erectImage = ''' ''';//竖状图
   String pie =  ''' ''';//饼图
   String themeColor = '';
+  ///全局变量  判断展示哪一个图表
+  late ProviderDetaild _providerDetaild;
 
   @override
   void initState() {
@@ -183,6 +180,7 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
         series: ${jsonEncode(series)}
       }
       ''';
+    _providerDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     super.initState();
   }
 
@@ -341,15 +339,14 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
 
   @override
   Widget build(BuildContext context) {
-    var _homeModel = Provider.of<ProviderDetaild>(context, listen: true);
     return SizedBox(
       width: px(550),
       height: px(700),
-      child: _homeModel.cloumnChart == 0 ?
+      child: _providerDetaild.cloumnChart == 0 ?
       Echarts(
         option: pie,
       ):
-      _homeModel.cloumnChart == 1 ?
+      _providerDetaild.cloumnChart == 1 ?
       Echarts(
       option: erectImage,
     ):

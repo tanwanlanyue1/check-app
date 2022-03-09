@@ -5,9 +5,13 @@ import 'package:scet_check/utils/screen/screen.dart';
 
 import 'check_compon.dart';
 
+///tab布局页面
+///tabBar: 头部切换
+///pageBody: 页面内容
+///callBack: 回调
 class LayoutPage extends StatefulWidget {
-  List tabBar;//头部切换
-  List pageBody;//页面内容
+  List tabBar;
+  List pageBody;//
   Function? callBack;
   LayoutPage({Key? key,required this.tabBar,this.callBack,required this.pageBody}) : super(key: key);
 
@@ -16,7 +20,8 @@ class LayoutPage extends StatefulWidget {
 }
 
 class _LayoutPageState extends State<LayoutPage> {
-  final PageController pagesController = PageController();
+  final PageController pagesController = PageController(); //page控制器
+  ///全局变量 控制偏移量
   ProviderDetaild? _roviderDetaild;
   List _tabBar = [];//头部
   List _pageBody = [];//页面内容

@@ -8,7 +8,7 @@ import 'package:scet_check/page/environmental_stewardship/check/hiddenParame/com
 import 'package:scet_check/page/environmental_stewardship/check/statisticAnaly/components/layout_page.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
-//隐患排查
+///隐患排查
 class PotentialRisksIndentification extends StatefulWidget {
   const PotentialRisksIndentification({Key? key}) : super(key: key);
 
@@ -17,15 +17,15 @@ class PotentialRisksIndentification extends StatefulWidget {
 }
 
 class _PotentialRisksIndentificationState extends State<PotentialRisksIndentification> {
-  List tabBar = ["全园区","第一片区","第二片区","第三片区"];
-  final PageController pagesController = PageController();
+  List tabBar = ["全园区","第一片区","第二片区","第三片区"];//头部
+  final PageController pagesController = PageController();//页面控制器
   int _companyId = 0;//公司
   String _companyName = '';//公司名称
   List companyList = [];//全部公司数据
   Position? position;//定位
-  int pageIndex = 0;
+  int pageIndex = 0;//下标
 
-  // 获取全部公司
+  /// 获取全部公司
   void _getLatestData() async {
     Map<String, dynamic> params = pageIndex == 0 ? {}: {'area':pageIndex};
     var response = await Request().get(Api.url['all'], data: params);
@@ -36,7 +36,7 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
     }
   }
 
-//签到
+  ///签到
   void singIn(){
     showModalBottomSheet(
         context: context,
@@ -128,6 +128,7 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
         }
     );
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -145,15 +146,6 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
         setState(() {});
       },
       pageBody: [
-        // HiddenDetails(
-        //   companyId: _companyId,
-        //   companyName: _companyName,
-        //   check: true,
-        //   callBack: (){
-        //     details = false;
-        //     setState(() {});
-        //   },
-        // ):
         Column(
           children: [
             Container(

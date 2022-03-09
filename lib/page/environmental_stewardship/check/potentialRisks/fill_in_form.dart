@@ -6,7 +6,9 @@ import 'package:scet_check/components/time_select.dart';
 import 'package:scet_check/components/upload_image.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
-//排查问题填报
+///排查问题填报
+///arguments:{declare:申报，key：时间选择key}
+///callBack:回调
 class FillInForm extends StatefulWidget {
   final Map? arguments;
   final Function? callBack;
@@ -17,7 +19,7 @@ class FillInForm extends StatefulWidget {
 }
 
 class _FillInFormState extends State<FillInForm> {
-
+  //图片列表
   List imgDetails = [
     'https://img2.baidu.com/it/u=1814268193,3619863984&fm=253&fmt=auto&app=138&f=JPEG?w=632&h=500',
     'https://img0.baidu.com/it/u=857510153,4267238650&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=675',
@@ -26,7 +28,7 @@ class _FillInFormState extends State<FillInForm> {
   ];
 
   bool declare  = false; //申报
-  late GlobalKey<ScaffoldState> _scaffoldKey;
+  late GlobalKey<ScaffoldState> _scaffoldKey;//时间选择key
 
   @override
   void initState() {

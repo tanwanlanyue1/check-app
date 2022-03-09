@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scet_check/utils/listView/un_listview.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
-// 下拉选择器 支持 单选 多选操作
+/// 下拉选择器 支持 单选 多选操作
 class DownInput extends StatefulWidget {
   final String? hitStr; //为空显示的文字
   final String? value;  //已选择内容后

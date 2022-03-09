@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/utils/dateUtc/date_utc.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/time/utc_tolocal.dart';
 
 //整改插件
 class RectifyComponents{
 
   ///整改表单
- static Widget rectifyRow({required List company,required int i,bool review = false,Function? callBack}){
+  /// company:每一项数据
+  /// i:第i项
+  /// review:复查记录是否开启
+  /// callBack:回调
+ static Widget rectifyRow({required Map company,required int i,bool review = false,Function? callBack}){
     return Container(
       margin: EdgeInsets.only(top: px(20),left: px(20),right: px(20)),
       padding: EdgeInsets.only(left: px(16),top: px(20),bottom: px(20)),
@@ -26,7 +30,7 @@ class RectifyComponents{
                 ),
                 Container(
                   margin: EdgeInsets.only(left: px(16),right: px(16),top: px(5)),
-                  child: Text('${company[i]["name"]}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+                  child: Text('${company["name"]}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
                 ),
                 SizedBox(
                   height: px(28),
@@ -39,16 +43,16 @@ class RectifyComponents{
                   height: px(48),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                      color: company[i]['type'] == -1 ? Color(0xffFAAA5A):
-                      company[i]['type'] == 1 ? Color(0xff7196F5):
+                      color: company['type'] == -1 ? Color(0xffFAAA5A):
+                      company['type'] == 1 ? Color(0xff7196F5):
                       Color(0xff95C758),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(px(20)),
                         bottomLeft: Radius.circular(px(20)),
                       )
                   ),//状态；-1：未处理;0:处理完；1：处理中
-                  child: Text(company[i]['type'] == -1 ? '未整改':
-                  company[i]['type'] == 1 ? '整改中':'整改完成'
+                  child: Text(company['type'] == -1 ? '未整改':
+                  company['type'] == 1 ? '整改中':'整改完成'
                     ,style: TextStyle(color: Colors.white,fontSize: sp(24)),),
                 ),
               ],
@@ -67,7 +71,7 @@ class RectifyComponents{
                   ),
                   Container(
                     margin: EdgeInsets.only(left: px(24),right: px(80)),
-                    child: Text('${company[i]["tag"]}',style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),),
+                    child: Text('${company["tag"]}',style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),),
                   ),
                   SizedBox(
                     height: px(32),
@@ -76,7 +80,7 @@ class RectifyComponents{
                   ),
                   Container(
                     margin: EdgeInsets.only(left: px(24),right: px(80)),
-                    child: Text(formatTime(company[i]["updateTime"]),style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),),
+                    child: Text(formatTime(company["updateTime"]),style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),),
                   ),
                 ],
               ),
@@ -157,7 +161,7 @@ class RectifyComponents{
  ///时间格式
  ///time:时间
  static String formatTime(time) {
-    return dateUtc(time.toString()).substring(0,10);
+    return utcToLocal(time.toString()).substring(0,10);
   }
 
 }

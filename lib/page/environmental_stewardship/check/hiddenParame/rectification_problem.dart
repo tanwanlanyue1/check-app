@@ -4,9 +4,11 @@ import 'package:scet_check/page/environmental_stewardship/check/hiddenParame/com
 import 'package:scet_check/page/environmental_stewardship/check/potentialRisks/enterprise_reform.dart';
 import 'package:scet_check/page/environmental_stewardship/check/potentialRisks/fill_in_form.dart';
 import 'package:scet_check/page/environmental_stewardship/check/potentialRisks/review_situation.dart';
-import 'package:scet_check/utils/dateUtc/date_utc.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/time/utc_tolocal.dart';
 
+///企业台账详情
+/// arguments = {check:是否申报,readOnly:是否只读}
 class RectificationProblem extends StatefulWidget {
   final arguments;
   const RectificationProblem({Key? key,this.arguments}) : super(key: key);
@@ -15,9 +17,10 @@ class RectificationProblem extends StatefulWidget {
   _RectificationProblemState createState() => _RectificationProblemState();
 }
 
-//企业台账详情
+
 class _RectificationProblemState extends State<RectificationProblem> {
 
+  //图片列表
   List imgDetails = ['https://img2.baidu.com/it/u=1814268193,3619863984&fm=253&fmt=auto&app=138&f=JPEG?w=632&h=500',
     'https://img0.baidu.com/it/u=857510153,4267238650&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=675',
     'https://img1.baidu.com/it/u=2374960005,3369337623&fm=253&fmt=auto&app=120&f=JPEG?w=499&h=312',
@@ -29,6 +32,7 @@ class _RectificationProblemState extends State<RectificationProblem> {
 
   bool readOnly = true; //是否为只读
 
+  ///选择时间所需的key，传递下去
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -88,6 +92,6 @@ class _RectificationProblemState extends State<RectificationProblem> {
 
   //日期转换
   String formatTime(time) {
-    return dateUtc(time.toString()).substring(0,10);
+    return utcToLocal(time.toString()).substring(0,10);
   }
 }

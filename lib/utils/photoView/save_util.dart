@@ -5,6 +5,7 @@ import 'package:scet_check/components/toast_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 
+///保存图片
 class SaveUtil {
   // isAsset本地图片   默认网络图片
   static Future<void> saveImage(String? imageUrl, {bool isAsset = false}) async {

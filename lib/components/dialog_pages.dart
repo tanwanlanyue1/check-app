@@ -96,7 +96,7 @@ class DialogPages {
     );
   }
 
-  // 弹框的按钮
+  /// 弹框的按钮
   static Widget succeedDialogBtn({String? str, Function? onTap,Color? bgColor}){
     return InkWell(
       child: Container(
@@ -117,7 +117,7 @@ class DialogPages {
     );
   }
 
-  //弹出框
+  ///弹出框
   static Future dialog(BuildContext context,{
     String title = '弹窗展示',
     String subTitle = '查看详情',

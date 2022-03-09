@@ -5,7 +5,7 @@ import 'package:scet_check/components/time_select.dart';
 import 'package:scet_check/components/upload_image.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
-//复查情况
+///复查情况
 class ReviewSituation extends StatefulWidget {
   final Map? arguments;
   final Function? callBack;
@@ -16,14 +16,15 @@ class ReviewSituation extends StatefulWidget {
 }
 
 class _ReviewSituationState extends State<ReviewSituation> {
+  //图片列表
   List imgDetails = ['https://img2.baidu.com/it/u=1814268193,3619863984&fm=253&fmt=auto&app=138&f=JPEG?w=632&h=500',
     'https://img0.baidu.com/it/u=857510153,4267238650&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=675',
     'https://img1.baidu.com/it/u=2374960005,3369337623&fm=253&fmt=auto&app=120&f=JPEG?w=499&h=312',
     'https://img0.baidu.com/it/u=857510153,4267238650&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=675',
   ];
   bool _readOnly = true; //是否为只读
-  late GlobalKey<ScaffoldState> _scaffoldKey;
-  int choice  = 0; //单选
+  late GlobalKey<ScaffoldState> _scaffoldKey;//时间选择key
+  int choice  = 0; //单选 1-是 0-否
 
   @override
   void initState() {
@@ -123,7 +124,7 @@ class _ReviewSituationState extends State<ReviewSituation> {
     );
   }
 
-  //单选
+  ///单选
   Widget _radio() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_echarts/flutter_echarts.dart';
-
+///折线图
+///facName:名称
+///unit:单位
+///warnLevel:颜色等级
+///valueData:数据
 class LineCharts extends StatelessWidget {
   final String? facName;
   final String? unit;

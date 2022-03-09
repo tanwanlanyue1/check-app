@@ -3,7 +3,10 @@ import 'package:scet_check/utils/screen/screen.dart';
 
 
 class CheckCompon {
-  //头部切换
+  ///头部切换
+  ///index： 下标
+  ///tabBar： tab数组
+  ///onTap： 回调
   static  Widget tabCut({int index = 0, List? tabBar, Function? onTap}) {
     return SizedBox(
       height: px(84),
@@ -36,7 +39,10 @@ class CheckCompon {
     );
   }
 
-  //背景
+  ///背景
+  ///pageIndex: 下标
+  ///offestLeft: 偏移量
+  ///right: 居右
   static Widget bagColor({required int pageIndex, double offestLeft = 0, double right = 30}) {
     return Padding(
       padding: EdgeInsets.only(
