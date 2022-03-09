@@ -60,7 +60,15 @@ class MyApp extends StatelessWidget {
         splitScreenMode: true,
         builder: () => MaterialApp(
           navigatorKey: navigatorKey,
-          builder: BotToastInit(),
+          builder:(context, child) {
+            final botToastBuilder = BotToastInit();
+            ScreenUtil.setContext(context);
+            child = botToastBuilder(context,child);
+            return  MediaQuery(
+              data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+              child: child,
+            );
+          },
           navigatorObservers: [BotToastNavigatorObserver()],
           debugShowCheckedModeBanner: false,
           localizationsDelegates: const [

@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:scet_check/api/request.dart';
-import 'package:scet_check/components/toast_widget.dart';
+import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 

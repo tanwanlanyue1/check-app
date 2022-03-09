@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/components/form_check.dart';
-import 'package:scet_check/components/image_widget.dart';
+import 'package:scet_check/components/generalduty/image_widget.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 ///企业整改详情

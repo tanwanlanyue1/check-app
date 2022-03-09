@@ -1,4 +1,5 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 ///toast弹窗
@@ -91,4 +92,56 @@ class ToastWidget {
         }
     );
   }
+
+  ///带输入框弹窗
+  ///context 上下文
+  ///hintText: 默认显示在输入框的文本
+  ///onChange: 输入改变时的回调
+  ///cancel: 取消事件
+  ///ok: 确认事件
+  static showInputDialog(context,{String? msg,String? hintText, Function? onChange, Function? cancel, Function? ok}) {
+    showCupertinoDialog(
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: Text("$msg"),
+            content: Card(
+              elevation: 0.0,
+              child: Column(
+                children: <Widget>[
+                  CupertinoTextField(
+                    controller: TextEditingController(text: '$hintText'), // 默认输入内容
+                    autofocus: true,
+                    onChanged: (val){
+                      onChange?.call(val);
+                    },
+                    style: TextStyle(fontSize: sp(25), color: Colors.black),
+                  ),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                onPressed: () {
+                  Navigator.pop(context);
+                  if(cancel != null ) {
+                    cancel();
+                  }
+                },
+                child: Text('取消',style: TextStyle(fontSize: sp(25),color: Colors.blue)),
+              ),
+              CupertinoDialogAction(
+                onPressed: () {
+                  Navigator.pop(context);
+                  if(ok != null ) {
+                    ok();
+                  }
+                },
+                child: Text('确定',style: TextStyle(fontSize: sp(25),color: Colors.blue)),
+              ),
+            ],
+          );
+        });
+  }
+
 }

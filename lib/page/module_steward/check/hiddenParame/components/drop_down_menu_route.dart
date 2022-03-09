@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/utils/screen/screen.dart';
-import 'package:scet_check/components/down_input.dart';
+import 'package:scet_check/components/generalduty/down_input.dart';
 
 ///筛选下拉组件
 ///position: 出現的位置

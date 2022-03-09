@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
-import 'package:scet_check/components/toast_widget.dart';
+import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/page/module_login/components/login_components.dart';
 import 'package:scet_check/utils/logOut/log_out.dart';
 import 'package:scet_check/utils/screen/screen.dart';

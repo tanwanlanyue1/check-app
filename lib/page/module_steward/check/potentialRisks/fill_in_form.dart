@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/components/down_input.dart';
+import 'package:scet_check/components/generalduty/down_input.dart';
 import 'package:scet_check/components/form_check.dart';
-import 'package:scet_check/components/image_widget.dart';
+import 'package:scet_check/components/generalduty/image_widget.dart';
 import 'package:scet_check/components/time_select.dart';
 import 'package:scet_check/components/upload_image.dart';
 import 'package:scet_check/utils/screen/screen.dart';

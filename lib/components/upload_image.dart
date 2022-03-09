@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
-import 'package:scet_check/components/toast_widget.dart';
+import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/routers/router_animate/router_fade_route.dart';
 import 'package:scet_check/utils/photoView/cached_network.dart';
 import 'package:scet_check/utils/photoView/photo_view.dart';

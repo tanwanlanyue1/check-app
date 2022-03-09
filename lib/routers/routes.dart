@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/components/toast_widget.dart';
+import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/hidden_details.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/rectification_problem.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/steward_check.dart';

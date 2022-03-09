@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
-import 'package:scet_check/components/down_input.dart';
+import 'package:scet_check/components/generalduty/down_input.dart';
 import 'package:scet_check/components/form_check.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/client_list_page.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/layout_page.dart';

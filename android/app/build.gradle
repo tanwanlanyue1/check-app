@@ -46,6 +46,7 @@ android {
         applicationId "com.scet.scet_check"
         minSdkVersion 19
         targetSdkVersion 30
+        multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

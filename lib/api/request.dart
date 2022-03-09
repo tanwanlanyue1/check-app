@@ -4,7 +4,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:scet_check/components/loading.dart';
-import 'package:scet_check/components/toast_widget.dart';
+import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/main.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
@@ -97,6 +97,29 @@ class Request {
     }
   }
 
+  // delete请求 默认json 如果是from表单 true
+  delete(url, {data, isForm = false}) async {
+    print('===>$url');
+    Response response;
+    Options option = Options();
+    if (isForm) {
+      option.contentType = Headers.formUrlEncodedContentType;
+    }
+    try {
+      if (null == data || data.length < 0) {
+        response = await dio.delete(url, options: option);
+      }else{
+        response = await dio.delete(url, data: data, options: option);
+      }
+      print('===>${response.data}');
+      return response.data;
+    } on DioError catch (e) {
+      print("deleteurl-->$url");
+      print("delete错误-->$e");
+      return {'code':null};
+    }
+  }
+
   // get请求
   get(url, {data}) async {
     Response response;
@@ -152,7 +175,7 @@ class Request {
   }
 
   // 上传文件  filePath：文件路径
-  upfile(url, filePath) async {
+  upfile(url, filePath,{FormData? formDatas, Function? onSendProgress}) async {
     if (filePath == null) {
       return;
     }
@@ -168,11 +191,11 @@ class Request {
     try {
       response = await dio.post(
         url,
-        data: formdata,
+        data: formDatas ?? formdata,
         options: option,
         onSendProgress: (int sent, int total) {
-          ToastWidget.showToastMsg("${((sent / total) * 100).toStringAsFixed(0)}%");
-        },
+          onSendProgress?.call("上传:${((sent / total) * 100).toStringAsFixed(0)}%");
+          },
       );
       return response.data;
     } on DioError catch (e) {

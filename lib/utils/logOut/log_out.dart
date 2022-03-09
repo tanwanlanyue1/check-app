@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:scet_check/components/toast_widget.dart';
+import 'package:scet_check/components/generalduty/toast_widget.dart';
 
 /// 监听首页返回 退出
 class LogOut {
