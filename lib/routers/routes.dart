@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/components/toast_widget.dart';
-import 'package:scet_check/page/environmental_stewardship/check/hiddenParame/hidden_details.dart';
-import 'package:scet_check/page/environmental_stewardship/check/hiddenParame/rectification_problem.dart';
-import 'package:scet_check/page/environmental_stewardship/check/hiddenParame/steward_check.dart';
-import 'package:scet_check/page/environmental_stewardship/check/potentialRisks/fill_in_form.dart';
-import 'package:scet_check/page/environmental_stewardship/enterprise/enterprise_details.dart';
-import 'package:scet_check/page/environmental_stewardship/home_page.dart';
-import 'package:scet_check/page/environmental_stewardship/law/essential_details.dart';
-import 'package:scet_check/page/environmental_stewardship/law/essential_list.dart';
-import 'package:scet_check/page/environmental_stewardship/law/file_lists.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/hidden_details.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/rectification_problem.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/steward_check.dart';
+import 'package:scet_check/page/module_steward/check/potentialRisks/fill_in_form.dart';
+import 'package:scet_check/page/module_steward/enterprise/enterprise_details.dart';
+import 'package:scet_check/page/module_steward/home_page.dart';
+import 'package:scet_check/page/module_steward/law/essential_details.dart';
+import 'package:scet_check/page/module_steward/law/essential_list.dart';
+import 'package:scet_check/page/module_steward/law/file_lists.dart';
 import 'package:scet_check/page/module_login/guide_page.dart';
 import 'package:scet_check/page/module_login/login_page.dart';
 

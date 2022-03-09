@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/page/environmental_stewardship/check/StatisticAnaly/statistics.dart';
-import 'package:scet_check/page/environmental_stewardship/check/statisticAnaly/components/layout_page.dart';
+import 'package:scet_check/page/module_steward/check/StatisticAnaly/statistics.dart';
+import 'package:scet_check/page/module_steward/check/statisticAnaly/components/layout_page.dart';
 
 ///统计分析
 class StatisticAnalysis extends StatefulWidget {

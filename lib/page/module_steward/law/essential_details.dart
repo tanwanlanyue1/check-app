@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/components/image_widget.dart';
-import 'package:scet_check/page/environmental_stewardship/check/hiddenParame/components/rectify_components.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 import 'components/law_components.dart';

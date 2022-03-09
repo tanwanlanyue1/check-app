@@ -4,8 +4,8 @@ import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/down_input.dart';
 import 'package:scet_check/components/form_check.dart';
-import 'package:scet_check/page/environmental_stewardship/check/hiddenParame/components/client_list_page.dart';
-import 'package:scet_check/page/environmental_stewardship/check/statisticAnaly/components/layout_page.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/components/client_list_page.dart';
+import 'package:scet_check/page/module_steward/check/statisticAnaly/components/layout_page.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 ///隐患排查

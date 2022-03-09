@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/components/form_check.dart';
-import 'package:scet_check/page/environmental_stewardship/law/components/law_components.dart';
+import 'package:scet_check/page/module_steward/law/components/law_components.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/time/utc_tolocal.dart';
 

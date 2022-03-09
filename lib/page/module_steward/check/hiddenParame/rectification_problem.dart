@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/components/form_check.dart';
-import 'package:scet_check/page/environmental_stewardship/check/hiddenParame/components/rectify_components.dart';
-import 'package:scet_check/page/environmental_stewardship/check/potentialRisks/enterprise_reform.dart';
-import 'package:scet_check/page/environmental_stewardship/check/potentialRisks/fill_in_form.dart';
-import 'package:scet_check/page/environmental_stewardship/check/potentialRisks/review_situation.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
+import 'package:scet_check/page/module_steward/check/potentialRisks/enterprise_reform.dart';
+import 'package:scet_check/page/module_steward/check/potentialRisks/fill_in_form.dart';
+import 'package:scet_check/page/module_steward/check/potentialRisks/review_situation.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/time/utc_tolocal.dart';
 

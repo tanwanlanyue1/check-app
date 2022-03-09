@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:scet_check/model/provider/provider_details.dart';
-import 'package:scet_check/page/environmental_stewardship/check/check_page.dart';
-import 'package:scet_check/page/environmental_stewardship/enterprise/enterprise_page.dart';
-import 'package:scet_check/page/environmental_stewardship/law/law_page.dart';
-import 'package:scet_check/page/environmental_stewardship/message/message_page.dart';
+import 'package:scet_check/page/module_steward/check/check_page.dart';
+import 'package:scet_check/page/module_steward/law/law_page.dart';
+import 'package:scet_check/page/module_steward/message/message_page.dart';
 import 'package:scet_check/utils/logOut/log_out.dart';
 import 'package:scet_check/utils/screen/adapter.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+
+import 'enterprise/enterprise_page.dart';
 
 
 class HomePage extends StatefulWidget {

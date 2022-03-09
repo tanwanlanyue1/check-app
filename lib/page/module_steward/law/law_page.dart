@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/page/environmental_stewardship/law/policy_stand.dart';
+import 'package:scet_check/page/module_steward/law/policy_stand.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 import 'essential_gist.dart';
