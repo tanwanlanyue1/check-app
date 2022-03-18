@@ -49,8 +49,8 @@ class _PhotoViewGalleryScreenState extends State<PhotoViewGalleryScreen> {
               scrollPhysics: const BouncingScrollPhysics(),
               builder: (BuildContext context, int index) {
                 return PhotoViewGalleryPageOptions(
-                  imageProvider: CachedNetworkImageProvider(widget.images[index]),
-                  // heroAttributes: (widget.heroTag?.isNotEmpty ?? false) ? PhotoViewHeroAttributes(tag: widget.heroTag!):null,
+                  imageProvider:CachedNetworkImageProvider(widget.images[index])
+                //   // heroAttributes: (widget.heroTag?.isNotEmpty ?? false) ? PhotoViewHeroAttributes(tag: widget.heroTag!):null,
                 );
               },
               itemCount: widget.images.length,

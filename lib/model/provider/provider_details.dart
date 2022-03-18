@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/utils/screen/adapter.dart';
+import 'package:scet_check/utils/screen/screen.dart';
 
 class ProviderDetaild with ChangeNotifier {
   bool _pieChart = false; //展示图表或者echart
@@ -30,8 +31,12 @@ class ProviderDetaild with ChangeNotifier {
   }
 
   //改变
-  setOffest(double off){
-    _offestLeft = ((Adapter.designWidth-40)/4) * off;
+  setOffest(double off,{int? length}){
+    if(off==0){
+      _offestLeft = px(20);
+    }else{
+      _offestLeft = px(206*off);
+    }
     notifyListeners();
   }
 

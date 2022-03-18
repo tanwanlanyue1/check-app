@@ -15,12 +15,13 @@ class EssentialDetails extends StatefulWidget {
 
 class _EssentialDetailsState extends State<EssentialDetails> {
   TextEditingController textEditingController = TextEditingController();
+  List subTitle = ['排查要点','标准规范','排查依据','违法依据'];//副标题
+  List imageDatile = [];//示例图片
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        padding: EdgeInsets.only(top: 0),
+      body: Column(
         children: [
           RectifyComponents.topBar(
               title: '排查要点详情',
@@ -29,17 +30,25 @@ class _EssentialDetailsState extends State<EssentialDetails> {
                 Navigator.pop(context);
               }
           ),
-          Column(
-            children: List.generate(3, (index) => checkFrom()),
-          ),
-          remark(),
-          example(),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.only(top: px(4)),
+              children: [
+                Column(
+                  children: List.generate(subTitle.length, (i) => checkFrom(i)),
+                ),
+                remark(),
+                example(),
+              ],
+            ),
+          )
         ],
       ),
     );
   }
+
   ///排查表单
-  Widget checkFrom(){
+  Widget checkFrom(int i){
     return Container(
       padding: EdgeInsets.only(left: px(30),top: px(26),bottom: px(12)),
       color: Colors.white,
@@ -47,7 +56,7 @@ class _EssentialDetailsState extends State<EssentialDetails> {
         children: [
           LawComponents.rowTwo(
             child: Image.asset('lib/assets/icons/other/rhombus.png'),
-              textChild: Text('排查要点',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),fontFamily: 'R'),)
+              textChild: Text('${subTitle[i]}',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),fontFamily: 'R'),)
           ),
           Container(
             padding: EdgeInsets.only(top: px(5),bottom: px(20)),
@@ -100,8 +109,11 @@ class _EssentialDetailsState extends State<EssentialDetails> {
             margin: EdgeInsets.only(left: px(32),top: px(20),bottom: px(20)),
             child: Text('名称:示例名称',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),fontFamily: 'R'),),
           ),
-          ImageWidget(
-            imageList: [],
+          Visibility(
+            visible: imageDatile.isNotEmpty,
+            child: ImageWidget(
+              imageList: imageDatile,
+            ),
           )
         ],
       ),

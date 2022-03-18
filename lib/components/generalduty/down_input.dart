@@ -199,7 +199,9 @@ class _DownInputState extends State<DownInput> {
     );
   }
 }
-
+/// 获取位置
+/// position：定位
+/// menuHeight:渲染的高度
 class DropDownMenuRouteLayout extends SingleChildLayoutDelegate {
   final Rect position;
   final double menuHeight;
@@ -384,7 +386,11 @@ class _WindowsPopState extends State<WindowsPop> {
                               height: px(56),
                               color: Colors.transparent,
                               alignment: Alignment.center,
-                              child:Text('${_data[index]['name']?.replaceAll("\n", " ")}',style: TextStyle(fontSize: sp(26.0),color: (_bools(index) ? Colors.white : Colors.black)),),
+                              // child:Text('${_data[index]['name']?.replaceAll("\n", " ")}',style: TextStyle(fontSize: sp(26.0),color: (_bools(index) ? Colors.white : Colors.black)),),
+                              child:Text(_data[index]['name'] !=null ?
+                                  '${_data[index]['name']?.replaceAll("\n", " ")}':
+                                  '${_data[index]['title']?.replaceAll("\n", " ")}',
+                                style: TextStyle(fontSize: sp(26.0),color: (_bools(index) ? Colors.white : Colors.black)),),
                             ),
                           ],
                         )

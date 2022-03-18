@@ -22,7 +22,7 @@ class _TimeSelectState extends State<TimeSelect> {
   @override
   void initState() {
     super.initState();
-    // currentTime = formatTime(widget.time);
+    currentTime = widget.time != null ?  formatTime(widget.time!) : '';
   }
   @override
   Widget build(BuildContext context) {
@@ -128,7 +128,7 @@ class _TimeSelectState extends State<TimeSelect> {
         }).show(widget.scaffoldKey!.currentState!);
   }
 
-  String formatTime(time) {
+  String formatTime(DateTime time) {
     return DateFormat("yyyy-MM-dd HH:mm:ss").format(time);
   }
 }

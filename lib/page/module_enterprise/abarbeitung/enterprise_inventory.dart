@@ -3,27 +3,28 @@ import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/time_select.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
+import 'package:scet_check/components/generalduty/upload_image.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/page/module_steward/law/components/law_components.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/time/utc_tolocal.dart';
 
-import 'components/rectify_components.dart';
+import 'abarbeitung_pdf.dart';
 
 
-
-///管家排查
-///arguments:{companyId:公司id，companyName：公司名称,uuid:清单id}
-class StewardCheck extends StatefulWidget {
-  Map? arguments;
-  StewardCheck({Key? key,this.arguments, }) : super(key: key);
+///企业清单详情
+/// arguments:{'uuid':清单id，或者问题id,'company':true}
+class EnterprisInventory extends StatefulWidget {
+  Map arguments;
+  EnterprisInventory({Key? key,required this.arguments,}) : super(key: key);
 
   @override
-  _StewardCheckState createState() => _StewardCheckState();
+  _EnterprisInventoryState createState() => _EnterprisInventoryState();
 }
 
-class _StewardCheckState extends State<StewardCheck> {
-  /// 1,未整改;2,已整改;3,整改已通过;4,整改未通过
+class _EnterprisInventoryState extends State<EnterprisInventory> {
+  /// 状态；-1：未处理;0:处理完；1：处理中
   int type = 1;
   bool tidy = true; //展开/收起
   Map repertoire = {};//清单
@@ -32,14 +33,15 @@ class _StewardCheckState extends State<StewardCheck> {
   String uuid = '';//清单id
   String area = '';//归属片区
   String location = '';//区域位置
-  String stewardCheck = '';//检查人 
+  String stewardCheck = '';//检查人
   String checkDate = '';//排查日期
-  String abarbeitungDates = '';//整改日期
+  String abarbeitungDate = '';//整改日期
   String sceneReviewDate = '';//现场复查日期
-  String checkType = '';//检查类型
+  String checkType = '管家排查';//检查类型
+  String companyId = '';//企业用户id
   bool uploading = false;//判断是否可以上传
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  Map<String,dynamic> data = {};//查询问题的参数
+
   /// 获取清单详情
   /// id:清单id
   void _getCompany() async {
@@ -51,9 +53,8 @@ class _StewardCheckState extends State<StewardCheck> {
         location = repertoire['company']['region']['name'];
         area = repertoire['company']['district']['name'];
         checkDate = RectifyComponents.formatTime(repertoire['createdAt']);
-        abarbeitungDates = repertoire['solvedAt'] != null ? RectifyComponents.formatTime(repertoire['solvedAt']) : '';
+        abarbeitungDate = repertoire['solvedAt'] != null ? RectifyComponents.formatTime(repertoire['solvedAt']) : '';
         sceneReviewDate = repertoire['reviewedAt'] != null ? RectifyComponents.formatTime(repertoire['reviewedAt']) : '';
-        checkType = repertoire['checkType'] == 1 ? '管家排查': '管家排查';
         argumentMap = {
           'declare':true,//申报
           'uuid': uuid,//清单ID
@@ -65,12 +66,17 @@ class _StewardCheckState extends State<StewardCheck> {
     }
   }
 
-  /// 获取问题
+  /// 获取清单下的问题
   ///companyId:公司id
   ///page:第几页
   ///size:每页多大
   ///andWhere:查询的条件
   void _getProblem() async {
+    Map<String,dynamic> data = {
+      'page':1,
+      'size':50,
+      'inventory.id':uuid
+    };
     var response = await Request().get(Api.url['problemList'],data: data,);
     if(response['statusCode'] == 200 && response['data'] != null) {
       setState(() {
@@ -85,31 +91,23 @@ class _StewardCheckState extends State<StewardCheck> {
       });
     }
   }
-
   /// 签到清单
   /// id: uuid
   /// solvedAt: 整改期限
   /// reviewedAt: 复查期限
   void _setInventory(Map<String, dynamic> _data) async {
-      var response = await Request().post(
-          Api.url['inventory'],
-          data: _data
-      );
-      if(response['statusCode'] == 200) {
-        ToastWidget.showToastMsg('修改日期成功');
-      }
+    var response = await Request().post(
+        Api.url['inventory'],
+        data: _data
+    );
+    if(response['statusCode'] == 200) {
+      ToastWidget.showToastMsg('修改日期成功');
+    }
   }
-
   @override
   void initState() {
     // TODO: implement initState
-    uuid = widget.arguments?['uuid'].toString() ?? '';
-    //查询清单下的问题
-    data = {
-      'page':1,
-      'size':50,
-      'inventory.id':uuid
-    };
+    uuid = widget.arguments['uuid'];
     _getCompany();
     _getProblem();
     super.initState();
@@ -121,7 +119,7 @@ class _StewardCheckState extends State<StewardCheck> {
       body: Column(
         children: [
           topBar(
-              '管家排查'
+              '排查问题详情'
           ),
           Expanded(
             child: ListView(
@@ -150,28 +148,30 @@ class _StewardCheckState extends State<StewardCheck> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           InkWell(
-          child: Container(
-            height: px(40),
-            width: px(41),
-            alignment: Alignment.centerLeft,
-            margin: EdgeInsets.only(left: px(20)),
-            child: Image.asset('lib/assets/icons/other/chevronLeft.png',fit: BoxFit.fill,),
+            child: Container(
+              height: px(40),
+              width: px(41),
+              alignment: Alignment.centerLeft,
+              margin: EdgeInsets.only(left: px(20)),
+              child: Image.asset('lib/assets/icons/other/chevronLeft.png',fit: BoxFit.fill,),
+            ),
+            onTap: ()async{
+              Navigator.pop(context);
+            },
           ),
-          onTap: ()async{
-            Navigator.pop(context);
-          },
-        ),
           Expanded(
             child: Container(
               alignment: Alignment.center,
               child: Text(title,style: TextStyle(color: Color(0xff323233),fontSize: sp(32),fontFamily: 'M'),),
             ),
           ),
-          Container(
-            height: px(28),
-            width: px(28),
-            margin: EdgeInsets.only(bottom: px(15),left: px(12)),
-          ),
+          // Container(
+          //   height: px(28),
+          //   width: px(28),
+          //   margin: EdgeInsets.only(bottom: px(15),left: px(12)),
+          //   child: Icon(Icons.star,color: Color(0xffE65C5C),),
+          // ),
+          // Spacer(),
         ],
       ),
     );
@@ -208,13 +208,13 @@ class _StewardCheckState extends State<StewardCheck> {
                   child: TimeSelect(
                     scaffoldKey: _scaffoldKey,
                     hintText: "请选择排查时间",
-                    time: abarbeitungDates.isNotEmpty ? DateTime.parse(abarbeitungDates) :null,
+                    time: abarbeitungDate.isNotEmpty ? DateTime.parse(abarbeitungDate) :null,
                     callBack: (time) {
-                      abarbeitungDates = formatTime(time);
+                      abarbeitungDate = formatTime(time);
                       _setInventory(
                           {
                             'id':uuid,
-                            'solvedAt': abarbeitungDates,
+                            'solvedAt': abarbeitungDate,
                           }
                       );
                       setState(() {});
@@ -291,22 +291,9 @@ class _StewardCheckState extends State<StewardCheck> {
                   margin: EdgeInsets.only(top: px(20),left: px(32),),
                   height: px(55),
                   child: FormCheck.formTitle(
-                    '隐患问题',
+                    '整改问题',
                   ),
                 ),
-              ),
-              GestureDetector(
-                child: Container(
-                  width: px(40),
-                  height: px(41),
-                  margin: EdgeInsets.only(right: px(20)),
-                  child: Image.asset('lib/assets/icons/form/add.png')),
-                onTap: () async{
-                  var res = await Navigator.pushNamed(context, '/fillInForm',arguments: argumentMap);
-                  if(res == true){
-                    _getProblem();
-                  }
-                },
               ),
             ],
           ),
@@ -317,10 +304,8 @@ class _StewardCheckState extends State<StewardCheck> {
                     company: problemList[i],
                     i: i,
                     review: false,
-                    callBack:(){
-                      Navigator.pushNamed(context, '/rectificationProblem',
-                          arguments: {'check':true,'problemId':problemList[i]['id']}
-                      );
+                    callBack:()async{
+                      Navigator.pushNamed(context, '/abarbeitungFrom',arguments: {'id':problemList[i]['id']});
                     }
                 )),
               ),
@@ -398,10 +383,26 @@ class _StewardCheckState extends State<StewardCheck> {
                       ],
                     ),
                   ),
+                  Container(
+                    margin: EdgeInsets.only(top: px(24)),
+                    child: Row(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(right: px(24)),
+                          child: Text('上传PDF',style: TextStyle(fontSize: sp(28)),),
+                        ),
+                        Expanded(
+                          child: AbarbeitungPdf(
+                            url: Api.baseUrlApp + 'file/upload?savePath=清单报告/',
+                            uuid: uuid,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
               onTap: (){
-                print('pdf网址');
                 // Navigator.pushNamed(context, '/PDFView',arguments: '');
               },
             ),

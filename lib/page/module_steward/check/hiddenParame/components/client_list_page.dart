@@ -132,6 +132,8 @@ class _ClientListPageState extends State<ClientListPage> {
                 color: Color(0xff72B1ED),
                 borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
+              alignment: Alignment.center,
+              child: Text('${model.name?.substring(0,1)}',style: TextStyle(color: Colors.white,fontSize: sp(22),)),
             ),
             Expanded(
               child: Text("${model.name} ",style: TextStyle(color: Color(0xFF323233),fontSize: sp(24),),),
@@ -227,10 +229,15 @@ class _ClientListPageState extends State<ClientListPage> {
               indexBarAlignment: Alignment.topRight,
               indexBarOptions: IndexBarOptions(
                 needRebuild: true,
-                indexHintWidth: 98,
-                indexHintHeight: 98,
+                indexHintWidth: px(52),
+                indexHintHeight: px(52),
                 indexHintAlignment: Alignment.centerRight,
-                indexHintTextStyle: TextStyle(fontSize: 24.0, color: Color(0xff374766)),
+                indexHintDecoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.all(Radius.circular(6)),
+                ),
+                indexHintTextStyle: TextStyle(fontSize: sp(24), color: Color(0xff374766)),
                 indexHintOffset: Offset(-30, 0),
               ),
             ),

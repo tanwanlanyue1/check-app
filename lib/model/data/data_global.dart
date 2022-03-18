@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scet_check/api/Request.dart';
 import 'package:scet_check/model/provider/provider_app.dart';
-import 'package:scet_check/page/module_login/login_page.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 import 'package:path_provider/path_provider.dart';
@@ -39,7 +38,6 @@ class Global {
   static Future init({context}) async {
     // 运行初始
     WidgetsFlutterBinding.ensureInitialized();
-
     // 网络请求初始化
     Request();
 
@@ -63,6 +61,12 @@ class Global {
           switch(_personalData['role']['name']){
             case '环保管家' :
               router = '/steward';
+              break;
+            case '企业' :
+              router = '/enterpriseHome';
+              break;
+            case '环保局' :
+              router = '/protectionAgencyHome';
               break;
             default: router = '/';break;
           }

@@ -1,27 +1,29 @@
-import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:scet_check/api/api.dart';
-import 'package:scet_check/api/request.dart';
-import 'package:scet_check/components/generalduty/toast_widget.dart';
+import 'package:scet_check/components/pertinence/companyFile/components/file_system.dart';
 import 'package:scet_check/routers/router_animate/router_fade_route.dart';
 import 'package:scet_check/utils/photoView/cached_network.dart';
 import 'package:scet_check/utils/photoView/photo_view.dart';
 import 'package:scet_check/utils/screen/screen.dart';
-import 'package:http_parser/http_parser.dart';
-import 'package:multi_image_picker2/multi_image_picker2.dart';
 
 ///上传图片
 ///callback:回调
 ///closeIcon:是否开启修改
 ///imgList:数据
+///uuid:uuid
+///url:上传图片路径
 class UploadImage extends StatefulWidget {
   final Function? callback;
   final bool closeIcon;
   final List imgList;
+  final String? uuid;
+  final String? url;
   const UploadImage({Key? key,
     this.callback,
     this.closeIcon = true,
+    this.uuid,
+    this.url,
     required this.imgList,
   }) : super(key: key);
   @override
@@ -30,76 +32,53 @@ class UploadImage extends StatefulWidget {
 
 class _UploadImageState extends State<UploadImage> {
 
-  List _imagesList = []; // 图片数组
+  List<dynamic> _imagesList = []; // 图片数组
+  String _uuid = '';//uuid
+  String _url = Api.url['uploadImg'];//url
 
-  // 选择照片并上传
-  Future<void> _uploadImages() async {
-    List<Asset> resultList = <Asset>[];
-    String _primaryColor = '';
-    //处理图片
-    try {
-      resultList = await MultiImagePicker.pickImages(
-        // 若_images不为空，再次打开选择界面的适合，可以显示之前选中的图片信息。
-        // selectedAssets: _imagesAsset,
-        // 选择图片的最大数量
-          maxImages: 9,
-          // 是否支持拍照
-          enableCamera: true,
-          cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
-          materialOptions: MaterialOptions(
-            // 显示所有照片，值为 false 时显示相册
-            startInAllView: false,
-            allViewTitle: '所有照片',
-            actionBarColor: _primaryColor,
-            statusBarColor: _primaryColor,
-            textOnNothingSelected: '没有选择照片',
-          )
-      );
-    } on Exception catch (e) {
-      ToastWidget.showToastMsg(e.toString());
-    }
-    if (!mounted) return;
-    if (resultList.isNotEmpty) {
-      _upImg(resultList);
-    }
-  }
-
-  _upImg(List<Asset> li) async {
-    // 上传照片时一张一张上传
-    for(int i = 0; i < li.length; i++) {
-      // 获取 ByteData
-      String _type =  li[i].name!.split(".")[li[i].name!.split(".").length - 1];
-      ByteData byteData = await li[i].getByteData();
-      List<int> imageData = byteData.buffer.asUint8List();
-      MultipartFile multipartFile = MultipartFile.fromBytes(
-        imageData,
-        filename:li[i].name,
-        contentType: MediaType("image",_type),// 文件类型
-      );
-      FormData formData =  FormData.fromMap({
-        "file": multipartFile,
-        "kind":_type
-      });
-      var response =  await Request().post(Api.url['uploadImg'], data: formData, downloadProgress:(val){
-        ToastWidget.showToastMsg(val);
-      });
-      if(response['code'] == 200){
-        Map data = response['data']['files'][0];
-        _imagesList.add(data);
+  /// 上传文件
+  /// result: 文件数组
+  /// 处理上传图片返回回来的格式，将\转化为/
+  void _upload() async {
+    String url = _url + _uuid;
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.image,
+    );
+    if (result != null) {
+      var isUp = await FileSystem.upload(result, url);
+      print('>>>>>>>>$isUp');
+      if(isUp?[0]!=false){
+        for(var i = 0; i < (isUp?.length ?? 0);i++){
+          String? imgUrl = isUp![i]['msg']['data']['dir']+'/'+isUp[0]['msg']['data']['base'];
+          _imagesList.add(
+            imgUrl?.replaceAll('\\', '/'),
+          );
+        }
         widget.callback?.call(_imagesList);
-        setState(() { });
-      }else{
-        ToastWidget.showToastMsg('请重试');
       }
+      setState(() {});
     }
   }
 
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
     _imagesList = widget.imgList;
+    _uuid = widget.uuid ?? '';
+    _url = widget.url ?? Api.url['uploadImg'];
+    super.initState();
   }
+
+  @override
+  void didUpdateWidget(covariant UploadImage oldWidget) {
+    // TODO: implement didUpdateWidget
+    _imagesList = widget.imgList;
+    _uuid = widget.uuid ?? '';
+    _url = widget.url ?? Api.url['uploadImg'];
+    super.didUpdateWidget(oldWidget);
+  }
+
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
@@ -115,7 +94,10 @@ class _UploadImageState extends State<UploadImage> {
       itemBuilder: (BuildContext context, int index) {
         if(index == _imagesList.length && widget.closeIcon) {
           return GestureDetector(
-            onTap: _uploadImages,
+            onTap: () async{
+              _upload();
+              // FileSystem.upload(result, url);
+            },
             child: Container(
               width: px(169),
               height: px(169),
@@ -129,8 +111,7 @@ class _UploadImageState extends State<UploadImage> {
             SizedBox(
               width: 300, height: 300,
               child: CachedNetwork(
-                url:  _imagesList[index],
-                  // url:Api.baseUrlApp + '/' + _imagesList[index]['path'],
+                url: Api.baseUrlApp + _imagesList[index],
                   fits: BoxFit.cover,
               ),
             ),
@@ -141,7 +122,9 @@ class _UploadImageState extends State<UploadImage> {
       },
     );
   }
-
+  ///创建GridView
+  ///child：子组件
+  ///index：下标
   Widget _createGridViewItem(Widget child, index) {
     return Container(
         decoration: BoxDecoration(
@@ -154,7 +137,7 @@ class _UploadImageState extends State<UploadImage> {
                 onTap: (){
                   List _img = [];
                   for (var item in _imagesList) {
-                    _img.add(Api.baseUrlApp + '/' + item['path']);
+                    _img.add(Api.baseUrlApp + item);
                   }
                   Navigator.of(context).push(FadeRoute(page: PhotoViewGalleryScreen(
                     images:_img,//传入图片list
@@ -169,7 +152,6 @@ class _UploadImageState extends State<UploadImage> {
                   child: GestureDetector(
                       onTap: () {
                         setState(() {
-                          // _imagesAsset.removeAt(index);
                           _imagesList.removeAt(index);
                           widget.callback?.call(_imagesList);
                         });

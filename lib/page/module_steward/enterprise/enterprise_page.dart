@@ -24,17 +24,26 @@ class _EnterprisePageState extends State<EnterprisePage> {
     var response = await Request().get(Api.url['all'],
         // data: params
     );
-    if(response['code'] == 200) {
+    if(response['statusCode'] == 200) {
       setState(() {
         companyList = response["data"];
       });
     }
   }
-
+  /// 获取企业数据
+  void _getCompany() async {
+    var response = await Request().get(Api.url['company'],);
+    if(response['statusCode'] == 200) {
+      setState(() {
+        companyList = response["data"];
+      });
+    }
+  }
   @override
   void initState() {
     super.initState();
-    _getLatestData();
+    // _getLatestData();
+    _getCompany();// 获取企业数据
   }
 
   @override

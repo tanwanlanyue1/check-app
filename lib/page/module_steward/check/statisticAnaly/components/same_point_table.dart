@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:scet_check/components/column_echarts.dart';
+import 'package:scet_check/components/pertinence/companyEchart/column_echarts.dart';
 import 'package:scet_check/model/provider/provider_details.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/storage/data_storage_key.dart';
+import 'package:scet_check/utils/storage/storage.dart';
 
 ///相同的图表
 ///tableHeader:表头
+///tableTitle:标题
 ///tableBody:表单内容
 ///callBack:下一页
 ///callPrevious:上一页
 class SamePointTable extends StatefulWidget {
-   String tableHeader;
+   String tableTitle;
+   List? tableHeader;
    List? tableBody;
    Function? callBack;
    Function? callPrevious;
-   SamePointTable({Key? key,required this.tableHeader,this.tableBody,this.callBack,this.callPrevious}) : super(key: key);
+   SamePointTable({Key? key, this.tableHeader,required this.tableTitle,this.tableBody,this.callBack,this.callPrevious}) : super(key: key);
 
   @override
   _SamePointTableState createState() => _SamePointTableState();
@@ -136,7 +140,7 @@ class _SamePointTableState extends State<SamePointTable> {
                   ),
                 ),
                 Visibility(
-                  visible: widget.tableHeader == '企业',
+                  visible: widget.tableTitle == '企业',
                   child: Expanded(
                     child: Container(
                       height: px(71),
@@ -171,7 +175,7 @@ class _SamePointTableState extends State<SamePointTable> {
                   ),
                 ),
                 Visibility(
-                  visible: widget.tableHeader == '行业',
+                  visible: widget.tableTitle == '行业',
                   child: Expanded(
                     child: Container(
                       height: px(71),
@@ -276,7 +280,7 @@ class _SamePointTableState extends State<SamePointTable> {
               Expanded(
                 child: Container(
                   margin: EdgeInsets.only(top: px(17),left: px(20)),
-                  child: Text("园区风险隐患排查总览-${widget.tableHeader}问题排名图",
+                  child: Text("园区风险隐患排查总览-${widget.tableTitle}问题排名图",
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Color(0xff323233),fontSize: sp(32)),),
                 ),
@@ -291,8 +295,6 @@ class _SamePointTableState extends State<SamePointTable> {
                    Image.asset('lib/assets/images/home/chartSwitch.png'),
                 ),
                 onTap: () async{
-                  // Navigator.pushNamed(context, '/enterpriseDetails');
-                  Navigator.pushNamed(context, '/stewardCheck');
                   // _providerDetaild.setPie();
                   // if(echart != 2){
                   //   echart++;
@@ -316,7 +318,7 @@ class _SamePointTableState extends State<SamePointTable> {
                 child: _providerDetaild.pieChart ?
                 Container():
                 Row(
-                  children: selectHeader(widget.tableHeader),
+                  children: selectHeader(widget.tableTitle),
                 ),
               ),
               SizedBox(

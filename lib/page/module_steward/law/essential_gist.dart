@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/components/form_check.dart';
+import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 import 'components/law_components.dart';

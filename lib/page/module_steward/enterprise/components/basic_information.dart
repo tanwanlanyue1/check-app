@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/components/form_check.dart';
+import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/time/utc_tolocal.dart';
 
@@ -7,7 +7,7 @@ import 'enterprise_compon.dart';
 
 ///基本信息
 class BasicInformation  extends StatefulWidget {
-   BasicInformation ({Key? key}) : super(key: key);
+   const BasicInformation ({Key? key}) : super(key: key);
 
   @override
   _BasicInformationState createState() => _BasicInformationState();
@@ -72,10 +72,10 @@ class _BasicInformationState extends State<BasicInformation > {
                 EnterPriseCompon.surveyItem( '环保负责人', '张文里'),
                 EnterPriseCompon.surveyItem( '联系电话', '18797379866',color: true),
                 EnterPriseCompon.surveyItem( '排污许可编号', '18797379866'),
-                EnterPriseCompon.surveyItem(' 许可证管理类型', '重点'),
-                EnterPriseCompon.surveyItem(' 许可证下发时间', '2021-4-19'),
-                EnterPriseCompon.surveyItem(' 许可证有效日期', '2021-4-19'),
-                EnterPriseCompon.surveyItem(' 现有生产线是否全部纳入排污许可', '2021-4-19'),
+                EnterPriseCompon.surveyItem( '许可证管理类型', '重点'),
+                EnterPriseCompon.surveyItem( '许可证下发时间', '2021-4-19'),
+                EnterPriseCompon.surveyItem( '许可证有效日期', '2021-4-19'),
+                EnterPriseCompon.surveyItem( '现有生产线是否全部纳入排污许可', '2021-4-19'),
               ]
           ),
           replacement: SizedBox(

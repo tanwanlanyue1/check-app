@@ -34,7 +34,6 @@ class _PolicyStandState extends State<PolicyStand> {
       setState(() {});
     }
   }
-
   @override
   void initState() {
     super.initState();

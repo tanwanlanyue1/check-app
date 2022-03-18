@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
+import 'package:scet_check/page/module_enterprise/enterprise_home.dart';
 import 'package:scet_check/page/module_login/components/login_components.dart';
+import 'package:scet_check/routers/router_animate/router_animate.dart';
 import 'package:scet_check/utils/logOut/log_out.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
@@ -41,6 +43,12 @@ class _LoginPageState extends State<LoginPage> {
           switch(response['data']['role']['name']){
             case '环保管家' :
               Navigator.pushNamedAndRemoveUntil(context,'/steward', (Route route)=>false);
+              break;
+            case '企业' :
+              Navigator.of(context).pushAndRemoveUntil(CustomRoute(EnterpriseHome()), (router) => router == null);
+              break;
+            case '环保局' :
+              Navigator.pushNamedAndRemoveUntil(context,'/protectionAgencyHome', (Route route)=>false);
               break;
           }
       } else if (response['statusCode'] == 500) {
@@ -154,8 +162,8 @@ class _LoginPageState extends State<LoginPage> {
                 }),
             LoginComponents.loginBtn(
               onTap: () {
-                Navigator.pushNamed(context, '/steward');
-                // _postLogin(_userName, _password);
+                // Navigator.pushNamed(context, '/steward');
+                _postLogin(_userName, _password);
               },
             )
           ],

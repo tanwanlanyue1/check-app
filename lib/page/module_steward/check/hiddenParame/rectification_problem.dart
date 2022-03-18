@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/components/form_check.dart';
+import 'package:scet_check/api/api.dart';
+import 'package:scet_check/api/request.dart';
+import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/enterprise_reform.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/fill_in_form.dart';
@@ -8,7 +10,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/time/utc_tolocal.dart';
 
 ///企业台账详情
-/// arguments = {check:是否申报,readOnly:是否只读}
+/// arguments = {check:是否申报,'problemId':问题id}
 class RectificationProblem extends StatefulWidget {
   final arguments;
   const RectificationProblem({Key? key,this.arguments}) : super(key: key);
@@ -17,20 +19,12 @@ class RectificationProblem extends StatefulWidget {
   _RectificationProblemState createState() => _RectificationProblemState();
 }
 
-
 class _RectificationProblemState extends State<RectificationProblem> {
 
-  //图片列表
-  List imgDetails = ['https://img2.baidu.com/it/u=1814268193,3619863984&fm=253&fmt=auto&app=138&f=JPEG?w=632&h=500',
-    'https://img0.baidu.com/it/u=857510153,4267238650&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=675',
-    'https://img1.baidu.com/it/u=2374960005,3369337623&fm=253&fmt=auto&app=120&f=JPEG?w=499&h=312',
-    'https://img0.baidu.com/it/u=857510153,4267238650&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=675',
-  ];
-
-  int choice  = 0; //单选
+  String problemTitle = '';//问题标题
+  String problemId = '';//问题Id
+  int status  = 0; //状态；-1：未处理;0:处理完；1：处理中
   bool declare = false;//申报
-
-  bool readOnly = true; //是否为只读
 
   ///选择时间所需的key，传递下去
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -38,15 +32,15 @@ class _RectificationProblemState extends State<RectificationProblem> {
   @override
   void initState() {
     declare = widget.arguments['check'] ?? false;
-    readOnly = widget.arguments['readOnly'] ?? false;
+    problemId = widget.arguments['problemId'] ?? '';
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      body: ListView(
-        padding: EdgeInsets.only(top: 0),
+      body: Column(
         children: [
           RectifyComponents.topBar(
               title: '隐患排查问题整改详情',
@@ -54,36 +48,46 @@ class _RectificationProblemState extends State<RectificationProblem> {
                 Navigator.pop(context);
               }
           ),
-          Container(
-            color: Colors.white,
-            margin: EdgeInsets.only(top: px(5)),
-            child: FormCheck.tabText(
-              title: "01",
-              str: '废气治理设施巡检记录不完善',
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.only(top: 0),
+              children: [
+                InkWell(
+                  child: Container(
+                    margin: EdgeInsets.only(top: px(5)),
+                    color: Colors.white,
+                    child: FormCheck.tabText(
+                      title: "01",
+                      str: '废气治理设施巡检记录不完善,点击跳转复查',
+                    ),
+                  ),
+                  onTap: ()async{
+                    Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId,'review':true});
+                  },
+                ),
+                //问题详情与申报
+                FillInForm(
+                  arguments:{
+                    'declare':false,//申报
+                    'key':_scaffoldKey,
+                    'problemId':problemId,
+                  },
+                  callBack: (){
+                  },
+                ),
+                //企业整改详情
+                EnterpriseReform(
+                  problemId: problemId,
+                ),
+                //现场复查情况
+                ReviewSituation(
+                  arguments:{
+                    'problemId':problemId,
+                  },
+                ),
+              ],
             ),
-          ),
-          //问题详情与申报
-          FillInForm(
-            arguments:{
-              'declare':declare,//申报
-              'key':_scaffoldKey
-            },
-            callBack: (){
-            },
-          ),
-          //企业整改详情
-          EnterpriseReform(),
-          //现场复查情况
-           ReviewSituation(
-            arguments:{
-              'readOnly':readOnly,
-              'key':_scaffoldKey
-            },
-          ),
-          Visibility(
-            visible: declare,
-            child: FormCheck.submit(),
-          ),
+          )
         ],
       ),
     );

@@ -18,18 +18,28 @@ class _HiddenParameterState extends State<HiddenParameter> {
 
   List tabBar = ["全园区","第一片区","第二片区","第三片区"];//头部
   final PageController pagesController = PageController();//页面控制器
-  int _companyId = 0;//公司id
+  String _companyId = '';//公司id
   String _companyName = '';//公司名称
   List companyList = [];//全部公司数据
   int pageIndex = 0;//下标
 
-  /// 获取全部公司
-  void _getLatestData() async {
-    // Map<String, dynamic> params = pageIndex == 0 ? {}: {'area':pageIndex};
-    var response = await Request().get(Api.url['all'],
-        // data: params
-    );
-    if(response['code'] == 200) {
+  /// 获取园区统计
+  /// 获取tabbar表头，不在写死,
+  /// 片区id也要获取，传递到页面请求片区详情
+  void _getStatistics() async {
+    var response = await Request().get(Api.url['district']);
+    if(response['statusCode'] == 200) {
+      tabBar = [];
+      tabBar.add('园区统计');
+      setState(() {
+      });
+    }
+  }
+
+  /// 获取企业数据
+  void _getCompany() async {
+    var response = await Request().get(Api.url['company'],);
+    if(response['statusCode'] == 200) {
       setState(() {
         companyList = response["data"];
       });
@@ -39,7 +49,8 @@ class _HiddenParameterState extends State<HiddenParameter> {
 @override
   void initState() {
     // TODO: implement initState
-  _getLatestData();
+  // _getLatestData();
+  _getCompany(); // 获取企业数据
   super.initState();
   }
 
@@ -47,106 +58,33 @@ class _HiddenParameterState extends State<HiddenParameter> {
   Widget build(BuildContext context) {
     return LayoutPage(
       tabBar: tabBar,
-      pageBody: [
-        Column(
-          children: [
-            Container(
-              height: px(24),
-              margin: EdgeInsets.only(left:px(20),right: px(20)),
-              color: Colors.white,
-            ),
-            Visibility(
-              visible: companyList.isNotEmpty,
-              child: Expanded(
-                child: ClientListPage(
-                  companyList: companyList,
-                  callBack: (id,name){
-                    _companyId = id;
-                    _companyName = name;
-                    Navigator.pushNamed(context, '/hiddenDetails',arguments: {'companyId': _companyId,'companyName': _companyName,});
-                    setState(() {});
-                  },
-                ),
+      pageBody: List.generate(4, (index) => Column(
+        children: [
+          Container(
+            height: px(24),
+            margin: EdgeInsets.only(left:px(20),right: px(20)),
+            color: Colors.white,
+          ),
+          Visibility(
+            visible: companyList.isNotEmpty,
+            child: Expanded(
+              child: ClientListPage(
+                companyList: companyList,
+                callBack: (id,name){
+                  _companyId = id;
+                  _companyName = name;
+                  Navigator.pushNamed(context, '/hiddenDetails',arguments: {'companyId': _companyId,'companyName': _companyName,});
+                  setState(() {});
+                },
               ),
             ),
-          ],
-        ),
-
-        Column(
-          children: [
-            Container(
-              height: px(24),
-              margin: EdgeInsets.only(left:px(20),right: px(20)),
-              color: Colors.white,
-            ),
-            Visibility(
-              visible: companyList.isNotEmpty,
-              child: Expanded(
-                child: ClientListPage(
-                  companyList: companyList,
-                  callBack: (id,name){
-                    _companyId = id;
-                    _companyName = name;
-                    Navigator.pushNamed(context, '/hiddenDetails',arguments: {'companyId': _companyId,'companyName': _companyName,});
-                    setState(() {});
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-
-        Column(
-          children: [
-            Container(
-              height: px(24),
-              margin: EdgeInsets.only(left:px(20),right: px(20)),
-              color: Colors.white,
-            ),
-            Visibility(
-              visible: companyList.isNotEmpty,
-              child: Expanded(
-                child: ClientListPage(
-                  companyList: companyList,
-                  callBack: (id,name){
-                    _companyId = id;
-                    _companyName = name;
-                    Navigator.pushNamed(context, '/hiddenDetails',arguments: {'companyId': _companyId,'companyName': _companyName,});
-                    setState(() {});
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-
-        Column(
-          children: [
-            Container(
-              height: px(24),
-              margin: EdgeInsets.only(left:px(20),right: px(20)),
-              color: Colors.white,
-            ),
-            Visibility(
-              visible: companyList.isNotEmpty,
-              child: Expanded(
-                child: ClientListPage(
-                  companyList: companyList,
-                  callBack: (id,name){
-                    _companyId = id;
-                    _companyName = name;
-                    Navigator.pushNamed(context, '/hiddenDetails',arguments: {'companyId': _companyId,'companyName': _companyName,});
-                    setState(() {});
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
+          ),
+        ],
+      )),
       callBack: (val){
         pageIndex = val;
-        _getLatestData();
+        // _getLatestData();
+        _getCompany();
         setState(() {});
       },
     );

@@ -10,30 +10,40 @@ class Api {
   static final Map url = {
     'version': baseUrlApp + '/manualInsert/platFromXiaZai',//版本更新
 
-    'user': baseUrlApp + 'user',//获取数据
+    'user': baseUrlApp + 'user',//获取用户数据
 
     'login': baseUrlApp + 'auth/login',//登录
 
-    'register': baseUrlApp + 'user/register',//注册
+    'district': baseUrlApp + 'district',//片区统计
 
-    'getByCompanyId': baseUrlApp + 'ledgerReview/getByCompanyId',//隐患台账公司详情
-
-    'ledgerColumns': baseUrlApp + 'ledgerReview/columns',//隐患台账表头
-
-    'statistics': baseUrlApp + 'hiddenLedger/statistics',//公司统计
-
-    'problem': baseUrlApp + 'problem',//隐患问题
-
-    'all': baseUrlApp + 'company/all',//公司
+    'industry': baseUrlApp + 'industry',//行业
 
     'lawFile': baseUrlApp + 'law',//法律文件
 
+    'company': baseUrlApp + 'company',//获取全部企业
+
+    'inventory': baseUrlApp + 'inventory',//保存清单
+
+    'inventoryList': baseUrlApp + 'inventory/list',//清单分页列表
+
+    "uploadImg": baseUrlApp + 'file/upload?savePath=清单/',// 上传图片
+
+    'problem': baseUrlApp + 'problem',//获取问题
+
+    'problemList': baseUrlApp + 'problem/list',//问题分页列表
+
+    'problemType': baseUrlApp + 'problem_type',//问题类型
+
+    'solution': baseUrlApp + 'solution',//整改
+
+    'solutionList': baseUrlApp + 'solution/list',//整改分页列表
+
+    'review': baseUrlApp + 'review',//复查
+
+    'reviewList': baseUrlApp + 'review/list',//复查分页列表
+
+
     'fileSearch': baseUrlApp + 'law/search',//法律文件搜索
 
-    'columns': baseUrlApp + 'company/columns',//表头
-
-    'fields': baseUrlApp + 'company/fields',//表单
-
-    'panelist': baseUrlApp + 'company/list',//分页列表
   };
 }

@@ -24,8 +24,8 @@ class StorageKey {
   static const String FontDownload = "font_download_finish"; // 是否下载完字体
 
   static const List productMainList = [
-    '6ece97a3-66c3-43fe-aa5d-c600d6a415c1', // 危废
-    'bc6ddac0-7ce6-11ec-8b56-cdf45ffbd125', // 一般固废
-    'cd7677a5-7ce6-11ec-8b56-cdf45ffbd125' // 副产品
+    '环保管家',
+    '企业',
+    '环保局',
   ]; // 页面类型ID
 }

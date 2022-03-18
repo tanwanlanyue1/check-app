@@ -3,7 +3,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:scet_check/components/loading.dart';
+import 'package:scet_check/components/generalduty/loading.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/main.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
@@ -50,7 +50,7 @@ class Request {
         return handler.next(options);
       },
         onResponse: (Response response,ResponseInterceptorHandler handler) {
-        if (response.data is Map && response.data['code'] == 502) {
+        if (response.data is Map && response.data['statusCode'] == 401) {
           ToastWidget.showToastMsg('用户信息过时，请重新登录！');
           BuildContext context = navigatorKey.currentState!.overlay!.context;
           Future.delayed(const Duration(seconds: 0)).then((onValue) {
@@ -61,6 +61,13 @@ class Request {
         return handler.next(response);
       },
       onError: (DioError e,ErrorInterceptorHandler  handler) {
+        if (e.response?.statusCode == 401) {
+          ToastWidget.showToastMsg('用户信息过时，请重新登录！');
+          BuildContext context = navigatorKey.currentState!.overlay!.context;
+          Future.delayed(const Duration(seconds: 0)).then((onValue) {
+            Navigator.pushNamedAndRemoveUntil(context, '/logIn', (route) => false);
+          });
+        }
         BotToast.closeAllLoading();
         ErrorEntity eInfo = createErrorEntity(e);
         ToastWidget.showToastMsg(eInfo.message);
@@ -207,6 +214,7 @@ class Request {
    * error 错误信息统一处理
    */
   ErrorEntity createErrorEntity(DioError error) {
+    BotToast.closeAllLoading();
     switch (error.type) {
       case DioErrorType.cancel:
         {
@@ -227,7 +235,7 @@ class Request {
       case DioErrorType.response:
         {
           try {
-            int? errCode = error.response!.statusCode;
+            int? errCode = error.response?.statusCode;
             switch (errCode) {
               case 400:
                 {

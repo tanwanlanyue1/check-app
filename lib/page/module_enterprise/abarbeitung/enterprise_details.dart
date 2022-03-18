@@ -1,28 +1,33 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
+import 'package:scet_check/components/generalduty/toast_widget.dart';
+import 'package:scet_check/page/module_login/login_page.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/drop_down_menu_route.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
+import 'package:scet_check/routers/router_animate/router_animate.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/storage/data_storage_key.dart';
+import 'package:scet_check/utils/storage/storage.dart';
 
-///隐患台账企业排查清单
-///arguments:{companyId:公司id，companyName：公司名称,uuid:uuid}
-class HiddenDetails extends StatefulWidget {
-  Map? arguments;
-  HiddenDetails({Key? key,this.arguments, }) : super(key: key);
+///企业详情
+/// 问题未整改列表/清单下的问题
+class EnterpriseDetails extends StatefulWidget {
+  const EnterpriseDetails({Key? key}) : super(key: key);
 
   @override
-  _HiddenDetailsState createState() => _HiddenDetailsState();
+  _EnterpriseDetailsState createState() => _EnterpriseDetailsState();
 }
 
-class _HiddenDetailsState extends State<HiddenDetails> {
+class _EnterpriseDetailsState extends State<EnterpriseDetails> {
   String companyName = '';//公司名
   String companyId = '';//公司id
   bool show = false; //筛选的显示
   int repertoire = 0; //0-渲染清单 1-问题列表
   bool check = false; //申报,排查
-  String uuid = '';//清单id
   List companyDetails = [];//公司问题详情
   GlobalKey _globalKey = GlobalKey(); //获取盒子位置
 
@@ -66,9 +71,8 @@ class _HiddenDetailsState extends State<HiddenDetails> {
   @override
   void initState() {
     // TODO: implement initState
-    companyName = widget.arguments?['companyName'] ?? '';
-    companyId = widget.arguments?['companyId'].toString() ?? '';
-    uuid = widget.arguments?['uuid'].toString() ?? '';
+    companyId =  jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['companyId'];
+    companyName =  jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['company']['name'];
     _getInventoryList();
     super.initState();
   }
@@ -92,10 +96,8 @@ class _HiddenDetailsState extends State<HiddenDetails> {
                           company: companyDetails[i],
                           i: i,
                           callBack:(){
-                            Navigator.pushNamed(context, '/stewardCheck',arguments: {
-                              'uuid':companyDetails[i]['id'],
-                              'company':false
-                            });
+                            Navigator.pushNamed(context, '/enterprisInventory',
+                                arguments: {'uuid':companyDetails[i]['id'],'company':false});
                           }
                       )),
                     ):
@@ -106,9 +108,7 @@ class _HiddenDetailsState extends State<HiddenDetails> {
                           detail: true,
                           review: false,
                           callBack:(){
-                            Navigator.pushNamed(context, '/rectificationProblem',
-                                arguments: {'check':true,'problemId':companyDetails[i]['id']}
-                            );
+                            Navigator.pushNamed(context, '/abarbeitungFrom',arguments: {'id':companyDetails[i]['id']});
                           }
                       )),
                     ),
@@ -148,7 +148,15 @@ class _HiddenDetailsState extends State<HiddenDetails> {
               child: Image.asset('lib/assets/icons/other/chevronLeft.png',fit: BoxFit.fill,),
             ),
             onTap: (){
-              Navigator.pop(context);
+              ToastWidget.showDialog(
+                  msg: '是否退出当前账号？',
+                  ok: (){
+                    StorageUtil().remove(StorageKey.Token);
+                    Navigator.of(context).pushAndRemoveUntil(
+                        CustomRoute(LoginPage()), (router) => false);
+                  }
+              );
+              // Navigator.pop(context);
             },
           ),
           Expanded(
@@ -196,4 +204,5 @@ class _HiddenDetailsState extends State<HiddenDetails> {
       ),
     );
   }
+
 }

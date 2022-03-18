@@ -49,7 +49,7 @@ class LawComponents{
     );
   }
 
- ///一行俩个
+ ///左图标一行俩个
  ///child : 左组件
  ///textChild : 右组件
  static Widget rowTwo({Widget? child,required Widget textChild}){

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/components/form_check.dart';
-import 'package:scet_check/page/module_steward/law/components/law_components.dart';
+import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 import 'enterprise_compon.dart';
@@ -23,17 +22,21 @@ class _HazardousWastesState extends State<HazardousWastes> {
           Container(
             color: Colors.white,
             padding: EdgeInsets.all(px(32)),
-            child: Column(
-              children: type(),
+            child:  Column(
+              children: EnterPriseCompon.type(color: true,length: 3),
             ),
+            // child: Column(
+            //   children: type(),
+            // ),
           )
         ],
       ),
     );
   }
 
-
   ///污染物类型循环
+  ///rowItem: 小标题
+  ///classify: 污染物具体数据
   List<Widget> type(){
     List<Widget> itemRow = [];
     for(var i = 0; i < 2; i++){
@@ -45,7 +48,7 @@ class _HazardousWastesState extends State<HazardousWastes> {
                 Container(
                   child: FormCheck.rowItem(
                       title: '1.污泥',
-                      titleColor: Color(0xff323233),
+                      titleColor: Color(0xff323233),//0xff6089F0
                       child: Text('危废编码：264-012-12',style: TextStyle(color: Color(0xff323233),fontSize: sp(26)),textAlign: TextAlign.right,)
                   ),
                 ),
@@ -53,34 +56,14 @@ class _HazardousWastesState extends State<HazardousWastes> {
                   padding: EdgeInsets.only(bottom: px(12)),
                   height: px(150),
                   child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Expanded(
-                          child: EnterPriseCompon.classify(
-                              title:'否',
-                              color: 0,
-                              type:'纳入管理计划'
-                          ),
+                    children: List.generate(3, (i) =>
+                      Expanded(
+                        child: EnterPriseCompon.classify(
+                            title:'否',
+                            color: 0,
+                            type:'纳入管理计划'
                         ),
-                        Container(
-                          width: px(1),
-                          height: px(48),
-                          color: Color(0xffE8E8E8),
-                        ),
-                        Expanded(
-                          child: EnterPriseCompon.classify(
-                              title:'是',
-                              color: 2,
-                              type:'纳入排污许可'
-                          ),
-                        ),
-                        Expanded(
-                          child: EnterPriseCompon.classify(
-                            title:'20',
-                            type: '排污许可量(t/a)',
-                          ),
-                        ),
-                      ]
+                      )),
                   ),
                   decoration: BoxDecoration(
                     border: Border(

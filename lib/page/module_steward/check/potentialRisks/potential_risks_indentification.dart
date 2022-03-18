@@ -1,12 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/down_input.dart';
-import 'package:scet_check/components/form_check.dart';
+import 'package:scet_check/components/generalduty/toast_widget.dart';
+import 'package:scet_check/components/generalduty/upload_image.dart';
+import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/client_list_page.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/layout_page.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/storage/data_storage_key.dart';
+import 'package:scet_check/utils/storage/storage.dart';
+import 'package:uuid/uuid.dart';
 
 ///隐患排查
 class PotentialRisksIndentification extends StatefulWidget {
@@ -19,25 +26,77 @@ class PotentialRisksIndentification extends StatefulWidget {
 class _PotentialRisksIndentificationState extends State<PotentialRisksIndentification> {
   List tabBar = ["全园区","第一片区","第二片区","第三片区"];//头部
   final PageController pagesController = PageController();//页面控制器
-  int _companyId = 0;//公司
-  String _companyName = '';//公司名称
-  List companyList = [];//全部公司数据
-  Position? position;//定位
-  int pageIndex = 0;//下标
+  String _companyId = ''; //公司id
+  String _companyName = ''; //公司名称
+  String checkName = ''; //排查人员
+  List companyList = []; //全部公司数据
+  List imgDetails = []; //上传图片
+  Position? position; //定位
+  int pageIndex = 0; //下标
+  Uuid uuid = Uuid(); //uuid
+  String _uuid = ''; //uuid
+  String userName = ''; //用户名
+  String userId = ''; //用户id
+  final DateTime _dateTime = DateTime.now();
+  DateTime solvedAt = DateTime.now().add(Duration(days: 7));//整改期限
+  DateTime reviewedAt = DateTime.now().add(Duration(days: 14));//复查期限
 
-  /// 获取全部公司
-  void _getLatestData() async {
-    Map<String, dynamic> params = pageIndex == 0 ? {}: {'area':pageIndex};
-    var response = await Request().get(Api.url['all'], data: params);
-    if(response['code'] == 200) {
+  /// 获取企业数据
+  void _getCompany() async {
+    var response = await Request().get(Api.url['company'],);
+    if(response['statusCode'] == 200) {
       setState(() {
         companyList = response["data"];
       });
     }
   }
 
+  /// 签到清单
+  /// id: uuid
+  /// checkPersonnel: 检查人员
+  /// checkType: 检查类型: 1,管家排查
+  /// images: [],上传的图片
+  /// longitude: 经度
+  /// latitude: 纬度度
+  /// userId: 用户id
+  /// companyId: 公司id
+  /// solvedAt: 整改期限
+  /// reviewedAt: 复查期限
+  void _setInventory() async {
+    if (position?.longitude == null) {
+      ToastWidget.showToastMsg('请获取坐标！');
+    } else if (checkName.isEmpty) {
+      ToastWidget.showToastMsg('请输入排查人员！');
+    } else if (imgDetails.isEmpty) {
+      ToastWidget.showToastMsg('请上传问题图片！');
+    }else{
+      Map<String, dynamic> _data = {
+        'id':_uuid,
+        'checkPersonnel': checkName,
+        'images': imgDetails,
+        'longitude':position?.longitude,
+        'latitude':position?.latitude,
+        'userId': userId,
+        'companyId': _companyId,
+        'solvedAt': solvedAt.toString(),
+        'reviewedAt': reviewedAt.toString(),
+      };
+      var response = await Request().post(
+          Api.url['inventory'],
+          data: _data
+      );
+      if(response['statusCode'] == 200) {
+        Navigator.pop(context);
+        setState(() {
+          Navigator.pushNamed(context, '/stewardCheck', arguments: {'uuid':_uuid,'company':false});
+        });
+      }
+    }
+  }
+
   ///签到
   void singIn(){
+    _uuid = uuid.v4();
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
@@ -52,25 +111,33 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
                         FormCheck.rowItem(
                             title: '企业名称',
                             titleColor: Color(0xff323233),
-                            child: FormCheck.inputWidget(hintText: '公司名称')
+                            child: Text(_companyName,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
                         ),
                         FormCheck.rowItem(
                             title: '归属片区',
                             titleColor: Color(0xff323233),
-                            child: FormCheck.inputWidget(hintText: '第一片区')
+                            child: Text('第一片区',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
                         ),
                         FormCheck.rowItem(
                             title: '区域位置',
                             titleColor: Color(0xff323233),
-                            child: FormCheck.inputWidget(hintText: '西区')
+                            child: Text('西区',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
                         ),
                         FormCheck.rowItem(
                           title: '实时定位',
                           titleColor: Color(0xff323233),
                           child: Row(
                             children: [
-                              position == null ?Container(): Text('${position?.longitude}',style: TextStyle(color: Color(0xff969799),fontSize: sp(28)),),
-                              position == null ?Container(): Text('${position?.latitude}',style: TextStyle(color: Color(0xff969799),fontSize: sp(28))),
+                              Visibility(
+                                visible: position != null,
+                                child: Text('${position?.longitude}',
+                                  style: TextStyle(color: Color(0xff969799),fontSize: sp(28)),),
+                              ),
+                              Visibility(
+                                visible: position != null,
+                                child: Text('${position?.latitude}',
+                                  style: TextStyle(color: Color(0xff969799),fontSize: sp(28)),),
+                              ),
                               Container(
                                 height: px(48),
                                 margin: EdgeInsets.only(left: px(24)),
@@ -95,30 +162,48 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
                         FormCheck.rowItem(
                           title: '排查人员',
                           titleColor: Color(0xff323233),
-                          child: DownInput(
-                            value: '陈秋好',
-                            data: [{'name':'陈秋好'},{"name":"张三"}],
-                            more:true,
-                          ),
+                            child: FormCheck.inputWidget(
+                              hintText: '请输入排查人员',
+                              onChanged: (val){
+                                checkName = val;
+                                state(() {});
+                              }
+                            )
                         ),
                         FormCheck.rowItem(
                             title: '排查日期',
                             titleColor: Color(0xff323233),
-                            child: FormCheck.inputWidget(hintText: '西区')
+                          child: Text(_dateTime.toString().substring(0,10),style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
                         ),
                         FormCheck.rowItem(
                             title: '填报人员',
                             titleColor: Color(0xff323233),
-                            child: FormCheck.inputWidget(hintText: '陈秋好')
+                          child: Text(userName,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+                        ),
+                        FormCheck.rowItem(
+                            alignStart: true,
+                            titleColor: Color(0xff323233),
+                            title: "问题照片",
+                            child: UploadImage(
+                              imgList: imgDetails,
+                              uuid: _uuid,
+                              closeIcon: true,
+                              callback: (List? data) {
+                                if (data != null) {
+                                  imgDetails = data;
+                                }
+                                setState(() {});
+                              },
+                            ),
                         ),
                         FormCheck.submit(
                           cancel: (){
                             Navigator.pop(context);
                           },
                           submit: (){
-                            Navigator.pop(context);
+                            _setInventory();
                           }
-                        )
+                        ),
                       ]
                   ),
                 )
@@ -132,7 +217,10 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
   @override
   void initState() {
     // TODO: implement initState
-    _getLatestData();
+    _getCompany();
+    Map res = jsonDecode(StorageUtil().getString(StorageKey.PersonalData));
+    userName = res['nickname'];
+    userId = res['id'];
     super.initState();
   }
 
@@ -142,113 +230,33 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
       tabBar: tabBar,
       callBack: (val){
         pageIndex = val;
-        _getLatestData();
+        _getCompany();
         setState(() {});
       },
-      pageBody: [
-        Column(
-          children: [
-            Container(
-              height: px(24),
-              margin: EdgeInsets.only(left:px(20),right: px(20)),
-              color: Colors.white,
-            ),
-            Visibility(
-              visible: companyList.isNotEmpty,
-              child: Expanded(
-                child: ClientListPage(
-                  companyList: companyList,
-                  callBack: (id,name){
-                    _companyId = id;
-                    _companyName = name;
-                    Navigator.pushNamed(context, '/hiddenDetails',
-                        arguments: {'companyId': _companyId,'companyName': _companyName,'check':true}
-                        );
-                    setState(() {});
-                  },
-                ),
+      pageBody: List.generate(4, (index) => Column(
+        children: [
+          Container(
+            height: px(24),
+            margin: EdgeInsets.only(left:px(20),right: px(20)),
+            color: Colors.white,
+          ),
+          Visibility(
+            visible: companyList.isNotEmpty,
+            child: Expanded(
+              child: ClientListPage(
+                companyList: companyList,
+                callBack: (id,name){
+                  _companyId = id;
+                  _companyName = name;
+                  imgDetails = [];
+                  singIn();
+                  setState(() {});
+                },
               ),
             ),
-          ],
-        ),
-
-        Column(
-          children: [
-            Container(
-              height: px(24),
-              margin: EdgeInsets.only(left:px(20),right: px(20)),
-              color: Colors.white,
-            ),
-            Visibility(
-              visible: companyList.isNotEmpty,
-              child: Expanded(
-                child: ClientListPage(
-                  companyList: companyList,
-                  callBack: (id,name){
-                    singIn();
-                    // _companyId = id;
-                    // _companyName = name;
-                    // details = true;
-                    setState(() {});
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-
-        Column(
-          children: [
-            Container(
-              height: px(24),
-              margin: EdgeInsets.only(left:px(20),right: px(20)),
-              color: Colors.white,
-            ),
-            Visibility(
-              visible: companyList.isNotEmpty,
-              child: Expanded(
-                child: ClientListPage(
-                  companyList: companyList,
-                  callBack: (id,name){
-                    _companyId = id;
-                    _companyName = name;
-                    Navigator.pushNamed(context, '/hiddenDetails',
-                        arguments: {'companyId': _companyId,'companyName': _companyName,'check':true}
-                    );
-                    setState(() {});
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-
-        Column(
-          children: [
-            Container(
-              height: px(24),
-              margin: EdgeInsets.only(left:px(20),right: px(20)),
-              color: Colors.white,
-            ),
-            Visibility(
-              visible: companyList.isNotEmpty,
-              child: Expanded(
-                child: ClientListPage(
-                  companyList: companyList,
-                  callBack: (id,name){
-                    _companyId = id;
-                    _companyName = name;
-                    Navigator.pushNamed(context, '/hiddenDetails',
-                        arguments: {'companyId': _companyId,'companyName': _companyName,'check':true}
-                    );
-                    setState(() {});
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
+          ),
+        ],
+      )),
     );
   }
 

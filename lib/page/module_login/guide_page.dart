@@ -2,11 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
-import 'package:scet_check/components/my_painter.dart';
-import 'package:scet_check/utils/screen/adapter.dart';
+import 'package:scet_check/page/module_login/components/my_painter.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
@@ -21,14 +19,6 @@ class _GuidePageState extends State<GuidePage> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(
-        BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width,
-            maxHeight: MediaQuery.of(context).size.height),
-        designSize: Size(Adapter.designWidth, Adapter.designHeight),
-        context: context,
-        minTextAdapt: true,
-        orientation: Orientation.portrait);
     return Scaffold(// 判断是否首次打开，不是首次打开使用启动页图片衔接安卓原生启动页
         body: Stack(
           children: [
@@ -46,7 +36,7 @@ class _GuidePageState extends State<GuidePage> {
                   shaderCallback: (bounds) {
                     return LinearGradient(
                     begin: Alignment.topCenter,end: Alignment.bottomCenter,
-                    colors: const [Color(0xff80D4FF), Color(0xff5778FF),Color(0xff5778FF )]
+                    colors: const [Color(0xff80D4FF), Color(0xff5778FF),Color(0xff5778FF)]
                     ).createShader(Offset.zero & bounds.size);
                   },
                   child: Text(
@@ -88,7 +78,7 @@ class _GuidePageState extends State<GuidePage> {
   void _tap() {
     StorageUtil().setBool(StorageKey.STORAGE_DEVICE_ALREADY_OPEN_KEY, true); // 设置本机为非首次打开app的状态
     /// 跳转至登陆页面
-    Navigator.pushNamedAndRemoveUntil(context, '/logIn', (route) => true);
+    Navigator.pushNamedAndRemoveUntil(context, '/logIn', (route) => false);
   }
 
   void initData() async {
@@ -118,7 +108,7 @@ class _GuidePageState extends State<GuidePage> {
       'type': packageInfo,
     };
     var response = await Request().post(Api.url['version'], data: _data);
-    if (response['code'] == 200 && response['data']['seccut'] == true) {
+    if (response['statusCode'] == 200 && response['data']['seccut'] == true) {
       if (Platform.isIOS) {
         _upAppPage(
           version: response['data']['version'],

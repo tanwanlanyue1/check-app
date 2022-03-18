@@ -19,11 +19,11 @@ class FileSystem{
   /// result: 文件数组[file,file] file_picker插件的文件选择回调
   /// url :上传地址
   /// 异步上传 上传操作完成后返回回调值[true]
-  static Future<List<bool>?> upload(FilePickerResult result,String url) async {
+  static Future<List<dynamic>?> upload(FilePickerResult result,String url) async {
 
     List<File> files = result.paths.map((path) => File(path.toString())).toList();
 
-    List<bool> _isUp = [];// 上传成功或者失败保存的数组
+    List<dynamic> _isUp = [];// 上传成功或者失败保存的数组
 
     for(int i = 0; i < files.length; i++){
 
@@ -39,6 +39,7 @@ class FileSystem{
         "size":size,
         "mimetype":mimetype
       };
+
       FormData formdata = FormData.fromMap({
         "file": await MultipartFile.fromFile(
           path, // 路径
@@ -46,6 +47,7 @@ class FileSystem{
         ),
         "stat":jsonEncode(data)
       });
+
       try{
         var response = await Request().upfile(
             url,
@@ -53,8 +55,9 @@ class FileSystem{
             formDatas: formdata,
             onSendProgress:(val){ToastWidget.showToastMsg(val);});
         if(response['statusCode'] == 200) {
+          print('response>>>>>>>>$response');
           ToastWidget.showToastMsg('上传成功!');
-          _isUp.add(true);
+          _isUp.add({"state":true,'msg':response});
         }else{
           ToastWidget.showToastMsg('上传出错了!');
           _isUp.add(false);

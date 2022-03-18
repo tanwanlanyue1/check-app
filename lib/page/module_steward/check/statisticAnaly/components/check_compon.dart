@@ -8,35 +8,31 @@ class CheckCompon {
   ///tabBar： tab数组
   ///onTap： 回调
   static  Widget tabCut({int index = 0, List? tabBar, Function? onTap}) {
-    return SizedBox(
-      height: px(84),
-      child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(tabBar?.length ?? 0, (i) {
-            return GestureDetector(
-              child: Container(
-                height: px(64),
-                alignment: Alignment.centerRight,
-                child: Text(
-                  i == 3 ?
-                  "${tabBar![i]}   " :
-                  "${tabBar![i]}",
-                  style: TextStyle(
-                    fontSize: sp(28),
-                    color: index == i ? Color(0xff84A7FF) : Color(0xff969799),
-                    fontFamily: 'R',
-                    fontWeight: index == i ? FontWeight.bold : FontWeight.w100,
-                  ),
+    return Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: List.generate(tabBar?.length ?? 0, (i) {
+          return GestureDetector(
+            child: Container(
+              height: px(64),
+              width: px(206),
+              alignment: Alignment.center,
+              child: Text(
+                "${tabBar![i]}",
+                style: TextStyle(
+                  fontSize: sp(28),
+                  color: index == i ? Color(0xff84A7FF) : Color(0xff969799),
+                  fontFamily: 'R',
+                  fontWeight: index == i ? FontWeight.bold : FontWeight.w100,
                 ),
               ),
-              onTap: () {
-                onTap?.call(i);
-              },
-            );
-          }
-          )),
-    );
+            ),
+            onTap: () {
+              onTap?.call(i);
+            },
+          );
+        }
+        ));
   }
 
   ///背景
@@ -47,22 +43,12 @@ class CheckCompon {
     return Padding(
       padding: EdgeInsets.only(
         top: px(19),
-        left: px(
-            pageIndex == 0 ?
-            offestLeft :
-            pageIndex == 3 && offestLeft > 20 ?
-            offestLeft - 20 :
-            offestLeft > right ?
-            offestLeft - right :
-            offestLeft
-        ),
+        left: offestLeft,
       ),
       child: SizedBox(
-        width: pageIndex == 0 || pageIndex == 3 ? px(180) : px(206),
+        width: px(206),
         height: px(74),
-        child: Image.asset('lib/assets/images/home/theFirstSection.png',
-          fit: offestLeft == 0 ? BoxFit.fitHeight : BoxFit.fill,
-        ),
+        child: Image.asset('lib/assets/images/home/theFirstSection.png',),
       ),
     );
   }

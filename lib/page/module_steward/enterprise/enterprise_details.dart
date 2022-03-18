@@ -39,7 +39,7 @@ class _EnterpriseDetailsState extends State<EnterpriseDetails> {
           Expanded(
             child: PageView(
               controller: pagesController,
-              children: [
+              children: const [
                 BasicInformation(),///基本信息
                 BuildingProject(),///建设项目情况
                 PollutionDischarge(),///排污许可

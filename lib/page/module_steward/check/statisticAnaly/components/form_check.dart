@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
+///表单组件
 class FormCheck {
 
   static TextStyle nameStyle = TextStyle(
@@ -119,7 +120,11 @@ class FormCheck {
     );
   }
 
-  //输入框
+  ///输入框
+  ///disabled:启用
+  ///hintText:默认
+  ///onChanged:回调
+  ///unit:单位
   static Widget inputWidget({bool? disabled, String? hintText = '请输入', Function? onChanged, String? unit}) {
     return Row(
       children: [
@@ -134,7 +139,7 @@ class FormCheck {
                     fontSize: sp(28.0)
                 ),
                 contentPadding: EdgeInsets.all(px(16.0)),
-                filled: true,
+                // filled: true,
                 fillColor: Color(0XffF5F6FA),
                 border: InputBorder.none,
               ),
@@ -153,77 +158,14 @@ class FormCheck {
       ],
     );
   }
-  //下拉选择
-  static Widget selectWidget({String? hintText, required List items, String? value, Function? onChanged}) {
-    return Container(
-      padding: EdgeInsets.only(left: px(8.0)),
-      height: px(54.0),
-      decoration: BoxDecoration(
-        border: Border.all(width: 1, color: Color(0X99A1A6B3)),
-        borderRadius: BorderRadius.circular(px(4.0)),
-      ),
-      child:  DropdownButton(
-        isExpanded: true,
-        underline: Container(),
-        items: items.map((item) => DropdownMenuItem(
-            child: Text('${item['name']}'),
-            value: '${item['name']}'
-        )
-        ).toList(),
-        hint: Text(
-            '$hintText',
-            style: TextStyle(
-                color: Color(0XFFB0B2B8),
-                fontSize: sp(24.0)
-            )
-        ),
-        style: TextStyle(
-            color: Color(0XFF45474D),
-            fontSize: sp(28.0)
-        ),
-        onChanged: (val){
-          onChanged?.call(val);
-        },
-        value: value,
-        iconSize: sp(40.0),
-        elevation: 10,
-      ),
-    );
-  }
-  //输入框可以展示四行
-  static Widget textAreaWidget({String? hintText, Function? onChanged}) {
-    return TextFormField(
-      maxLines: 4,
-      autofocus: false,
-      decoration: InputDecoration(
-        isCollapsed: true,
-        hintText: '$hintText',
-        hintStyle: TextStyle(
-          color: Color(0XFFA8ABB3),
-          fontSize: sp(28.0)
-        ),
-        contentPadding: EdgeInsets.all(px(10.0)),
-        filled: true,
-        fillColor: Color(0X29B8BDCC),
-        border: InputBorder.none
-      ),
-      style: TextStyle(
-        color: Color(0XFF45474D),
-        fontSize: sp(28.0)
-      ),
-      onChanged: (val){
-        onChanged?.call();
-      }
-    );
-  }
 
   ///表单卡片
   ///title：标题
   ///children：表单内容
-  static Widget dataCard({String? title,required List<Widget> children}){
+  static Widget dataCard({String? title,required List<Widget> children,bool top = true}){
     return Container(
       width: px(750),
-      margin: EdgeInsets.only(top: px(4)),
+      margin: EdgeInsets.only(top: top ? px(4):0),
       padding: EdgeInsets.all(px(16)),
       decoration: BoxDecoration(
           color: Color(0xffffffff),

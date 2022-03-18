@@ -7,13 +7,14 @@ import 'package:scet_check/components/generalduty/down_input.dart';
 ///callback: 回调
 class DropDownMenuRoute extends PopupRoute {
   final Rect position;
+  int selectIndex;
   final callback;
   DropDownMenuRoute({
     required this.position,
-    this.callback
+    this.callback,
+    this.selectIndex = 0,
   });
 
-  int index = 0;
   @override
   // TODO: implement barrierColor
   Color? get barrierColor => null;
@@ -25,6 +26,7 @@ class DropDownMenuRoute extends PopupRoute {
   @override
   // TODO: implement barrierLabel
   String? get barrierLabel => null;
+  List inventory = ['隐患排查清单','隐患排查问题列表'];
 
   @override
   Widget buildPage(BuildContext context, Animation<double> animation,
@@ -49,18 +51,18 @@ class DropDownMenuRoute extends PopupRoute {
                       child: Column(
                         children: [
                           Wrap(
-                            children: List.generate(6, (i) {
+                            children: List.generate(inventory.length, (i) {
                               return GestureDetector(
                                 child: Container(
                                   margin: EdgeInsets.only(left: px(24),top: px(12)),
                                   height: px(48),
                                   width: px(240),
-                                  color: Color(index == i ? 0xffEDF2FC : 0xffF0F1F5),
+                                  color: Color(selectIndex == i ? 0xffEDF2FC : 0xffF0F1F5),
                                   alignment: Alignment.center,
-                                  child: Text('隐患排查清单',style: TextStyle(color: Color(index == i ? 0xff4D7FFF : 0xff323233),fontSize: sp(24)),),
+                                  child: Text(inventory[i],style: TextStyle(color: Color(selectIndex == i ? 0xff4D7FFF : 0xff323233),fontSize: sp(24)),),
                                 ),
                                 onTap: (){
-                                  index = i;
+                                  selectIndex = i;
                                   state(() {});
                                 },
                               );
@@ -79,7 +81,6 @@ class DropDownMenuRoute extends PopupRoute {
                                     child: Text('取消',style: TextStyle(color: Color(0xff4D7FFF),fontSize: sp(24)),),
                                   ),
                                   onTap: (){
-                                    callback(false);
                                     Navigator.pop(context);
                                   },
                                 ),
@@ -94,7 +95,7 @@ class DropDownMenuRoute extends PopupRoute {
                                     child: Text('确定',style: TextStyle(color: Colors.white,fontSize: sp(24)),),
                                   ),
                                   onTap: (){
-                                    callback(true);
+                                    callback(selectIndex);
                                     Navigator.pop(context);
                                   },
                                 ),

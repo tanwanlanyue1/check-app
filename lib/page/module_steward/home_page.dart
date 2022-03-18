@@ -57,12 +57,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width,
-        maxHeight: MediaQuery.of(context).size.height),
-        designSize: Size(Adapter.designWidth, Adapter.designHeight),
-        orientation: Orientation.portrait,
-    context: context);
     return WillPopScope(
       onWillPop: LogOut.onWillPop,
       child: Scaffold(
@@ -110,6 +104,9 @@ class _HomePageState extends State<HomePage> {
   }
 
 ///每一项菜单
+///index: 下标
+///commonImage: 未选中图片
+///activeImage: 选中图片
   Widget _buildItemMenu({required int index, required String commonImage, required String activeImage}) {
     _roviderDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     Widget menuItem = GestureDetector(

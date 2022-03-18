@@ -6,9 +6,12 @@ import 'package:scet_check/utils/screen/screen.dart';
 import 'Components/same_point_table.dart';
 
 ///统计
+///pageIndex:当前页面下表
+///districtId:园区id
 class Statistics extends StatefulWidget {
-  int pageIndex;//当前页面下表
-  Statistics({Key? key,required this.pageIndex}) : super(key: key);
+  int pageIndex;
+  List? districtId;
+  Statistics({Key? key,required this.pageIndex,this.districtId}) : super(key: key);
 
   @override
   _StatisticsState createState() => _StatisticsState();
@@ -16,9 +19,12 @@ class Statistics extends StatefulWidget {
 
 class _StatisticsState extends State<Statistics> {
 
-  Map gardenStatistics = {};//总数据
-  List _tableBody = [];//表单
+  String _districtId = '';//片区id
   String type = '行业';//排名类型
+
+  Map gardenStatistics = {};//总数据
+  List districtList = [];//片区统计数据
+  List _tableBody = [];//表单
   int tabIndex = 0;//表单类型
   int finished = 0;//问题整改
   int questionTotal = 0;//问题总数
@@ -31,42 +37,44 @@ class _StatisticsState extends State<Statistics> {
   void initState() {
     super.initState();
     _pageIndex = widget.pageIndex;
-    _getStatistics(); // 获取园区统计
-    _getcolumns(); // 获取表头
+    // _districtId = widget.districtId?[_pageIndex] ?? '';
+    // _getStatistics(); // 获取园区统计
   }
 
-  /// 获取园区统计
+  @override
+  void didUpdateWidget(covariant Statistics oldWidget) {
+    _pageIndex = widget.pageIndex;
+    // _districtId = widget.districtId?[_pageIndex] ?? '';
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+  }
+
+  /// 获取园区详情
   void _getStatistics() async {
-    Map<String, dynamic> params = _pageIndex == 0 ? {}: {'area':_pageIndex};
-    var response = await Request().get(Api.url['statistics'], data: params);
+    var response = await Request().get(Api.url['district']);
     if(response['statusCode'] == 200) {
+      columns = [];
+      print(response);
       setState(() {
-        gardenStatistics = response["data"];
-        questionTotal = gardenStatistics['question_total'] ?? 0;
-        finished = gardenStatistics['question_finished'] ?? 0;
-        companyTotal = gardenStatistics['company_total'] ?? 0;
-        number = [
-          {'total':companyTotal,'unit':'家','name':"企业总数"},
-          {'total':questionTotal,'unit':'个','name':"排查问题"},
-          {'total':finished,'unit':'个','name':"整改完毕"},
-        ];
+        // gardenStatistics = response["data"];
+        // questionTotal = gardenStatistics['question_total'] ?? 0;
+        // finished = gardenStatistics['question_finished'] ?? 0;
+        // companyTotal = gardenStatistics['company_total'] ?? 0;
+        // number = [
+        //   {'total':companyTotal,'unit':'家','name':"企业总数"},
+        //   {'total':questionTotal,'unit':'个','name':"排查问题"},
+        //   {'total':finished,'unit':'个','name':"整改完毕"},
+        // ];
       });
       judge();
     }
   }
+
   /// 获取user
   void _getUser() async {
     var response = await Request().get(Api.url['user']);
     if(response['statusCode'] == 200) {
       print(response);
-    }
-  }
-  /// 获取表头
-  void _getcolumns() async {
-    var response = await Request().get(Api.url['columns']);
-    if(response['statusCode'] == 200) {
-      print(response);
-      // columns = response['data'];
     }
   }
 
@@ -100,7 +108,8 @@ class _StatisticsState extends State<Statistics> {
         children: [
           abarbeitung(),
           SamePointTable(
-            tableHeader: type,
+            tableHeader: columns,
+            tableTitle: type,
             tableBody: _tableBody,
             callBack: (){
               judge();
@@ -109,7 +118,6 @@ class _StatisticsState extends State<Statistics> {
               }else {
                 tabIndex = 0;
               }
-              // widget.callBack?.call();
             },
             callPrevious: (){
               judge();
@@ -118,7 +126,6 @@ class _StatisticsState extends State<Statistics> {
               }else{
                 tabIndex = 2;
               }
-              // widget.callPrevious?.call();
             },
           ),
         ],

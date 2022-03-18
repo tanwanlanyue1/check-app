@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scet_check/model/provider/provider_details.dart';
+import 'package:scet_check/utils/screen/adapter.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 import 'check_compon.dart';
@@ -21,12 +22,14 @@ class LayoutPage extends StatefulWidget {
 
 class _LayoutPageState extends State<LayoutPage> {
   final PageController pagesController = PageController(); //page控制器
+  ScrollController controller = ScrollController();
+  ScrollController controllerTow = ScrollController();
   ///全局变量 控制偏移量
   ProviderDetaild? _roviderDetaild;
   List _tabBar = [];//头部
   List _pageBody = [];//页面内容
   int _pageIndex = 0;//下标
-
+  double off = 0.0;
   @override
   void initState() {
     super.initState();
@@ -36,6 +39,10 @@ class _LayoutPageState extends State<LayoutPage> {
       if(pagesController.page != null){
         _roviderDetaild!.setOffest(pagesController.page!);
       }
+    });
+    controller.addListener(() {
+      off = controller.offset;
+      controllerTow.jumpTo(off);
     });
   }
 
@@ -59,18 +66,39 @@ class _LayoutPageState extends State<LayoutPage> {
           margin: EdgeInsets.only(left:px(20),right: px(18)),
           child: Stack(
             children: [
-              CheckCompon.bagColor(
-                pageIndex: _pageIndex,
-                offestLeft:_roviderDetaild!.offestLeft,
+              ListView(
+                scrollDirection: Axis.horizontal,
+                controller: controllerTow,
+                children: [
+                  Container(
+                    height: px(88),
+                    width: px(206 * _tabBar.length),
+                    // margin: EdgeInsets.only(left: px(206)),
+                    child: Row(
+                      children: [
+                        CheckCompon.bagColor(
+                          pageIndex: _pageIndex,
+                          offestLeft: _roviderDetaild?.offestLeft,
+                        )
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              CheckCompon.tabCut(
-                  index: _pageIndex,
-                  tabBar: _tabBar,
-                  onTap: (i){
-                    _pageIndex = i;
-                    pagesController.jumpToPage(i);
-                    setState(() {});
-                  }
+              ListView(
+                scrollDirection: Axis.horizontal,
+                controller: controller,
+                children: [
+                  CheckCompon.tabCut(
+                      index: _pageIndex,
+                      tabBar: _tabBar,
+                      onTap: (i){
+                        _pageIndex = i;
+                        pagesController.jumpToPage(i);
+                        setState(() {});
+                      }
+                  ),
+                ],
               ),
             ],
           ),
@@ -85,7 +113,8 @@ class _LayoutPageState extends State<LayoutPage> {
                 _pageIndex = val;
                 widget.callBack?.call(val);
               },
-            )),
+            )
+        ),
       ],
     );
   }
