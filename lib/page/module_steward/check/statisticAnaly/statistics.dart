@@ -44,7 +44,9 @@ class _StatisticsState extends State<Statistics> {
     _getProblem();//获取问题数据总数
     _companyCount();//获取企业总数
     _getAbarbeitung();// 获取整改数据总数
-    _getStatistics(); // 获取问题统计数目
+    _getStatistics(data: {
+      'groupTable':'industry',
+    });
     judge();
   }
 
@@ -52,24 +54,27 @@ class _StatisticsState extends State<Statistics> {
   void didUpdateWidget(covariant Statistics oldWidget) {
     _pageIndex = widget.pageIndex;
     _districtId = widget.districtId?[_pageIndex] ?? '';
-    _getProblem();//获取问题数据总数
-    _companyCount();//获取企业总数
-    _getAbarbeitung();// 获取整改数据总数
-    _getStatistics();// 获取问题统计数目
-    judge();
+    if(mounted){
+      _getProblem();//获取问题数据总数
+      _companyCount();//获取企业总数
+      _getAbarbeitung();// 获取整改数据总数
+      // _getStatistics();// 获取问题统计数目
+      judge();
+    }
     // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
   }
 
   /// 获取问题统计数目
-  void _getStatistics() async {
+  void _getStatistics({Map<String,dynamic>? data}) async {
     var response = await Request().get(
         Api.url['problemStatistics'],
         data: data
     );
     if(response['statusCode'] == 200) {
-      _tableBody = response['data'];
-      setState(() {});
+      setState(() {
+        _tableBody = response['data'];
+      });
     }
   }
   /// 获取问题数据总数
@@ -144,7 +149,7 @@ class _StatisticsState extends State<Statistics> {
           };
         }
         setState((){});
-        _getStatistics();
+        _getStatistics(data: data);
         return;
       }
       case 1: {
@@ -160,7 +165,7 @@ class _StatisticsState extends State<Statistics> {
           };
         }
         setState((){});
-        _getStatistics();
+        _getStatistics(data: data);
         return;
       }
       case 2: {
@@ -176,7 +181,7 @@ class _StatisticsState extends State<Statistics> {
           };
         }
         setState((){});
-        _getStatistics();
+        _getStatistics(data: data);
         return;
       }
     }

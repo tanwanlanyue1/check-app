@@ -43,6 +43,7 @@ class _SamePointTableState extends State<SamePointTable> {
     super.initState();
     tableBody = widget.tableBody ?? [];
     judge();
+    manage(tableBody);
   }
 
   @override
@@ -149,7 +150,6 @@ class _SamePointTableState extends State<SamePointTable> {
   List<Widget> bodyRow(item){
     List<Widget> bodyRow = [];
     for(var i = 0; i < item.length; i++){
-      print('...${item[i]}');
       bodyRow.add(
           Container(
             color: i % 2 == 0 ? Color(0xffF5F8FF) : Colors.white,

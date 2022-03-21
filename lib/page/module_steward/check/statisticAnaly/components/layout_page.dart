@@ -94,6 +94,7 @@ class _LayoutPageState extends State<LayoutPage> {
                       onTap: (i){
                         _pageIndex = i;
                         pagesController.jumpToPage(i);
+                        widget.callBack?.call(i);
                         setState(() {});
                       }
                   ),
