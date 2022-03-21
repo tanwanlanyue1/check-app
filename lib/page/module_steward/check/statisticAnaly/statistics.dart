@@ -44,6 +44,7 @@ class _StatisticsState extends State<Statistics> {
     _companyCount();//获取企业总数
     _getAbarbeitung();// 获取整改数据总数
     _getStatistics(); // 获取问题统计数目
+    judge();
   }
 
   @override
@@ -54,6 +55,7 @@ class _StatisticsState extends State<Statistics> {
     _companyCount();//获取企业总数
     _getAbarbeitung();// 获取整改数据总数
     _getStatistics();// 获取问题统计数目
+    judge();
     // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
   }
@@ -192,20 +194,20 @@ class _StatisticsState extends State<Statistics> {
             tableTitle: type,
             tableBody: _tableBody,
             callBack: (){
-              judge();
               if(tabIndex != 2){
                 tabIndex++;
               }else {
                 tabIndex = 0;
               }
+              judge();
             },
             callPrevious: (){
-              judge();
               if(tabIndex != 0){
                 tabIndex--;
               }else{
                 tabIndex = 2;
               }
+              judge();
             },
           ),
         ],
