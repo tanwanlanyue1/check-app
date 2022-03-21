@@ -41,13 +41,15 @@ class _StatisticsState extends State<Statistics> {
     super.initState();
     _pageIndex = widget.pageIndex;
     _districtId = widget.districtId?[_pageIndex] ?? '';
-    _getProblem();//获取问题数据总数
-    _companyCount();//获取企业总数
-    _getAbarbeitung();// 获取整改数据总数
-    _getStatistics(data: {
-      'groupTable':'industry',
-    });
-    judge();
+    if(mounted){
+      _getProblem();//获取问题数据总数
+      _companyCount();//获取企业总数
+      _getAbarbeitung();// 获取整改数据总数
+      _getStatistics(data: {
+        'groupTable':'industry',
+      });
+      judge();
+    }
   }
 
   @override

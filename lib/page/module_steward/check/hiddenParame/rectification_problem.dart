@@ -26,6 +26,7 @@ class _RectificationProblemState extends State<RectificationProblem> {
   String problemId = '';//问题Id
   int status  = 0; //状态；-1：未处理;0:处理完；1：处理中
   bool declare = false;//申报
+  bool review = false;//复查
   Map problemList = {};//问题详情列表
   List solutionList = [];//整改详情
   List reviewList = [];//复查详情
@@ -78,6 +79,11 @@ class _RectificationProblemState extends State<RectificationProblem> {
     );
     if(response['statusCode'] == 200 && response['data']!=null) {
       reviewList = response['data']['list'];
+      for(var i=0;i<reviewList.length;i++){
+        if(reviewList[i]['isSolved'] == true){
+          review = true;
+        }
+      }
       setState(() {});
     }
   }
@@ -163,9 +169,13 @@ class _RectificationProblemState extends State<RectificationProblem> {
               margin: EdgeInsets.only(right: px(20)),
               child: Image.asset('lib/assets/icons/form/add.png'),),
             onTap: () async{
-              var res =  await  Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId,'review':true});
-              if(res == true){
-                _getReviewList();
+              if(solutionList.isEmpty || review==false){
+                var res =  await  Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId,'review':true});
+                if(res == true){
+                  _getReviewList();
+                }
+              }else{
+                ToastWidget.showToastMsg('暂无整改详情');
               }
             },
           ),
