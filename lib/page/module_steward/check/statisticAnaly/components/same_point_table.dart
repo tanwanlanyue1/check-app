@@ -34,6 +34,7 @@ class _SamePointTableState extends State<SamePointTable> {
   List echartData =[]; //图表数据
   List pieData =[]; //饼图数据
   String companyName = 'companyName';
+  double percent = 0.0; //百分比
   ///全局变量  判断展示哪一个图表
   late ProviderDetaild _providerDetaild;
 
@@ -49,7 +50,6 @@ class _SamePointTableState extends State<SamePointTable> {
     super.didUpdateWidget(oldWidget);
     tableBody = widget.tableBody ?? [];
     judge();
-    print('tableBody====$tableBody');
     manage(tableBody);
   }
 
@@ -111,6 +111,12 @@ class _SamePointTableState extends State<SamePointTable> {
     manage(tableBody);
   }
 
+  //计算最后一位百分比
+  percents(){
+    for(var i=0;i<tableBody.length;i++){
+      ((int.parse(tableBody[i]['allCount'])/6)*100).toStringAsFixed(2);
+    }
+  }
   ///表头
   ///item:表头
   List<Widget> topRow(item){

@@ -14,36 +14,54 @@ class EnterprisePage extends StatefulWidget {
 }
 
 class _EnterprisePageState extends State<EnterprisePage> {
-  List tabBar = ["全园区","第一片区","第二片区","第三片区"];//tab
+  List tabBar = [""];//tab
   int pageIndex = 0;//页面下标
   List companyList = [];//公司列表
+  List districtId = [""];//片区id
+  List districtList = [];//片区统计数据
+  Map<String,dynamic> data = {};//获取企业数据传递的参数
 
-  /// 获取全部公司
-  void _getLatestData() async {
-    // Map<String, dynamic> params = pageIndex == 0 ? {}: {'area':pageIndex};
-    var response = await Request().get(Api.url['all'],
-        // data: params
+  /// 获取企业统计
+  /// district.id:片区id
+  void _getCompany() async {
+    if(pageIndex != 0){
+      data = {
+        'district.id': districtList[pageIndex]['id']
+      };
+    }else{
+      data = {};
+    }
+    var response = await Request().get(
+        Api.url['companyList'],
+        data: data
     );
     if(response['statusCode'] == 200) {
-      setState(() {
-        companyList = response["data"];
-      });
+      companyList = response["data"]['list'];
+      setState(() {});
     }
   }
-  /// 获取企业数据
-  void _getCompany() async {
-    var response = await Request().get(Api.url['company'],);
+  /// 获取片区统计
+  /// 获取tabbar表头，不在写死,
+  /// 片区id也要获取，传递到页面请求片区详情
+  void _getStatistics() async {
+    var response = await Request().get(Api.url['district']);
     if(response['statusCode'] == 200) {
+      tabBar = [];
+      tabBar.add('全园区');
       setState(() {
-        companyList = response["data"];
+        districtList = response["data"];
+        for(var i = 0; i<districtList.length;i++){
+          tabBar.add(districtList[i]['name']);
+          districtId.add(districtList[i]['id']);
+        }
       });
+      _getCompany();
     }
   }
   @override
   void initState() {
     super.initState();
-    // _getLatestData();
-    _getCompany();// 获取企业数据
+    _getStatistics();// 获取片区
   }
 
   @override
@@ -60,13 +78,18 @@ class _EnterprisePageState extends State<EnterprisePage> {
         Expanded(
           child: LayoutPage(
             tabBar: tabBar,
+            callBack: (val){
+              pageIndex = val;
+              _getCompany();
+              setState(() {});
+            },
             pageBody: [
               Visibility(
                 visible: companyList.isNotEmpty,
                 child: ClientListPage(
                   companyList: companyList,
                   callBack: (id,name){
-                    Navigator.pushNamed(context, '/enterpriseDetails');
+                    Navigator.pushNamed(context, '/enterpriseDetails',arguments: {'name':name,"id":id});
                   },
                 ),
               ),
@@ -75,7 +98,7 @@ class _EnterprisePageState extends State<EnterprisePage> {
                 child: ClientListPage(
                   companyList: companyList,
                   callBack: (id,name){
-                    Navigator.pushNamed(context, '/enterpriseDetails');
+                    Navigator.pushNamed(context, '/enterpriseDetails',arguments: {'name':name,"id":id});
                   },
                 ),
               ),
@@ -84,7 +107,7 @@ class _EnterprisePageState extends State<EnterprisePage> {
                 child: ClientListPage(
                   companyList: companyList,
                   callBack: (id,name){
-                    Navigator.pushNamed(context, '/enterpriseDetails');
+                    Navigator.pushNamed(context, '/enterpriseDetails',arguments: {'name':name,"id":id});
                   },
                 ),
               ),
@@ -93,7 +116,7 @@ class _EnterprisePageState extends State<EnterprisePage> {
                 child: ClientListPage(
                   companyList: companyList,
                   callBack: (id,name){
-                    Navigator.pushNamed(context, '/enterpriseDetails');
+                    Navigator.pushNamed(context, '/enterpriseDetails',arguments: {'name':name,"id":id});
                   },
                 ),
               ),

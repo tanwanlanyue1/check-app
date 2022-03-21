@@ -49,8 +49,6 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
   void _getCompany() async {
     if(pageIndex != 0){
       data = {
-        'size':1000,
-        'page':1,
         'district.id': districtList[pageIndex]['id']
       };
     }else{

@@ -49,8 +49,6 @@ class _HiddenParameterState extends State<HiddenParameter> {
   void _getCompany() async {
     if(pageIndex != 0){
       data = {
-        'size':1000,
-        'page':1,
         'district.id': districtList[pageIndex]['id']
       };
     }else{

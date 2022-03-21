@@ -7,9 +7,9 @@ import 'enterprise_compon.dart';
 
 ///基本信息
 class BasicInformation  extends StatefulWidget {
-   const BasicInformation ({Key? key}) : super(key: key);
-
-  @override
+   Map? companyList;
+   BasicInformation ({Key? key,this.companyList}) : super(key: key);
+    @override
   _BasicInformationState createState() => _BasicInformationState();
 }
 
@@ -17,6 +17,8 @@ class _BasicInformationState extends State<BasicInformation > {
   bool tidy = true; //基本信息 收起/展示
   bool prou = true; //生产情况 收起/展示
   List colunms = ['主要产品名称','生产线','批复产能'];//表头
+  Map companyList = {};
+
   ///表单数据
   List bodyList = [
     {
@@ -34,6 +36,20 @@ class _BasicInformationState extends State<BasicInformation > {
       ]
     },
   ];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    companyList = widget.companyList ?? companyList;
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant BasicInformation oldWidget) {
+    // TODO: implement didUpdateWidget
+    companyList = widget.companyList ?? companyList;
+    super.didUpdateWidget(oldWidget);
+  }
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -66,16 +82,16 @@ class _BasicInformationState extends State<BasicInformation > {
                       setState(() {});
                     }
                 ),
-                EnterPriseCompon.surveyItem( '企业名称', '陈秋好'),
-                EnterPriseCompon.surveyItem( '行业类型', '2644染料制造'),
-                EnterPriseCompon.surveyItem( '企业地址', '工打到以南、经四路以东'),
-                EnterPriseCompon.surveyItem( '环保负责人', '张文里'),
-                EnterPriseCompon.surveyItem( '联系电话', '18797379866',color: true),
-                EnterPriseCompon.surveyItem( '排污许可编号', '18797379866'),
-                EnterPriseCompon.surveyItem( '许可证管理类型', '重点'),
-                EnterPriseCompon.surveyItem( '许可证下发时间', '2021-4-19'),
-                EnterPriseCompon.surveyItem( '许可证有效日期', '2021-4-19'),
-                EnterPriseCompon.surveyItem( '现有生产线是否全部纳入排污许可', '2021-4-19'),
+                EnterPriseCompon.surveyItem( '企业名称', '${companyList['name']}'),
+                EnterPriseCompon.surveyItem( '行业类型', '${companyList['industry']?['name']}'),
+                EnterPriseCompon.surveyItem( '企业地址', '${companyList['address']}'),
+                EnterPriseCompon.surveyItem( '环保负责人', '${companyList['environmentPrincipal']}'),
+                EnterPriseCompon.surveyItem( '联系电话', '${companyList['environmentPhone']}',color: true),
+                EnterPriseCompon.surveyItem( '排污许可编号', '${companyList['pollutionDischarge']}'),
+                EnterPriseCompon.surveyItem( '许可证管理类型', companyList['pollutionDischargeType'] == 1 ? '重点':"非重点"),
+                EnterPriseCompon.surveyItem( '许可证下发时间', formatTime(companyList['pollutionDischargeStart'])),
+                EnterPriseCompon.surveyItem( '许可证有效日期', formatTime(companyList['pollutionDischargeEnd'])),
+                EnterPriseCompon.surveyItem( '现有生产线是否全部纳入排污许可', companyList['isPollutionDischarge'] == true ? '是':"否"),
               ]
           ),
           replacement: SizedBox(
@@ -140,6 +156,10 @@ class _BasicInformationState extends State<BasicInformation > {
 
   //日期转换
   String formatTime(time) {
-    return utcToLocal(time.toString()).substring(0,10);
+    if(time==null){
+      return '';
+    }else{
+      return utcToLocal(time.toString()).substring(0,10);
+    }
   }
 }

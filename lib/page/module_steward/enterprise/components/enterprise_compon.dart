@@ -84,7 +84,7 @@ class EnterPriseCompon{
       child: FormCheck.rowItem(
         title: title,
         expandedLeft: true,
-        child: Text('$data',style: TextStyle(color: Color(color ? 0xff6089F0 : 0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,),
+        child: Text((data == 'null' || data == null) ? "" : data,style: TextStyle(color: Color(color ? 0xff6089F0 : 0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,),
       ),
       decoration: BoxDecoration(
           border: Border(top: BorderSide(color: Color(0xffE8E8E8),width: px(2)))
