@@ -97,6 +97,7 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
   ///签到
   void singIn(){
     _uuid = uuid.v4();
+    position = null;
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
@@ -130,12 +131,12 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
                             children: [
                               Visibility(
                                 visible: position != null,
-                                child: Text('${position?.longitude}',
+                                child: Text('${position?.longitude.toStringAsFixed(2)}, ',
                                   style: TextStyle(color: Color(0xff969799),fontSize: sp(28)),),
                               ),
                               Visibility(
                                 visible: position != null,
-                                child: Text('${position?.latitude}',
+                                child: Text('${(position?.latitude.toStringAsFixed(2))}',
                                   style: TextStyle(color: Color(0xff969799),fontSize: sp(28)),),
                               ),
                               Container(

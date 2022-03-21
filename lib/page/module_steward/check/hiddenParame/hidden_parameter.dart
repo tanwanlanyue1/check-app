@@ -22,16 +22,23 @@ class _HiddenParameterState extends State<HiddenParameter> {
   String _companyName = '';//公司名称
   List companyList = [];//全部公司数据
   int pageIndex = 0;//下标
+  List districtList = [];//片区统计数据
+  List districtId = [""];//片区id
 
-  /// 获取园区统计
+  /// 获取片区统计
   /// 获取tabbar表头，不在写死,
   /// 片区id也要获取，传递到页面请求片区详情
   void _getStatistics() async {
     var response = await Request().get(Api.url['district']);
     if(response['statusCode'] == 200) {
       tabBar = [];
-      tabBar.add('园区统计');
+      tabBar.add('全园区');
       setState(() {
+        districtList = response["data"];
+        for(var i = 0; i<districtList.length;i++){
+          tabBar.add(districtList[i]['name']);
+          districtId.add(districtList[i]['id']);
+        }
       });
     }
   }
@@ -49,7 +56,7 @@ class _HiddenParameterState extends State<HiddenParameter> {
 @override
   void initState() {
     // TODO: implement initState
-  // _getLatestData();
+  _getStatistics();//获取片区统计
   _getCompany(); // 获取企业数据
   super.initState();
   }

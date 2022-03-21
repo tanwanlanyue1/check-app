@@ -25,7 +25,7 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> {
     _getStatistics();
     super.initState();
   }
-  /// 获取园区统计
+  /// 获取片区统计
   /// 获取tabbar表头，不在写死,
   /// 片区id也要获取，传递到页面请求片区详情
   void _getStatistics() async {

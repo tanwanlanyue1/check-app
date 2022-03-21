@@ -193,7 +193,7 @@ class _ClientListPageState extends State<ClientListPage> {
                   child: InkWell(
                     onTap: () {
                       textEditingController.clear();
-                      // _search('');
+                      _search('');
                     },
                     child: Icon(
                       Icons.cancel,
