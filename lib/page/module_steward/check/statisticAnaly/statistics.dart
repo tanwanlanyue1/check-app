@@ -30,10 +30,11 @@ class _StatisticsState extends State<Statistics> {
   int questionTotal = 0;//问题总数
   int companyTotal = 0;//企业总数
   int _pageIndex = 0;//企业总数
+  int _types = 0;//类型的下标
   List number = [];//整改数
   List columns = [];//表头
   Map<String,dynamic> data = {
-    'groupTable':'company',
+    'groupTable':'industry',
   };//获取问题统计数目传递的参数
   @override
   void initState() {
@@ -129,7 +130,7 @@ class _StatisticsState extends State<Statistics> {
 
   ///判断表单的数据
   judge(){
-    switch (tabIndex){
+    switch (_types){
       case 0: {
         type = '行业';
         if(_districtId.isNotEmpty){
@@ -196,16 +197,20 @@ class _StatisticsState extends State<Statistics> {
             callBack: (){
               if(tabIndex != 2){
                 tabIndex++;
+                _types++;
               }else {
                 tabIndex = 0;
+                _types = 0;
               }
               judge();
             },
             callPrevious: (){
               if(tabIndex != 0){
                 tabIndex--;
+                _types--;
               }else{
                 tabIndex = 2;
+                _types = 2;
               }
               judge();
             },

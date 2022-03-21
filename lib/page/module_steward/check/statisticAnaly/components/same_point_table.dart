@@ -55,7 +55,7 @@ class _SamePointTableState extends State<SamePointTable> {
 
   ///处理
   ///item:表单数据
-  ///获取横状图树状图的数据，讲name，date，分别存放
+  ///获取横状图树状图的数据，讲name，date，分别e存放
   void manage(List item){
     name = [];
     pieData = [];
@@ -149,6 +149,7 @@ class _SamePointTableState extends State<SamePointTable> {
   List<Widget> bodyRow(item){
     List<Widget> bodyRow = [];
     for(var i = 0; i < item.length; i++){
+      print('...${item[i]}');
       bodyRow.add(
           Container(
             color: i % 2 == 0 ? Color(0xffF5F8FF) : Colors.white,
