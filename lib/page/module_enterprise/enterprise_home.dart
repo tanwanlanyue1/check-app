@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scet_check/page/module_steward/message/message_page.dart';
 import 'package:scet_check/utils/logOut/log_out.dart';
 import 'package:scet_check/utils/screen/adapter.dart';
 import 'package:scet_check/utils/screen/screen.dart';
@@ -20,8 +21,8 @@ class _EnterpriseHomeState extends State<EnterpriseHome> {
 
 
   final List _pageList = [
-    const EnterpriseDetails(),//
-    Container(),//
+    EnterpriseDetails(),//
+    MessagePage(),//通知中心
   ];
 
   ///底部tab图标

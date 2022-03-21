@@ -55,5 +55,7 @@ class Api {
 
     'fileSearch': baseUrlApp + 'law/search',//法律文件搜索
 
+    'versions':baseUrlApp + 'version/list',//检测App更新
+
   };
 }

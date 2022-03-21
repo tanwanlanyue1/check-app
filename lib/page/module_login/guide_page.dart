@@ -2,12 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/page/module_login/components/my_painter.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
+
+import 'components/update_app.dart';
 
 ///引导页
 class GuidePage extends StatefulWidget {
@@ -16,6 +19,11 @@ class GuidePage extends StatefulWidget {
 }
 
 class _GuidePageState extends State<GuidePage> {
+  @override
+  void initState() {
+    super.initState();
+    initData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,33 +90,35 @@ class _GuidePageState extends State<GuidePage> {
   }
 
   void initData() async {
-    // PackageInfo _packageInfo = PackageInfo(
-    //   appName: 'Unknown',
-    //   packageName: 'Unknown',
-    //   version: 'Unknown',
-    //   buildNumber: 'Unknown',
-    // );
-    // _packageInfo = await PackageInfo.fromPlatform();
+    PackageInfo _packageInfo = PackageInfo(
+      appName: 'Unknown',
+      packageName: 'Unknown',
+      version: 'Unknown',
+      buildNumber: 'Unknown',
+    );
+    _packageInfo = await PackageInfo.fromPlatform();
 
-    // if (Platform.isIOS) {
-    //   _upApp(packageInfo: 2, version: _packageInfo.version);
-    //   //ios相关代码
-    // } else if (Platform.isAndroid) {
-    //   _upApp(packageInfo: 1, version: _packageInfo.version);
-    //   //android相关代码
-    // }
+    if (Platform.isIOS) {
+      _upApp(packageInfo: '2', version: _packageInfo.version);
+      //ios相关代码
+    } else if (Platform.isAndroid) {
+      _upApp(packageInfo: '1', version: _packageInfo.version);
+      //android相关代码
+    }
   }
 
   /// 获取版本信息
   /// packageInfo :包信息
   /// version :版本号
-  void _upApp({required int packageInfo, required String version}) async {
-    Map<String, dynamic> _data = {
-      'platformName': version,
-      'type': packageInfo,
-    };
-    var response = await Request().post(Api.url['version'], data: _data);
-    if (response['statusCode'] == 200 && response['data']['seccut'] == true) {
+  void _upApp({required String packageInfo, required String version}) async {
+    Map<String, dynamic> params = Map();
+    params['type'] = packageInfo;
+
+    var response = await Request().get(Api.url['versions'], data: params);
+
+    if(response['statusCode'] == 200 &&
+        response['data']['list'].length > 0 &&
+        version != response['data']['list'][0]?['number']){
       if (Platform.isIOS) {
         _upAppPage(
           version: response['data']['version'],
@@ -119,10 +129,10 @@ class _GuidePageState extends State<GuidePage> {
         //ios相关代码
       } else if (Platform.isAndroid) {
         _upAppPage(
-          version: response['data']['version'],
-          msg: response['data']['msgName'],
+          version: response['data']['list'][0]?['number'],
+          msg: response['data']['list'][0]['remark'],
           isForced: true,
-          path: response['data']['path'],
+          path: Api.baseUrlApp + response['data']['list'][0]['file']
         );
         //android相关代码
       }
@@ -145,12 +155,12 @@ class _GuidePageState extends State<GuidePage> {
               onTap: () {},
               child: Material(
                 color: Color.fromRGBO(0, 0, 0, 0.3),
-                // child: UpApp(
-                //   msg: msg,
-                //   version: version,
-                //   isForced: isForced,
-                //   path: Api.BASE_URL_APP + '$path',
-                // ),
+                child: UpdateApp(
+                  msg: msg,
+                  version: version,
+                  isForced: isForced,
+                  path:'$path',
+                ),
               ),
           );
         },

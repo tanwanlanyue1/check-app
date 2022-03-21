@@ -140,25 +140,25 @@ class _EnterpriseDetailsState extends State<EnterpriseDetails> {
       margin: EdgeInsets.only(top: Adapt.padTopH()),
       child: Row(
         children: [
-          InkWell(
-            child: Container(
-              height: px(40),
-              width: px(41),
-              margin: EdgeInsets.only(left: px(20)),
-              child: Image.asset('lib/assets/icons/other/chevronLeft.png',fit: BoxFit.fill,),
-            ),
-            onTap: (){
-              ToastWidget.showDialog(
-                  msg: '是否退出当前账号？',
-                  ok: (){
-                    StorageUtil().remove(StorageKey.Token);
-                    Navigator.of(context).pushAndRemoveUntil(
-                        CustomRoute(LoginPage()), (router) => false);
-                  }
-              );
-              // Navigator.pop(context);
-            },
-          ),
+          // InkWell(
+          //   child: Container(
+          //     height: px(40),
+          //     width: px(41),
+          //     margin: EdgeInsets.only(left: px(20)),
+          //     child: Image.asset('lib/assets/icons/other/chevronLeft.png',fit: BoxFit.fill,),
+          //   ),
+          //   onTap: (){
+          //     ToastWidget.showDialog(
+          //         msg: '是否退出当前账号？',
+          //         ok: (){
+          //           StorageUtil().remove(StorageKey.Token);
+          //           Navigator.of(context).pushAndRemoveUntil(
+          //               CustomRoute(LoginPage()), (router) => false);
+          //         }
+          //     );
+          //     // Navigator.pop(context);
+          //   },
+          // ),
           Expanded(
             flex: 1,
             child: Center(

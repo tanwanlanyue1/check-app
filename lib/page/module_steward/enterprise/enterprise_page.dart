@@ -72,7 +72,6 @@ class _EnterprisePageState extends State<EnterprisePage> {
           width: px(750),
           height: px(88),
           decoration: BoxDecoration(
-            color: Color(0xff19191A),
             border: Border(bottom: BorderSide(color: Color(0xff19191A),width: 0.0)),),
         ),
         Expanded(

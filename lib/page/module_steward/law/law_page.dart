@@ -66,6 +66,7 @@ class _LawPageState extends State<LawPage>  with SingleTickerProviderStateMixin{
   ///头部
   Widget topBar(){
     return Container(
+      margin: EdgeInsets.only(top: Adapt.padTopH()),
       color: Colors.white,
       height: px(88),
       child: Row(
