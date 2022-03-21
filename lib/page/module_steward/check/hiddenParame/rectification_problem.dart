@@ -169,7 +169,7 @@ class _RectificationProblemState extends State<RectificationProblem> {
               margin: EdgeInsets.only(right: px(20)),
               child: Image.asset('lib/assets/icons/form/add.png'),),
             onTap: () async{
-              if(solutionList.isEmpty || review==false){
+              if(solutionList.isNotEmpty && review==false){
                 var res =  await  Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId,'review':true});
                 if(res == true){
                   _getReviewList();
