@@ -87,19 +87,25 @@ class _LoginPageState extends State<LoginPage> {
               onTap: () {
                 FocusScope.of(context).requestFocus(FocusNode());
               },
-              child: ListView(
-                children: [
-                  SizedBox(
-                    height: Adapt.screenH(),
-                    child: Stack(
-                      children: [
-                        _bottomLogos(),
-                        _topLogos(),
-                        _loginInput()
-                      ],
-                    ),
-                  )
-                ],
+              child: SingleChildScrollView(
+                child: Container(
+                  height: Adapt.screenH(),
+                  child: Stack(
+                    children: [
+                      _bottomLogos(),
+                      Column(
+                        children: [
+                          Stack(
+                            children: [
+                              _topLogos(),
+                              _loginInput()
+                            ],
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
               ),
             ),
         )
@@ -112,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
       child: Container(
         height: px(829),
         width: double.infinity,
-        margin: EdgeInsets.only(left: px(32),right: px(32),top: px(52)),
+        margin: EdgeInsets.only(left: px(32),right: px(32),top: Adapt.screenH()*0.12),
         decoration: BoxDecoration(
             image: DecorationImage(
                 image: AssetImage('lib/assets/images/login/loginBg.png'),
@@ -136,7 +142,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _loginInput() {
     return Container(
         width: double.infinity,
-        margin: EdgeInsets.only(top: px(380)),
+        margin: EdgeInsets.only(top: Adapt.screenH()*0.12+px(380)),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(px(46),),
@@ -162,7 +168,6 @@ class _LoginPageState extends State<LoginPage> {
                 }),
             LoginComponents.loginBtn(
               onTap: () {
-                // Navigator.pushNamed(context, '/steward');
                 _postLogin(_userName, _password);
               },
             )
@@ -175,7 +180,7 @@ class _LoginPageState extends State<LoginPage> {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
-        height: px(860),
+        height: Adapt.screenH()*0.65,
         width: Adapt.screenW(),
         decoration: BoxDecoration(
             image: DecorationImage(

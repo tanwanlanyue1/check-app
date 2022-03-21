@@ -55,7 +55,6 @@ class FileSystem{
             formDatas: formdata,
             onSendProgress:(val){ToastWidget.showToastMsg(val);});
         if(response['statusCode'] == 200) {
-          print('response>>>>>>>>$response');
           ToastWidget.showToastMsg('上传成功!');
           _isUp.add({"state":true,'msg':response});
         }else{

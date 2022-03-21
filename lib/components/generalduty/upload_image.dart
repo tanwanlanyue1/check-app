@@ -47,7 +47,6 @@ class _UploadImageState extends State<UploadImage> {
     );
     if (result != null) {
       var isUp = await FileSystem.upload(result, url);
-      print('>>>>>>>>$isUp');
       if(isUp?[0]!=false){
         for(var i = 0; i < (isUp?.length ?? 0);i++){
           String? imgUrl = isUp![i]['msg']['data']['dir']+'/'+isUp[0]['msg']['data']['base'];

@@ -26,13 +26,12 @@ class PDFView extends StatelessWidget {
             centerTitle: true
         ),
       ),
-      body: SfPdfViewer.network(
-        '$pathPDF',
+      body: Visibility(
+        visible: pathPDF?.isNotEmpty ?? false,
+        child: SfPdfViewer.network(
+          '$pathPDF',
+        ),
       ),
-      // body:SfPdfViewer.file(
-      //   File("$pathPDF"),
-      //   key: _pdfViewerKey,
-      // ),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/time_select.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
+import 'package:scet_check/page/module_enterprise/abarbeitung/abarbeitung_pdf.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/page/module_steward/law/components/law_components.dart';
 import 'package:scet_check/utils/screen/screen.dart';
@@ -37,9 +38,9 @@ class _StewardCheckState extends State<StewardCheck> {
   String abarbeitungDates = '';//整改日期
   String sceneReviewDate = '';//现场复查日期
   String checkType = '';//检查类型
-  bool uploading = false;//判断是否可以上传
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Map<String,dynamic> data = {};//查询问题的参数
+
   /// 获取清单详情
   /// id:清单id
   void _getCompany() async {
@@ -75,13 +76,6 @@ class _StewardCheckState extends State<StewardCheck> {
     if(response['statusCode'] == 200 && response['data'] != null) {
       setState(() {
         problemList = response['data']['list'];
-        for(var i=0; i<problemList.length; i++){
-          if(problemList[i]['status'] == 2 || problemList[i]['status'] == 3){
-            uploading = true;
-          }else{
-            uploading = false;
-          }
-        }
       });
     }
   }
@@ -110,8 +104,8 @@ class _StewardCheckState extends State<StewardCheck> {
       'size':50,
       'inventory.id':uuid
     };
-    _getCompany();
     _getProblem();
+    _getCompany();
     super.initState();
   }
   @override
@@ -131,7 +125,6 @@ class _StewardCheckState extends State<StewardCheck> {
                 survey():
                 Container(),
                 concerns(),
-                rectification(),
               ],
             ),
           ),
@@ -331,85 +324,6 @@ class _StewardCheckState extends State<StewardCheck> {
     );
   }
 
-  ///整改报告
-  Widget rectification(){
-    return Container(
-      margin: EdgeInsets.only(top: px(4),bottom: px(20)),
-      color: Colors.white,
-      child: Column(
-        children: [
-          Container(
-            margin: EdgeInsets.only(top: px(20),left: px(32),),
-            child: FormCheck.formTitle(
-              '整改报告',
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: px(20),left: px(20),right: px(20)),
-            padding: EdgeInsets.only(left: px(16),bottom: px(20)),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(px(4.0))),
-            ),
-            child: InkWell(
-              child: Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      LawComponents.rowTwo(
-                          child: Image.asset('lib/assets/icons/check/PDF.png'),
-                          textChild: Text('21-12-14隐患排查问题-整改完成报告',style: TextStyle(color: Color(0xff323233),fontSize: sp(26)),)
-                      ),
-                      Spacer(),
-                      Container(
-                        height: px(40),
-                        width: px(41),
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.only(left: px(20)),
-                        child: Image.asset('lib/assets/icons/other/right.png',color: Colors.grey,),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: px(20)),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: px(32),
-                          width: px(32),
-                          margin: EdgeInsets.only(left: px(12)),
-                          child: Image.asset('lib/assets/icons/check/time.png',color:Color(0xff6089F0),),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(right: px(138)),
-                          child: Text('审核中',style: TextStyle(color: Color(0xff6089F0),fontSize: sp(24)),),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: px(12)),
-                          child: Text('提交时间:',style: TextStyle(color: Color(0xffC8C9CC),fontSize: sp(24)),),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: px(12)),
-                          child: Text('2021-12-14',style: TextStyle(color: Color(0xffC8C9CC),fontSize: sp(24)),),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              onTap: (){
-                print('pdf网址');
-                // Navigator.pushNamed(context, '/PDFView',arguments: '');
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
   ///日期转换
   String formatTime(time) {
     return utcToLocal(time.toString()).substring(0,10);

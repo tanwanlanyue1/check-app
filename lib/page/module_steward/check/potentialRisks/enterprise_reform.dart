@@ -3,13 +3,13 @@ import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
-import 'package:scet_check/components/generalduty/image_widget.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 ///企业整改详情
 class EnterpriseReform extends StatefulWidget {
   final String? problemId;
-  const EnterpriseReform({Key? key,this.problemId,}) : super(key: key);
+  final List? solutionList;
+  const EnterpriseReform({Key? key,this.problemId,this.solutionList}) : super(key: key);
 
   @override
   _EnterpriseReformState createState() => _EnterpriseReformState();
@@ -17,29 +17,7 @@ class EnterpriseReform extends StatefulWidget {
 
 class _EnterpriseReformState extends State<EnterpriseReform> {
 
-  List imgDetails = [];//图片列表
   List solutionList = [];//整改详情
-  bool readOnly = true; //是否为只读
-  String rectifyMeasure = '';//整改措施
-  String otherExplain = '暂无'; //其他说明
-  String dutyPerson = '';//责任人
-  String schedule = '';//进度
-
-  /// 整改详情，
-  void _setSolution() async {
-    Map<String,dynamic> _data = {
-      'page':1,
-      'size':50,
-      'problem.id':widget.problemId,
-    };
-    var response = await Request().get(
-        Api.url['solutionList'],data: _data
-    );
-    if(response['statusCode'] == 200 && response['data']!=null) {
-      solutionList = response['data']['list'];
-      setState(() {});
-    }
-  }
 
   /// 赋值
   /// :1,待复查;2,复查已通过;3,复查未通过
@@ -55,8 +33,15 @@ class _EnterpriseReformState extends State<EnterpriseReform> {
   @override
   void initState() {
     // TODO: implement initState
-    _setSolution();
+    solutionList = widget.solutionList ?? [];
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant EnterpriseReform oldWidget) {
+    // TODO: implement didUpdateWidget
+    solutionList = widget.solutionList ?? [];
+    super.didUpdateWidget(oldWidget);
   }
 
   @override

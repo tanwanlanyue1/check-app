@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
-import 'package:scet_check/components/generalduty/time_select.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
@@ -100,14 +99,13 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
         'userId': userId,
         'problemId': widget.arguments!['id'],
       };
-      print('data===$_data');
       var response = await Request().post(
         Api.url['review'],data: _data,
       );
-      // if(response['statusCode'] == 200) {
-      //   Navigator.pop(context,true);
-      //   setState(() {});
-      // }
+      if(response['statusCode'] == 200) {
+        Navigator.pop(context,true);
+        setState(() {});
+      }
     }
   }
   @override
@@ -136,11 +134,8 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
             child: ListView(
               padding: EdgeInsets.only(top: 0),
               children: [
-                Visibility(
-                  visible: review,
-                  child: reviewFill(),
-                  replacement: fillAgent(),
-                ),
+                review ? reviewFill():
+                fillAgent()
               ],
             ),
           )

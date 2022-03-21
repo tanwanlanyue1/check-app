@@ -31,6 +31,8 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
   bool abarbeitung = false; //是否可以整改
   String userName = '';//用户名
   String userId = '';//用户id
+  List solutionList = [];//整改详情
+  List reviewList = [];//复查详情
 
   @override
   void initState() {
@@ -39,6 +41,8 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
     userName= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
     userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
     _getProblems();
+    _setSolution();
+    _getReviewList();
     super.initState();
   }
   /// 获取问题
@@ -49,6 +53,36 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
       problemList = response['data'];
       abarbeitung = response['data']['status'] == 1 ||
                     response['data']['status'] == 4 ? true :false;
+      setState(() {});
+    }
+  }
+  /// 整改详情，
+  void _setSolution() async {
+    Map<String,dynamic> _data = {
+      'page':1,
+      'size':50,
+      'problem.id':problemId,
+    };
+    var response = await Request().get(
+        Api.url['solutionList'],data: _data
+    );
+    if(response['statusCode'] == 200 && response['data']!=null) {
+      solutionList = response['data']['list'];
+      setState(() {});
+    }
+  }
+  /// 复查详情，
+  void _getReviewList() async {
+    Map<String,dynamic> _data = {
+      'page':1,
+      'size':50,
+      'problem.id': problemId,
+    };
+    var response = await Request().get(
+        Api.url['reviewList'],data: _data
+    );
+    if(response['statusCode'] == 200 && response['data']!=null) {
+      reviewList = response['data']['list'];
       setState(() {});
     }
   }
@@ -69,11 +103,13 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
                 //企业整改详情
                 EnterpriseReform(
                   problemId: problemId,
+                  solutionList: solutionList,
                 ),
                 //现场复查情况
                 ReviewSituation(
                   arguments:{
                     'problemId':problemId,
+                    'reviewList':reviewList,
                   },
                 ),
                 // rubyAgent(),
@@ -118,7 +154,10 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
                 child: Image.asset('lib/assets/icons/form/add.png'),),
             onTap: () async{
               if(abarbeitung){
-                Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId});
+               var res = await Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId});
+               if(res == true){
+                 _setSolution();
+               }
               }else{
                 ToastWidget.showToastMsg('当前问题已整改');
               }

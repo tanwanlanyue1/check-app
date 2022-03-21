@@ -20,7 +20,7 @@ class Statistics extends StatefulWidget {
 class _StatisticsState extends State<Statistics> {
 
   String _districtId = '';//片区id
-  String type = '行业';//排名类型
+  String type = '企业';//排名类型
 
   Map gardenStatistics = {};//总数据
   List districtList = [];//片区统计数据
@@ -32,49 +32,96 @@ class _StatisticsState extends State<Statistics> {
   int _pageIndex = 0;//企业总数
   List number = [];//整改数
   List columns = [];//表头
-
+  Map<String,dynamic> data = {
+    'groupTable':'company',
+  };//获取问题统计数目传递的参数
   @override
   void initState() {
     super.initState();
     _pageIndex = widget.pageIndex;
-    // _districtId = widget.districtId?[_pageIndex] ?? '';
-    // _getStatistics(); // 获取园区统计
+    _districtId = widget.districtId?[_pageIndex] ?? '';
+    _getProblem();//获取问题数据总数
+    _companyCount();//获取企业总数
+    _getAbarbeitung();// 获取整改数据总数
+    _getStatistics(); // 获取问题统计数目
   }
 
   @override
   void didUpdateWidget(covariant Statistics oldWidget) {
     _pageIndex = widget.pageIndex;
-    // _districtId = widget.districtId?[_pageIndex] ?? '';
+    _districtId = widget.districtId?[_pageIndex] ?? '';
+    _getProblem();//获取问题数据总数
+    _companyCount();//获取企业总数
+    _getAbarbeitung();// 获取整改数据总数
+    _getStatistics();// 获取问题统计数目
     // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
   }
 
-  /// 获取园区详情
+  /// 获取问题统计数目
   void _getStatistics() async {
-    var response = await Request().get(Api.url['district']);
+    var response = await Request().get(
+        Api.url['problemStatistics'],
+        data: data
+    );
     if(response['statusCode'] == 200) {
-      columns = [];
-      print(response);
+      _tableBody = response['data'];
+      setState(() {});
+    }
+  }
+  /// 获取问题数据总数
+  void _getProblem() async {
+    var response = await Request().get(
+        Api.url['problemCount'],
+    );
+    if(response['statusCode'] == 200) {
       setState(() {
-        // gardenStatistics = response["data"];
-        // questionTotal = gardenStatistics['question_total'] ?? 0;
-        // finished = gardenStatistics['question_finished'] ?? 0;
-        // companyTotal = gardenStatistics['company_total'] ?? 0;
-        // number = [
-        //   {'total':companyTotal,'unit':'家','name':"企业总数"},
-        //   {'total':questionTotal,'unit':'个','name':"排查问题"},
-        //   {'total':finished,'unit':'个','name':"整改完毕"},
-        // ];
+        questionTotal = response['data'];
       });
-      judge();
     }
   }
 
-  /// 获取user
-  void _getUser() async {
-    var response = await Request().get(Api.url['user']);
+  /// 获取企业总数
+  void _companyCount() async {
+    Map<String,dynamic> _data =  _districtId.isEmpty ? {} :
+    {
+    'district.id': _districtId
+    };
+    var response = await Request().get(
+      Api.url['companyCount'],
+      data: _data
+    );
     if(response['statusCode'] == 200) {
-      print(response);
+      setState(() {
+        companyTotal = response['data'];
+      });
+    }
+  }
+
+  /// 获取整改数据总数
+  /// status:写死的状态
+  void _getAbarbeitung() async {
+    Map<String,dynamic> _data =  _districtId.isEmpty ?
+    {
+      'status':'[2,3]',
+    } :
+    {
+      'status':'[2,3]',
+      'district.id': _districtId
+    };
+    var response = await Request().get(
+        Api.url['problemCount'],
+        data: _data
+    );
+    if(response['statusCode'] == 200) {
+      setState(() {
+        finished = response['data'];
+        number = [
+          {'total':companyTotal,'unit':'家','name':"企业总数"},
+          {'total':questionTotal,'unit':'个','name':"排查问题"},
+          {'total':finished,'unit':'个','name':"整改完毕"},
+        ];
+      });
     }
   }
 
@@ -83,18 +130,51 @@ class _StatisticsState extends State<Statistics> {
     switch (tabIndex){
       case 0: {
         type = '行业';
+        if(_districtId.isNotEmpty){
+          data =  {
+            'groupTable':'industry',
+            'district.id': _districtId
+          };
+        }else{
+          data =   {
+            'groupTable':'industry',
+          };
+        }
         setState((){});
-        return _tableBody = gardenStatistics['rank_industry_total_views'] ?? [];
+        _getStatistics();
+        return;
       }
       case 1: {
         type = '片区';
+        if(_districtId.isNotEmpty){
+          data =   {
+            'groupTable':'district',
+            'district.id': _districtId
+          };
+        }else{
+          data =   {
+            'groupTable':'district',
+          };
+        }
         setState((){});
-        return _tableBody = gardenStatistics['rank_area_total_view'] ?? [];
+        _getStatistics();
+        return;
       }
       case 2: {
         type = '企业';
+        if(_districtId.isNotEmpty){
+          data =   {
+            'groupTable':'company',
+            'district.id': _districtId
+          };
+        }else{
+          data =   {
+            'groupTable':'company',
+          };
+        }
         setState((){});
-        return _tableBody = gardenStatistics['rank_company_total_views'] ?? [];
+        _getStatistics();
+        return;
       }
     }
   }
@@ -143,9 +223,9 @@ class _StatisticsState extends State<Statistics> {
       child: Column(
         children: [
           numberRectification(),
+          _tableBody.isNotEmpty ?
           Expanded(
-            child: gardenStatistics.isNotEmpty ?
-            Container(
+            child: Container(
               margin: EdgeInsets.only(left: px(49),right: px(10)),
               child: Row(
                 children: [
@@ -190,9 +270,8 @@ class _StatisticsState extends State<Statistics> {
                   Text('${(finished/questionTotal*100).toInt()}%',style: TextStyle(color: Color(0xff336DFF), fontSize:sp(28.0),),),
                 ],
               ),
-            ):
-            Container(),
-          ),
+            ),
+          ) : Container(),
         ],
       ),
     );

@@ -9,7 +9,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/time/utc_tolocal.dart';
 
 ///复查情况
-///arguments = {'problemId':问题id}
+///arguments = {'problemId':问题id,'solutionList':复查数据,}
 class ReviewSituation extends StatefulWidget {
   final Map? arguments;
   final Function? callBack;
@@ -22,30 +22,19 @@ class ReviewSituation extends StatefulWidget {
 class _ReviewSituationState extends State<ReviewSituation> {
   List solutionList = [];//现场复查数据
 
-  /// 复查详情，
-  void _setSolution() async {
-    Map<String,dynamic> _data = {
-      'page':1,
-      'size':50,
-      'problem.id': widget.arguments?['problemId'],
-      // 'andWhere':"problem.id='${widget.problemId}'",
-    };
-    var response = await Request().get(
-        Api.url['reviewList'],data: _data
-    );
-    if(response['statusCode'] == 200 && response['data']!=null) {
-      solutionList = response['data']['list'];
-      setState(() {});
-    }
-  }
 
   @override
   void initState() {
     // TODO: implement initState
-    _setSolution();
+    solutionList = widget.arguments?['reviewList'] ?? [];
     super.initState();
   }
-
+  @override
+    void didUpdateWidget(covariant ReviewSituation oldWidget) {
+      // TODO: implement didUpdateWidget
+    solutionList = widget.arguments?['reviewList'] ?? [];
+    super.didUpdateWidget(oldWidget);
+    }
   @override
   Widget build(BuildContext context) {
     return Column(

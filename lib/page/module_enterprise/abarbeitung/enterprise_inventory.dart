@@ -3,7 +3,6 @@ import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/time_select.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
-import 'package:scet_check/components/generalduty/upload_image.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/page/module_steward/law/components/law_components.dart';
@@ -30,6 +29,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
   Map repertoire = {};//清单
   Map argumentMap = {};//传递的参数
   List problemList = [];//企业下的问题
+  List pdfList = [];//清单报告
   String uuid = '';//清单id
   String area = '';//归属片区
   String location = '';//区域位置
@@ -62,6 +62,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
           'companyId': repertoire['company']['id'],//企业id
           'industryId': repertoire['company']['industryId'],//行业ID
         };
+        pdfList = repertoire['inventoryReports'];
       });
     }
   }
@@ -104,6 +105,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
       ToastWidget.showToastMsg('修改日期成功');
     }
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -205,7 +207,9 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
                 child: FormCheck.rowItem(
                   title: '整改截至日期',
                   expandedLeft: true,
-                  child: TimeSelect(
+                  child: uploading ?
+                  Text(abarbeitungDate,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,):
+                  TimeSelect(
                     scaffoldKey: _scaffoldKey,
                     hintText: "请选择排查时间",
                     time: abarbeitungDate.isNotEmpty ? DateTime.parse(abarbeitungDate) :null,
@@ -227,7 +231,9 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
                 child: FormCheck.rowItem(
                   title: '现场复查日期',
                   expandedLeft: true,
-                  child: TimeSelect(
+                  child: uploading ?
+                  Text(sceneReviewDate,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,):
+                  TimeSelect(
                     scaffoldKey: _scaffoldKey,
                     hintText: "请选择排查时间",
                     time: sceneReviewDate.isNotEmpty ? DateTime.parse(sceneReviewDate) :null,
@@ -336,79 +342,88 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
               color: Colors.white,
               borderRadius: BorderRadius.all(Radius.circular(px(4.0))),
             ),
-            child: InkWell(
-              child: Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            child: Column(
+              children: [
+                Column(
+                  children: List.generate(pdfList.length, (i) => report(i)),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: px(24)),
+                  child: Row(
                     children: [
-                      LawComponents.rowTwo(
-                          child: Image.asset('lib/assets/icons/check/PDF.png'),
-                          textChild: Text('21-12-14隐患排查问题-整改完成报告',style: TextStyle(color: Color(0xff323233),fontSize: sp(26)),)
-                      ),
-                      Spacer(),
                       Container(
-                        height: px(40),
-                        width: px(41),
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.only(left: px(20)),
-                        child: Image.asset('lib/assets/icons/other/right.png',color: Colors.grey,),
+                        margin: EdgeInsets.only(right: px(24)),
+                        child: Text('上传PDF',style: TextStyle(fontSize: sp(28)),),
+                      ),
+                      Expanded(
+                        child: AbarbeitungPdf(
+                          url: Api.baseUrlApp + 'file/upload?savePath=清单报告/',
+                          inventoryId: uuid,
+                          uploading:uploading,
+                          callback: (val){
+                            if(val){
+                              _getCompany();
+                            }
+                          },
+                        ),
                       ),
                     ],
                   ),
-                  Container(
-                    margin: EdgeInsets.only(top: px(20)),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: px(32),
-                          width: px(32),
-                          margin: EdgeInsets.only(left: px(12)),
-                          child: Image.asset('lib/assets/icons/check/time.png',color:Color(0xff6089F0),),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(right: px(138)),
-                          child: Text('审核中',style: TextStyle(color: Color(0xff6089F0),fontSize: sp(24)),),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: px(12)),
-                          child: Text('提交时间:',style: TextStyle(color: Color(0xffC8C9CC),fontSize: sp(24)),),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: px(12)),
-                          child: Text('2021-12-14',style: TextStyle(color: Color(0xffC8C9CC),fontSize: sp(24)),),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: px(24)),
-                    child: Row(
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(right: px(24)),
-                          child: Text('上传PDF',style: TextStyle(fontSize: sp(28)),),
-                        ),
-                        Expanded(
-                          child: AbarbeitungPdf(
-                            url: Api.baseUrlApp + 'file/upload?savePath=清单报告/',
-                            uuid: uuid,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              onTap: (){
-                // Navigator.pushNamed(context, '/PDFView',arguments: '');
-              },
+                ),
+              ],
             ),
           ),
         ],
       ),
+    );
+  }
+  //报告
+  Widget report(int i){
+    return Column(
+      children: [
+        InkWell(
+          child: Row(
+            children: [
+              Container(
+                width: px(30),
+                height: px(30),
+                margin: EdgeInsets.only(right: px(8)),
+                child: Image.asset('lib/assets/icons/check/PDF.png'),
+              ),
+              Expanded(
+                child: Text(pdfList[i]['name'],style: TextStyle(color: Color(0xff323233),fontSize: sp(26)),),
+              ),
+              Container(
+                height: px(40),
+                width: px(41),
+                alignment: Alignment.centerLeft,
+                margin: EdgeInsets.only(left: px(20)),
+                child: Image.asset('lib/assets/icons/other/right.png',color: Colors.grey,),
+              ),
+            ],
+          ),
+          onTap: (){
+            Navigator.pushNamed(context, '/PDFView',arguments: Api.baseUrlApp+pdfList[i]['file']?.replaceAll('\\', '/'));
+          },
+        ),
+        Container(
+          margin: EdgeInsets.only(top: px(20)),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                margin: EdgeInsets.only(left: px(12)),
+                child: Text('提交时间:',style: TextStyle(color: Color(0xffC8C9CC),fontSize: sp(24)),),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: px(12)),
+                child: Text(formatTime(pdfList[i]['createdAt']),style: TextStyle(color: Color(0xffC8C9CC),fontSize: sp(24)),),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
   ///日期转换

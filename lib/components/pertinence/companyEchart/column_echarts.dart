@@ -59,11 +59,11 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
         },
         xAxis: {
           type: 'value',
+          boundaryGap: [0, 0.01],
         },
         yAxis: {
           type: 'category',
           data: ${jsonEncode(erectName)},
-
      axisLabel : {//坐标轴刻度标签的相关设置。
        formatter : function(params){
                 var \$newParamsName = "";// 最终拼接成的字符串
@@ -180,7 +180,6 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
         series: ${jsonEncode(series)}
       }
       ''';
-    _providerDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     super.initState();
   }
 
@@ -190,6 +189,7 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
     series = widget.data ?? [];
     erectName = widget.erectName ?? [];
     datas = widget.pieData ?? [];
+    print('erectName===$erectName');
     columnImage =  '''
       {
         title: {
@@ -245,53 +245,53 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
         series: ${jsonEncode(series)}
       }
       ''';
-    pie =  '''
-{
-  legend: {
-    bottom: '5%',
-    left: 'center',
-     icon: "circle"
-  },
-  series: [
-    {
-      name: '',
-     //hoverAnimation: false, // 取消掉环形图鼠标移上去时自动放大
-     selectedMode:'single',
-      selectedOffset:20,
-      type: 'pie',
-      radius: ['40%', '70%'],
-      avoidLabelOverlap: false,
-      // top: '-30%',//饼图距离上面的距离
-      //color:['red','blue','gray','yellow','teal'],//颜色
-      itemStyle: { //调整相邻的边距和圆角
-        borderRadius: 10,
-        borderColor: '#fff',
-        borderWidth: 2
-      },
-      
-      label: {
-        show: false, /*是否一直显示*/
-        position: 'center',
-                 formatter: function (value) {
-                            return `\${value['name']}`+
-                            `\\n`+`\${value['value']}`;
-                          },
-      },
-      emphasis: {
-        label: {
-          show: true,
-          fontSize: '12',
-          fontColor:'#323233'
-        }
-      },
-      labelLine: {
-        show: false
-      },
-      data: ${jsonEncode(datas)}
-    }
-  ]
-}
-      ''';
+//     pie =  '''
+// {
+//   legend: {
+//     bottom: '5%',
+//     left: 'center',
+//      icon: "circle"
+//   },
+//   series: [
+//     {
+//       name: '',
+//      //hoverAnimation: false, // 取消掉环形图鼠标移上去时自动放大
+//      selectedMode:'single',
+//       selectedOffset:20,
+//       type: 'pie',
+//       radius: ['40%', '70%'],
+//       avoidLabelOverlap: false,
+//       // top: '-30%',//饼图距离上面的距离
+//       //color:['red','blue','gray','yellow','teal'],//颜色
+//       itemStyle: { //调整相邻的边距和圆角
+//         borderRadius: 10,
+//         borderColor: '#fff',
+//         borderWidth: 2
+//       },
+//
+//       label: {
+//         show: false, /*是否一直显示*/
+//         position: 'center',
+//                  formatter: function (value) {
+//                             return `\${value['name']}`+
+//                             `\\n`+`\${value['value']}`;
+//                           },
+//       },
+//       emphasis: {
+//         label: {
+//           show: true,
+//           fontSize: '12',
+//           fontColor:'#323233'
+//         }
+//       },
+//       labelLine: {
+//         show: false
+//       },
+//       data: ${jsonEncode(datas)}
+//     }
+//   ]
+// }
+//       ''';
     erectImage =  '''
       {
         title: {
@@ -339,6 +339,7 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
 
   @override
   Widget build(BuildContext context) {
+    _providerDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     return SizedBox(
       width: px(550),
       height: px(700),
@@ -348,9 +349,8 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
       ):
       _providerDetaild.cloumnChart == 1 ?
       Echarts(
-      option: erectImage,
-    ):
-      Echarts(
+        option: erectImage,
+      ):Echarts(
         option: columnImage,
       )
     );

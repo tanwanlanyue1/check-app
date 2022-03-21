@@ -33,6 +33,7 @@ class _SamePointTableState extends State<SamePointTable> {
   List name =[]; //名称
   List echartData =[]; //图表数据
   List pieData =[]; //饼图数据
+  String companyName = 'companyName';
   ///全局变量  判断展示哪一个图表
   late ProviderDetaild _providerDetaild;
 
@@ -40,13 +41,15 @@ class _SamePointTableState extends State<SamePointTable> {
   void initState() {
     super.initState();
     tableBody = widget.tableBody ?? [];
-    manage(tableBody);
+    judge();
   }
 
   @override
   void didUpdateWidget(SamePointTable oldWidget) {
     super.didUpdateWidget(oldWidget);
     tableBody = widget.tableBody ?? [];
+    judge();
+    print('tableBody====$tableBody');
     manage(tableBody);
   }
 
@@ -61,13 +64,13 @@ class _SamePointTableState extends State<SamePointTable> {
     int issueTotal = 0; //问题总数
     int notCorrectedTotal = 0; //未整改总数
     for(var i=0;i<item.length;i++){
-      name.add(item[i]['name']);
-      issue.add(item[i]['totalLedgers']);
-      notCorrected.add(item[i]['notRectified']);
-      issueTotal = item[i]['totalLedgers']+issueTotal;
-      notCorrectedTotal = item[i]['notRectified']+notCorrectedTotal;
+      name.add(item[i][companyName]);
+      issueTotal = int.parse(item[i]['allCount']);
+      issue.add(int.parse(item[i]['allCount']));
+      notCorrected.add(int.parse(item[i]['unsolvedCount']));
+      notCorrectedTotal = int.parse(item[i]['unsolvedCount'])+notCorrectedTotal;
       pieData.add({
-        'value':item[i]['totalLedgers'],'name':item[i]['name']
+        'value':item[i]['allCount'],'name':item[i][companyName]
       });
     }
     echartData = [
@@ -85,7 +88,29 @@ class _SamePointTableState extends State<SamePointTable> {
       }];
     setState(() {});
   }
-  
+
+  ///判断图表的name
+  judge(){
+    switch (widget.tableTitle){
+      case '行业': {
+        companyName = 'industryName';
+        setState((){});
+        return;
+      }
+      case '片区': {
+        setState((){});
+        companyName = 'districtName';
+        return;
+      }
+      case '企业': {
+        companyName = 'companyName';
+        setState((){});
+        return;
+      }
+    }
+    manage(tableBody);
+  }
+
   ///表头
   ///item:表头
   List<Widget> topRow(item){
@@ -148,7 +173,7 @@ class _SamePointTableState extends State<SamePointTable> {
                       child: Container(
                         alignment: Alignment.topCenter,
                         child: Text(
-                            '${item[i]['area']}',
+                            '${item[i]['districtName']}',
                             style: TextStyle(
                                 color: Color(0XFF969799),
                                 fontSize: sp(24.0)
@@ -165,7 +190,7 @@ class _SamePointTableState extends State<SamePointTable> {
                     child: Container(
                       alignment: Alignment.topCenter,
                       child: Text(
-                          '${item[i]['name']}',
+                          '${item[i][companyName]}',
                           style: TextStyle(
                               color: Color(0XFF969799),
                               fontSize: sp(24.0)
@@ -183,7 +208,7 @@ class _SamePointTableState extends State<SamePointTable> {
                       child: Container(
                         alignment: Alignment.topCenter,
                         child: Text(
-                            '${item[i]['rectified']/item[i]['totalLedgers']}%',
+                            '${((int.parse(item[i]['allCount'])/6)*100).toStringAsFixed(2)}%',
                             style: TextStyle(
                                 color: Color(0XFF969799),
                                 fontSize: sp(24.0)
@@ -200,7 +225,7 @@ class _SamePointTableState extends State<SamePointTable> {
                     child: Container(
                       alignment: Alignment.topCenter,
                       child: Text(
-                          '${item[i]['totalLedgers']}',
+                          '${item[i]['allCount']}',
                           style: TextStyle(
                               color: Color(0XFF969799),
                               fontSize: sp(24.0)
@@ -216,7 +241,7 @@ class _SamePointTableState extends State<SamePointTable> {
                     child: Container(
                       alignment: Alignment.topCenter,
                       child: Text(
-                          '${item[i]['rectified']}',
+                          '${item[i]['solvedCount']}',
                           style: TextStyle(
                               color: Color(0XFF969799),
                               fontSize: sp(24.0)
@@ -232,7 +257,7 @@ class _SamePointTableState extends State<SamePointTable> {
                     child: Container(
                       alignment: Alignment.topCenter,
                       child: Text(
-                          '${item[i]['notRectified']}',
+                          '${item[i]['unsolvedCount']}',
                           style: TextStyle(
                               color: Color(0XFF969799),
                               fontSize: sp(24.0)
@@ -295,13 +320,13 @@ class _SamePointTableState extends State<SamePointTable> {
                    Image.asset('lib/assets/images/home/chartSwitch.png'),
                 ),
                 onTap: () async{
-                  // _providerDetaild.setPie();
-                  // if(echart != 2){
-                  //   echart++;
-                  // }else{
-                  //   echart = 0;
-                  // }
-                  // setState(() {});
+                  _providerDetaild.setPie();
+                  if(echart != 2){
+                    echart++;
+                  }else{
+                    echart = 0;
+                  }
+                  setState(() {});
                 },
               ),
             ],

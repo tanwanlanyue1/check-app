@@ -70,10 +70,9 @@ class _LayoutPageState extends State<LayoutPage> {
                 scrollDirection: Axis.horizontal,
                 controller: controllerTow,
                 children: [
-                  Container(
+                  SizedBox(
                     height: px(88),
                     width: px(206 * _tabBar.length),
-                    // margin: EdgeInsets.only(left: px(206)),
                     child: Row(
                       children: [
                         CheckCompon.bagColor(

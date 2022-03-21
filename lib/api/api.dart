@@ -22,6 +22,8 @@ class Api {
 
     'company': baseUrlApp + 'company',//获取全部企业
 
+    'companyCount': baseUrlApp + 'company/count',//获取企业数据总数
+
     'inventory': baseUrlApp + 'inventory',//保存清单
 
     'inventoryList': baseUrlApp + 'inventory/list',//清单分页列表
@@ -32,6 +34,10 @@ class Api {
 
     'problemList': baseUrlApp + 'problem/list',//问题分页列表
 
+    'problemStatistics': baseUrlApp + 'problem/statistics',//问题统计数目
+
+    'problemCount': baseUrlApp + 'problem/count',//获取数据总数
+
     'problemType': baseUrlApp + 'problem_type',//问题类型
 
     'solution': baseUrlApp + 'solution',//整改
@@ -41,6 +47,8 @@ class Api {
     'review': baseUrlApp + 'review',//复查
 
     'reviewList': baseUrlApp + 'review/list',//复查分页列表
+
+    'inventoryReport': baseUrlApp + 'inventory_report',//清单报告
 
 
     'fileSearch': baseUrlApp + 'law/search',//法律文件搜索

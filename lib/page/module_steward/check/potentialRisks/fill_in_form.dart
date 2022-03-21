@@ -23,6 +23,7 @@ import 'package:uuid/uuid.dart';
 ///           'district': repertoire['company']['districtId'],//片区id
 ///           'companyId': repertoire['company']['id'],//企业id
 ///           'industryId': repertoire['company']['industryId'],//行业ID
+///           'problemList':problemList,//问题详情
 ///         };
 ///callBack:回调
 class FillInForm extends StatefulWidget {
@@ -78,20 +79,18 @@ class _FillInFormState extends State<FillInForm> {
   /// 获取问题详情
   /// id:问题id
   void _getProblems() async {
-    var response = await Request().get(Api.url['problem']+'/${widget.arguments?['problemId']}',);
-    if(response['statusCode'] == 200) {
-      problemList = response['data'];
-      checkPersonnel = problemList['inventory']['checkPersonnel'];
-      checkDay = formatTime(problemList['createdAt']);
-      type = problemList['problemType']['name'];
-      issueDetails = problemList['detail'] ?? '';
-      imgDetails = problemList['images'];
-      law = problemList['law']['title'];
-      isImportant = problemList['isImportant'];
-      solvedAt = problemList['solvedAt'] != null ? formatTime(problemList['solvedAt']) : '';
-      setState(() {});
-    }
+    problemList = widget.arguments?['problemList'];
+    checkPersonnel = problemList['inventory']['checkPersonnel'];
+    checkDay = formatTime(problemList['createdAt']);
+    type = problemList['problemType']['name'];
+    issueDetails = problemList['detail'] ?? '';
+    imgDetails = problemList['images'];
+    law = problemList['law']['title'];
+    isImportant = problemList['isImportant'];
+    solvedAt = problemList['solvedAt'] != null ? formatTime(problemList['solvedAt']) : '';
+    setState(() {});
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -128,7 +127,7 @@ class _FillInFormState extends State<FillInForm> {
     }else if(type.isEmpty){
       ToastWidget.showToastMsg('请选择问题类型');
     }else if(issueDetails.isEmpty){
-      ToastWidget.showToastMsg('请选择问题详情');
+      ToastWidget.showToastMsg('请输入问题详情');
     }else if(imgDetails.isEmpty){
       ToastWidget.showToastMsg('请上传问题图片');
     }else if(law.isEmpty){
@@ -150,7 +149,6 @@ class _FillInFormState extends State<FillInForm> {
         'lawId': lawId,
         'solvedAt': rectifyTime.toString(),
       };
-      print('参数=$_data');
       var response = await Request().post(
         Api.url['problem'],data: _data,
       );
@@ -162,6 +160,14 @@ class _FillInFormState extends State<FillInForm> {
 
   }
 
+  @override
+  void didUpdateWidget(covariant FillInForm oldWidget) {
+    // TODO: implement didUpdateWidget
+    if(!declare){
+      _getProblems();
+    }
+    super.didUpdateWidget(oldWidget);
+  }
   @override
   Widget build(BuildContext context) {
     return declare ?

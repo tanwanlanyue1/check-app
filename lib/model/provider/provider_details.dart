@@ -31,9 +31,9 @@ class ProviderDetaild with ChangeNotifier {
   }
 
   //改变
-  setOffest(double off,{int? length}){
+  setOffest(double off){
     if(off==0){
-      _offestLeft = px(20);
+      _offestLeft = px(30);
     }else{
       _offestLeft = px(206*off);
     }

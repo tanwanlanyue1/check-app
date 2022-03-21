@@ -213,10 +213,18 @@ class FormCheck {
                 fontWeight: FontWeight.bold
             )),
           ),
-          Text("$str",style: TextStyle(
-              fontSize: sp(28.0),
-              color: Color(0XFF323233)
-          )),
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: Adapt.screenW()-px(250),
+            ),
+            child: Container(
+              margin: EdgeInsets.only(left: px(16),right: px(12)),
+              child: Text("$str",style: TextStyle(
+                  fontSize: sp(28.0),
+                  color: Color(0XFF323233)
+              )),
+            ),
+          ),
           Visibility(
             visible: star,
             child: Container(

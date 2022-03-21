@@ -17,7 +17,7 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> {
   final PageController pagesController = PageController();
   List tabBar = [];//表头
   List districtList = [];//片区统计数据
-  List districtId = [];//片区id
+  List districtId = [""];//片区id
   int _pageIndex = 0;//下标
 
   @override
