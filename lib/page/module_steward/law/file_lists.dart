@@ -3,7 +3,7 @@ import 'package:scet_check/page/module_steward/check/hiddenParame/components/rec
 import 'package:scet_check/utils/screen/screen.dart';
 
 ///文件列表
-/// arguments: type类型 0 国家，1 地方，2 行业 3 通知 4 其他
+/// arguments: type类型 1 国家，2 地方，3 行业
 /// file: 文件数据
 class FileLists extends StatefulWidget {
   final Map? arguments;
@@ -21,11 +21,11 @@ class _FileListsState extends State<FileLists> {
   ///type 类型 具体看arguments
   void hierarchySelect(int? type) {
     switch(type) {
-      case 0: title = '国家标准文件';break;
-      case 1: title = '地方标准文件';break;
-      case 2: title = '行业标准文件';break;
-      case 3: title = '通知文件';break;
-      case 4: title = '其他文件';break;
+      case 1: title = '国家标准文件';break;
+      case 2: title = '地方标准文件';break;
+      case 3: title = '行业标准文件';break;
+      // case 3: title = '通知文件';break;
+      // case 4: title = '其他文件';break;
       default: title = '国家标准文件';
     }
   }
@@ -93,7 +93,7 @@ class _FileListsState extends State<FileLists> {
                   Expanded(
                     child: Container(
                       margin: EdgeInsets.only(left: px(16),right: px(16)),
-                      child: Text('${standardFile[i]["name"]}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+                      child: Text('${standardFile[i]["title"]}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
                     ),
                   ),
                   SizedBox(

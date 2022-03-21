@@ -40,17 +40,49 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
   final DateTime _dateTime = DateTime.now();
   DateTime solvedAt = DateTime.now().add(Duration(days: 7));//整改期限
   DateTime reviewedAt = DateTime.now().add(Duration(days: 14));//复查期限
+  List districtId = [""];//片区id
+  List districtList = [];//片区统计数据
+  Map<String,dynamic> data = {};//获取企业数据传递的参数
 
-  /// 获取企业数据
+  /// 获取企业统计
+  /// district.id:片区id
   void _getCompany() async {
-    var response = await Request().get(Api.url['company'],);
+    if(pageIndex != 0){
+      data = {
+        'size':1000,
+        'page':1,
+        'district.id': districtList[pageIndex]['id']
+      };
+    }else{
+      data = {};
+    }
+    var response = await Request().get(
+        Api.url['companyList'],
+        data: data
+    );
     if(response['statusCode'] == 200) {
-      setState(() {
-        companyList = response["data"];
-      });
+      companyList = response["data"]['list'];
+      setState(() {});
     }
   }
-
+  /// 获取片区统计
+  /// 获取tabbar表头，不在写死,
+  /// 片区id也要获取，传递到页面请求片区详情
+  void _getStatistics() async {
+    var response = await Request().get(Api.url['district']);
+    if(response['statusCode'] == 200) {
+      tabBar = [];
+      tabBar.add('全园区');
+      setState(() {
+        districtList = response["data"];
+        for(var i = 0; i<districtList.length;i++){
+          tabBar.add(districtList[i]['name']);
+          districtId.add(districtList[i]['id']);
+        }
+      });
+      _getCompany();
+    }
+  }
   /// 签到清单
   /// id: uuid
   /// checkPersonnel: 检查人员
@@ -218,7 +250,7 @@ class _PotentialRisksIndentificationState extends State<PotentialRisksIndentific
   @override
   void initState() {
     // TODO: implement initState
-    _getCompany();
+    _getStatistics();
     Map res = jsonDecode(StorageUtil().getString(StorageKey.PersonalData));
     userName = res['nickname'];
     userId = res['id'];

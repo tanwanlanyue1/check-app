@@ -22,11 +22,12 @@ class _PolicyStandState extends State<PolicyStand> {
     {'name':'国家标准文件','icon':'lib/assets/icons/other/country.png'},
     {'name':'地方标准文件','icon':'lib/assets/icons/other/place.png'},
     {'name':'行业标准文件','icon':'lib/assets/icons/other/industry.png'},
-    {'name':'通知文件','icon':'lib/assets/icons/other/inform.png'},
-    {'name':'其他文件','icon':'lib/assets/icons/other/acronym.png'},
+    // {'name':'通知文件','icon':'lib/assets/icons/other/inform.png'},
+    // {'name':'其他文件','icon':'lib/assets/icons/other/acronym.png'},
   ];
 
   /// 获取法律文件
+  ///type 1,国家标准文件;2,地方标准文件;3,行业标准文件
   void _getProfile() async {
     var response = await Request().get(Api.url['lawFile']);
     if(response['statusCode'] == 200) {
@@ -99,7 +100,7 @@ class _PolicyStandState extends State<PolicyStand> {
       onTap: (){
         nationList = [];//清空分类文件
         for(var j=0; j<lawList.length; j++){
-          if(lawList[j]['type'] == i){
+          if(lawList[j]['type'] == i+1){
             nationList.add(lawList[j]);
           }
         }

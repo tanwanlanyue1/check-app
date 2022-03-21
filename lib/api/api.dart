@@ -22,6 +22,8 @@ class Api {
 
     'company': baseUrlApp + 'company',//获取全部企业
 
+    'companyList': baseUrlApp + 'company/list',//企业分页列表
+
     'companyCount': baseUrlApp + 'company/count',//获取企业数据总数
 
     'inventory': baseUrlApp + 'inventory',//保存清单

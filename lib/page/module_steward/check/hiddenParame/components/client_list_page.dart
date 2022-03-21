@@ -42,6 +42,15 @@ class _ClientListPageState extends State<ClientListPage> {
   }
 
   @override
+  void didUpdateWidget(covariant ClientListPage oldWidget) {
+    // TODO: implement didUpdateWidget
+    LanguageHelper.language = widget.companyList;
+    textEditingController = TextEditingController();
+    loadData();
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   void dispose() {
     textEditingController.dispose();
     super.dispose();

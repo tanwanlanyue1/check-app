@@ -24,6 +24,7 @@ class _HiddenParameterState extends State<HiddenParameter> {
   int pageIndex = 0;//下标
   List districtList = [];//片区统计数据
   List districtId = [""];//片区id
+  Map<String,dynamic> data = {};//获取企业数据传递的参数
 
   /// 获取片区统计
   /// 获取tabbar表头，不在写死,
@@ -40,16 +41,28 @@ class _HiddenParameterState extends State<HiddenParameter> {
           districtId.add(districtList[i]['id']);
         }
       });
+      _getCompany(); // 获取企业数据
     }
   }
-
-  /// 获取企业数据
+  /// 获取企业统计
+  /// district.id:片区id
   void _getCompany() async {
-    var response = await Request().get(Api.url['company'],);
+    if(pageIndex != 0){
+      data = {
+        'size':1000,
+        'page':1,
+        'district.id': districtList[pageIndex]['id']
+      };
+    }else{
+      data = {};
+    }
+    var response = await Request().get(
+        Api.url['companyList'],
+        data: data
+    );
     if(response['statusCode'] == 200) {
-      setState(() {
-        companyList = response["data"];
-      });
+      companyList = response["data"]['list'];
+      setState(() {});
     }
   }
 
@@ -57,7 +70,6 @@ class _HiddenParameterState extends State<HiddenParameter> {
   void initState() {
     // TODO: implement initState
   _getStatistics();//获取片区统计
-  _getCompany(); // 获取企业数据
   super.initState();
   }
 
@@ -90,7 +102,6 @@ class _HiddenParameterState extends State<HiddenParameter> {
       )),
       callBack: (val){
         pageIndex = val;
-        // _getLatestData();
         _getCompany();
         setState(() {});
       },
