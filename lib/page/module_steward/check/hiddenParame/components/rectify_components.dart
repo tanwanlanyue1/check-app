@@ -57,7 +57,7 @@ class RectifyComponents{
                  height: px(32),
                  width: px(32),
                  margin: EdgeInsets.only(top: px(8)),
-                 child: company['isImportant'] ? Image.asset('lib/assets/icons/form/star.png') : Text(''),
+                 child: company['isImportant'] ?? false ? Image.asset('lib/assets/icons/form/star.png') : Text(''),
                ),
                Spacer(),
                Container(
@@ -90,7 +90,7 @@ class RectifyComponents{
                  ),
                  Container(
                    margin: EdgeInsets.only(left: px(30),right: px(50)),
-                   child: Text('${company["problemType"]['name']}',style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),),
+                   child: Text('${company["problemType"]?['name']}',style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),),
                  ),
                  SizedBox(
                    height: px(32),
@@ -184,7 +184,7 @@ class RectifyComponents{
                    margin: EdgeInsets.only(left: px(16),right: px(12)),
                    child: FittedBox(
                      fit: BoxFit.scaleDown, //不让自己调放大，可以缩小
-                     child: Text('${company['company']["name"]}',style: TextStyle(color: Color(0xff323233),fontSize: sp(30)),),
+                     child: Text(formatTime(company['updatedAt']),style: TextStyle(color: Color(0xff323233),fontSize: sp(30)),),
                    ),
                  ),
                ),
@@ -206,8 +206,8 @@ class RectifyComponents{
                        topLeft: Radius.circular(px(20)),
                        bottomLeft: Radius.circular(px(20)),
                      )
-                 ),//状态；1,未整改;2,已整改;3,整改已通过;4,整改未通过
-                 child: Text(switchs(company["status"])
+                 ),//状态；1,整改中;2,已归档;3,待审核;4,审核已通过;5,审核未通过;6,未提交;
+                 child: Text(inventory(company["status"])
                    ,style: TextStyle(color: Colors.white,fontSize: sp(20)),),
                ),
              ],
@@ -258,6 +258,7 @@ class RectifyComponents{
      ),
    );
  }
+
 //颜色状态
  static Color Colorswitchs(status){
     switch(status){
@@ -278,7 +279,18 @@ class RectifyComponents{
       default: return '未整改';
     }
   }
-
+  //清单状态 1,整改中;2,已归档;3,待审核;4,审核已通过;5,审核未通过;6,未提交;
+  static String inventory(status){
+    switch(status){
+      case 1 : return '整改中';
+      case 2 : return '已归档';
+      case 3 : return '待审核';
+      case 4 : return '审核已通过';
+      case 5 : return '审核未通过';
+      case 6 : return '未提交';
+      default: return '未整改';
+    }
+  }
  ///头部
  /// title :标题名
  /// left :左侧按钮/图标
@@ -311,16 +323,75 @@ class RectifyComponents{
            ),
          ),
          Container(
-           width: px(40),
+           // width: px(40),
            height: px(50),
            margin: EdgeInsets.only(right: px(20)),
            child: right ? Image.asset('lib/assets/icons/form/alter.png',fit: BoxFit.cover,):
+           // child: right ? Text('提交',style: TextStyle(fontSize: sp(24)),):
            Text(''),
          ),
        ],
      ),
    );
  }
+  ///状态
+  ///title:标题
+  ///str:内容
+  ///star:是否星标
+  static Widget tabText({String? title, String? str,bool star = false,int status = 1}){
+    return SizedBox(
+      height: px(82),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            margin: EdgeInsets.only(left: px(24),right: px(12)),
+            child: Text("$title",style: TextStyle(
+                fontSize: sp(28.0),
+                color: Color(0xff4D7FFF),
+                fontWeight: FontWeight.bold
+            )),
+          ),
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: Adapt.screenW()-px(250),
+            ),
+            child: Container(
+              margin: EdgeInsets.only(left: px(16),right: px(12)),
+              child: Text("$str",style: TextStyle(
+                  fontSize: sp(28.0),
+                  color: Color(0XFF323233)
+              ),maxLines: 1,overflow: TextOverflow.ellipsis,),
+            ),
+          ),
+          Visibility(
+            visible: star,
+            child: Container(
+              alignment: Alignment.topLeft,
+              height: px(32),
+              width: px(32),
+              child: Image.asset('lib/assets/icons/form/star.png'),
+            ),
+          ),
+          Spacer(),
+          Container(
+            width: px(110),
+            height: px(48),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+                color: Colorswitchs(status),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(px(20)),
+                  bottomLeft: Radius.circular(px(20)),
+                )
+            ),//状态；1,未整改;2,已整改;3,整改已通过;4,整改未通过
+            child: Text(switchs(status)
+              ,style: TextStyle(color: Colors.white,fontSize: sp(20)),),
+          )
+        ],
+      ),
+    );
+  }
  ///时间格式
  ///time:时间
  static String formatTime(time) {

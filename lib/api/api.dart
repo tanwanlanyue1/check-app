@@ -34,7 +34,11 @@ class Api {
 
     'problem': baseUrlApp + 'problem',//获取问题
 
+    'problemSubmit': baseUrlApp + 'problem/submit',//问题提交
+
     'problemList': baseUrlApp + 'problem/list',//问题分页列表
+
+    'problemSearch': baseUrlApp + 'problem/search',//问题搜索
 
     'problemStatistics': baseUrlApp + 'problem/statistics',//问题统计数目
 
@@ -48,10 +52,13 @@ class Api {
 
     'review': baseUrlApp + 'review',//复查
 
+    'basis': baseUrlApp + 'basis',//排查依据
+
+    'basisList': baseUrlApp + 'basis/list',//排查依据分页列表
+
     'reviewList': baseUrlApp + 'review/list',//复查分页列表
 
     'inventoryReport': baseUrlApp + 'inventory_report',//清单报告
-
 
     'fileSearch': baseUrlApp + 'law/search',//法律文件搜索
 

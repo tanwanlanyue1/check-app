@@ -11,6 +11,7 @@ import 'package:scet_check/page/module_steward/check/hiddenParame/hidden_details
 import 'package:scet_check/page/module_steward/check/hiddenParame/rectification_problem.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/steward_check.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/fill_in_form.dart';
+import 'package:scet_check/page/module_steward/check/potentialRisks/screening_based.dart';
 import 'package:scet_check/page/module_steward/enterprise/enterprise_details.dart';
 import 'package:scet_check/page/module_steward/home_page.dart';
 import 'package:scet_check/page/module_steward/law/essential_details.dart';
@@ -32,8 +33,9 @@ final routes = {
   '/enterpriseDetails': (context,{arguments}) =>  EnterpriseDetails(arguments:arguments), //企业管理详情
   '/fillInForm': (context,{arguments}) =>  FillInForm(arguments:arguments), //排查问题填报
   '/fileLists': (context,{arguments}) =>  FileLists(arguments:arguments), //政策文件列表
-  '/essentialList': (context,{arguments}) =>  EssentialList(), //排查要点列表
-  '/essentialDetails': (context,{arguments}) =>  EssentialDetails(), //排查要点详情
+  '/essentialList': (context,{arguments}) =>  EssentialList(arguments:arguments), //排查要点列表
+  '/essentialDetails': (context,{arguments}) =>  EssentialDetails(arguments:arguments), //排查要点详情
+  '/screeningBased': (context,{arguments}) =>  ScreeningBased(arguments:arguments), //排查要点/法律法规
   '/stewardCheck': (context,{arguments}) =>  StewardCheck(arguments:arguments), //管家排查
   '/PDFView': (context,{arguments}) =>  PDFView(pathPDF:arguments), //PDF页面
   '/CompanyFile': (context,{arguments}) =>  CompanyFile(arguments:arguments), //一企一档
@@ -52,15 +54,17 @@ onGenerateRoute (RouteSettings settings) {
   final String? name = settings.name;
   final Function? pageContentBuilder = routes[name];
   if (pageContentBuilder != null) {
-    // print(settings.name);
     if (settings.arguments != null) {
       final Route route = MaterialPageRoute(
+          settings: RouteSettings(name: name),
           builder: (context) =>
               pageContentBuilder(context, arguments: settings.arguments));
       return route;
     } else {
       final Route route =
-          MaterialPageRoute(builder: (context) => pageContentBuilder(context));
+          MaterialPageRoute(
+              settings: RouteSettings(name: name),
+              builder: (context) => pageContentBuilder(context));
       return route;
     }
   } else {

@@ -21,7 +21,7 @@ class _EnterpriseHomeState extends State<EnterpriseHome> {
 
 
   final List _pageList = [
-    EnterpriseDetails(),//
+    EnterpriseDetails(),//企业详情
     MessagePage(),//通知中心
   ];
 

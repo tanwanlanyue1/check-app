@@ -15,6 +15,7 @@ class ProblemDetails extends StatefulWidget {
 class _ProblemDetailsState extends State<ProblemDetails> {
 
   List imgDetails = [];//图片列表
+  List lawImg = [];//法律法规截图列表
   Map problemList = {};//问题详情列表
   bool isImportant = false; //重点问题
   String checkPersonnel = '';//排查人员
@@ -32,7 +33,12 @@ class _ProblemDetailsState extends State<ProblemDetails> {
     imgDetails = problemList['images'];
     isImportant = problemList['isImportant'];
     checkPersonnel = problemList['inventory']['checkPersonnel'];
-    lawTitle = problemList['law']['title'];
+    lawImg = problemList['lawImages'] ?? [];
+    if(problemList['law'] == null){
+      lawTitle = problemList['basis']['name'] ?? '';
+    }else{
+      lawTitle = problemList['law']['title'] ?? '';
+    }
     fillPerson = problemList['user']['nickname'];
     problemType = problemList['problemType']['name'];
     rectifyPlan = problemList['detail'] ?? '';
@@ -106,11 +112,20 @@ class _ProblemDetailsState extends State<ProblemDetails> {
               )
           ),
           FormCheck.rowItem(
-            title: "法规依据",
+            title: "排查依据",
             child: Text(lawTitle, style: TextStyle(color: Color(0xff4D7FFF),
                 fontSize: sp(28),
                 fontFamily: 'Roboto-Condensed'),),
           ),
+          lawImg.isNotEmpty ?
+          FormCheck.rowItem(
+              alignStart: true,
+              title: "法律法规截图",
+              child: UploadImage(
+                imgList: lawImg,
+                closeIcon: false,
+              )) :
+          Container(),
           FormCheck.rowItem(
             title: "整改期限",
             child: Text(solvedAt, style: TextStyle(

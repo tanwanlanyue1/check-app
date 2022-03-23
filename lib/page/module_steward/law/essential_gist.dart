@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:scet_check/api/api.dart';
+import 'package:scet_check/api/request.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 import 'components/law_components.dart';
 
 ///排查要点依据
+///search：判断要不要输入框
 class EssentialGist extends StatefulWidget {
-  const EssentialGist({Key? key}) : super(key: key);
+  bool search;
+  EssentialGist({Key? key,this.search = true}) : super(key: key);
 
   @override
   _EssentialGistState createState() => _EssentialGistState();
@@ -15,48 +19,27 @@ class EssentialGist extends StatefulWidget {
 class _EssentialGistState extends State<EssentialGist> {
   late TextEditingController textEditingController;//输入框控制器
   ///依据数据
-  List<Map<String,dynamic>> gistData = [
-    {"text":"环境监测",
-      'data':[
-        {'name':'企业环境信息披露'},
-        {'name':'排污信息公考'},
-        {'name':'自行监测信息公开'},
-      ]
-    },
-    {"text":"环保手续",
-      'data':[
-        {'name':'项目建设'},
-        {'name':'排污许可'},
-    ]},
-    {"text":"环保信息",
-      'data':[
-        {'name':'企业环境信息披露'},
-        {'name':'排污信息公考'},
-        {'name':'自行监测信息公开'},
-        {'name':'自行监测信息公开'},
-        {'name':'自行监测信息公开'},
-        {'name':'自行监测信息公开'},
-        {'name':'自行监测信息公开'},
-      ]},
-    {"text":"工业固废管理",
-      'data':[
-        {'name':'企业环境信息披露'},
-      ]
-    },
-    {"text":"大气污染防治",},
-  ];
-
+  List<dynamic> gistData = [];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _getBasis();
     textEditingController = TextEditingController();
-    ///添加一个展开收起的属性
-    for(var i=0; i< gistData.length;i++){
-      gistData[i]['tidy'] = false;
+  }
+  /// 获取排查依据
+  ///type 1,国家标准文件;2,地方标准文件;3,行业标准文件
+  void _getBasis() async {
+    var response = await Request().get(Api.url['basisList'],data: {"level":1});
+    if(response['statusCode'] == 200 && response['data'] != null) {
+      gistData = response['data']['list'];
+      ///添加一个展开收起的属性
+      for(var i=0; i< gistData.length;i++){
+        gistData[i]['tidy'] = false;
+      }
+      setState(() {});
     }
   }
-
   ///计算高度
   ///i:数量
  double calculateHeight(int i){
@@ -75,6 +58,7 @@ class _EssentialGistState extends State<EssentialGist> {
     return ListView(
       padding: EdgeInsets.only(top: 0),
       children: [
+        widget.search ?
         Container(
           height: px(88),
           color: Colors.white,
@@ -83,13 +67,14 @@ class _EssentialGistState extends State<EssentialGist> {
               textEditingController: textEditingController,
               callBack: (val){}
           ),
-        ),
+        ):
+        Container(),
         Column(
           children: List.generate(gistData.length, (i) => gistDataCard(
-            title: gistData[i]["text"],
+            title: gistData[i]["name"],
             packup: gistData[i]["tidy"],
             index: i,
-            data: gistData[i]['data'],
+            data: gistData[i]['children'],
             onTaps: (){
               gistData[i]["tidy"] = !gistData[i]["tidy"];
               setState(() {});
@@ -148,7 +133,7 @@ class _EssentialGistState extends State<EssentialGist> {
             ],
           ),
           onTap: (){
-            Navigator.pushNamed(context, '/essentialList');
+            Navigator.pushNamed(context, '/essentialList',arguments: {'data':gistData[index]});
           },
         ),
       ),

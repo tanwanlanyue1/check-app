@@ -16,7 +16,8 @@ class CheckPage extends StatefulWidget {
 }
 
 class _CheckPageState extends State<CheckPage> {
-  List tabBar = ["统计分析","隐患台帐","隐患排查",];//头部
+  List tabBar = ["统计分析","隐患台帐",];//头部
+  // List tabBar = ["统计分析","隐患台帐","隐患排查",];//头部
   PageController pagesController = PageController();//控制器
   int pageIndex = 0;//下标
   List _pageList = [];//页面数组
@@ -27,7 +28,7 @@ class _CheckPageState extends State<CheckPage> {
     _pageList = [
       StatisticAnalysis(),//统计分析
       HiddenParameter(),// 隐患台账
-      PotentialRisksIndentification(),//隐患排查
+      // PotentialRisksIndentification(),//隐患排查
     ];
   }
 
@@ -80,6 +81,7 @@ class _CheckPageState extends State<CheckPage> {
               children: [
                 Container(
                   margin: EdgeInsets.only(bottom: px(3)),
+                  padding: EdgeInsets.only(left: px(24),right: px(24),top: px(5),bottom: px(5)),
                   child: Text(
                     "${tabBar[i]}",
                     style: TextStyle(
@@ -91,11 +93,12 @@ class _CheckPageState extends State<CheckPage> {
                 ),
                 Positioned(
                   bottom: 0,
-                  child: SizedBox(
+                  child: Container(
                     width: px(144),
+                    margin: EdgeInsets.only(left: px(24),right: px(24)),
                     height: pageIndex == i ? px(17) : 0,
                     child: pageIndex == 0 ?Image.asset('lib/assets/images/home/shapeCombination.png'):
-                     pageIndex == 1 ?Image.asset('lib/assets/images/home/shapeCombinationTwo.png'):
+                     // pageIndex == 1 ?Image.asset('lib/assets/images/home/shapeCombinationTwo.png'):
                      Image.asset('lib/assets/images/home/shapeCombinationThree.png'),
                   ),
                 )

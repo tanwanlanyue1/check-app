@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:scet_check/api/api.dart';
+import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/image_widget.dart';
-import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
+import 'package:scet_check/model/provider/provider_details.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 import 'components/law_components.dart';
 
 ///排查要点详情
+///arguments:{'id':详情id}
 class EssentialDetails extends StatefulWidget {
-  const EssentialDetails({Key? key}) : super(key: key);
+  final Map? arguments;
+  const EssentialDetails ({Key? key,this.arguments}) : super(key: key);
 
   @override
   _EssentialDetailsState createState() => _EssentialDetailsState();
@@ -16,28 +21,58 @@ class EssentialDetails extends StatefulWidget {
 class _EssentialDetailsState extends State<EssentialDetails> {
   TextEditingController textEditingController = TextEditingController();
   List subTitle = ['排查要点','标准规范','排查依据','违法依据'];//副标题
+  Map gistDetails = {};//要点详情
   List imageDatile = [];//示例图片
+  late ProviderDetaild _providerDetaild;
+
+  /// 获取排查详情
+  void _getBasis() async {
+    var response = await Request().get(Api.url['basis']+'/${widget.arguments?['id']}',
+    );
+    if(response['statusCode'] == 200 && response['data'] != null) {
+      gistDetails = response['data'];
+      imageDatile = response['data']['images'] ?? [];
+      setState(() {});
+    }
+  }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    _getBasis();
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
+    _providerDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     return Scaffold(
       body: Column(
         children: [
-          RectifyComponents.topBar(
-              title: '排查要点详情',
-              right: true,
-              callBack: (){
-                Navigator.pop(context);
-              }
-          ),
+          top(),
           Expanded(
             child: ListView(
               padding: EdgeInsets.only(top: px(4)),
               children: [
-                Column(
-                  children: List.generate(subTitle.length, (i) => checkFrom(i)),
+                checkFrom(
+                  title: '排查要点',
+                  data: gistDetails['name'] ?? '',
                 ),
-                remark(),
+                checkFrom(
+                  title: '标准规范',
+                  data: gistDetails['specification'] ?? '',
+                ),
+                checkFrom(
+                  title: '排查依据',
+                  data: gistDetails['checkBasis'] ?? '',
+                ),
+                checkFrom(
+                  title: '违法依据',
+                  data: gistDetails['illegalBasis'] ?? '',
+                ),
+                checkFrom(
+                  title: '备注',
+                  data: gistDetails['remark'] ?? '',
+                ),
                 example(),
               ],
             ),
@@ -47,8 +82,50 @@ class _EssentialDetailsState extends State<EssentialDetails> {
     );
   }
 
+  ///头部
+  Widget top(){
+    return Container(
+      color: Colors.white,
+      height: px(88),
+      margin: EdgeInsets.only(top: Adapt.padTopH()),
+      child: Row(
+        children: [
+          InkWell(
+            child: Container(
+              height: px(40),
+              width: px(41),
+              margin: EdgeInsets.only(left: px(20)),
+              child: Image.asset('lib/assets/icons/other/chevronLeft.png',fit: BoxFit.fill,),
+            ),
+            onTap: (){
+              Navigator.pop(context);
+            },
+          ),
+          Expanded(
+            flex: 1,
+            child: Center(
+              child: Text("排查要点详情",style: TextStyle(color: Color(0xff323233),fontSize: sp(32),fontFamily: 'M'),),
+            ),
+          ),
+          InkWell(
+            child: Container(
+                width: px(80),
+                height: px(50),
+                margin: EdgeInsets.only(right: px(20)),
+                alignment: Alignment.center,
+                child: Text('提交',style: TextStyle(fontSize: sp(24)),)
+            ),
+            onTap: (){
+              _providerDetaild.getLawId(id: gistDetails['id'],name: gistDetails['name'],basis: true);
+              Navigator.of(context).popUntil(ModalRoute.withName('/fillInForm'));
+            },
+          ),
+        ],
+      ),
+    );
+  }
   ///排查表单
-  Widget checkFrom(int i){
+  Widget checkFrom({String? title,String data = ''}){
     return Container(
       padding: EdgeInsets.only(left: px(30),top: px(26),bottom: px(12)),
       color: Colors.white,
@@ -56,12 +133,13 @@ class _EssentialDetailsState extends State<EssentialDetails> {
         children: [
           LawComponents.rowTwo(
             child: Image.asset('lib/assets/icons/other/rhombus.png'),
-              textChild: Text('${subTitle[i]}',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),fontFamily: 'R'),)
+              textChild: Text('$title',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),fontFamily: 'R'),)
           ),
           Container(
             padding: EdgeInsets.only(top: px(5),bottom: px(20)),
             margin: EdgeInsets.only(left: px(32),right: px(24),),
-            child: Text('核对企业所有项目皮肤，核查是否存在未批先建。'*3,style: TextStyle(color: Color(0xff323233),fontSize: sp(26),fontFamily: 'R'),),
+            alignment: Alignment.centerLeft,
+            child: Text(data,style: TextStyle(color: Color(0xff323233),fontSize: sp(26),fontFamily: 'R'),),
             decoration: BoxDecoration(
               border: Border(bottom: BorderSide(width: px(1.0),color: Color(0X99A1A6B3))),
             ),
@@ -71,27 +149,6 @@ class _EssentialDetailsState extends State<EssentialDetails> {
     );
   }
 
-  ///备注
-  Widget remark(){
-    return Container(
-      color: Colors.white,
-      padding: EdgeInsets.only(left: px(30),top: px(26),bottom: px(12)),
-      child: Column(
-        children: [
-          LawComponents.rowTwo(
-              child: Image.asset('lib/assets/icons/other/rhombus.png'),
-              textChild: Text('备注',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),fontFamily: 'R'),)
-          ),
-          LawComponents.uniline(
-              hint: '备注填写现场排查经验，非规范要求。',
-              textEditingController: textEditingController,
-              callBack: (val){
-              }
-          ),
-        ],
-      ),
-    );
-  }
 
   ///示例
   Widget example(){
@@ -105,10 +162,10 @@ class _EssentialDetailsState extends State<EssentialDetails> {
               child: Image.asset('lib/assets/icons/other/rhombus.png'),
               textChild: Text('示例图片',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),fontFamily: 'R'),)
           ),
-          Container(
-            margin: EdgeInsets.only(left: px(32),top: px(20),bottom: px(20)),
-            child: Text('名称:示例名称',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),fontFamily: 'R'),),
-          ),
+          // Container(
+          //   margin: EdgeInsets.only(left: px(32),top: px(20),bottom: px(20)),
+          //   child: Text('名称:示例名称',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),fontFamily: 'R'),),
+          // ),
           Visibility(
             visible: imageDatile.isNotEmpty,
             child: ImageWidget(

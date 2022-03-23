@@ -125,7 +125,7 @@ class FormCheck {
   ///hintText:默认
   ///onChanged:回调
   ///unit:单位
-  static Widget inputWidget({bool? disabled, String? hintText = '请输入', Function? onChanged, String? unit}) {
+  static Widget inputWidget({bool? disabled, String? hintText = '请输入', Function? onChanged,int lines = 1, String? unit}) {
     return Row(
       children: [
         Expanded(
@@ -143,6 +143,7 @@ class FormCheck {
                 fillColor: Color(0XffF5F6FA),
                 border: InputBorder.none,
               ),
+              maxLines: lines,
               onChanged: (val){
                 onChanged?.call(val);
               },
@@ -190,70 +191,6 @@ class FormCheck {
                 children: children
             ),
           )
-        ],
-      ),
-    );
-  }
-
-  ///状态
-  ///title:标题
-  ///str:内容
-  ///star:是否星标
-  static Widget tabText({String? title, String? str,bool star = false}){
-    return SizedBox(
-      height: px(82),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            margin: EdgeInsets.only(left: px(24),right: px(12)),
-            child: Text("$title",style: TextStyle(
-                fontSize: sp(28.0),
-                color: Color(0xff4D7FFF),
-                fontWeight: FontWeight.bold
-            )),
-          ),
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: Adapt.screenW()-px(250),
-            ),
-            child: Container(
-              margin: EdgeInsets.only(left: px(16),right: px(12)),
-              child: Text("$str",style: TextStyle(
-                  fontSize: sp(28.0),
-                  color: Color(0XFF323233)
-              )),
-            ),
-          ),
-          Visibility(
-            visible: star,
-            child: Container(
-              alignment: Alignment.topLeft,
-              height: px(32),
-              width: px(32),
-              child: Image.asset('lib/assets/icons/form/star.png'),
-            ),
-          ),
-          Spacer(),
-          Container(
-            height: px(48),
-            width: px(100),
-            alignment: Alignment.center,
-            child: Text(
-              '已整改',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: sp(22.0)
-              ),
-            ),
-            decoration: BoxDecoration(
-                color: Color(0xff95C758),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(px(20)),
-                  bottomLeft: Radius.circular(px(20)),
-                )
-            ),
-          ),
         ],
       ),
     );

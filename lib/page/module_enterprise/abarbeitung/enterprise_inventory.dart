@@ -72,16 +72,20 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
   ///page:第几页
   ///size:每页多大
   ///andWhere:查询的条件
+  ///isCompanyRead:判断该是否企业可以看
+  ///uploading:判断该是否整改完成
   void _getProblem() async {
     Map<String,dynamic> data = {
-      'page':1,
-      'size':50,
       'inventory.id':uuid
     };
     var response = await Request().get(Api.url['problemList'],data: data,);
     if(response['statusCode'] == 200 && response['data'] != null) {
       setState(() {
-        problemList = response['data']['list'];
+       for(var i=0; i<response['data']['list'].length; i++){
+          if(response['data']['list'][i]['isCompanyRead'] == true){
+            problemList.add(response['data']['list'][i]);
+          }
+        }
         for(var i=0; i<problemList.length; i++){
           if(problemList[i]['status'] == 2 || problemList[i]['status'] == 3){
             uploading = true;

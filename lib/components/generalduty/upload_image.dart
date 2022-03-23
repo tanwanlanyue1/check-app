@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/components/pertinence/companyFile/components/file_system.dart';
 import 'package:scet_check/routers/router_animate/router_fade_route.dart';
@@ -94,8 +95,11 @@ class _UploadImageState extends State<UploadImage> {
         if(index == _imagesList.length && widget.closeIcon) {
           return GestureDetector(
             onTap: () async{
-              _upload();
-              // FileSystem.upload(result, url);
+              if (await Permission.camera.request().isGranted) {
+                if (await Permission.photos.request().isGranted) {
+                  _upload();
+                }
+              }
             },
             child: Container(
               width: px(169),

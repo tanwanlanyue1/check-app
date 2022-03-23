@@ -101,9 +101,10 @@ class _RectificationProblemState extends State<RectificationProblem> {
                 Container(
                   margin: EdgeInsets.only(top: px(5)),
                   color: Colors.white,
-                  child: FormCheck.tabText(
+                  child: RectifyComponents.tabText(
                     title: "01",
                     str: '${problemList['detail']}',
+                    status: problemList['status'] ?? 1
                   ),
                 ),
                 //问题详情与申报

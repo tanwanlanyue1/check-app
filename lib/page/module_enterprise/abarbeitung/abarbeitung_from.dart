@@ -5,14 +5,13 @@ import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/page/module_enterprise/abarbeitung/problem_details.dart';
-import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/enterprise_reform.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/review_situation.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 
-///整改问题表单
+///整改问题表单 inventory
 ///arguments{'id'：企业id}
 class AbarbeitungFrom extends StatefulWidget {
   final Map? arguments;

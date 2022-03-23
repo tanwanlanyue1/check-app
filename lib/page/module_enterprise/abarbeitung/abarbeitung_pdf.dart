@@ -106,7 +106,7 @@ class _AbarbeitungPdfState extends State<AbarbeitungPdf> {
         width: px(169),
         height: px(169),
         color: Color(0XFFF5F6FA),
-        child: Image.asset('lib/assets/icons/form/camera.png'),
+        child: Image.asset('lib/assets/icons/form/pdf.png'),
       ),
     );
   }

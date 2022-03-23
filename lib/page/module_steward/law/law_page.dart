@@ -52,7 +52,7 @@ class _LawPageState extends State<LawPage>  with SingleTickerProviderStateMixin{
           Expanded(
             child: TabBarView(
                 controller: _tabController,
-                children: const <Widget>[
+                children: <Widget>[
                   PolicyStand(),//政策标准规范
                   EssentialGist(),//排查要点依据
                 ]

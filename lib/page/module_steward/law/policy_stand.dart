@@ -6,8 +6,10 @@ import 'package:scet_check/api/request.dart';
 import 'components/law_components.dart';
 
 ///政策标准规范
+///search：判断要不要输入框
 class PolicyStand extends StatefulWidget {
-  const PolicyStand({Key? key}) : super(key: key);
+  bool search;
+  PolicyStand({Key? key,this.search = true}) : super(key: key);
 
   @override
   _PolicyStandState createState() => _PolicyStandState();
@@ -47,6 +49,7 @@ class _PolicyStandState extends State<PolicyStand> {
     return ListView(
       padding: EdgeInsets.only(top: 0),
       children: [
+        widget.search ?
         Container(
           height: px(88),
           color: Colors.white,
@@ -55,7 +58,8 @@ class _PolicyStandState extends State<PolicyStand> {
             textEditingController: textEditingController,
             callBack: (val){}
           ),
-        ),
+        ):
+        Container(),
         Column(
           children: List.generate(icons.length, (i) => rowFile(i)),
         ),

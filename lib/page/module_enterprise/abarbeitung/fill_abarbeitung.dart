@@ -153,7 +153,7 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
           FormCheck.rowItem(
             title: "整改措施",
             child: FormCheck.inputWidget(
-                hintText: '整改措施',
+                hintText: '请输入整改措施',
                 onChanged: (val){
                   descript = val;
                   setState(() {});
@@ -179,7 +179,7 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
           FormCheck.rowItem(
             title: "其他说明",
             child: FormCheck.inputWidget(
-                hintText: '其他说明',
+                hintText: '请输入其他说明',
                 onChanged: (val){
                   remark = val;
                   setState(() {});
@@ -215,7 +215,7 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
             FormCheck.rowItem(
               title: "复查人员",
               child: FormCheck.inputWidget(
-                  hintText: '复查人员',
+                  hintText: '请输入复查人员',
                   onChanged: (val){
                     reviewPerson = val;
                     setState(() {});
@@ -231,7 +231,7 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
             FormCheck.rowItem(
               title: "复查详情",
               child: FormCheck.inputWidget(
-                  hintText: '复查详情',
+                  hintText: '请输入复查详情',
                   onChanged: (val){
                     descript = val;
                     setState(() {});
@@ -257,7 +257,7 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
             FormCheck.rowItem(
               title: "其他说明",
               child: FormCheck.inputWidget(
-                  hintText: '其他说明',
+                  hintText: '请输入其他说明',
                   onChanged: (val){
                     remark = val;
                     setState(() {});

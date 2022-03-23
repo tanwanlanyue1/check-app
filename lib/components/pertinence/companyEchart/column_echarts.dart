@@ -64,31 +64,30 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
         yAxis: {
           type: 'category',
           data: ${jsonEncode(erectName)},
-     axisLabel : {//坐标轴刻度标签的相关设置。
-       formatter : function(params){
-                var \$newParamsName = "";// 最终拼接成的字符串
-                var \$paramsNameNumber = params.length;// 实际标签的个数
-                var \$provideNumber = 5;// 每行能显示的字的个数
-                var \$rowNumber = Math.ceil(\$paramsNameNumber / \$provideNumber);// 换行的话，需要显示几行，向上取整
-                if (\$paramsNameNumber > \$provideNumber) {
-                  for (var p = 0; p < \$rowNumber; p++) {
-                   var \$tempStr = "";// 表示每一次截取的字符串
-                    var \$start = p * \$provideNumber;// 开始截取的位置
-                    var \$end = \$start + \$provideNumber;// 结束截取的位置
-                     if (p == \$rowNumber - 1) {
-                      \$tempStr = params.substring(\$start, \$paramsNameNumber);
-                     }else{
-                     \$tempStr = params.substring(\$start, \$end) + "\\n";
-                     }
-                        \$newParamsName += \$tempStr;// 最终拼成的字符串
+           axisLabel : {//坐标轴刻度标签的相关设置。
+             formatter : function(params){
+                      var \$newParamsName = "";// 最终拼接成的字符串
+                      var \$paramsNameNumber = params.length;// 实际标签的个数
+                      var \$provideNumber = 5;// 每行能显示的字的个数
+                      var \$rowNumber = Math.ceil(\$paramsNameNumber / \$provideNumber);// 换行的话，需要显示几行，向上取整
+                      if (\$paramsNameNumber > \$provideNumber) {
+                        for (var p = 0; p < \$rowNumber; p++) {
+                         var \$tempStr = "";// 表示每一次截取的字符串
+                          var \$start = p * \$provideNumber;// 开始截取的位置
+                          var \$end = \$start + \$provideNumber;// 结束截取的位置
+                           if (p == \$rowNumber - 1) {
+                            \$tempStr = params.substring(\$start, \$paramsNameNumber);
+                           }else{
+                           \$tempStr = params.substring(\$start, \$end) + "\\n";
+                           }
+                              \$newParamsName += \$tempStr;// 最终拼成的字符串
+                        }
+                      }else{
+                       \$newParamsName = params;
+                      }
+                      return \$newParamsName
                   }
-                }else{
-                 \$newParamsName = params;
-                }
-                return \$newParamsName
-            }
-   },
-
+         },
         },
         series: ${jsonEncode(series)}
       }
@@ -164,13 +163,34 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
          xAxis: {
             type: 'category',
             data: ${jsonEncode(erectName)},
+             axisLabel : {//坐标轴刻度标签的相关设置。
+             formatter : function(params){
+                      var \$newParamsName = "";// 最终拼接成的字符串
+                      var \$paramsNameNumber = params.length;// 实际标签的个数
+                      var \$provideNumber = 5;// 每行能显示的字的个数
+                      var \$rowNumber = Math.ceil(\$paramsNameNumber / \$provideNumber);// 换行的话，需要显示几行，向上取整
+                      if (\$paramsNameNumber > \$provideNumber) {
+                        for (var p = 0; p < \$rowNumber; p++) {
+                         var \$tempStr = "";// 表示每一次截取的字符串
+                          var \$start = p * \$provideNumber;// 开始截取的位置
+                          var \$end = \$start + \$provideNumber;// 结束截取的位置
+                           if (p == \$rowNumber - 1) {
+                            \$tempStr = params.substring(\$start, \$paramsNameNumber);
+                           }else{
+                           \$tempStr = params.substring(\$start, \$end) + "\\n";
+                           }
+                              \$newParamsName += \$tempStr;// 最终拼成的字符串
+                        }
+                      }else{
+                       \$newParamsName = params;
+                      }
+                      return \$newParamsName
+                  }
+             },
             axisTick: {
               alignWithLabel: true,
               length: 0,
             },
-            axisLabel: {
-              interval: 0,
-            }
           },
           yAxis: {
             type: 'value',
@@ -189,7 +209,6 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
     series = widget.data ?? [];
     erectName = widget.erectName ?? [];
     datas = widget.pieData ?? [];
-    print('erectName===$erectName');
     columnImage =  '''
       {
         title: {
@@ -245,53 +264,53 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
         series: ${jsonEncode(series)}
       }
       ''';
-//     pie =  '''
-// {
-//   legend: {
-//     bottom: '5%',
-//     left: 'center',
-//      icon: "circle"
-//   },
-//   series: [
-//     {
-//       name: '',
-//      //hoverAnimation: false, // 取消掉环形图鼠标移上去时自动放大
-//      selectedMode:'single',
-//       selectedOffset:20,
-//       type: 'pie',
-//       radius: ['40%', '70%'],
-//       avoidLabelOverlap: false,
-//       // top: '-30%',//饼图距离上面的距离
-//       //color:['red','blue','gray','yellow','teal'],//颜色
-//       itemStyle: { //调整相邻的边距和圆角
-//         borderRadius: 10,
-//         borderColor: '#fff',
-//         borderWidth: 2
-//       },
-//
-//       label: {
-//         show: false, /*是否一直显示*/
-//         position: 'center',
-//                  formatter: function (value) {
-//                             return `\${value['name']}`+
-//                             `\\n`+`\${value['value']}`;
-//                           },
-//       },
-//       emphasis: {
-//         label: {
-//           show: true,
-//           fontSize: '12',
-//           fontColor:'#323233'
-//         }
-//       },
-//       labelLine: {
-//         show: false
-//       },
-//       data: ${jsonEncode(datas)}
-//     }
-//   ]
-// }
-//       ''';
+    pie =  '''
+{
+  legend: {
+    bottom: '5%',
+    left: 'center',
+     icon: "circle"
+  },
+  series: [
+    {
+      name: '',
+     //hoverAnimation: false, // 取消掉环形图鼠标移上去时自动放大
+     selectedMode:'single',
+      selectedOffset:20,
+      type: 'pie',
+      radius: ['40%', '70%'],
+      avoidLabelOverlap: false,
+      // top: '-30%',//饼图距离上面的距离
+      //color:['red','blue','gray','yellow','teal'],//颜色
+      itemStyle: { //调整相邻的边距和圆角
+        borderRadius: 10,
+        borderColor: '#fff',
+        borderWidth: 2
+      },
+
+      label: {
+        show: false, /*是否一直显示*/
+        position: 'center',
+                 formatter: function (value) {
+                            return `\${value['name']}`+
+                            `\\n`+`\${value['value']}`;
+                          },
+      },
+      emphasis: {
+        label: {
+          show: true,
+          fontSize: '12',
+          fontColor:'#323233'
+        }
+      },
+      labelLine: {
+        show: false
+      },
+      data: ${jsonEncode(datas)}
+    }
+  ]
+}
+      ''';
     erectImage =  '''
       {
         title: {
@@ -321,11 +340,30 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
               alignWithLabel: true,
               length: 0,
             },
-            // axisLabel:{interval: 0,rotate:40}
-            // axisLabel:{interval: 0,}
-            axisLabel: {
-              interval: 0,
-            }
+             axisLabel : {//坐标轴刻度标签的相关设置。
+             formatter : function(params){
+                      var \$newParamsName = "";// 最终拼接成的字符串
+                      var \$paramsNameNumber = params.length;// 实际标签的个数
+                      var \$provideNumber = 5;// 每行能显示的字的个数
+                      var \$rowNumber = Math.ceil(\$paramsNameNumber / \$provideNumber);// 换行的话，需要显示几行，向上取整
+                      if (\$paramsNameNumber > \$provideNumber) {
+                        for (var p = 0; p < \$rowNumber; p++) {
+                         var \$tempStr = "";// 表示每一次截取的字符串
+                          var \$start = p * \$provideNumber;// 开始截取的位置
+                          var \$end = \$start + \$provideNumber;// 结束截取的位置
+                           if (p == \$rowNumber - 1) {
+                            \$tempStr = params.substring(\$start, \$paramsNameNumber);
+                           }else{
+                           \$tempStr = params.substring(\$start, \$end) + "\\n";
+                           }
+                              \$newParamsName += \$tempStr;// 最终拼成的字符串
+                        }
+                      }else{
+                       \$newParamsName = params;
+                      }
+                      return \$newParamsName
+                  }
+             },
           },
           yAxis: {
             type: 'value',

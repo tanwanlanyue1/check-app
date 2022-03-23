@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/time_select.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
-import 'package:scet_check/page/module_enterprise/abarbeitung/abarbeitung_pdf.dart';
+import 'package:scet_check/model/provider/provider_details.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
-import 'package:scet_check/page/module_steward/law/components/law_components.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/time/utc_tolocal.dart';
 
@@ -23,7 +23,7 @@ class StewardCheck extends StatefulWidget {
   _StewardCheckState createState() => _StewardCheckState();
 }
 
-class _StewardCheckState extends State<StewardCheck> {
+class _StewardCheckState extends State<StewardCheck>{
   /// 1,未整改;2,已整改;3,整改已通过;4,整改未通过
   int type = 1;
   bool tidy = true; //展开/收起
@@ -38,8 +38,12 @@ class _StewardCheckState extends State<StewardCheck> {
   String abarbeitungDates = '';//整改日期
   String sceneReviewDate = '';//现场复查日期
   String checkType = '';//检查类型
+  bool pigeon = true; //是否可以归档
+  bool isCompanyRead = false;//是否企业查看
+  bool isEnvironmentRead = false;//是否环保局查看
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  Map<String,dynamic> data = {};//查询问题的参数
+  Map<String, dynamic> subCompanies = {'companies':[],'environments':[]};//提交的数组
+  late ProviderDetaild _providerDetaild;
 
   /// 获取清单详情
   /// id:清单id
@@ -47,6 +51,7 @@ class _StewardCheckState extends State<StewardCheck> {
     var response = await Request().get(Api.url['inventory']+'/$uuid',);
     if(response['statusCode'] == 200 && response['data'] != null) {
       setState(() {
+        _getProblem();
         repertoire = response['data'] ;
         stewardCheck = repertoire['checkPersonnel'];
         location = repertoire['company']['region']['name'];
@@ -72,10 +77,30 @@ class _StewardCheckState extends State<StewardCheck> {
   ///size:每页多大
   ///andWhere:查询的条件
   void _getProblem() async {
-    var response = await Request().get(Api.url['problemList'],data: data,);
+    var response = await Request().get(Api.url['problemList'],
+      data: {
+        'inventory.id':uuid
+      },);
     if(response['statusCode'] == 200 && response['data'] != null) {
       setState(() {
         problemList = response['data']['list'];
+        for(var i=0; i<problemList.length; i++){
+          problemList[i]['check'] = false;
+          if(problemList[i]['status'] != 3){
+            pigeon = false;
+          }
+        }
+      });
+    }
+  }
+
+  /// 提交问题
+  void _submit() async {
+    var response = await Request().post(Api.url['problemSubmit'],data: subCompanies,);
+    if(response['statusCode'] == 200) {
+      setState(() {
+        _getProblem();
+        ToastWidget.showToastMsg('提交成功');
       });
     }
   }
@@ -90,8 +115,170 @@ class _StewardCheckState extends State<StewardCheck> {
           data: _data
       );
       if(response['statusCode'] == 200) {
-        ToastWidget.showToastMsg('修改日期成功');
+        ToastWidget.showToastMsg('修改成功');
       }
+  }
+  ///筛选提交的问题
+  void submission(){
+    Future.microtask(() {
+      showDialog<Null>(
+        context: context,//StatefulBuilder
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return StatefulBuilder(builder: (context,setState){
+            return Material(
+              color: Color.fromRGBO(0, 0, 0, 0.3),
+              child: Center(
+                child: Container(
+                  margin: EdgeInsets.only(left: px(24),right: px(24)),
+                  decoration:const ShapeDecoration(
+                      color: Color(0xffF9F9F9),
+                      shape: RoundedRectangleBorder(
+                          borderRadius:  BorderRadius.all( Radius.circular(5))
+                      )
+                  ),
+                  height: Adapt.screenH()*0.75,
+                  child: Column(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(top: px(12)),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text('提交到企业',style: TextStyle(color: Color(0xff4D7FFF),fontSize: sp(30)),textAlign: TextAlign.center,),
+                            ),
+                            Expanded(
+                              child: Text('提交到环保局',style: TextStyle(color: Color(0xff4D7FFF),fontSize: sp(30)),textAlign: TextAlign.center,),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: List.generate(
+                                  problemList.length, (i) =>
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: px(70),
+                                          child: Radio(
+                                            value: false,
+                                            groupValue: problemList[i]['check'],
+                                            onChanged: (val) {
+                                              setState(() {
+                                                if(problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false){
+                                                  problemList[i]['check'] = val!;
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: InkWell(
+                                            child: Text('${problemList[i]['detail']}',style: TextStyle(
+                                                color: Color((problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false) ? 0xff323233 : 0xff969799),
+                                                fontSize: sp(30),
+                                                overflow: TextOverflow.ellipsis)),
+                                            onTap: (){
+                                              if(problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false){
+                                                problemList[i]['check'] = !problemList[i]['check'];
+                                              }
+                                              setState(() {});
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: List.generate(
+                                  problemList.length, (i) =>
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: px(70),
+                                          child: Radio(
+                                            value: true,
+                                            groupValue: problemList[i]['check'],
+                                            onChanged: (val) {
+                                              setState(() {
+                                                if(problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false){
+                                                  problemList[i]['check'] = val!;
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: InkWell(
+                                            child: Text('${problemList[i]['detail']}',style: TextStyle(
+                                                color: Color((problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false) ? 0xff323233 : 0xff969799),
+                                                fontSize: sp(30),
+                                                overflow: TextOverflow.ellipsis)),
+                                            onTap: (){
+                                              if(problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false){
+                                                problemList[i]['check'] = !problemList[i]['check'];
+                                              }
+                                              setState(() {});
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: px(24),right: px(24),top: px(24)),
+                        child: FormCheck.submit(
+                            cancel: (){
+                              Navigator.pop(context);
+                            },
+                            submit: (){
+                              for (var item in problemList) {
+                                if(item['isCompanyRead'] != true && item['isEnvironmentRead'] != true){
+                                  if(item['check'] == false){
+                                    subCompanies['companies'].add(
+                                      item['id'],
+                                    );
+                                  }else{
+                                    subCompanies['environments'].add(
+                                      item['id'],
+                                    );
+                                  }
+                                }
+                              }
+                              if(subCompanies['companies'].isEmpty && subCompanies['environments'].isEmpty){
+                                ToastWidget.showToastMsg('未选中问题，无法提交');
+                              }else{
+                                _submit();
+                              }
+                              Navigator.pop(context);
+                            }
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          });
+        },
+      );
+    });
   }
 
   @override
@@ -99,17 +286,12 @@ class _StewardCheckState extends State<StewardCheck> {
     // TODO: implement initState
     uuid = widget.arguments?['uuid'].toString() ?? '';
     //查询清单下的问题
-    data = {
-      'page':1,
-      'size':50,
-      'inventory.id':uuid
-    };
-    _getProblem();
     _getCompany();
     super.initState();
   }
-  @override
+    @override
   Widget build(BuildContext context) {
+    _providerDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     return Scaffold(
       key: _scaffoldKey,
       body: Column(
@@ -125,6 +307,7 @@ class _StewardCheckState extends State<StewardCheck> {
                 survey():
                 Container(),
                 concerns(),
+                pigeonhole(),
               ],
             ),
           ),
@@ -198,7 +381,9 @@ class _StewardCheckState extends State<StewardCheck> {
                 child: FormCheck.rowItem(
                   title: '整改截至日期',
                   expandedLeft: true,
-                  child: TimeSelect(
+                  child: pigeon ?
+                  Text(abarbeitungDates,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,):
+                  TimeSelect(
                     scaffoldKey: _scaffoldKey,
                     hintText: "请选择排查时间",
                     time: abarbeitungDates.isNotEmpty ? DateTime.parse(abarbeitungDates) :null,
@@ -220,7 +405,9 @@ class _StewardCheckState extends State<StewardCheck> {
                 child: FormCheck.rowItem(
                   title: '现场复查日期',
                   expandedLeft: true,
-                  child: TimeSelect(
+                  child: pigeon ?
+                  Text(sceneReviewDate,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,):
+                  TimeSelect(
                     scaffoldKey: _scaffoldKey,
                     hintText: "请选择排查时间",
                     time: sceneReviewDate.isNotEmpty ? DateTime.parse(sceneReviewDate) :null,
@@ -295,6 +482,7 @@ class _StewardCheckState extends State<StewardCheck> {
                   margin: EdgeInsets.only(right: px(20)),
                   child: Image.asset('lib/assets/icons/form/add.png')),
                 onTap: () async{
+                  _providerDetaild.getLawId(id: '');
                   var res = await Navigator.pushNamed(context, '/fillInForm',arguments: argumentMap);
                   if(res == true){
                     _getProblem();
@@ -310,14 +498,92 @@ class _StewardCheckState extends State<StewardCheck> {
                     company: problemList[i],
                     i: i,
                     review: false,
-                    callBack:(){
-                      Navigator.pushNamed(context, '/rectificationProblem',
+                    callBack:() async {
+                      var res = await Navigator.pushNamed(context, '/rectificationProblem',
                           arguments: {'check':true,'problemId':problemList[i]['id']}
                       );
+                      if(res == null){
+                        _getProblem();
+                      }
                     }
                 )),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  ///归档
+  Widget pigeonhole(){
+    return Container(
+      height: px(88),
+      margin: EdgeInsets.only(top: px(12)),
+      color: Colors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          GestureDetector(
+            child: Container(
+              width: px(240),
+              height: px(56),
+              alignment: Alignment.center,
+              margin: EdgeInsets.only(left: px(40)),
+              child: Text(
+                '归档',
+                style: TextStyle(
+                    fontSize: sp(24),
+                    fontFamily: "R",
+                    color: Colors.white),
+              ),
+              decoration: BoxDecoration(
+                color: Color(0xff4D7FFF),
+                border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
+                borderRadius: BorderRadius.all(Radius.circular(px(28))),
+              ),
+            ),
+            onTap: (){
+              if(pigeon){
+                _setInventory(
+                    {
+                      'id':uuid,
+                      'status': 2,
+                    }
+                );
+              }else{
+                ToastWidget.showToastMsg('有问题未通过，暂时无法归档');
+              }
+              setState(() {});
+            },
+          ),
+          GestureDetector(
+            child: Container(
+              width: px(240),
+              height: px(56),
+              alignment: Alignment.center,
+              margin: EdgeInsets.only(left: px(40)),
+              child: Text(
+                '提交',
+                style: TextStyle(
+                    fontSize: sp(24),
+                    fontFamily: "R",
+                    color: Colors.white),
+              ),
+              decoration: BoxDecoration(
+                color: Color(0xff4D7FFF),
+                border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
+                borderRadius: BorderRadius.all(Radius.circular(px(28))),
+              ),
+            ),
+            onTap: (){
+              for(var i=0; i<problemList.length; i++){
+                problemList[i]['check'] = false;
+              }
+              subCompanies = {'companies':[],'environments':[],'inventoryId':uuid};
+              submission();
+              setState(() {});
+            },
           ),
         ],
       ),
