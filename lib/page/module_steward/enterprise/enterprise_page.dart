@@ -70,9 +70,8 @@ class _EnterprisePageState extends State<EnterprisePage> {
       children: [
         Container(
           width: px(750),
-          height: px(88),
-          decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(color: Color(0xff19191A),width: 0.0)),),
+          height: appTopPadding(context),
+          color: Color(0xff19191A),
         ),
         Expanded(
           child: LayoutPage(

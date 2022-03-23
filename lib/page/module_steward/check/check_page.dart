@@ -47,10 +47,8 @@ class _CheckPageState extends State<CheckPage> {
         children: [
           Container(
             width: px(750),
-            height: px(88),
-            decoration: BoxDecoration(
-              color: Color(0xff19191A),
-              border: Border(bottom: BorderSide(color: Color(0xff19191A),width: 0.0)),),
+            height: appTopPadding(context),
+            color: Color(0xff19191A),
           ),
           tabCut(),
           Expanded(
@@ -80,6 +78,7 @@ class _CheckPageState extends State<CheckPage> {
             child: Stack(
               children: [
                 Container(
+                  color:Colors.transparent,
                   margin: EdgeInsets.only(bottom: px(3)),
                   padding: EdgeInsets.only(left: px(24),right: px(24),top: px(5),bottom: px(5)),
                   child: Text(

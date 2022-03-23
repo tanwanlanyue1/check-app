@@ -26,6 +26,11 @@ class _LawPageState extends State<LawPage>  with SingleTickerProviderStateMixin{
     return Scaffold(
       body: Column(
         children: [
+          Container(
+            width: px(750),
+            height: appTopPadding(context),
+            color: Color(0xff19191A),
+          ),
           topBar(),
           Container(
             height: px(64.0),
@@ -66,7 +71,6 @@ class _LawPageState extends State<LawPage>  with SingleTickerProviderStateMixin{
   ///头部
   Widget topBar(){
     return Container(
-      margin: EdgeInsets.only(top: Adapt.padTopH()),
       color: Colors.white,
       height: px(88),
       child: Row(

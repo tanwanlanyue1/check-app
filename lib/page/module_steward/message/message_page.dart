@@ -28,26 +28,28 @@ class _MessagePageState extends State<MessagePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: px(150)),
-      child: Column(
-        children: [
-          InkWell(
-            child: Icon(Icons.people_alt_outlined,size: px(100),),
-            onTap: (){
-              ToastWidget.showDialog(
-                  msg: '是否退出当前账号？',
-                  ok: (){
-                    StorageUtil().remove(StorageKey.Token);
-                    Navigator.of(context).pushAndRemoveUntil(
-                        CustomRoute(LoginPage()), (router) => false);
-                  }
-              );
-              // Navigator.pop(context);
-            },
-          )
-        ],
-      ),
+    return Column(
+      children: [
+        Container(
+          width: px(750),
+          height: appTopPadding(context),
+          color: Color(0xff19191A),
+        ),
+        InkWell(
+          child: Icon(Icons.people_alt_outlined,size: px(100),),
+          onTap: (){
+            ToastWidget.showDialog(
+                msg: '是否退出当前账号？',
+                ok: (){
+                  StorageUtil().remove(StorageKey.Token);
+                  Navigator.of(context).pushAndRemoveUntil(
+                      CustomRoute(LoginPage()), (router) => false);
+                }
+            );
+            // Navigator.pop(context);
+          },
+        )
+      ],
     );
   }
 
