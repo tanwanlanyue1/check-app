@@ -108,7 +108,7 @@ class _PolicyStandState extends State<PolicyStand> {
             nationList.add(lawList[j]);
           }
         }
-        Navigator.pushNamed(context, '/fileLists',arguments: {'type':i,'file':nationList});
+        Navigator.pushNamed(context, '/fileLists',arguments: {'type':i,'file':nationList,'law': !widget.search});
       },
     );
   }

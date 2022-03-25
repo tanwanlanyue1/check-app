@@ -163,11 +163,11 @@ class FormCheck {
   ///表单卡片
   ///title：标题
   ///children：表单内容
-  static Widget dataCard({String? title,required List<Widget> children,bool top = true}){
+  static Widget dataCard({String? title,required List<Widget> children,bool top = true,bool padding = true}){
     return Container(
       width: px(750),
       margin: EdgeInsets.only(top: top ? px(4):0),
-      padding: EdgeInsets.all(px(16)),
+      padding: padding ? EdgeInsets.all(px(16)) : EdgeInsets.all(px(0)),
       decoration: BoxDecoration(
           color: Color(0xffffffff),
       ),

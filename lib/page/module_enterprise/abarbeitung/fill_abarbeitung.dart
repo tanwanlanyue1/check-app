@@ -35,6 +35,7 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
   String userName = '';//用户名
   bool review = false;//复查填报
   bool isImportant = false; //是否完成整改
+  List solutionList = [];//整改详情
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final DateTime _dateTime = DateTime.now();
 
@@ -46,22 +47,20 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
   /// status:状态:1,待复查;2,复查已通过;3,复查未通过
   /// userId:用户ID
   /// problemId:问题id
-  void _setProblem() async {
+  void _setProblem({int status = 4}) async {
     if(descript.isEmpty){
       ToastWidget.showToastMsg('请输入整改措施');
     }else if(imgDetails.isEmpty){
       ToastWidget.showToastMsg('请上传问题图片');
-    }else if(remark.isEmpty){
-      ToastWidget.showToastMsg('请输入其他说明');
     }else{
       Map _data = {
         'id': _uuid,
         'descript': descript,
-        'status': 1,
+        'status': status,//提交1? 保存4
         'images': imgDetails,
         'userId': userId,
         'problemId': widget.arguments!['id'],
-        'remark': remark,
+        // 'remark': remark,
       };
       var response = await Request().post(
         Api.url['solution'],data: _data,
@@ -70,6 +69,25 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
         Navigator.pop(context,true);
         setState(() {});
       }
+    }
+  }
+
+  /// 整改详情，
+  void _setSolution() async {
+    Map<String,dynamic> _data = {
+      'problem.id':widget.arguments!['id'],
+    };
+    var response = await Request().get(
+        Api.url['solutionList'],data: _data
+    );
+    if(response['statusCode'] == 200 && response['data']!=null) {
+      solutionList = response['data']['list'];
+      if(solutionList.isNotEmpty){
+        descript = solutionList[0]['descript'];
+        imgDetails = solutionList[0]['images'];
+        _uuid = solutionList[0]['id'];
+      }
+      setState(() {});
     }
   }
 
@@ -86,8 +104,6 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
       ToastWidget.showToastMsg('请输入复查详情');
     }else if(imgDetails.isEmpty){
       ToastWidget.showToastMsg('请上传复查图片');
-    }else if(remark.isEmpty){
-      ToastWidget.showToastMsg('请输入其他说明');
     }else{
       Map _data = {
         'id': _uuid,
@@ -108,6 +124,7 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
       }
     }
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -115,6 +132,7 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
     userName= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
     userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
     review = widget.arguments?['review'] ?? false;
+    _setSolution();
     super.initState();
   }
 
@@ -122,6 +140,7 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
+      appBar: RectifyComponents.appBarTop(),
       body: Column(
         children: [
           RectifyComponents.topBar(
@@ -153,7 +172,7 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
           FormCheck.rowItem(
             title: "整改措施",
             child: FormCheck.inputWidget(
-                hintText: '请输入整改措施',
+                hintText: descript.isEmpty ? '请输入整改措施' : descript,
                 onChanged: (val){
                   descript = val;
                   setState(() {});
@@ -177,28 +196,68 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
             ),
           ),
           FormCheck.rowItem(
-            title: "其他说明",
-            child: FormCheck.inputWidget(
-                hintText: '请输入其他说明',
-                onChanged: (val){
-                  remark = val;
-                  setState(() {});
-                }
-            ),
-          ),
-          FormCheck.rowItem(
             title: "填报人员",
             child: Text(userName, style: TextStyle(color: Color(0xff323233),
                 fontSize: sp(28),
                 fontFamily: 'Roboto-Condensed'),),
           ),
-          FormCheck.submit(
-              submit: (){
-                _setProblem();
-              },
-              cancel: (){
-                Navigator.pop(context);
-              }
+          Container(
+            height: px(88),
+            margin: EdgeInsets.only(top: px(4)),
+            color: Colors.white,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  child: Container(
+                    width: px(240),
+                    height: px(56),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '提交整改问题',
+                      style: TextStyle(
+                          fontSize: sp(24),
+                          fontFamily: "R",
+                          color: Colors.white),
+                    ),
+                    decoration: BoxDecoration(
+                      color: Color(0xff4D7FFF),
+                      border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
+                      borderRadius: BorderRadius.all(Radius.circular(px(28))),
+                    ),
+                  ),
+                  onTap: (){
+                    _setProblem(
+                        status: 1
+                    );
+                  },
+                ),
+                GestureDetector(
+                  child: Container(
+                    width: px(240),
+                    height: px(56),
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.only(left: px(40)),
+                    child: Text(
+                      '保存整改',
+                      style: TextStyle(
+                          fontSize: sp(24),
+                          fontFamily: "R",
+                          color: Color(0xFF323233)),
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
+                      borderRadius: BorderRadius.all(Radius.circular(px(28))),
+                    ),
+                  ),
+                  onTap: (){
+                    _setProblem(
+                      status: 4
+                    );
+                  },
+                ),
+              ],
+            ),
           )
         ]
     );

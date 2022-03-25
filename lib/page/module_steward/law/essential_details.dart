@@ -4,7 +4,9 @@ import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/image_widget.dart';
 import 'package:scet_check/model/provider/provider_details.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/storage/storage.dart';
 
 import 'components/law_components.dart';
 
@@ -46,6 +48,7 @@ class _EssentialDetailsState extends State<EssentialDetails> {
   Widget build(BuildContext context) {
     _providerDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     return Scaffold(
+      appBar: RectifyComponents.appBarTop(),
       body: Column(
         children: [
           top(),
@@ -87,7 +90,6 @@ class _EssentialDetailsState extends State<EssentialDetails> {
     return Container(
       color: Colors.white,
       height: px(88),
-      margin: EdgeInsets.only(top: Adapt.padTopH()),
       child: Row(
         children: [
           InkWell(
@@ -107,6 +109,7 @@ class _EssentialDetailsState extends State<EssentialDetails> {
               child: Text("排查要点详情",style: TextStyle(color: Color(0xff323233),fontSize: sp(32),fontFamily: 'M'),),
             ),
           ),
+          widget.arguments?['gist'] ?
           InkWell(
             child: Container(
                 width: px(80),
@@ -116,10 +119,10 @@ class _EssentialDetailsState extends State<EssentialDetails> {
                 child: Text('提交',style: TextStyle(fontSize: sp(24)),)
             ),
             onTap: (){
-              _providerDetaild.getLawId(id: gistDetails['id'],name: gistDetails['name'],basis: true);
+              StorageUtil().setJSON('gist',gistDetails);
               Navigator.of(context).popUntil(ModalRoute.withName('/fillInForm'));
             },
-          ),
+          ) : Container(),
         ],
       ),
     );

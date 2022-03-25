@@ -48,6 +48,7 @@ class _EnterpriseDetailsState extends State<EnterpriseDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: RectifyComponents.appBarTop(),
       body: Column(
         children: [
           RectifyComponents.topBar(

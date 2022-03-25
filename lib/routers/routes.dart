@@ -19,6 +19,7 @@ import 'package:scet_check/page/module_steward/law/essential_list.dart';
 import 'package:scet_check/page/module_steward/law/file_lists.dart';
 import 'package:scet_check/page/module_login/guide_page.dart';
 import 'package:scet_check/page/module_login/login_page.dart';
+import 'package:scet_check/page/module_steward/law/fill_details.dart';
 
 
 /// 配置静态路由
@@ -33,6 +34,7 @@ final routes = {
   '/enterpriseDetails': (context,{arguments}) =>  EnterpriseDetails(arguments:arguments), //企业管理详情
   '/fillInForm': (context,{arguments}) =>  FillInForm(arguments:arguments), //排查问题填报
   '/fileLists': (context,{arguments}) =>  FileLists(arguments:arguments), //政策文件列表
+  '/fillDetails': (context,{arguments}) =>  FillDetails(arguments:arguments), //政策文件详情
   '/essentialList': (context,{arguments}) =>  EssentialList(arguments:arguments), //排查要点列表
   '/essentialDetails': (context,{arguments}) =>  EssentialDetails(arguments:arguments), //排查要点详情
   '/screeningBased': (context,{arguments}) =>  ScreeningBased(arguments:arguments), //排查要点/法律法规
@@ -56,14 +58,14 @@ onGenerateRoute (RouteSettings settings) {
   if (pageContentBuilder != null) {
     if (settings.arguments != null) {
       final Route route = MaterialPageRoute(
-          settings: RouteSettings(name: name),
+          // settings: RouteSettings(name: name),
           builder: (context) =>
               pageContentBuilder(context, arguments: settings.arguments));
       return route;
     } else {
       final Route route =
           MaterialPageRoute(
-              settings: RouteSettings(name: name),
+              // settings: RouteSettings(name: name),
               builder: (context) => pageContentBuilder(context));
       return route;
     }

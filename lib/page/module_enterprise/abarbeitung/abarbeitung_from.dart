@@ -5,6 +5,7 @@ import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/page/module_enterprise/abarbeitung/problem_details.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/enterprise_reform.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/review_situation.dart';
 import 'package:scet_check/utils/screen/screen.dart';
@@ -50,16 +51,15 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
     var response = await Request().get(Api.url['problem']+'/$problemId',);
     if(response['statusCode'] == 200) {
       problemList = response['data'];
-      abarbeitung = response['data']['status'] == 1 ||
-                    response['data']['status'] == 4 ? true :false;
+      abarbeitung = problemList['isSolutionCommit'];
+      // abarbeitung = response['data']['status'] == 1 ||
+      //               response['data']['status'] == 4 ? true :false;
       setState(() {});
     }
   }
   /// 整改详情，
   void _setSolution() async {
     Map<String,dynamic> _data = {
-      'page':1,
-      'size':50,
       'problem.id':problemId,
     };
     var response = await Request().get(
@@ -88,6 +88,7 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: RectifyComponents.appBarTop(),
       body: Column(
         children: [
           topBar(),
@@ -100,17 +101,20 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
                   problemList: problemList,
                 ),
                 //企业整改详情
+                solutionList.isNotEmpty?
                 EnterpriseReform(
                   problemId: problemId,
                   solutionList: solutionList,
-                ),
+                ):
+                Container(),
                 //现场复查情况
+                reviewList.isNotEmpty?
                 ReviewSituation(
                   arguments:{
                     'problemId':problemId,
                     'reviewList':reviewList,
                   },
-                ),
+                ):Container(),
                 // rubyAgent(),
               ],
             ),
@@ -124,7 +128,6 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
     return Container(
       color: Colors.white,
       height: px(88),
-      margin: EdgeInsets.only(top: Adapt.padTopH()),
       child: Row(
         children: [
           InkWell(
@@ -152,9 +155,10 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
                 margin: EdgeInsets.only(right: px(20)),
                 child: Image.asset('lib/assets/icons/form/add.png'),),
             onTap: () async{
-              if(abarbeitung){
+              if(!abarbeitung){
                var res = await Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId});
                if(res == true){
+                 _getProblems();
                  _setSolution();
                }
               }else{

@@ -1,12 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/down_input.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
-import 'package:scet_check/model/provider/provider_details.dart';
+import 'package:scet_check/main.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/components/generalduty/time_select.dart';
@@ -16,6 +15,7 @@ import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 import 'package:scet_check/utils/time/utc_tolocal.dart';
 import 'package:uuid/uuid.dart';
+import 'package:intl/intl.dart';
 
 ///排查问题填报
 ///        arguments = {
@@ -37,7 +37,7 @@ class FillInForm extends StatefulWidget {
   _FillInFormState createState() => _FillInFormState();
 }
 
-class _FillInFormState extends State<FillInForm> {
+class _FillInFormState extends State<FillInForm> with RouteAware {
   List imgDetails = [];//问题图片列表
   List lawImg = [];//法律法规截图
   List typeList = [];//问题类型列表
@@ -52,6 +52,12 @@ class _FillInFormState extends State<FillInForm> {
   String typeId = '';//问题ID
   String law = '';//法规依据
   String lawId = '';//法规依据ID
+  String districtId = '';//排查标准ID
+  String inventoryId = '';//清单ID
+  String companyId = '';//企业ID
+  String industryId = '';//产业ID
+  String areaId = '';//区域ID
+  String problemId = '';//问题id
   String _uuid = '';//uuid
   Uuid uuid = Uuid();//uuid
   String userName = '';//用户名
@@ -63,7 +69,7 @@ class _FillInFormState extends State<FillInForm> {
   late GlobalKey<ScaffoldState> _scaffoldKey; //时间选择key
   DateTime checkTime = DateTime.now();//填报排查日期
   DateTime rectifyTime = DateTime.now().add(Duration(days: 7));//整改期限
-  late ProviderDetaild _providerDetaild;
+
 
   /// 获取法律文件
   void _getProfile() async {
@@ -95,10 +101,18 @@ class _FillInFormState extends State<FillInForm> {
       imgDetails = problemList['images'];
       lawImg = problemList['lawImages'] ?? [];
       if(problemList['law'] == null){
-        law = problemList['basis']['name'] ?? '';
+        law = problemList['basis']?['name'] ?? '';
       }else{
         law = problemList['law']['title'] ?? '';
       }
+      problemId = problemList['id'];
+      inventoryId = problemList['inventoryId'];
+      typeId = problemList['problemTypeId'];
+      companyId = problemList['companyId'];
+      industryId = problemList['industryId'];
+      areaId = problemList['districtId'];
+      lawId = problemList['lawId'];
+      districtId = problemList['basisId'];
       isImportant = problemList['isImportant'];
       solvedAt = problemList['solvedAt'] != null ? formatTime(problemList['solvedAt']) : '';
     }
@@ -113,13 +127,48 @@ class _FillInFormState extends State<FillInForm> {
     _scaffoldKey = widget.arguments?['key'] ?? GlobalKey<ScaffoldState>();
     userName= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
     userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
+
     if(declare){
       _getProblemType();
       _getProfile();
+      _getProblems();
+      inventoryId = widget.arguments?['uuid'];
+      companyId = widget.arguments?['companyId'];
+      industryId = widget.arguments?['industryId'];
+      areaId = widget.arguments?['districtId'];
     }else{
       _getProblems();
     }
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+  }
+
+  @override
+  void didPopNext() {
+    // TODO: implement didPopNext
+    if(StorageUtil().getJSON('law')!=null){
+      lawId = StorageUtil().getJSON('law')['id'];
+      law = StorageUtil().getJSON('law')['title'];
+      StorageUtil().setJSON('gist', null);
+      StorageUtil().setJSON('law', null);
+      districtId = '';
+      setState(() {});
+    }
+    if(StorageUtil().getJSON('gist') !=null ){
+      law = StorageUtil().getJSON('gist')['name'];
+      districtId = StorageUtil().getJSON('gist')['id'];
+      StorageUtil().setJSON('gist', null);
+      StorageUtil().setJSON('law', null);
+      lawId = '';
+      setState(() {});
+    }
+    super.didPopNext();
   }
 
   /// 问题填报 填报post，
@@ -146,29 +195,25 @@ class _FillInFormState extends State<FillInForm> {
       ToastWidget.showToastMsg('请输入问题详情');
     }else if(imgDetails.isEmpty){
       ToastWidget.showToastMsg('请上传问题图片');
-    }else if(lawId.isEmpty && _providerDetaild.lawId.isEmpty){
+    }else if(lawId.isEmpty && districtId.isEmpty){
       ToastWidget.showToastMsg('请选择排查依据');
     }else{
-      if(_providerDetaild.basis == false){
-        lawId = _providerDetaild.lawId;
-        _providerDetaild.getLawId(id: '',);
-      }
       Map _data = {
-        'id': _uuid,
+        'id': problemId.isEmpty ? _uuid : problemId,
         'screeningPerson': checkPersonnel,
         'detail': issueDetails,
         'images': imgDetails,
         'lawImages': lawImg,
         'status': 1,
-        'inventoryId':widget.arguments?['uuid'],
+        'inventoryId':inventoryId,
         'problemTypeId': typeId,
         'userId':userId,
         'isImportant':isImportant,
-        'companyId': widget.arguments?['companyId'],
+        'companyId': companyId,
         'industryId': widget.arguments?['industryId'],
         'districtId': widget.arguments?['districtId'],
         'lawId': lawId,
-        'basisId': _providerDetaild.lawId,
+        'basisId': districtId,
         'solvedAt': rectifyTime.toString(),
       };
       var response = await Request().post(
@@ -186,66 +231,48 @@ class _FillInFormState extends State<FillInForm> {
     Request().post(Api.url['problemType'],data: {'id':_uuid,'name':otherType});
   }
 
-  ///排查依据
-  String titles(){
-    String title = '';
-    if(_providerDetaild.lawId.isNotEmpty){
-      if(_providerDetaild.basis == false && checkGist){
-        title = _providerDetaild.lawTitle;
-      }else if(_providerDetaild.basis == false && checkGist == false){
-        title = '请选择排查标准';
-      }else if(_providerDetaild.basis == true && checkGist == false){
-        title = _providerDetaild.lawTitle;
-      }else{
-        title = '请选择法律法规';
-      }
-    }else{
-      title = checkGist ? '请选择法律法规':'请选择排查标准';
-    }
-    return title;
-  }
-
   @override
   void didUpdateWidget(covariant FillInForm oldWidget) {
     // TODO: implement didUpdateWidget
-    if(!declare){
+    if(widget.arguments?['problemList'] != null){
       _getProblems();
     }
     super.didUpdateWidget(oldWidget);
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    /// 取消路由订阅
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    _providerDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     return declare ?
-      WillPopScope(
-          child: Scaffold(
-            key: _scaffoldKey,
-            body: Column(
+    Scaffold(
+      key: _scaffoldKey,
+      appBar: RectifyComponents.appBarTop(),
+      body: Column(
+        children: [
+          RectifyComponents.topBar(
+              title: '隐患排查问题填报',
+              callBack: (){
+                Navigator.pop(context);
+              }
+          ),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.only(top: 0),
               children: [
-                RectifyComponents.topBar(
-                    title: '隐患排查问题填报',
-                    callBack: (){
-                      _providerDetaild.getLawBool(false);
-                      Navigator.pop(context);
-                    }
-                ),
-                Expanded(
-                  child: ListView(
-                    padding: EdgeInsets.only(top: 0),
-                    children: [
-                      rubyAgent()
-                    ],
-                  ),
-                )
+                rubyAgent()
               ],
             ),
-          ),
-          onWillPop: () async{
-            _providerDetaild.getLawBool(false);
-            return true;
-          },
-      ):
+          )
+        ],
+      ),
+    ):
       rubyAgent();
   }
 
@@ -281,7 +308,7 @@ class _FillInFormState extends State<FillInForm> {
               Container(
                 color: Color(0xffF5F6FA),
                 child: FormCheck.inputWidget(
-                    hintText: '请输入排查人员',
+                    hintText: checkPersonnel.isEmpty ? '请输入排查人员' : checkPersonnel,
                     onChanged: (val){
                       checkPersonnel = val;
                       setState(() {});
@@ -331,12 +358,12 @@ class _FillInFormState extends State<FillInForm> {
               title: "问题详情",
               alignStart: true,
               child: Container(
-                color: Color(0xffF5F6FA),
+                color: !declare? Colors.white : Color(0xffF5F6FA),
                 padding: EdgeInsets.only(top: px(5),left: px(5)),
                 child: !declare ? Text(issueDetails, style: TextStyle(
                     color: Color(0xff323233), fontSize: sp(28)),)
                     : FormCheck.inputWidget(
-                    hintText: '请输入问题详情',
+                    hintText: issueDetails.isEmpty ? '请输入问题详情':issueDetails,
                     lines: 4,
                     onChanged: (val){
                       issueDetails = val;
@@ -380,20 +407,19 @@ class _FillInFormState extends State<FillInForm> {
                   height: px(87),
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    titles(),
+                    law.isEmpty ? (checkGist ? '请选择法律法规' : '请选择排查标准'): law,
                     style: TextStyle(color: Color(0xff323233),
                       fontSize: sp(28),
                       fontFamily: 'Roboto-Condensed'),),
                 ),
                 onTap: () async{
-                  _providerDetaild.getLawBool(true);
                   Navigator.pushNamed(context, '/screeningBased',arguments: {'law':checkGist});
                 },
               ),
             ) :
             Container(),
 
-            // declare ?
+            checkGist ?
             FormCheck.rowItem(
                 alignStart: true,
                 title: "法律法规截图",
@@ -411,8 +437,8 @@ class _FillInFormState extends State<FillInForm> {
                     setState(() {});
                   },
                 ),
-            ) ,
-                // : Container(),
+            )
+                : Container(),
 
             FormCheck.rowItem(
               title: "整改期限",
@@ -425,8 +451,9 @@ class _FillInFormState extends State<FillInForm> {
                     scaffoldKey: _scaffoldKey,
                     hintText: "请选择整改期限",
                     time: rectifyTime,
+                    type: 7,
                     callBack: (time) {
-                      rectifyTime = time;
+                      rectifyTime = DateTime.parse(formatTimes(time));
                       setState(() {});
                     },
                   ),
@@ -450,14 +477,12 @@ class _FillInFormState extends State<FillInForm> {
               visible: declare,
               child: FormCheck.submit(
                 submit: (){
-                  _providerDetaild.getLawBool(false);
                   if(other && otherType.isNotEmpty){
                     _postProblemType();
                   }
                   _setProblem();
                 },
                 cancel: (){
-                  _providerDetaild.getLawBool(false);
                   Navigator.pop(context);
                 }
               ),
@@ -479,7 +504,9 @@ class _FillInFormState extends State<FillInForm> {
             onChanged: (bool? val) {
               setState(() {
                 checkGist = val!;
-                _providerDetaild.getLawId(id: '');
+                law = '';
+                lawId = '';
+                districtId = '';
               });
             },
           ),
@@ -491,7 +518,9 @@ class _FillInFormState extends State<FillInForm> {
           ),
           onTap: (){
             checkGist = !checkGist;
-            _providerDetaild.getLawId(id: '');
+            law = '';
+            lawId = '';
+            districtId = '';
             setState(() {});
           },
         ),
@@ -503,6 +532,9 @@ class _FillInFormState extends State<FillInForm> {
             onChanged: (bool? val) {
               setState(() {
                 checkGist = val!;
+                law = '';
+                lawId = '';
+                districtId = '';
               });
             },
           ),
@@ -514,7 +546,9 @@ class _FillInFormState extends State<FillInForm> {
           ),
           onTap: (){
             checkGist = !checkGist;
-            _providerDetaild.getLawId(id: '');
+            law = '';
+            lawId = '';
+            districtId = '';
             setState(() {});
           },
         )
@@ -564,5 +598,8 @@ class _FillInFormState extends State<FillInForm> {
   ///日期转换
   String formatTime(time) {
     return utcToLocal(time.toString()).substring(0,10);
+  }
+  String formatTimes(DateTime time) {
+    return DateFormat("yyyy-MM-dd").format(time);
   }
 }

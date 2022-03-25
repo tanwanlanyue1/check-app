@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
+import 'package:scet_check/components/generalduty/down_input.dart';
 import 'package:scet_check/components/generalduty/time_select.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
+import 'package:scet_check/components/generalduty/upload_image.dart';
 import 'package:scet_check/model/provider/provider_details.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
+import 'package:scet_check/routers/routes.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/time/utc_tolocal.dart';
 
@@ -27,6 +30,7 @@ class _StewardCheckState extends State<StewardCheck>{
   /// 1,未整改;2,已整改;3,整改已通过;4,整改未通过
   int type = 1;
   bool tidy = true; //展开/收起
+  bool sing = false; //展开/收起
   Map repertoire = {};//清单
   Map argumentMap = {};//传递的参数
   List problemList = [];//企业下的问题
@@ -38,13 +42,16 @@ class _StewardCheckState extends State<StewardCheck>{
   String abarbeitungDates = '';//整改日期
   String sceneReviewDate = '';//现场复查日期
   String checkType = '';//检查类型
-  bool pigeon = true; //是否可以归档
+  bool pigeon = false; //是否可以归档
+  bool subStatus = false; //是否可以修改的状态
   bool isCompanyRead = false;//是否企业查看
   bool isEnvironmentRead = false;//是否环保局查看
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Map<String, dynamic> subCompanies = {'companies':[],'environments':[]};//提交的数组
-  late ProviderDetaild _providerDetaild;
-
+  List typeList = [
+    {'name':'管家排查','id':1},
+    {'name':'其他','id':2},
+  ];//问题类型列表
   /// 获取清单详情
   /// id:清单id
   void _getCompany() async {
@@ -60,6 +67,8 @@ class _StewardCheckState extends State<StewardCheck>{
         abarbeitungDates = repertoire['solvedAt'] != null ? RectifyComponents.formatTime(repertoire['solvedAt']) : '';
         sceneReviewDate = repertoire['reviewedAt'] != null ? RectifyComponents.formatTime(repertoire['reviewedAt']) : '';
         checkType = repertoire['checkType'] == 1 ? '管家排查': '管家排查';
+        pigeon = repertoire['status'] == 1 ? true : false;
+        subStatus = repertoire['status'] == 6 ? true : false;//状态为6，可以提交问题、修改
         argumentMap = {
           'declare':true,//申报
           'uuid': uuid,//清单ID
@@ -76,6 +85,7 @@ class _StewardCheckState extends State<StewardCheck>{
   ///page:第几页
   ///size:每页多大
   ///andWhere:查询的条件
+  ///check 添加一个提交问题的判断
   void _getProblem() async {
     var response = await Request().get(Api.url['problemList'],
       data: {
@@ -86,9 +96,6 @@ class _StewardCheckState extends State<StewardCheck>{
         problemList = response['data']['list'];
         for(var i=0; i<problemList.length; i++){
           problemList[i]['check'] = false;
-          if(problemList[i]['status'] != 3){
-            pigeon = false;
-          }
         }
       });
     }
@@ -101,6 +108,7 @@ class _StewardCheckState extends State<StewardCheck>{
       setState(() {
         _getProblem();
         ToastWidget.showToastMsg('提交成功');
+        Navigator.pop(context);
       });
     }
   }
@@ -141,7 +149,8 @@ class _StewardCheckState extends State<StewardCheck>{
                   child: Column(
                     children: [
                       Container(
-                        margin: EdgeInsets.only(top: px(12)),
+                        padding: EdgeInsets.only(top: px(24),left: px(24),right: px(24),bottom: px(12)),
+                        color: Color(0XFFE5E6E9),
                         child: Row(
                           children: [
                             Expanded(
@@ -154,91 +163,93 @@ class _StewardCheckState extends State<StewardCheck>{
                         ),
                       ),
                       Expanded(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: List.generate(
-                                  problemList.length, (i) =>
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: px(70),
-                                          child: Radio(
-                                            value: false,
-                                            groupValue: problemList[i]['check'],
-                                            onChanged: (val) {
-                                              setState(() {
+                        child: Container(
+                          margin: EdgeInsets.only(left: px(24),right: px(24),bottom: px(12)),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: ListView(
+                                  padding: EdgeInsets.only(top: 0),
+                                  children: List.generate(
+                                    problemList.length, (i) =>
+                                      Row(
+                                        children: [
+                                          SizedBox(
+                                            width: px(70),
+                                            child: Radio(
+                                              value: false,
+                                              groupValue: problemList[i]['check'],
+                                              onChanged: (val) {
+                                                setState(() {
+                                                  if(problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false){
+                                                    problemList[i]['check'] = val!;
+                                                  }
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: InkWell(
+                                              child: Text('${problemList[i]['detail']}',style: TextStyle(
+                                                  color: Color((problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false) ? 0xff323233 : 0xff969799),
+                                                  fontSize: sp(30),
+                                                  overflow: TextOverflow.ellipsis)),
+                                              onTap: (){
                                                 if(problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false){
-                                                  problemList[i]['check'] = val!;
+                                                  problemList[i]['check'] = !problemList[i]['check'];
                                                 }
-                                              });
-                                            },
+                                                setState(() {});
+                                              },
+                                            ),
                                           ),
-                                        ),
-                                        Expanded(
-                                          child: InkWell(
-                                            child: Text('${problemList[i]['detail']}',style: TextStyle(
-                                                color: Color((problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false) ? 0xff323233 : 0xff969799),
-                                                fontSize: sp(30),
-                                                overflow: TextOverflow.ellipsis)),
-                                            onTap: (){
-                                              if(problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false){
-                                                problemList[i]['check'] = !problemList[i]['check'];
-                                              }
-                                              setState(() {});
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                        ],
+                                      ),
+                                  ),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: List.generate(
-                                  problemList.length, (i) =>
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: px(70),
-                                          child: Radio(
-                                            value: true,
-                                            groupValue: problemList[i]['check'],
-                                            onChanged: (val) {
-                                              setState(() {
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: List.generate(
+                                    problemList.length, (i) =>
+                                      Row(
+                                        children: [
+                                          SizedBox(
+                                            width: px(70),
+                                            child: Radio(
+                                              value: true,
+                                              groupValue: problemList[i]['check'],
+                                              onChanged: (val) {
+                                                setState(() {
+                                                  if(problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false){
+                                                    problemList[i]['check'] = val!;
+                                                  }
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: InkWell(
+                                              child: Text('${problemList[i]['detail']}',style: TextStyle(
+                                                  color: Color((problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false) ? 0xff323233 : 0xff969799),
+                                                  fontSize: sp(30),
+                                                  overflow: TextOverflow.ellipsis)),
+                                              onTap: (){
                                                 if(problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false){
-                                                  problemList[i]['check'] = val!;
+                                                  problemList[i]['check'] = !problemList[i]['check'];
                                                 }
-                                              });
-                                            },
+                                                setState(() {});
+                                              },
+                                            ),
                                           ),
-                                        ),
-                                        Expanded(
-                                          child: InkWell(
-                                            child: Text('${problemList[i]['detail']}',style: TextStyle(
-                                                color: Color((problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false) ? 0xff323233 : 0xff969799),
-                                                fontSize: sp(30),
-                                                overflow: TextOverflow.ellipsis)),
-                                            onTap: (){
-                                              if(problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false){
-                                                problemList[i]['check'] = !problemList[i]['check'];
-                                              }
-                                              setState(() {});
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                        ],
+                                      ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                       Container(
@@ -249,16 +260,14 @@ class _StewardCheckState extends State<StewardCheck>{
                             },
                             submit: (){
                               for (var item in problemList) {
-                                if(item['isCompanyRead'] != true && item['isEnvironmentRead'] != true){
-                                  if(item['check'] == false){
-                                    subCompanies['companies'].add(
-                                      item['id'],
-                                    );
-                                  }else{
-                                    subCompanies['environments'].add(
-                                      item['id'],
-                                    );
-                                  }
+                                if(item['check'] == false){
+                                  subCompanies['companies'].add(
+                                    item['id'],
+                                  );
+                                }else{
+                                  subCompanies['environments'].add(
+                                    item['id'],
+                                  );
                                 }
                               }
                               if(subCompanies['companies'].isEmpty && subCompanies['environments'].isEmpty){
@@ -291,18 +300,21 @@ class _StewardCheckState extends State<StewardCheck>{
   }
     @override
   Widget build(BuildContext context) {
-    _providerDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     return Scaffold(
       key: _scaffoldKey,
+      appBar: RectifyComponents.appBarTop(),
       body: Column(
         children: [
           topBar(
-              '管家排查'
+            '管家排查',
           ),
           Expanded(
             child: ListView(
               padding: EdgeInsets.only(top: 0),
               children: [
+                repertoire.isNotEmpty ?
+                singSurvey():
+                Container(),
                 repertoire.isNotEmpty ?
                 survey():
                 Container(),
@@ -315,28 +327,27 @@ class _StewardCheckState extends State<StewardCheck>{
       ),
     );
   }
-
   ///头部
   Widget topBar(String title){
     return Container(
       color: Colors.white,
       height: px(88),
-      margin: EdgeInsets.only(top: Adapt.padTopH()),
+      // margin: EdgeInsets.only(top: Adapt.padTopH()),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           InkWell(
-          child: Container(
-            height: px(40),
-            width: px(41),
-            alignment: Alignment.centerLeft,
-            margin: EdgeInsets.only(left: px(20)),
-            child: Image.asset('lib/assets/icons/other/chevronLeft.png',fit: BoxFit.fill,),
+            child: Container(
+              height: px(40),
+              width: px(41),
+              alignment: Alignment.centerLeft,
+              margin: EdgeInsets.only(left: px(20)),
+              child: Image.asset('lib/assets/icons/other/chevronLeft.png',fit: BoxFit.fill,),
+            ),
+            onTap: ()async{
+              Navigator.pop(context);
+            },
           ),
-          onTap: ()async{
-            Navigator.pop(context);
-          },
-        ),
           Expanded(
             child: Container(
               alignment: Alignment.center,
@@ -352,6 +363,56 @@ class _StewardCheckState extends State<StewardCheck>{
       ),
     );
   }
+  ///签到概况
+  Widget singSurvey(){
+    return Container(
+      padding: EdgeInsets.only(left: px(24),right: px(24)),
+      color: Colors.white,
+      child: Visibility(
+        visible: sing,
+        child: FormCheck.dataCard(
+          padding: false,
+            children: [
+              FormCheck.formTitle(
+                  '签到概况',
+                  showUp: sing,
+                  tidy: sing,
+                  onTaps: (){
+                    sing = !sing;
+                    setState(() {});
+                  }
+              ),
+              surveyItem('归属片区',area),
+              surveyItem('签到坐标','${(double.parse(repertoire['longitude'])).toStringAsFixed(2)}, '
+                  '${((double.parse(repertoire['latitude'])).toStringAsFixed(2))}',),
+              surveyItem('检查人',stewardCheck),
+              surveyItem('企业名',repertoire['company']['name']),
+              surveyItem('排查日期',checkDate.substring(0,10)),
+              FormCheck.rowItem(
+                alignStart: true,
+                title: "签到照片",
+                child: UploadImage(
+                  imgList: repertoire['images'],
+                  closeIcon: false,
+                ),
+              ),
+            ]
+        ),
+        replacement: SizedBox(
+          height: px(88),
+          child: FormCheck.formTitle(
+              '签到概况',
+              showUp: true,
+              tidy: sing,
+              onTaps: (){
+                sing = !sing;
+                setState(() {});
+              }
+          ),
+        ),
+      ),
+    );
+  }
 
   ///排查概况
   Widget survey(){
@@ -361,6 +422,7 @@ class _StewardCheckState extends State<StewardCheck>{
       child: Visibility(
         visible: tidy,
         child: FormCheck.dataCard(
+            padding: false,
             children: [
               FormCheck.formTitle(
                   '排查概况',
@@ -374,14 +436,44 @@ class _StewardCheckState extends State<StewardCheck>{
               surveyItem('归属片区',area),
               surveyItem('区域位置',location),
               surveyItem('检查人',stewardCheck),
-              surveyItem('检查类型',checkType),
+              Row(
+                  crossAxisAlignment:  CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                          child: Text(
+                              '检查类型',
+                              textAlign: TextAlign.justify,
+                              style: TextStyle(
+                                  color: Color(0XFF969799),
+                                  fontSize: sp(28.0),
+                                  fontWeight: FontWeight.w500
+                              )
+                          )
+                      ),
+                    ),
+                    Container(
+                      width: px(350),
+                      alignment: Alignment.centerRight,
+                      child: DownInput(
+                        value: checkType,
+                        data: typeList,
+                        callback: (val){
+                          checkType = val['name'];
+                          setState(() {});
+                        },
+                      ),
+                    )
+                  ]
+              ),
               surveyItem('排查日期',checkDate.substring(0,10)),
               Container(
                 margin: EdgeInsets.only(top: px(24)),
                 child: FormCheck.rowItem(
                   title: '整改截至日期',
                   expandedLeft: true,
-                  child: pigeon ?
+                  child: !subStatus ?
                   Text(abarbeitungDates,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,):
                   TimeSelect(
                     scaffoldKey: _scaffoldKey,
@@ -405,7 +497,7 @@ class _StewardCheckState extends State<StewardCheck>{
                 child: FormCheck.rowItem(
                   title: '现场复查日期',
                   expandedLeft: true,
-                  child: pigeon ?
+                  child: !subStatus ?
                   Text(sceneReviewDate,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,):
                   TimeSelect(
                     scaffoldKey: _scaffoldKey,
@@ -482,10 +574,17 @@ class _StewardCheckState extends State<StewardCheck>{
                   margin: EdgeInsets.only(right: px(20)),
                   child: Image.asset('lib/assets/icons/form/add.png')),
                 onTap: () async{
-                  _providerDetaild.getLawId(id: '');
-                  var res = await Navigator.pushNamed(context, '/fillInForm',arguments: argumentMap);
-                  if(res == true){
-                    _getProblem();
+                  if(subStatus){
+                    final Function? pageContentBuilder = routes['/fillInForm'];
+                    var res = await Navigator.push(context, MaterialPageRoute(
+                        settings: RouteSettings(name: '/fillInForm'),
+                        builder: (context) => pageContentBuilder!(context, arguments: argumentMap)
+                    ));
+                    if(res == true){
+                      _getProblem();
+                    }
+                  }else{
+                    ToastWidget.showToastMsg('清单已提交，无法新增问题');
                   }
                 },
               ),

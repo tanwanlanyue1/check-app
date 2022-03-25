@@ -3,10 +3,12 @@ import 'package:provider/provider.dart';
 import 'package:scet_check/model/provider/provider_details.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/storage/storage.dart';
 
 ///文件列表
 /// arguments: type类型 1 国家，2 地方，3 行业
 /// file: 文件数据
+///  law:true//展示提交
 class FileLists extends StatefulWidget {
   final Map? arguments;
   const FileLists({Key? key,this.arguments}) : super(key: key);
@@ -18,7 +20,6 @@ class FileLists extends StatefulWidget {
 class _FileListsState extends State<FileLists> {
   List standardFile  = [];//文件数据
   String title = '国家';//标题
-  late ProviderDetaild _providerDetaild;
 
   ///初始化判断头部标题
   ///type 类型 具体看arguments
@@ -42,8 +43,8 @@ class _FileListsState extends State<FileLists> {
   }
   @override
   Widget build(BuildContext context) {
-    _providerDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     return Scaffold(
+      appBar: RectifyComponents.appBarTop(),
       body: ListView(
         padding: EdgeInsets.only(top: 0),
         children: [
@@ -100,21 +101,17 @@ class _FileListsState extends State<FileLists> {
                       child: Text('${standardFile[i]["title"]}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
                     ),
                   ),
-                  _providerDetaild.lawBool ?
-                  InkWell(
-                    child: Container(
-                        width: px(80),
-                        height: px(50),
-                        margin: EdgeInsets.only(right: px(20)),
-                        alignment: Alignment.center,
-                        child: Text('提交',style: TextStyle(fontSize: sp(24)),)
-                    ),
-                    onTap: (){
-                      _providerDetaild.getLawBool(false);
-                      _providerDetaild.getLawId(id: standardFile[i]['id'],name:standardFile[i]["title"],basis: false);
-                      Navigator.of(context).popUntil(ModalRoute.withName('/fillInForm'));
-                    },
-                  ):
+                  // widget.arguments?['law'] ?
+                  // InkWell(
+                  //   child: Container(
+                  //       width: px(80),
+                  //       height: px(50),
+                  //       margin: EdgeInsets.only(right: px(20)),
+                  //       alignment: Alignment.center,
+                  //       child: Text('提交',style: TextStyle(fontSize: sp(24)),)
+                  //   ),
+
+                  // ):
                   SizedBox(
                     width: px(40),
                     height: px(40),
@@ -129,7 +126,8 @@ class _FileListsState extends State<FileLists> {
             ],
           ),
           onTap: (){
-            callBack?.call();
+            Navigator.pushNamed(context, '/fillDetails',arguments: {'law': standardFile[i]});
+            // callBack?.call();
           },
         ),
       )),

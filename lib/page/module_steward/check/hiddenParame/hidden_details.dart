@@ -20,6 +20,8 @@ import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 import 'package:uuid/uuid.dart';
 
+import 'inventory_page.dart';
+
 ///隐患台账企业排查清单
 ///arguments:{companyId:公司id，companyName：公司名称,uuid:uuid}
 class HiddenDetails extends StatefulWidget {
@@ -35,41 +37,18 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
   List companyDetails = [];//公司问题列表
   List inventoryDetails = [];//公司清单列表
   List imgDetails = []; //上传图片
-  List status = [];//状态
-  List problemStatus = [
-    {'name':'未整改','id':1},
-    {'name':'已整改','id':2},
-    {'name':'整改已通过','id':3},
-    {'name':'整改未通过','id':4},
-  ]; //问题的状态
-  List inventoryStatus = [
-    {'name':'整改中','id':1},
-    {'name':'已归档','id':2},
-    {'name':'待审核','id':3},
-    {'name':'审核已通过','id':4},
-    {'name':'审核未通过','id':5},
-    {'name':'未提交','id':6},
-  ]; //清单的状态
-  Map<String,dynamic> typeStatus = {'name':'请选择','id':0};//默认类型
   String companyName = '';//公司名
   String companyId = '';//公司id
-  int repertoire = 0; //0-渲染清单 1-问题列表
-  int selectIndex = 0; //选择的下标
-  bool check = false; //申报,排查
   Uuid uuid = Uuid(); //uuid
   String _uuid = ''; //uuid
   Position? position; //定位
   String userName = ''; //用户名
   String userId = ''; //用户id
   String checkName = ''; //排查人员
-  String condition = ''; //条件查询
-  DateTime? startTime;//选择开始时间
-  DateTime? endTime;//选择结束时间
   final DateTime _dateTime = DateTime.now();
   DateTime solvedAt = DateTime.now().add(Duration(days: 7));//整改期限
   DateTime reviewedAt = DateTime.now().add(Duration(days: 14));//复查期限
   late TabController _tabController; //TabBar控制器
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();//侧边栏key
 
   /// 获取企业下的问题
   ///companyId:公司id
@@ -79,8 +58,8 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
   ///添加一个状态 check-提交到企业,environment-提交到环保局
   void _getProblem() async {
     Map<String,dynamic> data = {
-      'page':1,
-      'size':50,
+      // 'page':1,
+      // 'size':50,
       'company.id':companyId,
     };
     var response = await Request().get(Api.url['problemList'],data: data,);
@@ -98,8 +77,6 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
   ///andWhere:查询的条件
   void _getInventoryList() async {
     Map<String,dynamic> data = {
-      // 'page':1,
-      // 'size':50,
       'company.id':companyId,
     };
     var response = await Request().get(Api.url['inventoryList'],data: data,);
@@ -146,34 +123,18 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
           data: _data
       );
       if(response['statusCode'] == 200) {
-        _getInventoryList();
         Navigator.pop(context);
+        var res = await Navigator.pushNamed(context, '/stewardCheck',arguments: {
+          'uuid': _uuid,
+          'company':false
+        });
+        if(res == null){
+          _getInventoryList();
+        }
       }
     }
   }
 
-  /// 问题搜索筛选
-  ///name:搜索名
-  ///query:搜索的字段
-  void _problemSearch({Map<String,dynamic>? data}) async {
-    var response = await Request().get(Api.url['problemList'],data: data,);
-    if(response['statusCode'] == 200 && response['data'] != null) {
-      setState(() {
-        companyDetails = response['data']['list'];
-      });
-    }
-  }
-  /// 清单搜索筛选
-  ///name:搜索名
-  ///query:搜索的字段
-  void _inventorySearch({Map<String,dynamic>? data}) async {
-    var response = await Request().get(Api.url['inventoryList'],data: data,);
-    if(response['statusCode'] == 200 && response['data'] != null) {
-      setState(() {
-        inventoryDetails = response['data']['list'];
-      });
-    }
-  }
   ///签到
   void singIn(){
     _uuid = uuid.v4();
@@ -315,15 +276,6 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
     _tabController = TabController(vsync: this,length: tabBar.length);
     userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
     userName= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
-    status = problemStatus;
-    _tabController.addListener(() {
-      if(_tabController.index == 0){
-        status = problemStatus;
-      }else{
-        status = inventoryStatus;
-      }
-      setState(() {});
-    });
     _getProblem();
     _getInventoryList();
     super.initState();
@@ -333,7 +285,7 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
+      appBar: RectifyComponents.appBarTop(),
       body: Column(
         children: [
           topBar(),
@@ -359,63 +311,23 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
               ),
             ),
           ),
-          Search(
-            bgColor: Color(0xffffffff),
-            textFieldColor: Color(0xFFF0F1F5),
-            search: (value) {
-              condition = value;
-              if(_tabController.index == 0){
-                _problemSearch(data: {
-                  'regexp':true,//近似搜索
-                  'detail': condition,
-                  'company.id':companyId,
-                });
-              }else{
-                _inventorySearch(
-                    data: {
-                      'regexp':true,//近似搜索
-                      'detail': condition,
-                      'company.id':companyId,
-                    }
-                );
-              }
-            },
-            screen: (){
-              _scaffoldKey.currentState!.openEndDrawer();
-            },
-          ),
           Expanded(
             child: TabBarView(
                 controller: _tabController,
                 children: <Widget>[
-                  companyDetails.isNotEmpty ?
                   ProblemPage(
                     hiddenProblem: companyDetails,
-                  ):// 隐患问题
-                  Container(),
-                  ListView(
-                    padding: EdgeInsets.only(top: 0),
-                    children: [
-                      Column(
-                        children: List.generate(inventoryDetails.length, (i) => RectifyComponents.repertoireRow(
-                            company: inventoryDetails[i],
-                            i: i,
-                            callBack:(){
-                              Navigator.pushNamed(context, '/stewardCheck',arguments: {
-                                'uuid':inventoryDetails[i]['id'],
-                                'company':false
-                              });
-                            }
-                        )),
-                      )
-                    ],
+                    companyId: companyId,
+                  ),
+                  InventoryPage(
+                    hiddenInventory: inventoryDetails,
+                    companyId: companyId,
                   ),// 排查清单
                 ]
             ),
           ),
         ],
       ),
-      endDrawer: endDrawers(),
     );
   }
 
@@ -426,7 +338,6 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
     return Container(
       color: Colors.white,
       height: px(88),
-      margin: EdgeInsets.only(top: Adapt.padTopH()),
       child: Row(
         children: [
           InkWell(
@@ -463,157 +374,4 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
     );
   }
 
-  ///抽屉
-  Widget endDrawers(){
-    return Container(
-      width: px(600),
-      color: Color(0xFFFFFFFF),
-      padding: EdgeInsets.only(left: px(20), right: px(20),bottom: px(50)),
-      child: Column(
-        children: [
-          Container(
-            margin: EdgeInsets.only(top: Adapt.padTopH()),
-            child: Row(
-              mainAxisAlignment:MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '问题搜索',
-                  style: TextStyle(fontSize: sp(30),color: Color(0xFF2E2F33),fontFamily:"M"),
-                ),
-                IconButton(
-                  icon: Icon(Icons.clear,color: Colors.red,size: px(39),),
-                  onPressed: (){Navigator.pop(context);},
-                )
-              ],
-            ),
-          ),
-          Row(
-            children: [
-              Container(
-                height: px(72),
-                width: px(140),
-                alignment: Alignment.bottomLeft,
-                child: Text('状态：',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
-              ),
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.only(left: px(20), right: px(20)),
-                  child: DownInput(
-                    value: typeStatus['name'],
-                    data: status,
-                    callback: (val){
-                      typeStatus['name'] = val['name'];
-                      typeStatus['id'] = val['id'];
-                      setState(() {});
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Container(
-                height: px(72),
-                width: px(140),
-                alignment: Alignment.bottomCenter,
-                child: Text('起止时间：',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
-              ),
-              Expanded(
-                child: Container(
-                  height: px(72),
-                  width: px(580),
-                  color: Colors.white,
-                  margin: EdgeInsets.only(top: px(24),left: px(24),right: px(24)),
-                  child: DateRange(
-                    start: startTime ?? DateTime.now(),
-                    end: endTime ?? DateTime.now(),
-                    showTime: false,
-                    callBack: (val) {
-                      startTime = val[0];
-                      endTime = val[1];
-                      setState(() { });
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Spacer(),
-          Row(
-            children: [
-              Expanded(
-                child: InkWell(
-                  child: Container(
-                    alignment: Alignment.center,
-                    color: Color(0xffE6EAF5),
-                    height: px(56),
-                    padding: EdgeInsets.only(left: px(49),right: px(49)),
-                    child: Text('取消',style: TextStyle(color: Color(0xff4D7FFF),fontSize: sp(24)),),
-                  ),
-                  onTap: (){
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-              Expanded(
-                child: InkWell(
-                  child: Container(
-                    color: Color(0xff4D7FFF),
-                    height: px(56),
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.only(left: px(49),right: px(49)),
-                    child: Text('确定',style: TextStyle(color: Colors.white,fontSize: sp(24)),),
-                  ),
-                  onTap: (){
-                    if(startTime==null){
-                      if(_tabController.index == 0){
-                        _problemSearch(
-                            data: {
-                              'status':typeStatus['id'],
-                              'company.id':companyId,
-                            }
-                        );
-                      }else{
-                        _inventorySearch(
-                            data: {
-                              'status':typeStatus['id'],
-                              'company.id':companyId,
-                            }
-                        );
-                      }
-                    }
-                    else{
-                      if(_tabController.index == 0){
-                        _problemSearch(
-                            data: {
-                              'status':typeStatus['id'],
-                              'company.id':companyId,
-                              'timeSearch':'createdAt',
-                              'startTime':startTime,
-                              'endTime':endTime,
-                            }
-                        );
-                      }else{
-                        _inventorySearch(
-                            data: {
-                              'status':typeStatus['id'],
-                              'company.id':companyId,
-                              'timeSearch':'createdAt',
-                              'startTime':startTime,
-                              'endTime':endTime,
-                            }
-                        );
-                      }
-                    }
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 }

@@ -1,13 +1,15 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
-import 'package:scet_check/components/generalduty/time_select.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
+import 'package:scet_check/components/generalduty/upload_image.dart';
+import 'package:scet_check/components/pertinence/companyFile/components/file_system.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
-import 'package:scet_check/page/module_steward/law/components/law_components.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/time/utc_tolocal.dart';
+import 'package:uuid/uuid.dart';
 
 import 'abarbeitung_pdf.dart';
 
@@ -26,6 +28,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
   /// 状态；-1：未处理;0:处理完；1：处理中
   int type = 1;
   bool tidy = true; //展开/收起
+  bool sing = false; //展开/收起
   Map repertoire = {};//清单
   Map argumentMap = {};//传递的参数
   List problemList = [];//企业下的问题
@@ -80,6 +83,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
     };
     var response = await Request().get(Api.url['problemList'],data: data,);
     if(response['statusCode'] == 200 && response['data'] != null) {
+      problemList = [];
       setState(() {
        for(var i=0; i<response['data']['list'].length; i++){
           if(response['data']['list'][i]['isCompanyRead'] == true){
@@ -96,19 +100,6 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
       });
     }
   }
-  /// 签到清单
-  /// id: uuid
-  /// solvedAt: 整改期限
-  /// reviewedAt: 复查期限
-  void _setInventory(Map<String, dynamic> _data) async {
-    var response = await Request().post(
-        Api.url['inventory'],
-        data: _data
-    );
-    if(response['statusCode'] == 200) {
-      ToastWidget.showToastMsg('修改日期成功');
-    }
-  }
 
   @override
   void initState() {
@@ -122,6 +113,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
+      appBar: RectifyComponents.appBarTop(),
       body: Column(
         children: [
           topBar(
@@ -131,6 +123,9 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
             child: ListView(
               padding: EdgeInsets.only(top: 0),
               children: [
+                repertoire.isNotEmpty ?
+                singSurvey():
+                Container(),
                 repertoire.isNotEmpty ?
                 survey():
                 Container(),
@@ -149,7 +144,6 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
     return Container(
       color: Colors.white,
       height: px(88),
-      margin: EdgeInsets.only(top: Adapt.padTopH()),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -171,18 +165,75 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
               child: Text(title,style: TextStyle(color: Color(0xff323233),fontSize: sp(32),fontFamily: 'M'),),
             ),
           ),
-          // Container(
-          //   height: px(28),
-          //   width: px(28),
-          //   margin: EdgeInsets.only(bottom: px(15),left: px(12)),
-          //   child: Icon(Icons.star,color: Color(0xffE65C5C),),
-          // ),
-          // Spacer(),
+          InkWell(
+            child: Container(
+              padding: EdgeInsets.only(bottom: px(15),right: px(12)),
+              color: Colors.transparent,
+              child: Text('整改结束',style: TextStyle(color: (repertoire['isSolutionCommit'] ?? false) ?
+              Color(0xff323233) : Color(0XFF969799),fontSize: sp(28)),),
+            ),
+            onTap: (){
+              if(repertoire['isSolutionCommit']){
+                ToastWidget.showToastMsg('整改结束');
+              }else{
+                ToastWidget.showToastMsg('整改未完成');
+              }
+            },
+          ),
         ],
       ),
     );
   }
-
+  ///签到概况
+  Widget singSurvey(){
+    return Container(
+      padding: EdgeInsets.only(left: px(24),right: px(24)),
+      color: Colors.white,
+      child: Visibility(
+        visible: sing,
+        child: FormCheck.dataCard(
+          padding: false,
+            children: [
+              FormCheck.formTitle(
+                  '签到概况',
+                  showUp: sing,
+                  tidy: sing,
+                  onTaps: (){
+                    sing = !sing;
+                    setState(() {});
+                  }
+              ),
+              surveyItem('归属片区',area),
+              surveyItem('签到坐标','${(double.parse(repertoire['longitude'])).toStringAsFixed(2)}, '
+                  '${((double.parse(repertoire['latitude'])).toStringAsFixed(2))}',),
+              surveyItem('检查人',stewardCheck),
+              surveyItem('企业名',repertoire['company']['name']),
+              surveyItem('排查日期',checkDate.substring(0,10)),
+              FormCheck.rowItem(
+                alignStart: true,
+                title: "签到照片",
+                child: UploadImage(
+                  imgList: repertoire['images'],
+                  closeIcon: false,
+                ),
+              ),
+            ]
+        ),
+        replacement: SizedBox(
+          height: px(88),
+          child: FormCheck.formTitle(
+              '签到概况',
+              showUp: true,
+              tidy: sing,
+              onTaps: (){
+                sing = !sing;
+                setState(() {});
+              }
+          ),
+        ),
+      ),
+    );
+  }
   ///排查概况
   Widget survey(){
     return Container(
@@ -191,6 +242,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
       child: Visibility(
         visible: tidy,
         child: FormCheck.dataCard(
+            padding: false,
             children: [
               FormCheck.formTitle(
                   '排查概况',
@@ -211,23 +263,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
                 child: FormCheck.rowItem(
                   title: '整改截至日期',
                   expandedLeft: true,
-                  child: uploading ?
-                  Text(abarbeitungDate,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,):
-                  TimeSelect(
-                    scaffoldKey: _scaffoldKey,
-                    hintText: "请选择排查时间",
-                    time: abarbeitungDate.isNotEmpty ? DateTime.parse(abarbeitungDate) :null,
-                    callBack: (time) {
-                      abarbeitungDate = formatTime(time);
-                      _setInventory(
-                          {
-                            'id':uuid,
-                            'solvedAt': abarbeitungDate,
-                          }
-                      );
-                      setState(() {});
-                    },
-                  ),
+                  child: Text(abarbeitungDate,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,),
                 ),
               ),
               Container(
@@ -235,23 +271,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
                 child: FormCheck.rowItem(
                   title: '现场复查日期',
                   expandedLeft: true,
-                  child: uploading ?
-                  Text(sceneReviewDate,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,):
-                  TimeSelect(
-                    scaffoldKey: _scaffoldKey,
-                    hintText: "请选择排查时间",
-                    time: sceneReviewDate.isNotEmpty ? DateTime.parse(sceneReviewDate) :null,
-                    callBack: (time) {
-                      sceneReviewDate = formatTime(time);
-                      _setInventory(
-                          {
-                            'id':uuid,
-                            'reviewedAt': sceneReviewDate,
-                          }
-                      );
-                      setState(() {});
-                    },
-                  ),
+                  child: Text(sceneReviewDate,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,),
                 ),
               ),
             ]
@@ -315,7 +335,10 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
                     i: i,
                     review: false,
                     callBack:()async{
-                      Navigator.pushNamed(context, '/abarbeitungFrom',arguments: {'id':problemList[i]['id']});
+                     var res = await Navigator.pushNamed(context, '/abarbeitungFrom',arguments: {'id':problemList[i]['id']});
+                     if(res == null ){
+                       _getProblem();
+                     }
                     }
                 )),
               ),
@@ -351,29 +374,25 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
                 Column(
                   children: List.generate(pdfList.length, (i) => report(i)),
                 ),
+                pdfList.isEmpty?
                 Container(
                   margin: EdgeInsets.only(top: px(24)),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        margin: EdgeInsets.only(right: px(24)),
-                        child: Text('上传PDF',style: TextStyle(fontSize: sp(28)),),
-                      ),
-                      Expanded(
-                        child: AbarbeitungPdf(
-                          url: Api.baseUrlApp + 'file/upload?savePath=清单报告/',
-                          inventoryId: uuid,
-                          uploading:uploading,
-                          callback: (val){
-                            if(val){
-                              _getCompany();
-                            }
-                          },
-                        ),
+                      AbarbeitungPdf(
+                        url: Api.baseUrlApp + 'file/upload?savePath=清单报告/',
+                        inventoryId: uuid,
+                        uploading:uploading,
+                        callback: (val){
+                          if(val){
+                            _getCompany();
+                          }
+                        },
                       ),
                     ],
                   ),
-                ),
+                ):Container(),
               ],
             ),
           ),
@@ -381,52 +400,73 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
       ),
     );
   }
+
   //报告
   Widget report(int i){
-    return Column(
+    return Stack(
       children: [
-        InkWell(
-          child: Row(
-            children: [
-              Container(
-                width: px(30),
-                height: px(30),
-                margin: EdgeInsets.only(right: px(8)),
-                child: Image.asset('lib/assets/icons/check/PDF.png'),
+        Column(
+          children: [
+            InkWell(
+              child: Row(
+                children: [
+                  Container(
+                    width: px(30),
+                    height: px(30),
+                    margin: EdgeInsets.only(right: px(8)),
+                    child: Image.asset('lib/assets/icons/check/PDF.png'),
+                  ),
+                  Expanded(
+                    child: Text(pdfList[i]['name'],style: TextStyle(color: Color(0xff323233),fontSize: sp(26)),),
+                  ),
+                  Container(
+                    height: px(40),
+                    width: px(41),
+                    alignment: Alignment.centerLeft,
+                    margin: EdgeInsets.only(left: px(20)),
+                    // child: Image.asset('lib/assets/icons/other/right.png',color: Colors.grey,),
+                  ),
+                ],
               ),
-              Expanded(
-                child: Text(pdfList[i]['name'],style: TextStyle(color: Color(0xff323233),fontSize: sp(26)),),
+              onTap: (){
+                Navigator.pushNamed(context, '/PDFView',arguments: Api.baseUrlApp+pdfList[i]['file']?.replaceAll('\\', '/'));
+              },
+            ),
+            Container(
+              margin: EdgeInsets.only(top: px(20)),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: px(12)),
+                    child: Text('提交时间:',style: TextStyle(color: Color(0xffC8C9CC),fontSize: sp(24)),),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(left: px(12)),
+                    child: Text(formatTime(pdfList[i]['createdAt']),style: TextStyle(color: Color(0xffC8C9CC),fontSize: sp(24)),),
+                  ),
+                ],
               ),
-              Container(
-                height: px(40),
-                width: px(41),
-                alignment: Alignment.centerLeft,
-                margin: EdgeInsets.only(left: px(20)),
-                child: Image.asset('lib/assets/icons/other/right.png',color: Colors.grey,),
-              ),
-            ],
-          ),
-          onTap: (){
-            Navigator.pushNamed(context, '/PDFView',arguments: Api.baseUrlApp+pdfList[i]['file']?.replaceAll('\\', '/'));
-          },
+            ),
+          ],
         ),
-        Container(
-          margin: EdgeInsets.only(top: px(20)),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                margin: EdgeInsets.only(left: px(12)),
-                child: Text('提交时间:',style: TextStyle(color: Color(0xffC8C9CC),fontSize: sp(24)),),
-              ),
-              Container(
-                margin: EdgeInsets.only(left: px(12)),
-                child: Text(formatTime(pdfList[i]['createdAt']),style: TextStyle(color: Color(0xffC8C9CC),fontSize: sp(24)),),
-              ),
-            ],
-          ),
-        ),
+        Positioned(
+            top: 0,
+            right: 0,
+            child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    pdfList = [];
+                  });
+                },
+                child: Container(
+                  color: Colors.transparent,
+                  padding: EdgeInsets.only(left: px(12),right: px(12)),
+                  child: Icon( Icons.close, color: Colors.redAccent, size: px(40.0),),
+                )
+            )
+        )
       ],
     );
   }

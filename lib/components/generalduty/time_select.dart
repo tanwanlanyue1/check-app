@@ -8,8 +8,9 @@ class TimeSelect extends StatefulWidget {
   final GlobalKey<ScaffoldState>? scaffoldKey;
   final DateTime? time;
   final String? hintText;
+  final int? type;
   final callBack;
-  const TimeSelect({Key? key, required this.scaffoldKey, this.time, this.hintText, this.callBack}):super(key: key);
+  const TimeSelect({Key? key, required this.scaffoldKey, this.time, this.hintText, this.type,this.callBack}):super(key: key);
 
   @override
   _TimeSelectState createState() => _TimeSelectState();
@@ -48,6 +49,8 @@ class _TimeSelectState extends State<TimeSelect> {
               )
               :
               Text(
+                widget.type == 7 ?
+                '${currentTime?.substring(0,10)}':
                 '$currentTime',
                 style: TextStyle(
                   fontSize: sp(26.0),
@@ -93,7 +96,7 @@ class _TimeSelectState extends State<TimeSelect> {
           fontSize: sp(28.0),
         ),
         adapter: DateTimePickerAdapter(
-            type: PickerDateTimeType.kYMDHM,
+            type: widget.type == null ? PickerDateTimeType.kYMDHM : widget.type!,
             isNumberMonth: true,
             yearSuffix: "年",
             monthSuffix: "月",
@@ -115,7 +118,7 @@ class _TimeSelectState extends State<TimeSelect> {
           PickerDelimiter(column: 5, child: Container(
             width: 12.0,
             alignment: Alignment.center,
-            child: Text(':', style: TextStyle(fontWeight: FontWeight.bold)),
+            child: Text((widget.type ?? 0) > 7 ? ':' : '', style: TextStyle(fontWeight: FontWeight.bold)),
             color: Colors.white,
           )),
         ],
@@ -123,12 +126,20 @@ class _TimeSelectState extends State<TimeSelect> {
           DateTime time = DateTime.parse((picker.adapter as DateTimePickerAdapter).value.toString());
           widget.callBack(time);
           setState(() {
-            currentTime = formatTime(time);
+            if((widget.type ?? 8) > 7){
+              currentTime = formatTime(time);
+            }else{
+              currentTime = formatTimes(time);
+            }
           });
         }).show(widget.scaffoldKey!.currentState!);
   }
 
   String formatTime(DateTime time) {
     return DateFormat("yyyy-MM-dd HH:mm:ss").format(time);
+  }
+  ///转换天
+  String formatTimes(DateTime time) {
+    return DateFormat("yyyy-MM-dd").format(time);
   }
 }

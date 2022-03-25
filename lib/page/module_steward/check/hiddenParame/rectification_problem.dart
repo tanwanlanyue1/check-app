@@ -7,6 +7,7 @@ import 'package:scet_check/page/module_steward/check/hiddenParame/components/rec
 import 'package:scet_check/page/module_steward/check/potentialRisks/enterprise_reform.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/fill_in_form.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/review_situation.dart';
+import 'package:scet_check/routers/routes.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/time/utc_tolocal.dart';
 
@@ -30,6 +31,7 @@ class _RectificationProblemState extends State<RectificationProblem> {
   Map problemList = {};//问题详情列表
   List solutionList = [];//整改详情
   List reviewList = [];//复查详情
+  Map argumentMap = {};//传递的参数
 
   ///选择时间所需的key，传递下去
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -49,19 +51,29 @@ class _RectificationProblemState extends State<RectificationProblem> {
     var response = await Request().get(Api.url['problem']+'/$problemId',);
     if(response['statusCode'] == 200) {
       problemList = response['data'];
+      argumentMap = {
+        'declare':true,//申报
+        'uuid': problemList['inventoryId'],//清单ID
+        'districtId': problemList['districtId'],//片区id
+        'companyId': problemList['companyId'],//企业id
+        'industryId': problemList['industryId'],//行业ID
+        'problemList': problemList,//问题详情
+      };
       setState(() {});
     }
   }
   /// 整改详情，
+  /// 1,2.3只能看提交的
   void _setSolution() async {
     Map<String,dynamic> _data = {
-      'page':1,
-      'size':50,
       'problem.id':problemId,
+      'status':"[1,2,3]"
     };
     var response = await Request().get(
         Api.url['solutionList'],data: _data
     );
+    print("_data_data====$_data");
+    print("response====$response");
     if(response['statusCode'] == 200 && response['data']!=null) {
       solutionList = response['data']['list'];
       setState(() {});
@@ -70,8 +82,8 @@ class _RectificationProblemState extends State<RectificationProblem> {
   /// 复查详情，
   void _getReviewList() async {
     Map<String,dynamic> _data = {
-      'page':1,
-      'size':50,
+      // 'page':1,
+      // 'size':50,
       'problem.id': problemId,
     };
     var response = await Request().get(
@@ -90,6 +102,7 @@ class _RectificationProblemState extends State<RectificationProblem> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: RectifyComponents.appBarTop(),
       key: _scaffoldKey,
       body: Column(
         children: [
@@ -112,24 +125,27 @@ class _RectificationProblemState extends State<RectificationProblem> {
                   arguments:{
                     'declare':false,//申报
                     'key':_scaffoldKey,
-                    'problemId':problemId,
                     'problemList':problemList,
                   },
                   callBack: (){
                   },
                 ),
                 //企业整改详情
+                solutionList.isNotEmpty?
                 EnterpriseReform(
                   problemId: problemId,
                   solutionList: solutionList,
-                ),
+                ):
+                Container(),
                 //现场复查情况
+                reviewList.isNotEmpty?
                 ReviewSituation(
                   arguments:{
                     'problemId':problemId,
                     'reviewList':reviewList,
                   },
-                ),
+                ):
+                Container(),
               ],
             ),
           )
@@ -142,7 +158,6 @@ class _RectificationProblemState extends State<RectificationProblem> {
     return Container(
       color: Colors.white,
       height: px(88),
-      margin: EdgeInsets.only(top: Adapt.padTopH()),
       child: Row(
         children: [
           InkWell(
@@ -165,18 +180,38 @@ class _RectificationProblemState extends State<RectificationProblem> {
           ),
           GestureDetector(
             child: Container(
-              width: px(40),
-              height: px(41),
               margin: EdgeInsets.only(right: px(20)),
-              child: Image.asset('lib/assets/icons/form/add.png'),),
+              child: (problemList['isProblemCommit'] ?? false) ? Image.asset(
+                  'lib/assets/icons/form/add.png',
+                width: px(50),
+                height: px(51),
+              ):
+              Text('修改详情',style: TextStyle(color: Color(0xff323233),fontSize: sp(28))),
+            ),
             onTap: () async{
-              if(solutionList.isNotEmpty && review==false){
-                var res =  await  Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId,'review':true});
-                if(res == true){
-                  _getReviewList();
+              if(problemList['isProblemCommit']){
+                if(solutionList.isNotEmpty && review==false){
+                  if(problemList['status'] == 2){
+                    var res =  await  Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId,'review':true});
+                    if(res == true){
+                      _getReviewList();
+                      _getProblems();
+                      _setSolution();
+                    }
+                  }
+                }else{
+                  ToastWidget.showToastMsg('暂无整改详情');
                 }
               }else{
-                ToastWidget.showToastMsg('暂无整改详情');
+                final Function? pageContentBuilder = routes['/fillInForm'];
+                var res = await Navigator.push(context, MaterialPageRoute(
+                    settings: RouteSettings(name: '/fillInForm'),
+                    builder: (context) => pageContentBuilder!(context, arguments: argumentMap)
+                ));
+                if(res == true){
+                  _getProblems();
+                  _getReviewList();
+                }
               }
             },
           ),

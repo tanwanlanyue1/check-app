@@ -48,10 +48,11 @@ void main() {
 }
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 class MyApp extends StatelessWidget {
   final String? routerStr;
-  MyApp({this.routerStr,});
+  MyApp({Key? key, this.routerStr,}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
@@ -70,7 +71,10 @@ class MyApp extends StatelessWidget {
             );
           },
           title: '隐患排查与整改',
-          navigatorObservers: [BotToastNavigatorObserver()],
+          navigatorObservers: <NavigatorObserver>[
+            BotToastNavigatorObserver(),
+            routeObserver
+          ],
           debugShowCheckedModeBanner: false,
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,

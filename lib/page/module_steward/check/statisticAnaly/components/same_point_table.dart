@@ -312,7 +312,7 @@ class _SamePointTableState extends State<SamePointTable> {
               Expanded(
                 child: Container(
                   margin: EdgeInsets.only(top: px(17),left: px(20)),
-                  child: Text("园区风险隐患排查总览-${widget.tableTitle}问题排名图",
+                  child: Text("${widget.tableTitle}问题排名图",
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Color(0xff323233),fontSize: sp(32)),),
                 ),
@@ -388,8 +388,7 @@ class _SamePointTableState extends State<SamePointTable> {
                     erectName: name,
                     data: echartData,
                     pieData: pieData,
-                  ),
-                  ):
+                  ),):
                   Column(
                   children: bodyRow(tableBody),
                 ),

@@ -7,7 +7,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 import 'components/law_components.dart';
 
 ///排查要点列表
-///arguments:{id:依据id]
+///arguments:{id:依据id,'gist':提交按钮]
 class EssentialList extends StatefulWidget {
   final Map? arguments;
   const EssentialList ({Key? key,this.arguments}) : super(key: key);
@@ -43,6 +43,7 @@ class _EssentialListState extends State<EssentialList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: RectifyComponents.appBarTop(),
       body: Column(
         children: [
           RectifyComponents.topBar(
@@ -108,7 +109,7 @@ class _EssentialListState extends State<EssentialList> {
                   ),
                 ),
                 onTap: (){
-                  Navigator.pushNamed(context, '/essentialDetails',arguments: {'id':data['children'][j]['id']});
+                  Navigator.pushNamed(context, '/essentialDetails',arguments: {'id':data['children'][j]['id'],'gist':widget.arguments?['gist']});
                 },
               );
             }

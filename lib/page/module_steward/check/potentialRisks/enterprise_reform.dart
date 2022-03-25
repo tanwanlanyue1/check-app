@@ -26,6 +26,7 @@ class _EnterpriseReformState extends State<EnterpriseReform> {
       case 1 : return '待复查';
       case 2 : return '复查已通过';
       case 3 : return '复查未通过';
+      case 4 : return '未提交';
       default: return '待复查';
     }
   }
@@ -86,10 +87,10 @@ class _EnterpriseReformState extends State<EnterpriseReform> {
                 closeIcon: false,
               )
           ),
-          FormCheck.rowItem(
-            title: "其他说明",
-            child: Text(solutionList[i]['remark'],style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
-          ),
+          // FormCheck.rowItem(
+          //   title: "其他说明",
+          //   child: Text(solutionList[i]['remark'],style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+          // ),
         ]
     );
   }

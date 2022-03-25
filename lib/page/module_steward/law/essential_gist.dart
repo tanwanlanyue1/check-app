@@ -133,7 +133,7 @@ class _EssentialGistState extends State<EssentialGist> {
             ],
           ),
           onTap: (){
-            Navigator.pushNamed(context, '/essentialList',arguments: {'data':gistData[index]});
+            Navigator.pushNamed(context, '/essentialList',arguments: {'data':gistData[index],'gist': !widget.search});
           },
         ),
       ),

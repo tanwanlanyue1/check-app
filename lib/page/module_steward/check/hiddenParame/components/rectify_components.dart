@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:scet_check/components/generalduty/date_range.dart';
+import 'package:scet_check/components/generalduty/down_input.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/time/utc_tolocal.dart';
 
@@ -184,7 +186,7 @@ class RectifyComponents{
                    margin: EdgeInsets.only(left: px(16),right: px(12)),
                    child: FittedBox(
                      fit: BoxFit.scaleDown, //不让自己调放大，可以缩小
-                     child: Text(formatTime(company['updatedAt']),style: TextStyle(color: Color(0xff323233),fontSize: sp(30)),),
+                     child: Text(formatTime(company['updatedAt'])+' 排查清单',style: TextStyle(color: Color(0xff323233),fontSize: sp(30)),),
                    ),
                  ),
                ),
@@ -222,9 +224,11 @@ class RectifyComponents{
                    margin: EdgeInsets.only(left: px(12)),
                    child: Text('排查人',style: TextStyle(color: Color(0xff969799),fontSize: sp(24))),
                  ),
-                 Container(
-                   margin: EdgeInsets.only(left: px(24),right: px(20)),
-                   child: Text('${company["checkPersonnel"]}',style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),),
+                 Expanded(
+                   child: Container(
+                     margin: EdgeInsets.only(left: px(24),right: px(20)),
+                     child: Text('${company["checkPersonnel"]}',style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),),
+                   ),
                  ),
                  Visibility(
                    visible: company["isImportant"] ?? false,
@@ -279,6 +283,7 @@ class RectifyComponents{
       default: return '未整改';
     }
   }
+
   //清单状态 1,整改中;2,已归档;3,待审核;4,审核已通过;5,审核未通过;6,未提交;
   static String inventory(status){
     switch(status){
@@ -291,6 +296,7 @@ class RectifyComponents{
       default: return '未整改';
     }
   }
+
  ///头部
  /// title :标题名
  /// left :左侧按钮/图标
@@ -301,7 +307,6 @@ class RectifyComponents{
    return Container(
      color: Colors.white,
      height: px(88),
-     margin: EdgeInsets.only(top: Adapt.padTopH()),
      child: Row(
        children: [
          InkWell(
@@ -389,6 +394,151 @@ class RectifyComponents{
               ,style: TextStyle(color: Colors.white,fontSize: sp(20)),),
           )
         ],
+      ),
+    );
+  }
+
+  ///抽屉
+  ///typeStatus:默认状态
+  ///status:下拉数据
+  ///startTime--endTime:起止时间
+  static Widget endDrawers(context,{
+    required Map typeStatus,
+    required List status,
+    required DateTime startTime,
+    required DateTime endTime,
+    Function? callBack,
+    Function? timeBack,
+    Function? trueBack,
+  }){
+    return Container(
+      width: px(600),
+      color: Color(0xFFFFFFFF),
+      padding: EdgeInsets.only(left: px(20), right: px(20),bottom: px(50)),
+      child: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: Adapt.padTopH()),
+            child: Row(
+              mainAxisAlignment:MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '问题搜索',
+                  style: TextStyle(fontSize: sp(30),color: Color(0xFF2E2F33),fontFamily:"M"),
+                ),
+                IconButton(
+                  icon: Icon(Icons.clear,color: Colors.red,size: px(39),),
+                  onPressed: (){Navigator.pop(context);},
+                )
+              ],
+            ),
+          ),
+          Row(
+            children: [
+              Container(
+                height: px(72),
+                width: px(140),
+                alignment: Alignment.centerLeft,
+                child: Text('状态：',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+              ),
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.only(left: px(20), right: px(20)),
+                  child: DownInput(
+                    value: typeStatus['name'],
+                    data: status,
+                    callback: (val){
+                      callBack?.call(val);
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Container(
+                height: px(72),
+                width: px(140),
+                alignment: Alignment.bottomCenter,
+                child: Text('起止时间：',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+              ),
+              Expanded(
+                child: Container(
+                  height: px(72),
+                  width: px(580),
+                  color: Colors.white,
+                  margin: EdgeInsets.only(top: px(24),left: px(24),right: px(24)),
+                  child: DateRange(
+                    start: startTime,
+                    end: endTime,
+                    showTime: false,
+                    callBack: (val) {
+                      timeBack?.call(val);
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Spacer(),
+          Row(
+            children: [
+              Expanded(
+                child: InkWell(
+                  child: Container(
+                    alignment: Alignment.center,
+                    color: Color(0xffE6EAF5),
+                    height: px(56),
+                    padding: EdgeInsets.only(left: px(49),right: px(49)),
+                    child: Text('取消',style: TextStyle(color: Color(0xff4D7FFF),fontSize: sp(24)),),
+                  ),
+                  onTap: (){
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              Expanded(
+                child: InkWell(
+                  child: Container(
+                    color: Color(0xff4D7FFF),
+                    height: px(56),
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.only(left: px(49),right: px(49)),
+                    child: Text('确定',style: TextStyle(color: Colors.white,fontSize: sp(24)),),
+                  ),
+                  onTap: (){
+                    trueBack?.call();
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  ///AppBar
+  ///name标题
+  static PreferredSizeWidget appBars({String? name,Widget? leading}){
+   return AppBar(
+     title: Text(
+       '$name',
+       style: TextStyle(fontSize: sp(30),fontFamily: 'M'),
+     ),
+     leading: leading,
+     centerTitle: true,
+   );
+  }
+
+  ///AppBar
+  static PreferredSizeWidget appBarTop(){
+    return PreferredSize(
+      preferredSize: Size(Adapt.screenW(), px(Adapt.padBotH())),
+      child: AppBar(
+        title: Text(''),
+        centerTitle: true,
       ),
     );
   }

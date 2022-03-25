@@ -73,7 +73,7 @@ class _ReviewSituationState extends State<ReviewSituation> {
           FormCheck.rowItem(
             title: "复查详情",
             child: Container(
-              color: Color(0xffF5F6F7),
+              // color: Color(0xffF5F6F7),
               child: Text(solutionList[i]['detail'],style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
             ),
           ),

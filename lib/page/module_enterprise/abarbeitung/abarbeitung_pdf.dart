@@ -75,6 +75,7 @@ class _AbarbeitungPdfState extends State<AbarbeitungPdf> {
         widget.callback?.call(true);
     }
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -103,10 +104,10 @@ class _AbarbeitungPdfState extends State<AbarbeitungPdf> {
         }
       },
       child: Container(
-        width: px(169),
-        height: px(169),
-        color: Color(0XFFF5F6FA),
-        child: Image.asset('lib/assets/icons/form/pdf.png'),
+        color: Colors.transparent,
+        margin: EdgeInsets.only(right: px(24)),
+        padding: EdgeInsets.only(left: px(24),right: px(24),top: px(5),bottom: px(5)),
+        child: Text('上传PDF',style: TextStyle(fontSize: sp(28)),),
       ),
     );
   }

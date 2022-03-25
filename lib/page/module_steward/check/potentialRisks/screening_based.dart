@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/law/essential_gist.dart';
 import 'package:scet_check/page/module_steward/law/policy_stand.dart';
 import 'package:scet_check/utils/screen/screen.dart';
@@ -25,13 +26,17 @@ class _ScreeningBasedState extends State<ScreeningBased > {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: RectifyComponents.appBarTop(),
       body: Container(
-        padding: EdgeInsets.only(top: Adapt.padTopH()),
         color: Colors.white,
         child: Column(
           children: [
-            Text(law ? '请选择法律法规':'请选择排查标准', style: TextStyle(color: Color(0xff323233),
-                fontSize: sp(30),fontFamily: 'M'),),
+            RectifyComponents.topBar(
+                title: law ? '请选择法律法规':'请选择排查标准',
+                callBack: (){
+                  Navigator.pop(context);
+                }
+            ),
             Expanded(
               child: law ?
               PolicyStand(

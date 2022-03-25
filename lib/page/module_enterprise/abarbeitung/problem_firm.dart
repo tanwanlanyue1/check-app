@@ -5,28 +5,25 @@ import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/no_data.dart';
 import 'package:scet_check/components/generalduty/search.dart';
 import 'package:scet_check/components/generalduty/sliver_app_bar.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/utils/easyRefresh/easy_refreshs.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
-import 'components/rectify_components.dart';
-
-///隐患问题页
-///hiddenProblem:隐患数据
-class ProblemPage extends StatefulWidget {
-  List? hiddenProblem;
+///企业问题
+class ProblemFirm extends StatefulWidget {
+  List hiddenProblem;
   String companyId;
-  ProblemPage({Key? key,this.hiddenProblem,required this.companyId}) : super(key: key);
+  ProblemFirm({Key? key,required this.companyId,required this.hiddenProblem}) : super(key: key);
 
   @override
-  _ProblemPageState createState() => _ProblemPageState();
+  _ProblemFirmState createState() => _ProblemFirmState();
 }
 
-class _ProblemPageState extends State<ProblemPage> {
+class _ProblemFirmState extends State<ProblemFirm> {
   EasyRefreshController _controller = EasyRefreshController(); // 上拉组件控制器
   int _pageNo = 1; // 当前页码
   int _total = 10; // 总条数
   bool _enableLoad = true; // 是否开启加载
-
   List hiddenProblem = []; //隐患问题数组
   List problemStatus = [
     {'name':'未整改','id':1},
@@ -47,7 +44,12 @@ class _ProblemPageState extends State<ProblemPage> {
     var response = await Request().get(Api.url['problemList'],data: data,);
     if(response['statusCode'] == 200 && response['data'] != null) {
       setState(() {
-        hiddenProblem = response['data']['list'];
+        hiddenProblem = [];
+        for(var i=0;i<response['data']['list'].length;i++){
+          if(response['data']['list'][i]['isCompanyRead'] == true){
+            hiddenProblem.add(response['data']['list'][i]);
+          }
+        }
       });
     }
   }
@@ -55,13 +57,8 @@ class _ProblemPageState extends State<ProblemPage> {
   @override
   void initState() {
     // TODO: implement initState
-    hiddenProblem = widget.hiddenProblem ?? [];
+    hiddenProblem = widget.hiddenProblem;
     companyId = widget.companyId;
-    _problemSearch(
-        data: {
-          'company.id':companyId,
-        }
-    );
     super.initState();
   }
   /// 获取企业下的问题
@@ -80,6 +77,7 @@ class _ProblemPageState extends State<ProblemPage> {
 
     if(response['statusCode'] == 200){
       Map _data = response['data'];
+      print('_data=$_data');
       _pageNo++;
       if (mounted) {
         if(type == typeStatusEnum.onRefresh) {
@@ -101,10 +99,15 @@ class _ProblemPageState extends State<ProblemPage> {
   // 下拉刷新
   _onRefresh({required List data,required int total}) {
     _total = total;
-    hiddenProblem = data;
     _enableLoad = true;
     _controller.resetLoadState();
     _controller.finishRefresh();
+    hiddenProblem = [];
+    for(var i=0;i<data.length;i++){
+      if(data[i]['isCompanyRead'] == true){
+        hiddenProblem.add(data[i]);
+      }
+    }
     if(hiddenProblem.length >= total){
       _controller.finishLoad(noMore: true);
     }
@@ -113,7 +116,12 @@ class _ProblemPageState extends State<ProblemPage> {
   // 上拉加载
   _onLoad({required List data,required int total}) {
     _total = total;
-    hiddenProblem.addAll(data);
+    // hiddenProblem.addAll(data);
+    for(var i=0;i<data.length;i++){
+      if(data[i]['isCompanyRead'] == true){
+        hiddenProblem.addAll(data[i]);
+      }
+    }
     _controller.finishLoadCallBack!();
     if(hiddenProblem.length >= total){
       _controller.finishLoad(noMore: true);
@@ -121,16 +129,10 @@ class _ProblemPageState extends State<ProblemPage> {
     }
     setState(() {});
   }
-
   @override
-  void didUpdateWidget(covariant ProblemPage oldWidget) {
+  void didUpdateWidget(covariant ProblemFirm oldWidget) {
     // TODO: implement didUpdateWidget
-    hiddenProblem = widget.hiddenProblem ?? [];
-    _problemSearch(
-        data: {
-          'company.id':companyId,
-        }
-    );
+    hiddenProblem = widget.hiddenProblem;
     super.didUpdateWidget(oldWidget);
   }
   @override
@@ -187,9 +189,7 @@ class _ProblemPageState extends State<ProblemPage> {
                         detail: true,
                         review: false,
                         callBack:(){
-                          Navigator.pushNamed(context, '/rectificationProblem',
-                              arguments: {'check':true,'problemId':hiddenProblem[i]['id']}
-                          );
+                          Navigator.pushNamed(context, '/abarbeitungFrom',arguments: {'id':hiddenProblem[i]['id']});
                         }
                     );
                   },
@@ -220,51 +220,51 @@ class _ProblemPageState extends State<ProblemPage> {
               ],
             ),
           ),
-
         ],
       ),
       endDrawer: RectifyComponents.endDrawers(
-          context,
-          typeStatus: typeStatus,
-          status: problemStatus,
-          startTime: startTime ?? DateTime.now(),
-          endTime: endTime ?? DateTime.now(),
-          callBack: (val){
-            typeStatus['name'] = val['name'];
-            typeStatus['id'] = val['id'];
-            setState(() {});
-          },
-          timeBack: (val){
-            startTime = val[0];
-            endTime = val[1];
-            setState(() {});
-          },
-          trueBack: (){
-            if(startTime==null){
-              _problemSearch(
-                  data: {
-                    'status':typeStatus['id'],
-                    'company.id':companyId,
-                  }
-              );
-            }
-            else{
-              _problemSearch(
-                  data: {
-                    'status':typeStatus['id'],
-                    'company.id':companyId,
-                    'timeSearch':'createdAt',
-                    'startTime':startTime,
-                    'endTime':endTime,
-                  }
-              );
-            }
-            Navigator.pop(context);
-            setState(() {});
-          },
+        context,
+        typeStatus: typeStatus,
+        status: problemStatus,
+        startTime: startTime ?? DateTime.now(),
+        endTime: endTime ?? DateTime.now(),
+        callBack: (val){
+          typeStatus['name'] = val['name'];
+          typeStatus['id'] = val['id'];
+          setState(() {});
+        },
+        timeBack: (val){
+          startTime = val[0];
+          endTime = val[1];
+          setState(() {});
+        },
+        trueBack: (){
+          if(startTime==null){
+            _problemSearch(
+                data: {
+                  'status':typeStatus['id'],
+                  'company.id':companyId,
+                }
+            );
+          }
+          else{
+            _problemSearch(
+                data: {
+                  'status':typeStatus['id'],
+                  'company.id':companyId,
+                  'timeSearch':'createdAt',
+                  'startTime':startTime,
+                  'endTime':endTime,
+                }
+            );
+          }
+          Navigator.pop(context);
+          setState(() {});
+        },
       ),
     );
   }
+
 }
 /// 页面状态
 enum typeStatusEnum {
