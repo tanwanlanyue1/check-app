@@ -84,7 +84,11 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
       solutionList = response['data']['list'];
       if(solutionList.isNotEmpty){
         descript = solutionList[0]['descript'];
-        imgDetails = solutionList[0]['images'];
+        if( review== false){
+          imgDetails = solutionList[0]['images'];
+        }else{
+          imgDetails = [];
+        }
         _uuid = solutionList[0]['id'];
       }
       setState(() {});

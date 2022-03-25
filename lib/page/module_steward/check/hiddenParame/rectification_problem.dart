@@ -72,8 +72,8 @@ class _RectificationProblemState extends State<RectificationProblem> {
     var response = await Request().get(
         Api.url['solutionList'],data: _data
     );
-    print("_data_data====$_data");
-    print("response====$response");
+    // print("_data_data====$_data");
+    // print("response====$response");
     if(response['statusCode'] == 200 && response['data']!=null) {
       solutionList = response['data']['list'];
       setState(() {});
@@ -203,6 +203,7 @@ class _RectificationProblemState extends State<RectificationProblem> {
                   ToastWidget.showToastMsg('暂无整改详情');
                 }
               }else{
+                // review = true;
                 final Function? pageContentBuilder = routes['/fillInForm'];
                 var res = await Navigator.push(context, MaterialPageRoute(
                     settings: RouteSettings(name: '/fillInForm'),
