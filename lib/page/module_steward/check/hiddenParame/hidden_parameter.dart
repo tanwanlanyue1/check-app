@@ -16,8 +16,7 @@ class HiddenParameter extends StatefulWidget {
 
 class _HiddenParameterState extends State<HiddenParameter> {
 
-  List tabBar = ["全园区","第一片区","第二片区","第三片区"];//头部
-  final PageController pagesController = PageController();//页面控制器
+  List tabBar = [];//头部
   String _companyId = '';//公司id
   String _companyName = '';//公司名称
   List companyList = [];//全部公司数据
@@ -45,11 +44,11 @@ class _HiddenParameterState extends State<HiddenParameter> {
     }
   }
   /// 获取企业统计
-  /// district.id:片区id
+  /// district.id:片区id,切换请求的片区
   void _getCompany() async {
     if(pageIndex != 0){
       data = {
-        'district.id': districtList[pageIndex]['id']
+        'district.id': districtId[pageIndex]
       };
     }else{
       data = {};
@@ -75,7 +74,7 @@ class _HiddenParameterState extends State<HiddenParameter> {
   Widget build(BuildContext context) {
     return LayoutPage(
       tabBar: tabBar,
-      pageBody: List.generate(4, (index) => Column(
+      pageBody: List.generate(tabBar.length, (index) => Column(
         children: [
           Container(
             height: px(24),

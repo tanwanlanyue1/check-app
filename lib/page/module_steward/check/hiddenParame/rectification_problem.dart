@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
-import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/enterprise_reform.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/fill_in_form.dart';
@@ -38,11 +37,13 @@ class _RectificationProblemState extends State<RectificationProblem> {
 
   @override
   void initState() {
-    declare = widget.arguments['check'] ?? false;
-    problemId = widget.arguments['problemId'] ?? '';
-    _getProblems();
-    _setSolution();
-    _getReviewList();
+    if(mounted){
+      declare = widget.arguments['check'] ?? false;
+      problemId = widget.arguments['problemId'] ?? '';
+      _getProblems();
+      _setSolution();
+      _getReviewList();
+    }
     super.initState();
   }
   /// 获取问题详情
@@ -72,18 +73,16 @@ class _RectificationProblemState extends State<RectificationProblem> {
     var response = await Request().get(
         Api.url['solutionList'],data: _data
     );
-    // print("_data_data====$_data");
-    // print("response====$response");
     if(response['statusCode'] == 200 && response['data']!=null) {
       solutionList = response['data']['list'];
       setState(() {});
     }
   }
+
   /// 复查详情，
+  /// 是否复查结束
   void _getReviewList() async {
     Map<String,dynamic> _data = {
-      // 'page':1,
-      // 'size':50,
       'problem.id': problemId,
     };
     var response = await Request().get(
@@ -99,13 +98,14 @@ class _RectificationProblemState extends State<RectificationProblem> {
       setState(() {});
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RectifyComponents.appBarTop(),
       key: _scaffoldKey,
       body: Column(
         children: [
+          RectifyComponents.appBarBac(),
           topBar(),
           Expanded(
             child: ListView(
@@ -126,8 +126,6 @@ class _RectificationProblemState extends State<RectificationProblem> {
                     'declare':false,//申报
                     'key':_scaffoldKey,
                     'problemList':problemList,
-                  },
-                  callBack: (){
                   },
                 ),
                 //企业整改详情
@@ -189,24 +187,28 @@ class _RectificationProblemState extends State<RectificationProblem> {
               Text('修改详情',style: TextStyle(color: Color(0xff323233),fontSize: sp(28))),
             ),
             onTap: () async{
+              ///是否问题
+              ///判断是否是复查还是修改问题详情
+              ///问题是否复查结束
               if(problemList['isProblemCommit']){
                 if(solutionList.isNotEmpty && review==false){
                   if(problemList['status'] == 2){
-                    var res =  await  Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId,'review':true});
+                    var res =  await Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId,'review':true});
                     if(res == true){
                       _getReviewList();
                       _getProblems();
                       _setSolution();
                     }
+                  }else{
+                    ToastWidget.showToastMsg('当前状态不可编辑');
                   }
                 }else{
                   ToastWidget.showToastMsg('暂无整改详情');
                 }
               }else{
-                // review = true;
                 final Function? pageContentBuilder = routes['/fillInForm'];
                 var res = await Navigator.push(context, MaterialPageRoute(
-                    settings: RouteSettings(name: '/fillInForm'),
+                    settings: RouteSettings(name: '/fillInForm'),//修改问题
                     builder: (context) => pageContentBuilder!(context, arguments: argumentMap)
                 ));
                 if(res == true){

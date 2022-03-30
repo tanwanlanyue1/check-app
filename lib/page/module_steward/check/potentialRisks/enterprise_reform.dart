@@ -20,7 +20,7 @@ class _EnterpriseReformState extends State<EnterpriseReform> {
   List solutionList = [];//整改详情
 
   /// 赋值
-  /// :1,待复查;2,复查已通过;3,复查未通过
+  /// 1,待复查;2,复查已通过;3,复查未通过
   String _status(int? status){
     switch(status){
       case 1 : return '待复查';
@@ -41,7 +41,9 @@ class _EnterpriseReformState extends State<EnterpriseReform> {
   @override
   void didUpdateWidget(covariant EnterpriseReform oldWidget) {
     // TODO: implement didUpdateWidget
-    solutionList = widget.solutionList ?? [];
+    if(widget.solutionList != oldWidget.solutionList){
+      solutionList = widget.solutionList ?? [];
+    }
     super.didUpdateWidget(oldWidget);
   }
 
@@ -87,10 +89,6 @@ class _EnterpriseReformState extends State<EnterpriseReform> {
                 closeIcon: false,
               )
           ),
-          // FormCheck.rowItem(
-          //   title: "其他说明",
-          //   child: Text(solutionList[i]['remark'],style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
-          // ),
         ]
     );
   }

@@ -26,7 +26,7 @@ class _EnterprisePageState extends State<EnterprisePage> {
   void _getCompany() async {
     if(pageIndex != 0){
       data = {
-        'district.id': districtList[pageIndex]['id']
+        'district.id': districtId[pageIndex]
       };
     }else{
       data = {};

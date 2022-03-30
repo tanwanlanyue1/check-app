@@ -15,6 +15,7 @@ class PDFView extends StatelessWidget {
       appBar: PreferredSize(
         preferredSize: Size(Adapt.screenW(), px(Adapter.topBarHeight)),
         child: AppBar(
+          backgroundColor: Color(0xff19191A),
             title: Text(
                 'pdf报告查看',
                 style: TextStyle(

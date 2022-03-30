@@ -4,7 +4,6 @@ import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/model/provider/provider_details.dart';
 import 'package:scet_check/page/module_steward/check/StatisticAnaly/statistics.dart';
-import 'package:scet_check/page/module_steward/check/statisticAnaly/components/layout_page.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 import 'components/check_compon.dart';
@@ -19,7 +18,6 @@ class StatisticAnalysis extends StatefulWidget {
 
 class _StatisticAnalysisState extends State<StatisticAnalysis> {
 
-  final PageController pagesController = PageController();
   List tabBar = [];//表头
   List districtList = [];//片区统计数据
   List districtId = [""];//片区id
@@ -34,22 +32,12 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> {
   int _types = 0; //排名类型
   ScrollController controller = ScrollController();
   ScrollController controllerTow = ScrollController();
-  ProviderDetaild? _roviderDetaild;
-  double off = 0.0;
+  ProviderDetaild? _roviderDetaild;//全局数据
 
   @override
   void initState() {
     _getStatistics();
     dealWith();
-    pagesController.addListener(() {
-      if(pagesController.page != null){
-        _roviderDetaild!.setOffest(pagesController.page!);
-      }
-    });
-    controller.addListener(() {
-      off = controller.offset;
-      controllerTow.jumpTo(off);
-    });
     super.initState();
   }
   @override
@@ -131,7 +119,6 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> {
 
   /// 问题统计数据
   void _getProblemStatis({Map<String,dynamic>? data}) async {
-    print('data=====$data');
     var response = await Request().get(
         Api.url['problemStatistics'],
         data: data
@@ -143,18 +130,19 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> {
     }
   }
 
-  //处理数据
+  ///处理数据
+  ///判断是哪一个片区进来的，
+  ///_pageIndex 0=统计片区
+  ///如果是统计片区，则不传片区id，只需要传递查询的类型
+  ///默认第一次查询企业类型-company
   void dealWith (){
     _data = _pageIndex == 0 ? {} :
-    {
-      'district.id': districtId[_pageIndex]
-    };
+    { 'district.id': districtId[_pageIndex] };
     groupTable = _pageIndex == 0 ? {'groupTable':'company'} :
     {
       'district.id': districtId[_pageIndex],
       'groupTable':'company'
     };
-    print('groupTable=$groupTable');
     _getProblem();
     _companyCount();
     _getAbarbeitung();
@@ -163,7 +151,9 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> {
     );
   }
   ///判断表单的数据
+  ///判断切换的类型和片区
   judge(){
+    print('进来了====$_types');
     switch (_types){
       case 0: {
         type = '企业';
@@ -237,13 +227,11 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> {
                 children: [
                   SizedBox(
                     height: px(88),
-                    // width: px(206 * tabBar.length),
+                    width: px(206 * tabBar.length),
                     child: Row(
                       children: [
                         CheckCompon.bagColor(
-                          pageIndex: _pageIndex,
-                          // offestLeft: _roviderDetaild?.offestLeft,
-                          offestLeft: tabBar==0 ?px(206): px(206 * tabBar.length),
+                          offestLeft: _roviderDetaild?.offestLeft,
                         )
                       ],
                     ),
@@ -261,7 +249,8 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> {
                         _pageIndex = i;
                         dealWith();
                         type = '企业';
-                        setState(() {});
+                        _roviderDetaild!.setOffest(double.parse(_pageIndex.toString()));
+                        _roviderDetaild!.setPie(cutPie: false);
                         setState(() {});
                       }
                   ),

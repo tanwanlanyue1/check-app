@@ -6,10 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
-import 'package:scet_check/components/generalduty/date_range.dart';
-import 'package:scet_check/components/generalduty/down_input.dart';
 import 'package:scet_check/components/generalduty/loading.dart';
-import 'package:scet_check/components/generalduty/search.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
@@ -23,10 +20,10 @@ import 'package:uuid/uuid.dart';
 import 'inventory_page.dart';
 
 ///隐患台账企业排查清单
-///arguments:{companyId:公司id，companyName：公司名称,uuid:uuid}
+///arguments:{companyId:公司id，companyName：公司名称 }
 class HiddenDetails extends StatefulWidget {
   Map? arguments;
-  HiddenDetails({Key? key,this.arguments, }) : super(key: key);
+  HiddenDetails({Key? key,this.arguments,}) : super(key: key);
 
   @override
   _HiddenDetailsState createState() => _HiddenDetailsState();
@@ -34,8 +31,6 @@ class HiddenDetails extends StatefulWidget {
 
 class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProviderStateMixin{
   List tabBar = ["隐患问题","排查清单"];//tab列表
-  List companyDetails = [];//公司问题列表
-  List inventoryDetails = [];//公司清单列表
   List imgDetails = []; //上传图片
   String companyName = '';//公司名
   String companyId = '';//公司id
@@ -49,43 +44,6 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
   DateTime solvedAt = DateTime.now().add(Duration(days: 7));//整改期限
   DateTime reviewedAt = DateTime.now().add(Duration(days: 14));//复查期限
   late TabController _tabController; //TabBar控制器
-
-  /// 获取企业下的问题
-  ///companyId:公司id
-  ///page:第几页
-  ///size:每页多大
-  ///andWhere:查询的条件
-  ///添加一个状态 check-提交到企业,environment-提交到环保局
-  void _getProblem() async {
-    Map<String,dynamic> data = {
-      // 'page':1,
-      // 'size':50,
-      'company.id':companyId,
-    };
-    var response = await Request().get(Api.url['problemList'],data: data,);
-    if(response['statusCode'] == 200 && response['data'] != null) {
-      setState(() {
-        companyDetails = response['data']['list'];
-      });
-    }
-  }
-
-  /// 获取企业下的清单
-  ///companyId:公司id
-  ///page:第几页
-  ///size:每页多大
-  ///andWhere:查询的条件
-  void _getInventoryList() async {
-    Map<String,dynamic> data = {
-      'company.id':companyId,
-    };
-    var response = await Request().get(Api.url['inventoryList'],data: data,);
-    if(response['statusCode'] == 200 && response['data'] != null) {
-      setState(() {
-        inventoryDetails = response['data']['list'];
-      });
-    }
-  }
 
   /// 签到清单
   /// id: uuid
@@ -104,7 +62,7 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
     } else if (checkName.isEmpty) {
       ToastWidget.showToastMsg('请输入排查人员！');
     } else if (imgDetails.isEmpty) {
-      ToastWidget.showToastMsg('请上传问题图片！');
+      ToastWidget.showToastMsg('请上传签到图片！');
     }else{
       Map<String, dynamic> _data = {
         'id':_uuid,
@@ -124,18 +82,17 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
       );
       if(response['statusCode'] == 200) {
         Navigator.pop(context);
-        var res = await Navigator.pushNamed(context, '/stewardCheck',arguments: {
+        Navigator.pushNamed(context, '/stewardCheck',arguments: {
           'uuid': _uuid,
           'company':false
         });
-        if(res == null){
-          _getInventoryList();
-        }
       }
     }
   }
 
   ///签到
+  ///获取uuid,用来上传
+  ///position,imgDetails清空每次的坐标和图片
   void singIn(){
     _uuid = uuid.v4();
     position = null;
@@ -276,8 +233,6 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
     _tabController = TabController(vsync: this,length: tabBar.length);
     userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
     userName= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
-    _getProblem();
-    _getInventoryList();
     super.initState();
   }
 
@@ -285,9 +240,9 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RectifyComponents.appBarTop(),
       body: Column(
         children: [
+          RectifyComponents.appBarBac(),
           topBar(),
           Container(
             height: px(64.0),
@@ -316,12 +271,12 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
                 controller: _tabController,
                 children: <Widget>[
                   ProblemPage(
-                    hiddenProblem: companyDetails,
                     companyId: companyId,
+                    firm: false,
                   ),
                   InventoryPage(
-                    hiddenInventory: inventoryDetails,
                     companyId: companyId,
+                    firm: false,
                   ),// 排查清单
                 ]
             ),
@@ -332,8 +287,7 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
   }
 
   ///头部
-  ///筛选
-  ///companyDetails要清空并重新赋值
+  ///签到
   Widget topBar(){
     return Container(
       color: Colors.white,
@@ -363,7 +317,6 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
               height: px(41),
               margin: EdgeInsets.only(right: px(20)),
               child: Image.asset('lib/assets/icons/form/add.png'),
-              // child: Image.asset('lib/assets/images/home/filtrate.png'),
             ),
             onTap: () async{
               singIn();

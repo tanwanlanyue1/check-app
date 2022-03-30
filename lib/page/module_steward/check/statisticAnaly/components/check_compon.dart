@@ -39,7 +39,7 @@ class CheckCompon {
   ///pageIndex: 下标
   ///offestLeft: 偏移量
   ///right: 居右
-  static Widget bagColor({required int pageIndex, double offestLeft = 0, double right = 30}) {
+  static Widget bagColor({ double offestLeft = 0, double right = 30}) {
     return Padding(
       padding: EdgeInsets.only(
         top: px(19),

@@ -52,8 +52,6 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
     if(response['statusCode'] == 200) {
       problemList = response['data'];
       abarbeitung = problemList['isSolutionCommit'];
-      // abarbeitung = response['data']['status'] == 1 ||
-      //               response['data']['status'] == 4 ? true :false;
       setState(() {});
     }
   }
@@ -85,12 +83,13 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
       setState(() {});
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RectifyComponents.appBarTop(),
       body: Column(
         children: [
+          RectifyComponents.appBarBac(),
           topBar(),
           Expanded(
             child: ListView(
@@ -155,7 +154,8 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
                 margin: EdgeInsets.only(right: px(20)),
                 child: Image.asset('lib/assets/icons/form/add.png'),),
             onTap: () async{
-              if(!abarbeitung){
+              //整改未通过，也可以继续添加
+              if(!abarbeitung || problemList['status'] == 4){
                var res = await Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId});
                if(res == true){
                  _getProblems();

@@ -54,7 +54,8 @@ class AppState with ChangeNotifier {
   }
 }
 List<Color> colorsList = [
-  Color(0xff19191A),
+  // Color(0xff19191A),
+  Color(0xff7196F5),
   Color(0xFF49B8A4),
   Color(0xFF16AADB),
 ];

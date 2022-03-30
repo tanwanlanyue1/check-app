@@ -54,6 +54,7 @@ class _PollutionDischargeState extends State<PollutionDischarge> {
     return box(
         vis: let,
         child: FormCheck.dataCard(
+            padding: false,
             children: [
               FormCheck.formTitle(
                   '排放口信息',
@@ -99,6 +100,7 @@ class _PollutionDischargeState extends State<PollutionDischarge> {
     return box(
         vis: monitor,
         child: FormCheck.dataCard(
+            padding: false,
             children: [
               FormCheck.formTitle(
                   '在线监测设备情况',
@@ -134,6 +136,7 @@ class _PollutionDischargeState extends State<PollutionDischarge> {
     return box(
         vis: pollute,
         child: FormCheck.dataCard(
+            padding: false,
             children: [
               FormCheck.formTitle(
                   '污染物类型',

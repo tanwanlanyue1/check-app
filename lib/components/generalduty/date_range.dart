@@ -95,9 +95,13 @@ class _DateRangeState extends State<DateRange> {
                     onSubmit: (val) async{
                       Navigator.pop(context);
                       if (val is PickerDateRange) {
+                        // var picked = [
+                        //   val.startDate,
+                        //   val.endDate,];
                         var picked = [
                           val.startDate,
-                          val.endDate,];
+                          DateTime(val.endDate!.year,val.endDate!.month,val.endDate!.day, 23,59,59),
+                        ];
                         widget.callBack?.call(picked);
                         startTime = formatTime(val.startDate);
                         endTime = formatTime(val.endDate);

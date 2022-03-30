@@ -2,23 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:scet_check/api/api.dart';
-import 'package:scet_check/api/request.dart';
-import 'package:scet_check/components/generalduty/date_range.dart';
-import 'package:scet_check/components/generalduty/down_input.dart';
-import 'package:scet_check/components/generalduty/search.dart';
-import 'package:scet_check/components/generalduty/toast_widget.dart';
-import 'package:scet_check/page/module_enterprise/abarbeitung/problem_firm.dart';
-import 'package:scet_check/page/module_login/login_page.dart';
-import 'package:scet_check/page/module_steward/check/hiddenParame/components/drop_down_menu_route.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
-import 'package:scet_check/routers/router_animate/router_animate.dart';
-import 'package:scet_check/utils/screen/adapter.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/inventory_page.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/problem_page.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
-
-import 'inventory_firm.dart';
 
 ///企业详情
 /// 问题未整改列表/清单下的问题
@@ -34,47 +23,8 @@ class _EnterpriseDetailsState extends State<EnterpriseDetails>  with SingleTicke
   String companyName = '';//公司名
   String companyId = '';//公司id
   bool check = false; //申报,排查
-  List companyDetails = [];//公司问题详情
-  List inventoryDetails = [];//公司清单列表
   late TabController _tabController; //TabBar控制器
-  /// 获取企业下的问题
-  ///companyId:公司id
-  ///page:第几页
-  ///size:每页多大
-  ///andWhere:查询的条件
-  void _getProblem() async {
-    Map<String,dynamic> data = {
-      'company.id':companyId,
-    };
-    var response = await Request().get(Api.url['problemList'],data: data,);
-    if(response['statusCode'] == 200 && response['data'] != null) {
-      setState(() {
-        companyDetails = [];
-        for(var i=0;i<response['data']['list'].length;i++){
-          if(response['data']['list'][i]['isCompanyRead'] == true){
-            companyDetails.add(response['data']['list'][i]);
-          }
-        }
-      });
-    }
-  }
 
-  /// 获取企业下的清单 沧州临港凯茵
-  ///companyId:公司id
-  ///page:第几页
-  ///size:每页多大
-  ///andWhere:查询的条件
-  void _getInventoryList() async {
-    Map<String,dynamic> data = {
-      'company.id':companyId,
-    };
-    var response = await Request().get(Api.url['inventoryList'],data: data,);
-    if(response['statusCode'] == 200 && response['data'] != null) {
-      setState(() {
-        inventoryDetails = response['data']['list'];
-      });
-    }
-  }
 
   @override
   void initState() {
@@ -82,8 +32,6 @@ class _EnterpriseDetailsState extends State<EnterpriseDetails>  with SingleTicke
     companyId =  jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['companyId'];
     companyName =  jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['company']['name'];
     _tabController = TabController(vsync: this,length: tabBar.length);
-    _getProblem();
-    _getInventoryList();
     super.initState();
   }
 
@@ -122,13 +70,13 @@ class _EnterpriseDetailsState extends State<EnterpriseDetails>  with SingleTicke
             child: TabBarView(
                 controller: _tabController,
                 children: <Widget>[
-                  ProblemFirm(
-                    hiddenProblem: companyDetails,
+                  ProblemPage(
                     companyId: companyId,
-                  ),//问题列表
-                  InventoryFirm(
-                    hiddenInventory: inventoryDetails,
+                    firm: true,
+                  ),
+                  InventoryPage(
                     companyId: companyId,
+                    firm: true,
                   ),// 排查清单
                 ]
             ),

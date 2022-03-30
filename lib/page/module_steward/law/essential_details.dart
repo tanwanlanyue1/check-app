@@ -48,9 +48,9 @@ class _EssentialDetailsState extends State<EssentialDetails> {
   Widget build(BuildContext context) {
     _providerDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     return Scaffold(
-      appBar: RectifyComponents.appBarTop(),
       body: Column(
         children: [
+          RectifyComponents.appBarBac(),
           top(),
           Expanded(
             child: ListView(

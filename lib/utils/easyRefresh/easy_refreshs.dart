@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 
+/// 页面状态
+enum typeStatusEnum {
+  onRefresh, // 刷新
+  onLoad // 加载
+}
+
 ///加载刷新
 ClassicalHeader headers(){
   return ClassicalHeader(

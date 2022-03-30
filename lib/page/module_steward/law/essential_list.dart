@@ -43,9 +43,9 @@ class _EssentialListState extends State<EssentialList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RectifyComponents.appBarTop(),
       body: Column(
         children: [
+          RectifyComponents.appBarBac(),
           RectifyComponents.topBar(
               title: '${gistData['name']}',
               callBack: (){

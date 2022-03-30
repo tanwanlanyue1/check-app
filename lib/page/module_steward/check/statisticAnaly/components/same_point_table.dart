@@ -16,9 +16,10 @@ class SamePointTable extends StatefulWidget {
    String tableTitle;
    List? tableHeader;
    List? tableBody;
+   int questionTotal;
    Function? callBack;
    Function? callPrevious;
-   SamePointTable({Key? key, this.tableHeader,required this.tableTitle,this.tableBody,this.callBack,this.callPrevious}) : super(key: key);
+   SamePointTable({Key? key, this.tableHeader,required this.questionTotal,required this.tableTitle,this.tableBody,this.callBack,this.callPrevious}) : super(key: key);
 
   @override
   _SamePointTableState createState() => _SamePointTableState();
@@ -35,6 +36,8 @@ class _SamePointTableState extends State<SamePointTable> {
   List pieData =[]; //饼图数据
   String companyName = 'companyName';
   double percent = 0.0; //百分比
+  bool cutPie = true;
+  int questionTotal = 0;//问题总数
   ///全局变量  判断展示哪一个图表
   late ProviderDetaild _providerDetaild;
 
@@ -44,12 +47,14 @@ class _SamePointTableState extends State<SamePointTable> {
     tableBody = widget.tableBody ?? [];
     judge();
     manage(tableBody);
+    questionTotal = widget.questionTotal;
   }
 
   @override
   void didUpdateWidget(SamePointTable oldWidget) {
     super.didUpdateWidget(oldWidget);
     tableBody = widget.tableBody ?? [];
+    questionTotal = widget.questionTotal;
     judge();
     manage(tableBody);
   }
@@ -215,7 +220,7 @@ class _SamePointTableState extends State<SamePointTable> {
                       child: Container(
                         alignment: Alignment.topCenter,
                         child: Text(
-                            '${((int.parse(item[i]['allCount'])/6)*100).toStringAsFixed(2)}%',
+                            '${((int.parse(item[i]['allCount'])/questionTotal)*100).toStringAsFixed(2)}%',
                             style: TextStyle(
                                 color: Color(0XFF969799),
                                 fontSize: sp(24.0)
@@ -313,7 +318,7 @@ class _SamePointTableState extends State<SamePointTable> {
                 child: Container(
                   margin: EdgeInsets.only(top: px(17),left: px(20)),
                   child: Text("${widget.tableTitle}问题排名图",
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.left,
                     style: TextStyle(color: Color(0xff323233),fontSize: sp(32)),),
                 ),
               ),
@@ -327,7 +332,13 @@ class _SamePointTableState extends State<SamePointTable> {
                    Image.asset('lib/assets/images/home/chartSwitch.png'),
                 ),
                 onTap: () async{
-                  _providerDetaild.setPie();
+                  if(cutPie){
+                    _providerDetaild.setPie(cutPie: cutPie);
+                    cutPie = false;
+                  }else{
+                    _providerDetaild.setPie(cutPie: cutPie);
+                    cutPie = true;
+                  }
                   if(echart != 2){
                     echart++;
                   }else{

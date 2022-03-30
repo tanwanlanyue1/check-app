@@ -39,12 +39,12 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final DateTime _dateTime = DateTime.now();
 
-  /// 问题填报 填报post，
+  /// 整改填报 填报post，
   /// id:整改id
   /// descript:整改措施
   /// images:图片
   /// remark	其他说明
-  /// status:状态:1,待复查;2,复查已通过;3,复查未通过
+  /// status:状态:提交 1  保存4
   /// userId:用户ID
   /// problemId:问题id
   void _setProblem({int status = 4}) async {
@@ -73,6 +73,9 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
   }
 
   /// 整改详情，
+  /// 获取最新的整改详情
+  /// 判断是复查未通过，还是修改保存的数据
+  /// status 1,待复查;2,复查已通过;3,复查未通过 4保存
   void _setSolution() async {
     Map<String,dynamic> _data = {
       'problem.id':widget.arguments!['id'],
@@ -82,9 +85,9 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
     );
     if(response['statusCode'] == 200 && response['data']!=null) {
       solutionList = response['data']['list'];
-      if(solutionList.isNotEmpty){
+      if(solutionList.isNotEmpty && solutionList[0]['status'] != 3){
         descript = solutionList[0]['descript'];
-        if( review== false){
+        if( review == false){
           imgDetails = solutionList[0]['images'];
         }else{
           imgDetails = [];
@@ -144,9 +147,9 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: RectifyComponents.appBarTop(),
       body: Column(
         children: [
+          RectifyComponents.appBarBac(),
           RectifyComponents.topBar(
               title: review ? '隐患复查问题填报' : '隐患整改问题填报',
               callBack: (){
@@ -167,7 +170,7 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
     );
   }
 
-  ///排查问题 填报
+  ///整改问题 填报
   ///declare: true-填报/详情
   Widget fillAgent(){
     return FormCheck.dataCard(

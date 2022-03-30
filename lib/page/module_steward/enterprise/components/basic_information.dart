@@ -53,7 +53,7 @@ class _BasicInformationState extends State<BasicInformation > {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.black12,
+      color: Colors.white,
       child: ListView(
         padding: EdgeInsets.only(top: 0),
         children: [
@@ -72,6 +72,7 @@ class _BasicInformationState extends State<BasicInformation > {
         child: Visibility(
           visible: tidy,
           child: FormCheck.dataCard(
+              padding: false,
               children: [
                 FormCheck.formTitle(
                     '基本信息',
@@ -119,6 +120,7 @@ class _BasicInformationState extends State<BasicInformation > {
         child: Visibility(
           visible: prou,
           child: FormCheck.dataCard(
+            padding: false,
               children: [
                 FormCheck.formTitle(
                     '生产情况',

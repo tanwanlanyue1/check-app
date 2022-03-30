@@ -57,20 +57,18 @@ class _ProblemDetailsState extends State<ProblemDetails> {
   @override
   void didUpdateWidget(covariant ProblemDetails oldWidget) {
     // TODO: implement didUpdateWidget
-    problemList = widget.problemList ?? {};
-    if(problemList.isNotEmpty){
-      _evaluation();
+    if(widget.problemList != oldWidget.problemList){
+      problemList = widget.problemList ?? {};
+      if(problemList.isNotEmpty){
+        _evaluation();
+      }
     }
     super.didUpdateWidget(oldWidget);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        rubyAgent(),
-      ],
-    );
+    return rubyAgent();
   }
   ///排查问题 详情
   Widget rubyAgent(){
@@ -87,8 +85,7 @@ class _ProblemDetailsState extends State<ProblemDetails> {
           ),
           FormCheck.rowItem(
             title: "排查人员",
-            child:
-            Text(checkPersonnel, style: TextStyle(color: Color(0xff323233),
+            child: Text(checkPersonnel, style: TextStyle(color: Color(0xff323233),
                 fontSize: sp(28),
                 fontFamily: 'Roboto-Condensed'),) ,
           ),

@@ -20,21 +20,24 @@ class ReviewSituation extends StatefulWidget {
 }
 
 class _ReviewSituationState extends State<ReviewSituation> {
-  List solutionList = [];//现场复查数据
+  List reviewList = [];//现场复查数据
 
 
   @override
   void initState() {
     // TODO: implement initState
-    solutionList = widget.arguments?['reviewList'] ?? [];
+    reviewList = widget.arguments?['reviewList'] ?? [];
     super.initState();
   }
   @override
     void didUpdateWidget(covariant ReviewSituation oldWidget) {
       // TODO: implement didUpdateWidget
-    solutionList = widget.arguments?['reviewList'] ?? [];
+    if(widget.arguments != oldWidget.arguments){
+      reviewList = widget.arguments?['reviewList'] ?? [];
+    }
     super.didUpdateWidget(oldWidget);
     }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -47,7 +50,7 @@ class _ReviewSituationState extends State<ReviewSituation> {
           child: FormCheck.formTitle('现场复查情况'),
         ),
         Column(
-          children: List.generate(solutionList.length, (i) => reviewDetile(i)),
+          children: List.generate(reviewList.length, (i) => reviewDetile(i)),
         )
       ],
     );
@@ -60,33 +63,30 @@ class _ReviewSituationState extends State<ReviewSituation> {
         children: [
           FormCheck.rowItem(
             title: "复查人员",
-            child: Text(solutionList[i]['reviewPerson'],style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+            child: Text(reviewList[i]['reviewPerson'],style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
             title: "复查时间",
-            child: Text(formatTime(solutionList[i]['createdAt']),style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+            child: Text(formatTime(reviewList[i]['createdAt']),style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
             title: "是否整改",
-            child: Text(solutionList[i]['isSolved'] ? '是':'否',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+            child: Text(reviewList[i]['isSolved'] ? '是':'否',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
             title: "复查详情",
-            child: Container(
-              // color: Color(0xffF5F6F7),
-              child: Text(solutionList[i]['detail'],style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
-            ),
+            child: Text(reviewList[i]['detail'],style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
               alignStart: true,
               title: "复查图片记录",
               child: ImageWidget(
-                imageList: solutionList[i]['images'],
+                imageList: reviewList[i]['images'],
               )
           ),
           FormCheck.rowItem(
             title: "其他说明",
-            child: Text(solutionList[i]['remark'],style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+            child: Text(reviewList[i]['remark'],style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
         ]
     );

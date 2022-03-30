@@ -71,15 +71,16 @@ class _StatisticsState extends State<Statistics> {
             tableHeader: columns,
             tableTitle: type,
             tableBody: _tableBody,
+            questionTotal:questionTotal,
             callBack: (){
-              if(widget.pageIndex==0){
-                if(tabIndex != 2){
+              if(widget.pageIndex == 0){
+                if(tabIndex < 2){
                   tabIndex++;
                 }else {
                   tabIndex = 0;
                 }
               }else{
-                if(tabIndex != 1){
+                if(tabIndex < 1 ){
                   tabIndex++;
                 }else {
                   tabIndex = 0;
@@ -88,14 +89,14 @@ class _StatisticsState extends State<Statistics> {
               widget.callBack?.call(tabIndex);
             },
             callPrevious: (){
-              if(widget.pageIndex==0){
-                if(tabIndex != 0){
+              if(widget.pageIndex == 0){
+                if(tabIndex > 0){
                   tabIndex--;
                 }else{
                   tabIndex = 2;
                 }
               }else{
-                if(tabIndex != 0){
+                if(tabIndex > 0){
                   tabIndex--;
                 }else{
                   tabIndex = 1;

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/down_input.dart';
 import 'package:scet_check/components/generalduty/time_select.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
-import 'package:scet_check/model/provider/provider_details.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/routers/routes.dart';
 import 'package:scet_check/utils/screen/screen.dart';
@@ -52,8 +50,10 @@ class _StewardCheckState extends State<StewardCheck>{
     {'name':'管家排查','id':1},
     {'name':'其他','id':2},
   ];//问题类型列表
+
   /// 获取清单详情
   /// id:清单id
+  /// argumentMap 提交问题传递的参数
   void _getCompany() async {
     var response = await Request().get(Api.url['inventory']+'/$uuid',);
     if(response['statusCode'] == 200 && response['data'] != null) {
@@ -67,8 +67,7 @@ class _StewardCheckState extends State<StewardCheck>{
         abarbeitungDates = repertoire['solvedAt'] != null ? RectifyComponents.formatTime(repertoire['solvedAt']) : '';
         sceneReviewDate = repertoire['reviewedAt'] != null ? RectifyComponents.formatTime(repertoire['reviewedAt']) : '';
         checkType = repertoire['checkType'] == 1 ? '管家排查': '管家排查';
-        pigeon = repertoire['status'] == 1 ? true : false;
-        subStatus = repertoire['status'] == 6 ? true : false;//状态为6，可以提交问题、修改
+        subStatus = repertoire['status'] == 6 ? true : false; //状态为6，可以提交问题、修改
         argumentMap = {
           'declare':true,//申报
           'uuid': uuid,//清单ID
@@ -86,6 +85,7 @@ class _StewardCheckState extends State<StewardCheck>{
   ///size:每页多大
   ///andWhere:查询的条件
   ///check 添加一个提交问题的判断
+  ///有一个问题未通过，就不可以归档
   void _getProblem() async {
     var response = await Request().get(Api.url['problemList'],
       data: {
@@ -95,6 +95,11 @@ class _StewardCheckState extends State<StewardCheck>{
       setState(() {
         problemList = response['data']['list'];
         for(var i=0; i<problemList.length; i++){
+          if(problemList[i]['status'] != 3){
+            pigeon = false;
+          }else{
+            pigeon = repertoire['status'] == 4 ||  repertoire['status'] == 1 ? true : false; //审核已通过
+          }
           problemList[i]['check'] = false;
         }
       });
@@ -123,9 +128,12 @@ class _StewardCheckState extends State<StewardCheck>{
           data: _data
       );
       if(response['statusCode'] == 200) {
+        _getCompany();
+        setState(() {});
         ToastWidget.showToastMsg('修改成功');
       }
   }
+
   ///筛选提交的问题
   void submission(){
     Future.microtask(() {
@@ -195,7 +203,9 @@ class _StewardCheckState extends State<StewardCheck>{
                                                   fontSize: sp(30),
                                                   overflow: TextOverflow.ellipsis)),
                                               onTap: (){
-                                                if(problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false){
+                                                //判断问题是否已提交
+                                                //isCompanyRead是否企业可以查看,isEnvironmentRead是否环保局可以查看
+                                                if(problemList[i]['isCompanyRead'] == false && problemList[i]['isEnvironmentRead'] == false){
                                                   problemList[i]['check'] = !problemList[i]['check'];
                                                 }
                                                 setState(() {});
@@ -222,7 +232,7 @@ class _StewardCheckState extends State<StewardCheck>{
                                               groupValue: problemList[i]['check'],
                                               onChanged: (val) {
                                                 setState(() {
-                                                  if(problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false){
+                                                  if(problemList[i]['isCompanyRead'] == false && problemList[i]['isEnvironmentRead'] == false){
                                                     problemList[i]['check'] = val!;
                                                   }
                                                 });
@@ -259,15 +269,14 @@ class _StewardCheckState extends State<StewardCheck>{
                               Navigator.pop(context);
                             },
                             submit: (){
+                              //默认选择企业，排除掉已选过的
                               for (var item in problemList) {
-                                if(item['check'] == false){
-                                  subCompanies['companies'].add(
-                                    item['id'],
-                                  );
-                                }else{
-                                  subCompanies['environments'].add(
-                                    item['id'],
-                                  );
+                                if(item['isCompanyRead'] != true && item['isEnvironmentRead']!=true){
+                                  if(item['check'] == false){
+                                    subCompanies['companies'].add(item['id'],);
+                                  }else{
+                                    subCompanies['environments'].add(item['id'],);
+                                  }
                                 }
                               }
                               if(subCompanies['companies'].isEmpty && subCompanies['environments'].isEmpty){
@@ -298,13 +307,14 @@ class _StewardCheckState extends State<StewardCheck>{
     _getCompany();
     super.initState();
   }
+
     @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: RectifyComponents.appBarTop(),
       body: Column(
         children: [
+          RectifyComponents.appBarBac(),
           topBar(
             '管家排查',
           ),
@@ -332,7 +342,6 @@ class _StewardCheckState extends State<StewardCheck>{
     return Container(
       color: Colors.white,
       height: px(88),
-      // margin: EdgeInsets.only(top: Adapt.padTopH()),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -354,15 +363,11 @@ class _StewardCheckState extends State<StewardCheck>{
               child: Text(title,style: TextStyle(color: Color(0xff323233),fontSize: sp(32),fontFamily: 'M'),),
             ),
           ),
-          Container(
-            height: px(28),
-            width: px(28),
-            margin: EdgeInsets.only(bottom: px(15),left: px(12)),
-          ),
         ],
       ),
     );
   }
+
   ///签到概况
   Widget singSurvey(){
     return Container(
@@ -415,6 +420,7 @@ class _StewardCheckState extends State<StewardCheck>{
   }
 
   ///排查概况
+  ///修改检查类型，排查日期
   Widget survey(){
     return Container(
       padding: EdgeInsets.only(left: px(24),right: px(24)),
@@ -436,36 +442,29 @@ class _StewardCheckState extends State<StewardCheck>{
               surveyItem('归属片区',area),
               surveyItem('区域位置',location),
               surveyItem('检查人',stewardCheck),
-              Row(
-                  crossAxisAlignment:  CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                          child: Text(
-                              '检查类型',
-                              textAlign: TextAlign.justify,
-                              style: TextStyle(
-                                  color: Color(0XFF969799),
-                                  fontSize: sp(28.0),
-                                  fontWeight: FontWeight.w500
-                              )
-                          )
-                      ),
-                    ),
-                    Container(
-                      width: px(350),
-                      alignment: Alignment.centerRight,
-                      child: DownInput(
-                        value: checkType,
-                        data: typeList,
-                        callback: (val){
-                          checkType = val['name'];
-                          setState(() {});
-                        },
-                      ),
-                    )
-                  ]
+              Container(
+                margin: EdgeInsets.only(top: px(24)),
+                child: FormCheck.rowItem(
+                  title: '检查类型',
+                  expandedLeft: true,
+                  child: !subStatus ?
+                  Text(checkType,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,):
+                  DownInput(
+                    value: checkType,
+                    data: typeList,
+                    callback: (val){
+                      checkType = val['name'];
+                      // 修改清单的排查类型
+                      _setInventory(
+                          {
+                            'id':uuid,
+                            'checkType': val['id'],
+                          }
+                      );
+                      setState(() {});
+                    },
+                  ),
+                ),
               ),
               surveyItem('排查日期',checkDate.substring(0,10)),
               Container(
@@ -481,6 +480,7 @@ class _StewardCheckState extends State<StewardCheck>{
                     time: abarbeitungDates.isNotEmpty ? DateTime.parse(abarbeitungDates) :null,
                     callBack: (time) {
                       abarbeitungDates = formatTime(time);
+                      // 修改清单的排查日期
                       _setInventory(
                           {
                             'id':uuid,
@@ -651,7 +651,11 @@ class _StewardCheckState extends State<StewardCheck>{
                     }
                 );
               }else{
-                ToastWidget.showToastMsg('有问题未通过，暂时无法归档');
+                if(repertoire['status'] == 2){
+                  ToastWidget.showToastMsg('该清单已归档');
+                }else{
+                  ToastWidget.showToastMsg('有问题未通过，暂时无法归档');
+                }
               }
               setState(() {});
             },

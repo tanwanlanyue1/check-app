@@ -22,14 +22,17 @@ class LayoutPage extends StatefulWidget {
 
 class _LayoutPageState extends State<LayoutPage> {
   final PageController pagesController = PageController(); //page控制器
-  ScrollController controller = ScrollController();
+  ScrollController controller = ScrollController();//头部ListView
   ScrollController controllerTow = ScrollController();
   ///全局变量 控制偏移量
   ProviderDetaild? _roviderDetaild;
   List _tabBar = [];//头部
   List _pageBody = [];//页面内容
   int _pageIndex = 0;//下标
-  double off = 0.0;
+  double off = 0.0;//偏移量
+
+  ///监听滑动
+  ///页面与头部一起滑动
   @override
   void initState() {
     super.initState();
@@ -76,7 +79,6 @@ class _LayoutPageState extends State<LayoutPage> {
                     child: Row(
                       children: [
                         CheckCompon.bagColor(
-                          pageIndex: _pageIndex,
                           offestLeft: _roviderDetaild?.offestLeft,
                         )
                       ],

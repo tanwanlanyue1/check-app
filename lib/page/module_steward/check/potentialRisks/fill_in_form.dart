@@ -27,11 +27,9 @@ import 'package:intl/intl.dart';
 ///           'industryId': repertoire['company']['industryId'],//行业ID
 ///           'problemList':problemList,//问题详情
 ///         };
-///callBack:回调
 class FillInForm extends StatefulWidget {
   final Map? arguments;
-  final Function? callBack;
-  const FillInForm({Key? key,this.arguments,this.callBack}) : super(key: key);
+  const FillInForm({Key? key,this.arguments}) : super(key: key);
 
   @override
   _FillInFormState createState() => _FillInFormState();
@@ -92,7 +90,7 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
   /// 获取问题详情
   /// id:问题id
   void _getProblems() async {
-    problemList = widget.arguments?['problemList'];
+    problemList = widget.arguments?['problemList'] ?? {};
     if(problemList.isNotEmpty){
       checkPersonnel = problemList['screeningPerson'] ?? '';
       checkDay = formatTime(problemList['createdAt']);
@@ -113,6 +111,9 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
       areaId = problemList['districtId'];
       lawId = problemList['lawId'];
       districtId = problemList['basisId'];
+      if(districtId.isNotEmpty){
+        checkGist = false;
+      }
       isImportant = problemList['isImportant'];
       solvedAt = problemList['solvedAt'] != null ? formatTime(problemList['solvedAt']) : '';
     }
@@ -127,7 +128,6 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
     _scaffoldKey = widget.arguments?['key'] ?? GlobalKey<ScaffoldState>();
     userName= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
     userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
-
     if(declare){
       _getProblemType();
       _getProfile();
@@ -146,11 +146,14 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
+    ///监听路由
     routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
   }
 
   @override
   void didPopNext() {
+    ///监听路由是否返回进来
+    ///清空另一个标准的id
     // TODO: implement didPopNext
     if(StorageUtil().getJSON('law')!=null){
       lawId = StorageUtil().getJSON('law')['id'];
@@ -171,7 +174,7 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
     super.didPopNext();
   }
 
-  /// 问题填报 填报post，
+  /// 问题填报 填报post，/修改
   /// screeningPerson:填报人
   /// detail:问题详情
   /// images:图片
@@ -234,7 +237,7 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
   @override
   void didUpdateWidget(covariant FillInForm oldWidget) {
     // TODO: implement didUpdateWidget
-    if(widget.arguments?['problemList'] != null){
+    if(widget.arguments?['problemList'] != null && widget.arguments != oldWidget.arguments){
       _getProblems();
     }
     super.didUpdateWidget(oldWidget);
@@ -253,9 +256,9 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
     return declare ?
     Scaffold(
       key: _scaffoldKey,
-      appBar: RectifyComponents.appBarTop(),
       body: Column(
         children: [
+          RectifyComponents.appBarBac(),
           RectifyComponents.topBar(
               title: '隐患排查问题填报',
               callBack: (){
@@ -438,7 +441,7 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
                   },
                 ),
             )
-                : Container(),
+            : Container(),
 
             FormCheck.rowItem(
               title: "整改期限",
@@ -477,6 +480,7 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
               visible: declare,
               child: FormCheck.submit(
                 submit: (){
+                  //other选中其他类型，且输入有其他类型,就新建其他类型
                   if(other && otherType.isNotEmpty){
                     _postProblemType();
                   }
@@ -595,10 +599,12 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
       ],
     );
   }
+
   ///日期转换
   String formatTime(time) {
     return utcToLocal(time.toString()).substring(0,10);
   }
+  ///展示年月日
   String formatTimes(DateTime time) {
     return DateFormat("yyyy-MM-dd").format(time);
   }

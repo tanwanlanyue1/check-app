@@ -4,7 +4,8 @@ import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 
 ///文件详情
-///  law:true//展示提交
+///  sub:true//展示提交
+///  law:文件数据
 class FillDetails extends StatefulWidget {
   final Map? arguments;
   const FillDetails({Key? key,this.arguments}) : super(key: key);
@@ -16,11 +17,10 @@ class FillDetails extends StatefulWidget {
 class _FillDetailsState extends State<FillDetails> {
   @override
   Widget build(BuildContext context) {
-    print(widget.arguments);
     return Scaffold(
-      appBar: RectifyComponents.appBarTop(),
       body: Column(
         children: [
+          RectifyComponents.appBarBac(),
           Container(
             color: Colors.white,
             height: px(88),
@@ -44,16 +44,19 @@ class _FillDetailsState extends State<FillDetails> {
                         fontFamily: 'M',),maxLines: 1,overflow: TextOverflow.ellipsis,),
                   ),
                 ),
-                InkWell(
-                  child: Container(
-                    padding: EdgeInsets.only(right: px(20),left: px(20)),
-                    color: Colors.transparent,
-                    child: Text('提交',style: TextStyle(fontSize: sp(24)),),
+                Visibility(
+                  visible: widget.arguments?['sub'],
+                  child: InkWell(
+                    child: Container(
+                      padding: EdgeInsets.only(right: px(20),left: px(20)),
+                      color: Colors.transparent,
+                      child: Text('提交',style: TextStyle(fontSize: sp(24)),),
+                    ),
+                    onTap: (){
+                      StorageUtil().setJSON('law',widget.arguments?['law']);
+                      Navigator.of(context).popUntil(ModalRoute.withName('/fillInForm'));
+                    },
                   ),
-                  onTap: (){
-                    StorageUtil().setJSON('law',widget.arguments?['law']);
-                    Navigator.of(context).popUntil(ModalRoute.withName('/fillInForm'));
-                  },
                 ),
               ],
             ),

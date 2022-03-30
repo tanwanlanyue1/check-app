@@ -97,7 +97,7 @@ class RectifyComponents{
                  SizedBox(
                    height: px(32),
                    width: px(32),
-                   child: Image.asset('lib/assets/icons/check/sandClock.png'),//problem.png
+                   child: Image.asset('lib/assets/icons/check/sandClock.png'),
                  ),
                  Container(
                    margin: EdgeInsets.only(left: px(24),right: px(80)),
@@ -203,7 +203,7 @@ class RectifyComponents{
                  height: px(48),
                  alignment: Alignment.center,
                  decoration: BoxDecoration(
-                     color: Colorswitchs(company["status"]),
+                     color: inventoryColor(company["status"]),
                      borderRadius: BorderRadius.only(
                        topLeft: Radius.circular(px(20)),
                        bottomLeft: Radius.circular(px(20)),
@@ -273,6 +273,7 @@ class RectifyComponents{
       default: return Color(0xffFAAA5A);
     }
   }
+
   //状态
   static String switchs(status){
     switch(status){
@@ -297,6 +298,18 @@ class RectifyComponents{
     }
   }
 
+//清单颜色状态
+  static Color inventoryColor(status){
+    switch(status){
+      case 1 : return Color(0xff7196F5);
+      case 2 : return Color(0xff95C758);
+      case 3 : return Color(0xffFAAA5A);
+      case 4 : return Color(0xff95C758);
+      case 5 : return Color(0xffFAAA5A);
+      case 6 : return Color(0xffFAAA5A);
+      default: return Color(0xffFAAA5A);
+    }
+  }
  ///头部
  /// title :标题名
  /// left :左侧按钮/图标
@@ -328,11 +341,9 @@ class RectifyComponents{
            ),
          ),
          Container(
-           // width: px(40),
            height: px(50),
            margin: EdgeInsets.only(right: px(20)),
            child: right ? Image.asset('lib/assets/icons/form/alter.png',fit: BoxFit.cover,):
-           // child: right ? Text('提交',style: TextStyle(fontSize: sp(24)),):
            Text(''),
          ),
        ],
@@ -523,6 +534,7 @@ class RectifyComponents{
   ///name标题
   static PreferredSizeWidget appBars({String? name,Widget? leading}){
    return AppBar(
+     backgroundColor: Color(0xff19191A),
      title: Text(
        '$name',
        style: TextStyle(fontSize: sp(30),fontFamily: 'M'),
@@ -532,16 +544,14 @@ class RectifyComponents{
    );
   }
 
-  ///AppBar
-  static PreferredSizeWidget appBarTop(){
-    return PreferredSize(
-      preferredSize: Size(Adapt.screenW(), px(Adapt.padBotH())),
-      child: AppBar(
-        title: Text(''),
-        centerTitle: true,
-      ),
+  ///AppBar背景色
+  static Widget appBarBac(){
+    return Container(
+      height: Adapt.padTopH(),
+      color: Color(0xff19191A),
     );
   }
+
  ///时间格式
  ///time:时间
  static String formatTime(time) {

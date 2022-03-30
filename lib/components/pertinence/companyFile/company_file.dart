@@ -27,15 +27,14 @@ class CompanyFile extends StatefulWidget {
 
 class _CompanyFileState extends State<CompanyFile> {
 
-  final String _baseUrl = 'https://cq.scet.com.cn:8443/api/company/files'; // 文件系统的路径
-  final String _newUrl = '/mkdir?currentDir='; // 新建地址
-  final String _delUrl = '?currentDir='; // 删除地址
-  final String _renameUrl = '/rename?currentDir='; // 重命名地址
-  final String _copyUrl = '/cutcopy?currentDir='; // 复制地址
-  final String _upLoadUrl = '/upload?savePath='; // 上传地址
-  final String _downLoadUrl = '/dl/'; // 下载地址
+  final String _baseUrl = ''; // 文件系统的路径
+  final String _newUrl = ''; // 新建地址
+  final String _delUrl = ''; // 删除地址
+  final String _renameUrl = ''; // 重命名地址
+  final String _copyUrl = ''; // 复制地址
+  final String _upLoadUrl = ''; // 上传地址
+  final String _downLoadUrl = ''; // 下载地址
 
-  // final String _baseUrl = 'http://10.10.1.217:9700'+'/company/files';
 
   String _fileName = ''; // 新建文件夹名称
 

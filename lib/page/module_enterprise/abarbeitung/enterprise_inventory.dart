@@ -1,15 +1,12 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
-import 'package:scet_check/components/pertinence/companyFile/components/file_system.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/time/utc_tolocal.dart';
-import 'package:uuid/uuid.dart';
 
 import 'abarbeitung_pdf.dart';
 
@@ -42,7 +39,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
   String sceneReviewDate = '';//现场复查日期
   String checkType = '管家排查';//检查类型
   String companyId = '';//企业用户id
-  bool uploading = false;//判断是否可以上传
+  bool uploading = true;//判断是否可以上传pdf
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   /// 获取清单详情
@@ -85,18 +82,16 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
     if(response['statusCode'] == 200 && response['data'] != null) {
       problemList = [];
       setState(() {
-       for(var i=0; i<response['data']['list'].length; i++){
+       for(var i=0; i < response['data']['list'].length; i++){
           if(response['data']['list'][i]['isCompanyRead'] == true){
             problemList.add(response['data']['list'][i]);
           }
         }
-        for(var i=0; i<problemList.length; i++){
-          if(problemList[i]['status'] == 2 || problemList[i]['status'] == 3){
-            uploading = true;
-          }else{
-            uploading = false;
-          }
-        }
+       for(var i=0; i<problemList.length; i++){
+         if(problemList[i]['status'] != 3){
+           uploading = false;
+         }
+       }
       });
     }
   }
@@ -113,9 +108,9 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: RectifyComponents.appBarTop(),
       body: Column(
         children: [
+          RectifyComponents.appBarBac(),
           topBar(
               '排查问题详情'
           ),
@@ -155,7 +150,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
               margin: EdgeInsets.only(left: px(20)),
               child: Image.asset('lib/assets/icons/other/chevronLeft.png',fit: BoxFit.fill,),
             ),
-            onTap: ()async{
+            onTap: (){
               Navigator.pop(context);
             },
           ),
@@ -173,7 +168,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
               Color(0xff323233) : Color(0XFF969799),fontSize: sp(28)),),
             ),
             onTap: (){
-              if(repertoire['isSolutionCommit']){
+              if(repertoire['isReportCommit']){
                 ToastWidget.showToastMsg('整改结束');
               }else{
                 ToastWidget.showToastMsg('整改未完成');
