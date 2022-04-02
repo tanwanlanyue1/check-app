@@ -3,9 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:scet_check/components/pertinence/companyEchart/column_echarts.dart';
 import 'package:scet_check/model/provider/provider_details.dart';
 import 'package:scet_check/utils/screen/screen.dart';
-import 'package:scet_check/utils/storage/data_storage_key.dart';
-import 'package:scet_check/utils/storage/storage.dart';
-
 ///相同的图表
 ///tableHeader:表头
 ///tableTitle:标题
@@ -91,7 +88,8 @@ class _SamePointTableState extends State<SamePointTable> {
         'type': 'bar',
         'data': notCorrected,
         'color':'#FAAF64'
-      }];
+      }
+    ];
     setState(() {});
   }
 
@@ -117,12 +115,6 @@ class _SamePointTableState extends State<SamePointTable> {
     manage(tableBody);
   }
 
-  //计算最后一位百分比
-  percents(){
-    for(var i=0;i<tableBody.length;i++){
-      ((int.parse(tableBody[i]['allCount'])/6)*100).toStringAsFixed(2);
-    }
-  }
   ///表头
   ///item:表头
   List<Widget> topRow(item){
@@ -332,6 +324,7 @@ class _SamePointTableState extends State<SamePointTable> {
                    Image.asset('lib/assets/images/home/chartSwitch.png'),
                 ),
                 onTap: () async{
+                  //是否打开饼图
                   if(cutPie){
                     _providerDetaild.setPie(cutPie: cutPie);
                     cutPie = false;
@@ -426,5 +419,4 @@ class _SamePointTableState extends State<SamePointTable> {
       ),
     );
   }
-  
 }

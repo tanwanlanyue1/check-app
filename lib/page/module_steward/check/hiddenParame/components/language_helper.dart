@@ -16,7 +16,6 @@ class LanguageHelper {
   static List<Contact>? getGithubLanguages() {
     List<Contact>? list =
     language?.map((v) => Contact.fromJson(v)).toList();
-    // language.map((v) => GithubLanguage.fromJson(v)).toList();
     return list;
   }
 
@@ -85,32 +84,3 @@ class Contact {
   }
 
 }
-
-// class Contact {
-//   Contact({
-//     this.id,
-//     this.name,
-//     this.shortName,
-//     this.area,});
-//
-//   Contact.fromJson(dynamic json) {
-//     id = json['id'];
-//     name = json['name'];
-//     shortName = json['short_name'];
-//     area = json['area'];
-//   }
-//   int? id;
-//   String? name;
-//   String? shortName;
-//   int? area;
-//
-//   Map<String, dynamic> toJson() {
-//     final map = <String, dynamic>{};
-//     map['id'] = id;
-//     map['name'] = name;
-//     map['short_name'] = shortName;
-//     map['area'] = area;
-//     return map;
-//   }
-//
-// }

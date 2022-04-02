@@ -35,7 +35,6 @@ class _ClientListPageState extends State<ClientListPage> {
   @override
   void initState() {
     super.initState();
-    // LanguageHelper.languageMap = LanguageHelper.getResource(widget.companyList);
     LanguageHelper.language = widget.companyList;
     textEditingController = TextEditingController();
     loadData();
@@ -152,7 +151,6 @@ class _ClientListPageState extends State<ClientListPage> {
       ),
       onTap: (){
           widget.callBack?.call(model.id,model.name);
-        // setState(() {});
       },
     );
   }

@@ -118,6 +118,7 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
                           titleColor: Color(0xff323233),
                           child: Text('第一片区',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
                         ),
+
                         FormCheck.rowItem(
                           title: '区域位置',
                           titleColor: Color(0xff323233),
@@ -147,6 +148,7 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
                                     backgroundColor: MaterialStateProperty.all<Color>(Color(0XFF2288F4)),
                                   ),
                                   onPressed: () async{
+                                    //发起加载，禁止多次点击
                                     BotToast.showCustomLoading(
                                         ignoreContentClick: true,
                                         toastBuilder: (cancelFunc) {
@@ -200,9 +202,7 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
                             uuid: _uuid,
                             closeIcon: true,
                             callback: (List? data) {
-                              if (data != null) {
-                                imgDetails = data;
-                              }
+                              imgDetails = data ?? [];
                               setState(() {});
                             },
                           ),

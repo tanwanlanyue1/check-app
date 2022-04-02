@@ -378,7 +378,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
                       AbarbeitungPdf(
                         url: Api.baseUrlApp + 'file/upload?savePath=清单报告/',
                         inventoryId: uuid,
-                        uploading:uploading,
+                        uploading: problemList.isEmpty ? false : uploading,
                         callback: (val){
                           if(val){
                             _getCompany();
@@ -413,13 +413,6 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
                   ),
                   Expanded(
                     child: Text(pdfList[i]['name'],style: TextStyle(color: Color(0xff323233),fontSize: sp(26)),),
-                  ),
-                  Container(
-                    height: px(40),
-                    width: px(41),
-                    alignment: Alignment.centerLeft,
-                    margin: EdgeInsets.only(left: px(20)),
-                    // child: Image.asset('lib/assets/icons/other/right.png',color: Colors.grey,),
                   ),
                 ],
               ),

@@ -162,8 +162,7 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
       StorageUtil().setJSON('law', null);
       districtId = '';
       setState(() {});
-    }
-    if(StorageUtil().getJSON('gist') !=null ){
+    }else if(StorageUtil().getJSON('gist') !=null ){
       law = StorageUtil().getJSON('gist')['name'];
       districtId = StorageUtil().getJSON('gist')['id'];
       StorageUtil().setJSON('gist', null);

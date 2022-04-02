@@ -81,44 +81,15 @@ class _EnterprisePageState extends State<EnterprisePage> {
               _getCompany();
               setState(() {});
             },
-            pageBody: [
-              Visibility(
-                visible: companyList.isNotEmpty,
-                child: ClientListPage(
-                  companyList: companyList,
-                  callBack: (id,name){
-                    Navigator.pushNamed(context, '/enterpriseDetails',arguments: {'name':name,"id":id});
-                  },
-                ),
+            pageBody: List.generate(tabBar.length, (index) => Visibility(
+              visible: companyList.isNotEmpty,
+              child: ClientListPage(
+                companyList: companyList,
+                callBack: (id,name){
+                  Navigator.pushNamed(context, '/enterpriseDetails',arguments: {'name':name,"id":id});
+                },
               ),
-              Visibility(
-                visible: companyList.isNotEmpty,
-                child: ClientListPage(
-                  companyList: companyList,
-                  callBack: (id,name){
-                    Navigator.pushNamed(context, '/enterpriseDetails',arguments: {'name':name,"id":id});
-                  },
-                ),
-              ),
-              Visibility(
-                visible: companyList.isNotEmpty,
-                child: ClientListPage(
-                  companyList: companyList,
-                  callBack: (id,name){
-                    Navigator.pushNamed(context, '/enterpriseDetails',arguments: {'name':name,"id":id});
-                  },
-                ),
-              ),
-              Visibility(
-                visible: companyList.isNotEmpty,
-                child: ClientListPage(
-                  companyList: companyList,
-                  callBack: (id,name){
-                    Navigator.pushNamed(context, '/enterpriseDetails',arguments: {'name':name,"id":id});
-                  },
-                ),
-              ),
-            ],
+            ),),
           ),
         ),
       ],

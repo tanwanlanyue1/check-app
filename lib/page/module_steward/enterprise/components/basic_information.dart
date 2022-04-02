@@ -6,6 +6,7 @@ import 'package:scet_check/utils/time/utc_tolocal.dart';
 import 'enterprise_compon.dart';
 
 ///基本信息
+///companyList 企业数据
 class BasicInformation  extends StatefulWidget {
    Map? companyList;
    BasicInformation ({Key? key,this.companyList}) : super(key: key);
@@ -18,7 +19,6 @@ class _BasicInformationState extends State<BasicInformation > {
   bool prou = true; //生产情况 收起/展示
   List colunms = ['主要产品名称','生产线','批复产能'];//表头
   Map companyList = {};
-
   ///表单数据
   List bodyList = [
     {

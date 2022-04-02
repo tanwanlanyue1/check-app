@@ -99,6 +99,43 @@ class _RectificationProblemState extends State<RectificationProblem> {
     }
   }
 
+  ///判断整改是否结束
+  ///是否问题
+  ///判断是否是复查还是修改问题详情
+  ///问题是否复查结束
+  void checkEnd () async{
+    if(problemList['isProblemCommit']){
+      if(solutionList.isNotEmpty && review == false){
+        if(problemList['status'] == 2){
+          var res =  await Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId,'review':true});
+          if(res == true){
+            _getReviewList();
+            _getProblems();
+            _setSolution();
+          }
+        }else{
+          ToastWidget.showToastMsg('暂无新的整改详情');
+        }
+      }else{
+        if(solutionList.isEmpty){
+          ToastWidget.showToastMsg('暂无整改详情');
+        }else{
+          ToastWidget.showToastMsg('整改已完成');
+        }
+      }
+    }else{
+      final Function? pageContentBuilder = routes['/fillInForm'];
+      var res = await Navigator.push(context, MaterialPageRoute(
+          settings: RouteSettings(name: '/fillInForm'),//修改问题
+          builder: (context) => pageContentBuilder!(context, arguments: argumentMap)
+      ));
+      if(res == true){
+        _getProblems();
+        _getReviewList();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -151,6 +188,7 @@ class _RectificationProblemState extends State<RectificationProblem> {
       ),
     );
   }
+
   ///头部
   Widget topBar(){
     return Container(
@@ -186,36 +224,8 @@ class _RectificationProblemState extends State<RectificationProblem> {
               ):
               Text('修改详情',style: TextStyle(color: Color(0xff323233),fontSize: sp(28))),
             ),
-            onTap: () async{
-              ///是否问题
-              ///判断是否是复查还是修改问题详情
-              ///问题是否复查结束
-              if(problemList['isProblemCommit']){
-                if(solutionList.isNotEmpty && review==false){
-                  if(problemList['status'] == 2){
-                    var res =  await Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId,'review':true});
-                    if(res == true){
-                      _getReviewList();
-                      _getProblems();
-                      _setSolution();
-                    }
-                  }else{
-                    ToastWidget.showToastMsg('当前状态不可编辑');
-                  }
-                }else{
-                  ToastWidget.showToastMsg('暂无整改详情');
-                }
-              }else{
-                final Function? pageContentBuilder = routes['/fillInForm'];
-                var res = await Navigator.push(context, MaterialPageRoute(
-                    settings: RouteSettings(name: '/fillInForm'),//修改问题
-                    builder: (context) => pageContentBuilder!(context, arguments: argumentMap)
-                ));
-                if(res == true){
-                  _getProblems();
-                  _getReviewList();
-                }
-              }
+            onTap: (){
+              checkEnd();
             },
           ),
         ],

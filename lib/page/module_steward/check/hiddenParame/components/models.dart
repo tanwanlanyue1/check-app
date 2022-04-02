@@ -10,25 +10,10 @@ class Languages extends Contact with ISuspensionBean {
 
   Languages.fromJson(Map<String, dynamic> json) : super.fromJson(json);
 
-  @override
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> map = super.toJson();
-    void addIfNonNull(String fieldName, dynamic value) {
-      if (value != null) {
-        map[fieldName] = value;
-      }
-    }
-//    addIfNonNull('tagIndex', tagIndex);
-    return map;
-  }
-
+  //返回标签
   @override
   String getSuspensionTag() {
     return tagIndex ?? '';
   }
 
-  @override
-  String toString() {
-    return json.encode(this);
-  }
 }

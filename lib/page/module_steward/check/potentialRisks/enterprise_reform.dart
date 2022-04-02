@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/api/api.dart';
-import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/utils/screen/screen.dart';
@@ -64,7 +62,6 @@ class _EnterpriseReformState extends State<EnterpriseReform> {
       ],
     );
   }
-
   ///整改详情
   Widget rectification(int i){
     return FormCheck.dataCard(

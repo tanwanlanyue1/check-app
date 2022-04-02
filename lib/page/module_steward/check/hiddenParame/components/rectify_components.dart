@@ -350,6 +350,7 @@ class RectifyComponents{
      ),
    );
  }
+
   ///状态
   ///title:标题
   ///str:内容
@@ -370,7 +371,7 @@ class RectifyComponents{
           ),
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth: Adapt.screenW()-px(250),
+              maxWidth: Adapt.screenW()-px(200),
             ),
             child: Container(
               margin: EdgeInsets.only(left: px(16),right: px(12)),
@@ -413,6 +414,9 @@ class RectifyComponents{
   ///typeStatus:默认状态
   ///status:下拉数据
   ///startTime--endTime:起止时间
+  ///callBack 下拉选择回调
+  ///trueBack 确认回调
+  ///timeBack 日期选择回调
   static Widget endDrawers(context,{
     required Map typeStatus,
     required List status,

@@ -100,7 +100,6 @@ class _StewardCheckState extends State<StewardCheck>{
           }else{
             pigeon = repertoire['status'] == 4 ||  repertoire['status'] == 1 ? true : false; //审核已通过
           }
-          problemList[i]['check'] = false;
         }
       });
     }
@@ -137,7 +136,7 @@ class _StewardCheckState extends State<StewardCheck>{
   ///筛选提交的问题
   void submission(){
     Future.microtask(() {
-      showDialog<Null>(
+      showDialog<void>(
         context: context,//StatefulBuilder
         barrierDismissible: false,
         builder: (BuildContext context) {
@@ -186,12 +185,10 @@ class _StewardCheckState extends State<StewardCheck>{
                                             width: px(70),
                                             child: Radio(
                                               value: false,
-                                              groupValue: problemList[i]['check'],
+                                              groupValue: problemList[i]['isEnvironmentRead'],
                                               onChanged: (val) {
                                                 setState(() {
-                                                  if(problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false){
-                                                    problemList[i]['check'] = val!;
-                                                  }
+                                                  problemList[i]['isEnvironmentRead'] = val!;
                                                 });
                                               },
                                             ),
@@ -199,15 +196,13 @@ class _StewardCheckState extends State<StewardCheck>{
                                           Expanded(
                                             child: InkWell(
                                               child: Text('${problemList[i]['detail']}',style: TextStyle(
-                                                  color: Color((problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false) ? 0xff323233 : 0xff969799),
+                                                  color: Color(0xff323233),
                                                   fontSize: sp(30),
                                                   overflow: TextOverflow.ellipsis)),
                                               onTap: (){
                                                 //判断问题是否已提交
                                                 //isCompanyRead是否企业可以查看,isEnvironmentRead是否环保局可以查看
-                                                if(problemList[i]['isCompanyRead'] == false && problemList[i]['isEnvironmentRead'] == false){
-                                                  problemList[i]['check'] = !problemList[i]['check'];
-                                                }
+                                                problemList[i]['isEnvironmentRead'] = false;
                                                 setState(() {});
                                               },
                                             ),
@@ -229,12 +224,10 @@ class _StewardCheckState extends State<StewardCheck>{
                                             width: px(70),
                                             child: Radio(
                                               value: true,
-                                              groupValue: problemList[i]['check'],
+                                              groupValue: problemList[i]['isEnvironmentRead'],
                                               onChanged: (val) {
                                                 setState(() {
-                                                  if(problemList[i]['isCompanyRead'] == false && problemList[i]['isEnvironmentRead'] == false){
-                                                    problemList[i]['check'] = val!;
-                                                  }
+                                                  problemList[i]['isEnvironmentRead'] = val!;
                                                 });
                                               },
                                             ),
@@ -242,13 +235,11 @@ class _StewardCheckState extends State<StewardCheck>{
                                           Expanded(
                                             child: InkWell(
                                               child: Text('${problemList[i]['detail']}',style: TextStyle(
-                                                  color: Color((problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false) ? 0xff323233 : 0xff969799),
+                                                  color: Color(0xff323233),
                                                   fontSize: sp(30),
                                                   overflow: TextOverflow.ellipsis)),
                                               onTap: (){
-                                                if(problemList[i]['isCompanyRead']==false && problemList[i]['isEnvironmentRead']==false){
-                                                  problemList[i]['check'] = !problemList[i]['check'];
-                                                }
+                                                problemList[i]['isEnvironmentRead'] = true;
                                                 setState(() {});
                                               },
                                             ),
@@ -271,19 +262,13 @@ class _StewardCheckState extends State<StewardCheck>{
                             submit: (){
                               //默认选择企业，排除掉已选过的
                               for (var item in problemList) {
-                                if(item['isCompanyRead'] != true && item['isEnvironmentRead']!=true){
-                                  if(item['check'] == false){
-                                    subCompanies['companies'].add(item['id'],);
-                                  }else{
-                                    subCompanies['environments'].add(item['id'],);
-                                  }
+                                if(item['isEnvironmentRead'] == false){
+                                  subCompanies['companies'].add(item['id']);
+                                }else{
+                                  subCompanies['environments'].add(item['id'],);
                                 }
                               }
-                              if(subCompanies['companies'].isEmpty && subCompanies['environments'].isEmpty){
-                                ToastWidget.showToastMsg('未选中问题，无法提交');
-                              }else{
-                                _submit();
-                              }
+                              _submit();
                               Navigator.pop(context);
                             }
                         ),
@@ -680,11 +665,15 @@ class _StewardCheckState extends State<StewardCheck>{
               ),
             ),
             onTap: (){
-              for(var i=0; i<problemList.length; i++){
-                problemList[i]['check'] = false;
-              }
               subCompanies = {'companies':[],'environments':[],'inventoryId':uuid};
-              submission();
+              for (var item in problemList) {
+                item['isEnvironmentRead'] = false;
+              }
+              if(subStatus && problemList.isNotEmpty){
+                submission();
+              }else{
+                ToastWidget.showToastMsg('问题已经全部提交');
+              }
               setState(() {});
             },
           ),

@@ -53,7 +53,7 @@ class _DateRangeState extends State<DateRange> {
                 child: Text(
                   '${startTime.toString().substring(0,10)} ~ ${endTime.toString().substring(0,10)}',
                   style: TextStyle(
-                      fontSize: ScreenUtil().setSp(22.0),
+                      fontSize: sp(22.0),
                       color: Color(0XFF585858)
                   ),
                   overflow: TextOverflow.ellipsis,

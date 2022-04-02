@@ -12,7 +12,7 @@ import 'components/rectify_components.dart';
 
 ///隐患问题页
 ///hiddenProblem:隐患数据
-///firm:是否企业
+///firm:是否企业端
 class ProblemPage extends StatefulWidget {
   String companyId;
   bool firm;
@@ -84,19 +84,8 @@ class _ProblemPageState extends State<ProblemPage> {
     }
   }
 
-  // 返回刷新
-  refresh(){
-    _problemSearch(
-        type: typeStatusEnum.onRefresh,
-        data: {
-          'pageNo': 1,
-          'pageSize': 50,
-          'company.id':companyId,
-        }
-    );
-  }
-
-  // 下拉刷新
+  /// 下拉刷新
+  /// 判断是否是企业端,剔除掉非企业端看的问题
   _onRefresh({required List data,required int total}) {
     _total = total;
     if(firm){
@@ -281,6 +270,7 @@ class _ProblemPageState extends State<ProblemPage> {
             setState(() {});
           },
           trueBack: (){
+            //判断搜索日期传递的参数
             if(startTime==null){
               _problemSearch(
                   type: typeStatusEnum.onRefresh,

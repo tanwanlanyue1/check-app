@@ -12,6 +12,7 @@ import 'components/rectify_components.dart';
 
 ///排查清单页
 ///hiddenInventory:隐患清单数据
+///firm 是否为企业端
 class InventoryPage extends StatefulWidget {
   String companyId;
   bool firm;

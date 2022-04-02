@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/api/api.dart';
-import 'package:scet_check/api/request.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 import 'Components/same_point_table.dart';
@@ -58,6 +56,16 @@ class _StatisticsState extends State<Statistics> {
     }
   }
 
+  //整改数颜色
+ Color numberColor (int type){
+    if(type == 0){
+      return Color(0XFF4D7FFF);
+    }else if(type == 1){
+      return Color(0XFFD68184);
+    }else{
+      return Color(0XFF95C758);
+    }
+  }
   ///只有园区统计才有片区
   @override
   Widget build(BuildContext context) {
@@ -73,6 +81,7 @@ class _StatisticsState extends State<Statistics> {
             tableBody: _tableBody,
             questionTotal:questionTotal,
             callBack: (){
+              //全部分区需要请求片区的接口，其他片区不需要,左箭头回调时间
               if(widget.pageIndex == 0){
                 if(tabIndex < 2){
                   tabIndex++;
@@ -89,6 +98,7 @@ class _StatisticsState extends State<Statistics> {
               widget.callBack?.call(tabIndex);
             },
             callPrevious: (){
+              //全部分区需要请求片区的接口，其他片区不需要,右箭头回调时间
               if(widget.pageIndex == 0){
                 if(tabIndex > 0){
                   tabIndex--;
@@ -120,7 +130,7 @@ class _StatisticsState extends State<Statistics> {
       child: Column(
         children: [
           numberRectification(),
-          _tableBody.isNotEmpty ?
+          _tableBody.isNotEmpty && questionTotal != 0 ?
           Expanded(
             child: Container(
               margin: EdgeInsets.only(left: px(49),right: px(10)),
@@ -146,7 +156,7 @@ class _StatisticsState extends State<Statistics> {
                         Align(
                           alignment: Alignment(0, 0),
                           child: Container(
-                            width: questionTotal != 0 ? px(475*(finished/questionTotal)) : px(0),
+                            width:px(475*(finished/questionTotal)),
                             height: px(16),
                             margin: EdgeInsets.only(left: px(18),right: px(16)),
                             decoration: BoxDecoration(
@@ -159,15 +169,14 @@ class _StatisticsState extends State<Statistics> {
                           width: px(27),
                           height: px(32),
                           margin: EdgeInsets.only(top: px(11),
-                              left: questionTotal != 0 ? px(475*(finished/questionTotal)+3) : px(3)
+                              left: px(475*(finished/questionTotal)+3)
                           ),
                           child: Image.asset("lib/assets/icons/other/coordinate.png"),
                         ),
                       ],
                     ),
                   ),
-                  Text(questionTotal != 0 ?
-                  '${(finished/questionTotal*100).toInt()}%':'0%',style: TextStyle(color: Color(0xff336DFF), fontSize:sp(28.0),),),
+                  Text( '${(finished/questionTotal*100).toInt()}%',style: TextStyle(color: Color(0xff336DFF), fontSize:sp(28.0),),),
                 ],
               ),
             ),
@@ -189,11 +198,7 @@ class _StatisticsState extends State<Statistics> {
                 TextSpan(text: '${number[i]['total']}',
                   style: TextStyle(
                       fontSize: sp(40.0),
-                      color: i == 0 ?
-                      Color(0XFF4D7FFF):
-                      i == 1 ?
-                      Color(0XFFD68184):
-                      Color(0XFF95C758)
+                      color: numberColor(i),
                   ),
                   children: <TextSpan>[
                     TextSpan(text: '/${number[i]['unit']}',

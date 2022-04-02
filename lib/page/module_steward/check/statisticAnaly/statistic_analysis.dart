@@ -38,6 +38,9 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> {
   void initState() {
     _getStatistics();
     dealWith();
+    controller.addListener(() {
+      controllerTow.jumpTo(controller.offset);
+    });
     super.initState();
   }
   @override
@@ -72,9 +75,8 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> {
       data: _data
     );
     if(response['statusCode'] == 200) {
-      setState(() {
-        questionTotal = response['data'];
-      });
+      questionTotal = response['data'];
+      _companyCount();
     }
   }
 
@@ -85,9 +87,8 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> {
         data: _data
     );
     if(response['statusCode'] == 200) {
-      setState(() {
-        companyTotal = response['data'];
-      });
+      companyTotal = response['data'];
+      _getAbarbeitung();
     }
   }
 
@@ -144,8 +145,6 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> {
       'groupTable':'company'
     };
     _getProblem();
-    _companyCount();
-    _getAbarbeitung();
     _getProblemStatis(
         data: groupTable
     );
@@ -153,7 +152,6 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> {
   ///判断表单的数据
   ///判断切换的类型和片区
   judge(){
-    print('进来了====$_types');
     switch (_types){
       case 0: {
         type = '企业';
