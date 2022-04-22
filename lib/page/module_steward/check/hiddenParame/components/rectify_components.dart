@@ -422,6 +422,7 @@ class RectifyComponents{
     required List status,
     required DateTime startTime,
     required DateTime endTime,
+    Function? callPop,
     Function? callBack,
     Function? timeBack,
     Function? trueBack,
@@ -443,7 +444,9 @@ class RectifyComponents{
                 ),
                 IconButton(
                   icon: Icon(Icons.clear,color: Colors.red,size: px(39),),
-                  onPressed: (){Navigator.pop(context);},
+                  onPressed: (){
+                    callPop?.call();
+                  },
                 )
               ],
             ),

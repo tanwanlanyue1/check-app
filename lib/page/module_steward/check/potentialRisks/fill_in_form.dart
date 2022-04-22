@@ -21,7 +21,9 @@ import 'package:intl/intl.dart';
 ///        arguments = {
 ///           'declare':true,//申报
 ///           'uuid': uuid,//清单ID
+///           'addProblem':true,//新增问题
 ///           'problemId':problemId,//问题id
+///           "stewardCheck":stewardCheck,//签到人
 ///           'district': repertoire['company']['districtId'],//片区id
 ///           'companyId': repertoire['company']['id'],//企业id
 ///           'industryId': repertoire['company']['industryId'],//行业ID
@@ -42,6 +44,7 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
   List lawList = [];//法律法规列表
   Map problemList = {};//问题详情列表
   bool declare = false; //申报
+  bool addProblem = false;//新增问题
   bool isImportant = false; //是否重点
   bool checkGist = true; //排查依据
   String checkPersonnel = '';//排查人员
@@ -65,7 +68,7 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
   String otherType = '';//其他类型
   bool other = false;//其他类型
   late GlobalKey<ScaffoldState> _scaffoldKey; //时间选择key
-  DateTime checkTime = DateTime.now();//填报排查日期
+  // DateTime checkTime = DateTime.now();//填报排查日期
   DateTime rectifyTime = DateTime.now().add(Duration(days: 7));//整改期限
 
 
@@ -126,16 +129,19 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
     _uuid = uuid.v4();
     declare = widget.arguments?['declare'] ?? true;
     _scaffoldKey = widget.arguments?['key'] ?? GlobalKey<ScaffoldState>();
+    addProblem = widget.arguments?['addProblem'] ?? false;
     userName= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
     userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
     if(declare){
-      _getProblemType();
-      _getProfile();
-      _getProblems();
       inventoryId = widget.arguments?['uuid'];
       companyId = widget.arguments?['companyId'];
       industryId = widget.arguments?['industryId'];
       areaId = widget.arguments?['districtId'];
+      checkPersonnel = widget.arguments?['stewardCheck'] ?? '';
+      checkDay = DateTime.now().toString().substring(0,16);
+      _getProblemType();
+      _getProfile();
+      _getProblems();
     }else{
       _getProblems();
     }
@@ -222,7 +228,13 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
         Api.url['problem'],data: _data,
       );
       if(response['statusCode'] == 200) {
-        Navigator.pop(context,true);
+        if(addProblem){
+          Navigator.of(context).pushReplacementNamed('/rectificationProblem',
+              arguments: {'check':true,'problemId': problemId.isEmpty ? _uuid : problemId}
+          );
+        }else{
+          Navigator.pop(context);
+        }
         setState(() {});
       }
     }
@@ -283,40 +295,62 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
   Widget rubyAgent(){
     return FormCheck.dataCard(
           children: [
-            FormCheck.formTitle('问题详情'),
+            Row(
+              children: [
+                Expanded(
+                  child: FormCheck.formTitle('问题详情'),
+                ),
+                declare == false ?
+                Container(
+                  width: px(110),
+                  height: px(48),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      color: Colorswitchs(problemList['status']),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(px(20)),
+                        bottomLeft: Radius.circular(px(20)),
+                      )
+                  ),//状态；1,未整改;2,已整改;3,整改已通过;4,整改未通过
+                  child: Text(switchs(problemList['status'])
+                    ,style: TextStyle(color: Colors.white,fontSize: sp(20)),),
+                ) :
+                Container(),
+              ],
+            ),
             FormCheck.rowItem(
                 title: "排查时间",
-                child: !declare ?
-                Text(checkDay, style: TextStyle(
+                // child: !declare ?
+                child: Text(checkDay, style: TextStyle(
                     color: Color(0xff323233),
                     fontSize: sp(28),
-                    fontFamily: 'Roboto-Condensed'),) :
-                TimeSelect(
-                  scaffoldKey: _scaffoldKey,
-                  hintText: "请选择排查时间",
-                  time: checkTime,
-                  callBack: (time) {
-                    checkTime = time;
-                    setState(() {});
-                  },
-                )
+                    fontFamily: 'Roboto-Condensed'),),
+                // TimeSelect(
+                //   scaffoldKey: _scaffoldKey,
+                //   hintText: "请选择排查时间",
+                //   time: checkTime,
+                //   callBack: (time) {
+                //     checkTime = time;
+                //     setState(() {});
+                //   },
+                // )
             ),
             FormCheck.rowItem(
               title: "排查人员",
-              child: !declare ?
-              Text(checkPersonnel, style: TextStyle(color: Color(0xff323233),
+              // child: !declare ?
+              child: Text(checkPersonnel, style: TextStyle(color: Color(0xff323233),
                   fontSize: sp(28),
-                  fontFamily: 'Roboto-Condensed'),) :
-              Container(
-                color: Color(0xffF5F6FA),
-                child: FormCheck.inputWidget(
-                    hintText: checkPersonnel.isEmpty ? '请输入排查人员' : checkPersonnel,
-                    onChanged: (val){
-                      checkPersonnel = val;
-                      setState(() {});
-                    }
-                ),
-              ),
+                  fontFamily: 'Roboto-Condensed'),)
+              // Container(
+              //   color: Color(0xffF5F6FA),
+              //   child: FormCheck.inputWidget(
+              //       hintText: checkPersonnel.isEmpty ? '请输入排查人员' : checkPersonnel,
+              //       onChanged: (val){
+              //         checkPersonnel = val;
+              //         setState(() {});
+              //       }
+              //   ),
+              // ),
             ),
             FormCheck.rowItem(
               title: "问题类型",
@@ -453,9 +487,10 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
                     scaffoldKey: _scaffoldKey,
                     hintText: "请选择整改期限",
                     time: rectifyTime,
-                    type: 7,
+                    // type: 7,
                     callBack: (time) {
-                      rectifyTime = DateTime.parse(formatTimes(time));
+                      // rectifyTime = DateTime.parse(formatTimes(time));
+                      rectifyTime = time;
                       setState(() {});
                     },
                   ),
@@ -492,6 +527,28 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
             )
           ]
       );
+  }
+
+  //颜色状态
+  Color Colorswitchs(status){
+    switch(status){
+      case 1 : return Color(0xffFAAA5A);
+      case 2 : return Color(0xff7196F5);
+      case 3 : return Color(0xff95C758);
+      case 4 : return Color(0xffFAAA5A);
+      default: return Color(0xffFAAA5A);
+    }
+  }
+
+  //状态
+  String switchs(status){
+    switch(status){
+      case 1 : return '未整改';
+      case 2 : return '整改中';
+      case 3 : return '整改已通过';
+      case 4 : return '整改未通过';
+      default: return '未整改';
+    }
   }
 
   ///选择排查依据

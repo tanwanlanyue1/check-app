@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
@@ -8,6 +9,7 @@ import 'package:scet_check/page/module_enterprise/abarbeitung/problem_details.da
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/enterprise_reform.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/review_situation.dart';
+import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
@@ -28,7 +30,8 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
   Map problemList = {};//问题详情
   String problemId = '';//问题ID
   bool declare = false; //申报
-  bool abarbeitung = false; //是否可以整改
+  bool getLose = false; //请求失败
+  bool abarbeitung = false; //是否可以修改
   String userName = '';//用户名
   String userId = '';//用户id
   List solutionList = [];//整改详情
@@ -51,11 +54,11 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
     var response = await Request().get(Api.url['problem']+'/$problemId',);
     if(response['statusCode'] == 200) {
       problemList = response['data'];
-      abarbeitung = problemList['isSolutionCommit'];
       setState(() {});
     }
   }
   /// 整改详情，
+  /// 判断是否提交，进行修改
   void _setSolution() async {
     Map<String,dynamic> _data = {
       'problem.id':problemId,
@@ -65,6 +68,15 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
     );
     if(response['statusCode'] == 200 && response['data']!=null) {
       solutionList = response['data']['list'];
+      abarbeitung = false;
+      for(var i=0;i<solutionList.length;i++){
+        if(solutionList[i]['status'] == 4){//4未提交
+          abarbeitung = true;
+        }
+      }
+      setState(() {});
+    }else{
+      getLose = true;
       setState(() {});
     }
   }
@@ -100,12 +112,12 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
                   problemList: problemList,
                 ),
                 //企业整改详情
+                addAbarbeitung(),
                 solutionList.isNotEmpty?
                 EnterpriseReform(
                   problemId: problemId,
                   solutionList: solutionList,
-                ):
-                Container(),
+                ):Container(),
                 //现场复查情况
                 reviewList.isNotEmpty?
                 ReviewSituation(
@@ -113,7 +125,8 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
                     'problemId':problemId,
                     'reviewList':reviewList,
                   },
-                ):Container(),
+                ) :
+                Container(),
                 // rubyAgent(),
               ],
             ),
@@ -144,30 +157,84 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
           Expanded(
             flex: 1,
             child: Center(
-              child: Text("隐患整改问题填报",style: TextStyle(color: Color(0xff323233),fontSize: sp(36),fontFamily: 'M'),),
+              child: Text("隐患整改问题详情",style: TextStyle(color: Color(0xff323233),fontSize: sp(36),fontFamily: 'M'),),
             ),
-          ),
-          GestureDetector(
-            child: Container(
-                width: px(40),
-                height: px(41),
-                margin: EdgeInsets.only(right: px(20)),
-                child: Image.asset('lib/assets/icons/form/add.png'),),
-            onTap: () async{
-              //整改未通过，也可以继续添加
-              if(!abarbeitung || problemList['status'] == 4){
-               var res = await Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId});
-               if(res == true){
-                 _getProblems();
-                 _setSolution();
-               }
-              }else{
-                ToastWidget.showToastMsg('当前问题已整改');
-              }
-            },
           ),
         ],
       ),
     );
   }
+  ///填报整改情况
+  Widget addAbarbeitung(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.only(left: px(24)),
+                margin: EdgeInsets.only(top: px(4)),
+                height: px(56),
+                child: FormCheck.formTitle('整改详情'),
+              ),
+            ),
+            abarbeitung ?
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              child: Container(
+                margin: EdgeInsets.only(left: px(24),right: px(24),bottom: px(4)),
+                padding: EdgeInsets.only(left: px(12),right: px(12),bottom: px(4),top: px(4)),
+                child: Text('修改',style: TextStyle(
+                    fontSize: sp(26),
+                    color: Colors.white
+                  // color: Color(0xff323233),
+                )),
+                decoration: BoxDecoration(
+                  color: Color(0xff4D7FFF),
+                  border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
+                  borderRadius: BorderRadius.all(Radius.circular(px(10))),
+                ),
+              ),
+              onTap: () async{
+                var res = await Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId});
+                if(res == true){
+                  _getProblems();
+                  _setSolution();
+                }
+              },
+            ) :
+            Container(),
+          ],
+        ),
+        getLose != true && (solutionList.isEmpty || problemList['status'] == 4) && !abarbeitung ?
+        GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          child: Container(
+            margin: EdgeInsets.only(left: px(24),right: px(24),bottom: px(4)),
+            padding: EdgeInsets.only(left: px(12),right: px(12),bottom: px(4),top: px(4)),
+            child: Text('填报整改情况',style: TextStyle(
+              fontSize: sp(26),
+              color: Colors.white
+              // color: Color(0xff323233),
+            )),
+            decoration: BoxDecoration(
+              color: Color(0xff4D7FFF),
+              border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
+              borderRadius: BorderRadius.all(Radius.circular(px(10))),
+            ),
+          ),
+          onTap: () async{
+            var res = await Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId});
+            if(res == true){
+              _getProblems();
+              _setSolution();
+            }
+          },
+        ):
+        Container(),
+      ],);
+  }
+
 }

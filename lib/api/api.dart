@@ -1,12 +1,10 @@
 
 class Api {
-  static const baseUrl = 'https://cz.scet.com.cn:1443/api';
 
   // static const baseUrlApp = 'http://10.10.1.217:9750';
   // static const baseUrlApp = 'http://10.10.1.217:8687/';
   static const baseUrlApp = 'https://dev.scet.com.cn/yhpc/';
 
-  static const baseWs = 'wss://cz.scet.com.cn:1443/api/wfws';
 
   static final Map url = {
     'version': baseUrlApp + '/manualInsert/platFromXiaZai',//版本更新
@@ -22,6 +20,8 @@ class Api {
     'lawFile': baseUrlApp + 'law',//法律文件
 
     'company': baseUrlApp + 'company',//获取全部企业
+
+    'companyId': baseUrlApp + 'company',//获取企业详情
 
     'companyList': baseUrlApp + 'company/list',//企业分页列表
 

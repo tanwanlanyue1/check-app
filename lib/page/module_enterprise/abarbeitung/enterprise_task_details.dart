@@ -9,17 +9,17 @@ import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 
-///企业详情
+///企业任务详情
 /// 问题未整改列表/清单下的问题
-class EnterpriseDetails extends StatefulWidget {
-  const EnterpriseDetails({Key? key}) : super(key: key);
+class EnterpriseTaskDetails extends StatefulWidget {
+  const EnterpriseTaskDetails({Key? key}) : super(key: key);
 
   @override
-  _EnterpriseDetailsState createState() => _EnterpriseDetailsState();
+  _EnterpriseTaskDetailsState createState() => _EnterpriseTaskDetailsState();
 }
 
-class _EnterpriseDetailsState extends State<EnterpriseDetails>  with SingleTickerProviderStateMixin{
-  List tabBar = ["隐患问题","排查清单"];//tab列表
+class _EnterpriseTaskDetailsState extends State<EnterpriseTaskDetails>  with SingleTickerProviderStateMixin{
+  List tabBar = ["隐患问题","问题台账"];//tab列表
   String companyName = '';//公司名
   String companyId = '';//公司id
   bool check = false; //申报,排查

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:scet_check/model/provider/provider_details.dart';
 import 'package:scet_check/page/module_steward/check/check_page.dart';
 import 'package:scet_check/page/module_steward/law/law_page.dart';
 import 'package:scet_check/page/module_steward/message/message_page.dart';
+import 'package:scet_check/page/module_steward/personal/personal_center.dart';
 import 'package:scet_check/utils/logOut/log_out.dart';
 import 'package:scet_check/utils/screen/adapter.dart';
 import 'package:scet_check/utils/screen/screen.dart';
@@ -33,26 +33,7 @@ class _HomePageState extends State<HomePage> {
     const EnterprisePage(),//企业管理
     const LawPage(),//法律法规
     const MessagePage(),//通知中心
-  ];
-
-  ///底部tab图标
-  List tabIcons = [
-    [
-      const Icon(Icons.map, size: 20.0,color: Color(0XFFB9B9B9)),
-      const Icon(Icons.map, size: 20.0,color: Color(0XFF4D7CFF)),
-    ],
-    [
-      const Icon(Icons.notifications_active, size: 20.0,color: Color(0XFFB9B9B9)),
-      const Icon(Icons.notifications_active, size: 20.0,color: Color(0XFF4D7CFF)),
-    ],
-    [
-      const Icon(Icons.show_chart, size: 20.0,color: Color(0XFFB9B9B9)),
-      const Icon(Icons.show_chart, size: 20.0,color: Color(0XFF4D7CFF)),
-    ],
-    [
-      const Icon(Icons.date_range, size: 20.0,color: Color(0XFFB9B9B9)),
-      const Icon(Icons.date_range, size: 20.0,color: Color(0XFF4D7CFF)),
-    ]
+    const PersonalCenter(),//个人中心
   ];
 
   @override
@@ -94,6 +75,11 @@ class _HomePageState extends State<HomePage> {
                       index: 3,
                       commonImage: 'lib/assets/icons/bottom-bar/D.png',
                       activeImage: 'lib/assets/icons/bottom-bar/D1.png'
+                  ),
+                  _buildItemMenu(
+                      index: 4,
+                      commonImage: 'lib/assets/icons/bottom-bar/mine.png',
+                      activeImage: 'lib/assets/icons/bottom-bar/mine-active.png'
                   ),
                 ],
               ),

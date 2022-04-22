@@ -5,6 +5,8 @@ import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/no_data.dart';
 import 'package:scet_check/components/generalduty/search.dart';
 import 'package:scet_check/components/generalduty/sliver_app_bar.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/steward_check.dart';
+import 'package:scet_check/routers/router_animate/router_fade_route.dart';
 import 'package:scet_check/utils/easyRefresh/easy_refreshs.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
@@ -87,7 +89,7 @@ class _InventoryPageState extends State<InventoryPage> {
 
   /// 上拉加载
   /// 当前数据等于总数据，关闭上拉加载
-  _onLoad({required List data,required int total}) {
+  _onLoad({required List data, required int total}) {
     _total = total;
     _controller.finishLoadCallBack!();
     if(hiddenInventory.length >= total){
@@ -246,6 +248,16 @@ class _InventoryPageState extends State<InventoryPage> {
         status: inventoryStatus,
         startTime: startTime ?? DateTime.now(),
         endTime: endTime ?? DateTime.now(),
+        callPop: (){
+          _inventorySearch(
+              type: typeStatusEnum.onRefresh,
+              data: {
+                'pageNo': 1,
+                'pageSize': 50,
+                'company.id':companyId,
+              }
+          );
+        },
         callBack: (val){
           typeStatus['name'] = val['name'];
           typeStatus['id'] = val['id'];

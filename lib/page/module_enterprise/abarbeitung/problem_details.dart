@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/time/utc_tolocal.dart';
@@ -74,7 +75,27 @@ class _ProblemDetailsState extends State<ProblemDetails> {
   Widget rubyAgent(){
     return FormCheck.dataCard(
         children: [
-          FormCheck.formTitle('问题详情'),
+          Row(
+            children: [
+              Expanded(
+                child: FormCheck.formTitle('问题详情'),
+              ),
+              Container(
+                width: px(110),
+                height: px(48),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: RectifyComponents.Colorswitchs(problemList['status']),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(px(20)),
+                      bottomLeft: Radius.circular(px(20)),
+                    )
+                ),//状态；1,未整改;2,已整改;3,整改已通过;4,整改未通过
+                child: Text(RectifyComponents.switchs(problemList['status'])
+                  ,style: TextStyle(color: Colors.white,fontSize: sp(20)),),
+              ),
+            ],
+          ),
           FormCheck.rowItem(
               title: "排查时间",
               child:
@@ -147,6 +168,6 @@ class _ProblemDetailsState extends State<ProblemDetails> {
 
   ///日期转换
   String formatTime(time) {
-    return utcToLocal(time.toString()).substring(0,10);
+    return utcToLocal(time.toString()).substring(0,16);
   }
 }

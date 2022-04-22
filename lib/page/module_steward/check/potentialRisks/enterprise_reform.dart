@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/time/utc_tolocal.dart';
 
 ///企业整改详情
 class EnterpriseReform extends StatefulWidget {
@@ -48,18 +49,7 @@ class _EnterpriseReformState extends State<EnterpriseReform> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
-        Container(
-          color: Colors.white,
-          padding: EdgeInsets.only(left: px(24)),
-          margin: EdgeInsets.only(top: px(4)),
-          height: px(56),
-          child: FormCheck.formTitle('整改详情'),
-        ),
-        Column(
-          children: List.generate(solutionList.length, (i) => rectification(i)),
-        ),
-      ],
+      children: List.generate(solutionList.length, (i) => rectification(i)),
     );
   }
   ///整改详情
@@ -80,6 +70,10 @@ class _EnterpriseReformState extends State<EnterpriseReform> {
             child: Text(solutionList[i]['descript'],style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
+            title: "整改时间",
+            child: Text(formatTime(solutionList[i]['createdAt']),style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+          ),
+          FormCheck.rowItem(
               title: "整改图片",
               child: UploadImage(
                 imgList: solutionList[i]['images'],
@@ -88,5 +82,10 @@ class _EnterpriseReformState extends State<EnterpriseReform> {
           ),
         ]
     );
+  }
+  ///时间格式
+  ///time:时间
+  static String formatTime(time) {
+    return utcToLocal(time.toString()).substring(0,16);
   }
 }

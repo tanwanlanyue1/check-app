@@ -16,7 +16,6 @@ class CheckPage extends StatefulWidget {
 
 class _CheckPageState extends State<CheckPage> {
   List tabBar = ["统计分析","隐患台帐",];//头部
-  // List tabBar = ["统计分析","隐患台帐","隐患排查",];//头部
   PageController pagesController = PageController();//控制器
   int pageIndex = 0;//下标
   List _pageList = [];//页面数组

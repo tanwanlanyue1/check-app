@@ -217,7 +217,7 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
               children: [
                 GestureDetector(
                   child: Container(
-                    width: px(240),
+                    width: px(200),
                     height: px(56),
                     alignment: Alignment.center,
                     child: Text(
@@ -241,10 +241,10 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
                 ),
                 GestureDetector(
                   child: Container(
-                    width: px(240),
+                    width: px(200),
                     height: px(56),
                     alignment: Alignment.center,
-                    margin: EdgeInsets.only(left: px(40)),
+                    margin: EdgeInsets.only(left: px(20)),
                     child: Text(
                       '保存整改',
                       style: TextStyle(
@@ -261,6 +261,28 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
                     _setProblem(
                       status: 4
                     );
+                  },
+                ),
+                GestureDetector(
+                  child: Container(
+                    width: px(200),
+                    height: px(56),
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.only(left: px(20)),
+                    child: Text(
+                      '上传整改报告',
+                      style: TextStyle(
+                          fontSize: sp(24),
+                          fontFamily: "R",
+                          color: Color(0xFF323233)),
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
+                      borderRadius: BorderRadius.all(Radius.circular(px(28))),
+                    ),
+                  ),
+                  onTap: (){
+                    print('上传整改报告');
                   },
                 ),
               ],
@@ -388,6 +410,6 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
   }
   ///日期转换
   String formatTime(time) {
-    return utcToLocal(time.toString()).substring(0,10);
+    return utcToLocal(time.toString()).substring(0,16);
   }
 }

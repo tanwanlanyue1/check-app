@@ -402,7 +402,7 @@ class _CompanyFileState extends State<CompanyFile> {
                                   }else{
                                     if(type == 0) {
                                       Map arguments = {'path':path, 'title':item['name'], 'data':item};
-                                      Navigator.pushNamed(context, '/CompanyFile',arguments:arguments ).then((value){
+                                      Navigator.pushNamed(context, '/companyFile',arguments:arguments ).then((value){
                                         _getFile();
                                       });
                                     }

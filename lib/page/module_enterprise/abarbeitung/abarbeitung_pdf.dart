@@ -10,6 +10,9 @@ import 'package:uuid/uuid.dart';
 ///上传整改报告
 ///url:上传路径
 ///uuid:uuid
+/// inventoryId : 清单id
+/// callback 回调方法
+/// uploading ：是否允许上传
 class AbarbeitungPdf extends StatefulWidget {
   final Function? callback;
   final String? url;
@@ -29,13 +32,13 @@ class AbarbeitungPdf extends StatefulWidget {
 
 class _AbarbeitungPdfState extends State<AbarbeitungPdf> {
 
-  List<dynamic> _imagesList = []; // 图片数组
+  final List<dynamic> _imagesList = []; // 图片数组
   String _url = Api.url['uploadImg'];//url
   String _uuid = '';//uuid
   String inventoryId = '';//uuid
   Uuid uuid = Uuid();//uuid
 
-  /// 上传pdf文件  沧州临港凯茵新材料科技有限公司
+  /// 上传pdf文件
   /// result: 文件数组
   /// 处理上传图片返回回来的格式，将\转化为/
   void _upload() async {

@@ -1,10 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:scet_check/page/module_steward/enterprise/enterprise_details.dart';
+import 'package:scet_check/page/module_steward/enterprise/enterprise_page.dart';
 import 'package:scet_check/page/module_steward/message/message_page.dart';
 import 'package:scet_check/utils/logOut/log_out.dart';
 import 'package:scet_check/utils/screen/adapter.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/storage/data_storage_key.dart';
+import 'package:scet_check/utils/storage/storage.dart';
 
-import 'abarbeitung/enterprise_details.dart';
+import 'abarbeitung/enterprise_task_details.dart';
 
 ///企业端首页
 class EnterpriseHome extends StatefulWidget {
@@ -18,12 +24,9 @@ class _EnterpriseHomeState extends State<EnterpriseHome> {
   final _pageController = PageController();//PageView控制器
 
   int _tabIndex = 0;  // 默认索引第一个tab
-
-
-  final List _pageList = [
-    EnterpriseDetails(),//企业详情
-    MessagePage(),//通知中心
-  ];
+  String companyId = '';//公司id
+  String companyName = '';//公司名称
+  List _pageList = []; //页面内容
 
   ///底部tab图标
   List tabIcons = [
@@ -34,9 +37,27 @@ class _EnterpriseHomeState extends State<EnterpriseHome> {
     [
       const Icon(Icons.date_range, size: 20.0,color: Color(0XFFB9B9B9)),
       const Icon(Icons.date_range, size: 20.0,color: Color(0XFF4D7CFF)),
+    ],
+    [
+      const Icon(Icons.date_range, size: 20.0,color: Color(0XFFB9B9B9)),
+      const Icon(Icons.date_range, size: 20.0,color: Color(0XFF4D7CFF)),
     ]
   ];
 
+  @override
+  void initState() {
+    // TODO: implement initState companyName
+    companyId = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['companyId'];
+    companyName = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['company']['name'];
+    _pageList = [
+      EnterpriseTaskDetails(),//企业任务详情
+      EnterpriseDetails(
+        arguments: {"id":companyId,'name':companyName},
+      ),//一企一档
+      MessagePage(),//通知中心
+    ];
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -64,6 +85,11 @@ class _EnterpriseHomeState extends State<EnterpriseHome> {
                   ),
                   _buildItemMenu(
                       index: 1,
+                      commonImage: 'lib/assets/icons/bottom-bar/B.png',
+                      activeImage: 'lib/assets/icons/bottom-bar/B1.png'
+                  ),
+                  _buildItemMenu(
+                      index: 2,
                       commonImage: 'lib/assets/icons/bottom-bar/D.png',
                       activeImage: 'lib/assets/icons/bottom-bar/D1.png'
                   ),

@@ -46,24 +46,26 @@ class _PolicyStandState extends State<PolicyStand> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: EdgeInsets.only(top: 0),
-      children: [
-        widget.search ?
-        Container(
-          height: px(88),
-          color: Colors.white,
-          alignment: Alignment.center,
-          child: LawComponents.search(
-            textEditingController: textEditingController,
-            callBack: (val){}
+    return Scaffold(
+      body: ListView(
+        padding: EdgeInsets.only(top: 0),
+        children: [
+          widget.search ?
+          Container(
+            height: px(88),
+            color: Colors.white,
+            alignment: Alignment.center,
+            child: LawComponents.search(
+                textEditingController: textEditingController,
+                callBack: (val){}
+            ),
+          ):
+          Container(),
+          Column(
+            children: List.generate(icons.length, (i) => rowFile(i)),
           ),
-        ):
-        Container(),
-        Column(
-          children: List.generate(icons.length, (i) => rowFile(i)),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

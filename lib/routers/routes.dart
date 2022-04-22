@@ -7,11 +7,13 @@ import 'package:scet_check/page/module_enterprise/abarbeitung/enterprise_invento
 import 'package:scet_check/page/module_enterprise/abarbeitung/fill_abarbeitung.dart';
 import 'package:scet_check/page/module_enterprise/enterprise_home.dart';
 import 'package:scet_check/page/module_protection_agency/protection_agency_home.dart';
+import 'package:scet_check/page/module_steward/check/check_page.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/hidden_details.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/rectification_problem.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/steward_check.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/fill_in_form.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/screening_based.dart';
+import 'package:scet_check/page/module_steward/check/statisticAnaly/home_classify.dart';
 import 'package:scet_check/page/module_steward/enterprise/enterprise_details.dart';
 import 'package:scet_check/page/module_steward/home_page.dart';
 import 'package:scet_check/page/module_steward/law/essential_details.dart';
@@ -20,6 +22,9 @@ import 'package:scet_check/page/module_steward/law/file_lists.dart';
 import 'package:scet_check/page/module_login/guide_page.dart';
 import 'package:scet_check/page/module_login/login_page.dart';
 import 'package:scet_check/page/module_steward/law/fill_details.dart';
+import 'package:scet_check/page/module_steward/personal/backlog_task.dart';
+import 'package:scet_check/page/module_steward/personal/have_done_task.dart';
+import 'package:scet_check/page/module_steward/personal/history_task.dart';
 
 
 /// 配置静态路由
@@ -29,6 +34,7 @@ final routes = {
   '/steward': (context) =>  HomePage(), //管家 根路由
   '/enterpriseHome': (context) =>  EnterpriseHome(), //企业 根路由
   '/protectionAgencyHome': (context) =>  ProtectionAgencyHome(), //环保局 根路由
+  '/checkPage': (context) =>  CheckPage(), //隐患排查
   '/rectificationProblem': (context,{arguments}) =>  RectificationProblem(arguments:arguments), //企业台账详情
   '/hiddenDetails': (context,{arguments}) =>  HiddenDetails(arguments:arguments), //隐患公司详情
   '/enterpriseDetails': (context,{arguments}) =>  EnterpriseDetails(arguments:arguments), //企业管理详情
@@ -40,7 +46,11 @@ final routes = {
   '/screeningBased': (context,{arguments}) =>  ScreeningBased(arguments:arguments), //排查要点/法律法规
   '/stewardCheck': (context,{arguments}) =>  StewardCheck(arguments:arguments), //管家排查
   '/PDFView': (context,{arguments}) =>  PDFView(pathPDF:arguments), //PDF页面
-  '/CompanyFile': (context,{arguments}) =>  CompanyFile(arguments:arguments), //一企一档
+  '/companyFile': (context,{arguments}) =>  CompanyFile(arguments:arguments), //一企一档
+  '/homeClassify': (context) =>  HomeClassify(), //首页分类
+  '/historyTask': (context,{arguments}) =>  HistoryTask(arguments:arguments), //历史台账
+  '/backlogTask': (context,{arguments}) =>  BacklogTask(arguments:arguments), //待办任务
+  '/haveDoneTask': (context,{arguments}) =>  HaveDoneTask(arguments:arguments), //已办任务 PolicyStand
 
 ///企业端
   '/enterprisInventory': (context,{arguments}) =>  EnterprisInventory(arguments:arguments), //企业清单详情

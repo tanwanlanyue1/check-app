@@ -12,8 +12,6 @@ import 'package:scet_check/utils/time/utc_tolocal.dart';
 
 import 'components/rectify_components.dart';
 
-
-
 ///管家排查
 ///arguments:{companyId:公司id，companyName：公司名称,uuid:清单id}
 class StewardCheck extends StatefulWidget {
@@ -49,6 +47,7 @@ class _StewardCheckState extends State<StewardCheck>{
   List typeList = [
     {'name':'管家排查','id':1},
     {'name':'其他','id':2},
+    {'name':'专项检查','id':3},
   ];//问题类型列表
 
   /// 获取清单详情
@@ -66,11 +65,14 @@ class _StewardCheckState extends State<StewardCheck>{
         checkDate = RectifyComponents.formatTime(repertoire['createdAt']);
         abarbeitungDates = repertoire['solvedAt'] != null ? RectifyComponents.formatTime(repertoire['solvedAt']) : '';
         sceneReviewDate = repertoire['reviewedAt'] != null ? RectifyComponents.formatTime(repertoire['reviewedAt']) : '';
-        checkType = repertoire['checkType'] == 1 ? '管家排查': '管家排查';
+        checkType = repertoire['checkType'] == 1 ? '管家排查':
+        repertoire['checkType'] == 2 ? '其他' : '专项检查';
         subStatus = repertoire['status'] == 6 ? true : false; //状态为6，可以提交问题、修改
         argumentMap = {
           'declare':true,//申报
           'uuid': uuid,//清单ID
+          'addProblem':true,//新增问题
+          'stewardCheck': stewardCheck,//签到人员
           'districtId': repertoire['company']['districtId'],//片区id
           'companyId': repertoire['company']['id'],//企业id
           'industryId': repertoire['company']['industryId'],//行业ID
@@ -375,7 +377,7 @@ class _StewardCheckState extends State<StewardCheck>{
               surveyItem('归属片区',area),
               surveyItem('签到坐标','${(double.parse(repertoire['longitude'])).toStringAsFixed(2)}, '
                   '${((double.parse(repertoire['latitude'])).toStringAsFixed(2))}',),
-              surveyItem('检查人',stewardCheck),
+              surveyItem('排查人员',stewardCheck),
               surveyItem('企业名',repertoire['company']['name']),
               surveyItem('排查日期',checkDate.substring(0,10)),
               FormCheck.rowItem(
@@ -462,7 +464,7 @@ class _StewardCheckState extends State<StewardCheck>{
                   TimeSelect(
                     scaffoldKey: _scaffoldKey,
                     hintText: "请选择排查时间",
-                    time: abarbeitungDates.isNotEmpty ? DateTime.parse(abarbeitungDates) :null,
+                    time: abarbeitungDates.isNotEmpty ? DateTime.parse(abarbeitungDates) : null,
                     callBack: (time) {
                       abarbeitungDates = formatTime(time);
                       // 修改清单的排查日期
@@ -552,6 +554,7 @@ class _StewardCheckState extends State<StewardCheck>{
                   ),
                 ),
               ),
+              subStatus ?
               GestureDetector(
                 child: Container(
                   width: px(40),
@@ -559,20 +562,17 @@ class _StewardCheckState extends State<StewardCheck>{
                   margin: EdgeInsets.only(right: px(20)),
                   child: Image.asset('lib/assets/icons/form/add.png')),
                 onTap: () async{
-                  if(subStatus){
-                    final Function? pageContentBuilder = routes['/fillInForm'];
-                    var res = await Navigator.push(context, MaterialPageRoute(
-                        settings: RouteSettings(name: '/fillInForm'),
-                        builder: (context) => pageContentBuilder!(context, arguments: argumentMap)
-                    ));
-                    if(res == true){
-                      _getProblem();
-                    }
-                  }else{
-                    ToastWidget.showToastMsg('清单已提交，无法新增问题');
+                  final Function? pageContentBuilder = routes['/fillInForm'];
+                  var res = await Navigator.push(context, MaterialPageRoute(
+                      settings: RouteSettings(name: '/fillInForm'),
+                      builder: (context) => pageContentBuilder!(context, arguments: argumentMap)
+                  ));
+                  if(res == null){
+                    _getProblem();
                   }
                 },
-              ),
+              ) :
+              Container(),
             ],
           ),
           Column(

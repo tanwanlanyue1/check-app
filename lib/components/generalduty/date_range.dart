@@ -98,6 +98,7 @@ class _DateRangeState extends State<DateRange> {
                         // var picked = [
                         //   val.startDate,
                         //   val.endDate,];
+                        //拿到当天的最后一秒
                         var picked = [
                           val.startDate,
                           DateTime(val.endDate!.year,val.endDate!.month,val.endDate!.day, 23,59,59),
