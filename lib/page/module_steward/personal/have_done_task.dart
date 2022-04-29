@@ -83,6 +83,7 @@ class _HaveDoneTaskState extends State<HaveDoneTask> {
           ],
         ),
         onTap: (){
+          Navigator.pushNamed(context, '/taskDetails');
         },
       ),
     );

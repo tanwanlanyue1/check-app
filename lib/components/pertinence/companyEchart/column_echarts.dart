@@ -10,11 +10,13 @@ import 'package:scet_check/utils/screen/screen.dart';
 ///erectName:标题
 ///pieData:饼图data
 ///data:竖状图data
+///erect:是否展示竖状图
 class ColumnEcharts extends StatefulWidget {
   final List? erectName;//标题
   final List? pieData;//饼图data
   final List? data;//竖状图data
-  const ColumnEcharts({Key? key, this.erectName,this.pieData,this.data, }) : super(key: key);
+  final bool erect;//竖状图
+  const ColumnEcharts({Key? key, this.erectName,this.pieData,this.data,this.erect = false}) : super(key: key);
 
   @override
   _ColumnEchartsState createState() => _ColumnEchartsState();
@@ -381,11 +383,11 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
     return SizedBox(
       width: px(550),
       height: px(700),
-      child: _providerDetaild.cloumnChart == 0 ?
+      child: _providerDetaild.cloumnChart == 0 && !widget.erect ?
       Echarts(
         option: pie,
       ):
-      _providerDetaild.cloumnChart == 1 ?
+      _providerDetaild.cloumnChart == 1 || widget.erect?
       Echarts(
         option: erectImage,
       ):Echarts(

@@ -49,7 +49,18 @@ class _EnterpriseReformState extends State<EnterpriseReform> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: List.generate(solutionList.length, (i) => rectification(i)),
+      children: [
+        // Container(
+        //   color: Colors.white,
+        //   padding: EdgeInsets.only(left: px(24)),
+        //   margin: EdgeInsets.only(top: px(4)),
+        //   height: px(56),
+        //   child: FormCheck.formTitle('整改详情'),
+        // ),
+        Column(
+          children: List.generate(solutionList.length, (i) => rectification(i)),
+        ),
+      ],
     );
   }
   ///整改详情

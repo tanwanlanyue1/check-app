@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scet_check/model/provider/provider_details.dart';
-import 'package:scet_check/utils/screen/adapter.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 import 'check_compon.dart';
@@ -30,7 +29,6 @@ class _LayoutPageState extends State<LayoutPage> {
   List _pageBody = [];//页面内容
   int _pageIndex = 0;//下标
   double off = 0.0;//偏移量
-
   ///监听滑动
   ///页面与头部一起滑动
   @override
@@ -53,8 +51,10 @@ class _LayoutPageState extends State<LayoutPage> {
   void didUpdateWidget(covariant LayoutPage oldWidget) {
     // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
-    _tabBar = widget.tabBar;
-    _pageBody = widget.pageBody;
+    if(oldWidget.pageBody != widget.pageBody){
+      _tabBar = widget.tabBar;
+      _pageBody = widget.pageBody;
+    }
   }
 
   @override

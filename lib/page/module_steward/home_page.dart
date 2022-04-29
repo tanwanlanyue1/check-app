@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scet_check/model/provider/provider_details.dart';
-import 'package:scet_check/page/module_steward/check/check_page.dart';
+import 'package:scet_check/model/provider/provider_home.dart';
 import 'package:scet_check/page/module_steward/law/law_page.dart';
 import 'package:scet_check/page/module_steward/message/message_page.dart';
 import 'package:scet_check/page/module_steward/personal/personal_center.dart';
@@ -9,33 +9,44 @@ import 'package:scet_check/utils/logOut/log_out.dart';
 import 'package:scet_check/utils/screen/adapter.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
+import 'check/statisticAnaly/home_classify.dart';
 import 'enterprise/enterprise_page.dart';
 
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  int? index;
+  HomePage({Key? key,this.index = 0}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  final _pageController = PageController();//PageView控制器
+  PageController _pageController = PageController();//PageView控制器
 
   int _tabIndex = 0;  // 默认索引第一个tab
 
   ///全局变量
   /// initOffest : 初始化tab偏移量
   ProviderDetaild? _roviderDetaild;
+  HomeModel? _homeModel; //全局的焦点
 
   final List _pageList = [
-    const CheckPage(),//隐患排查
+    // const CheckPage(),//隐患排查
+    const HomeClassify(),// 首页分类
     const EnterprisePage(),//企业管理
     const LawPage(),//法律法规
     const MessagePage(),//通知中心
     const PersonalCenter(),//个人中心
   ];
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    _tabIndex = widget.index ?? 0;
+    _pageController = PageController(initialPage: widget.index ?? 0);//PageView控制器
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -95,10 +106,12 @@ class _HomePageState extends State<HomePage> {
 ///activeImage: 选中图片
   Widget _buildItemMenu({required int index, required String commonImage, required String activeImage}) {
     _roviderDetaild = Provider.of<ProviderDetaild>(context, listen: true);
+    _homeModel = Provider.of<HomeModel>(context, listen: true);
     Widget menuItem = GestureDetector(
         onTap: () {
           _pageController.jumpToPage(index);
           _roviderDetaild!.initOffest();
+          _homeModel!.onVerifyNodes();
           setState(() {
             _tabIndex = index;
           });

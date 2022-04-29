@@ -201,7 +201,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
               surveyItem('归属片区',area),
               surveyItem('签到坐标','${(double.parse(repertoire['longitude'])).toStringAsFixed(2)}, '
                   '${((double.parse(repertoire['latitude'])).toStringAsFixed(2))}',),
-              surveyItem('检查人',stewardCheck),
+              surveyItem('排查人员',stewardCheck),
               surveyItem('企业名',repertoire['company']['name']),
               surveyItem('排查日期',checkDate.substring(0,10)),
               FormCheck.rowItem(
@@ -250,7 +250,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
               ),
               surveyItem('归属片区',area),
               surveyItem('区域位置',location),
-              surveyItem('检查人',stewardCheck),
+              surveyItem('排查人员',stewardCheck),
               surveyItem('检查类型',checkType),
               surveyItem('排查日期',checkDate.substring(0,10)),
               Container(

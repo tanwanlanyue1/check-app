@@ -5,6 +5,7 @@ import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/page/module_login/login_page.dart';
 import 'package:scet_check/page/module_login/components/update_app.dart';
+import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/routers/router_animate/router_animate.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
@@ -37,6 +38,7 @@ class _MessagePageState extends State<MessagePage> {
             height: appTopPadding(context),
             color: Color(0xff19191A),
           ),
+          TaskCompon.topTitle(title: '通知中心'),
           InkWell(
             child: Icon(Icons.people_alt_outlined,size: px(100),),
             onTap: (){
@@ -113,7 +115,7 @@ class _MessagePageState extends State<MessagePage> {
           ],
         ),
         onTap: (){
-          Navigator.pushNamed(context, '/homeClassify');
+          Navigator.pushNamed(context, '/messageDetailsPage');
         },
       ),
     );

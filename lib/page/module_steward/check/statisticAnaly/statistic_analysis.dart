@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
+import 'package:scet_check/main.dart';
 import 'package:scet_check/model/provider/provider_details.dart';
 import 'package:scet_check/page/module_steward/check/StatisticAnaly/statistics.dart';
 import 'package:scet_check/utils/screen/screen.dart';
@@ -16,7 +17,7 @@ class StatisticAnalysis extends StatefulWidget {
   _StatisticAnalysisState createState() => _StatisticAnalysisState();
 }
 
-class _StatisticAnalysisState extends State<StatisticAnalysis> {
+class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
 
   List tabBar = [];//表头
   List districtList = [];//片区统计数据
@@ -42,6 +43,13 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> {
       controllerTow.jumpTo(controller.offset);
     });
     super.initState();
+  }
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    ///监听路由
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
   }
   @override
   void didUpdateWidget(covariant StatisticAnalysis oldWidget) {
@@ -152,61 +160,54 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> {
   ///判断表单的数据
   ///判断切换的类型和片区
   judge(){
+    Map<String, dynamic> data = {};
     switch (_types){
       case 0: {
         type = '企业';
-        _pageIndex == 0 ?
-        _getProblemStatis(
-            data: {
-              'groupTable':'company',
-
-            }) :
-        _getProblemStatis(
-            data: {
-              'district.id': districtId[_pageIndex],
-              'groupTable':'company',
-
-            });
+        data =  _pageIndex == 0 ?
+       {'groupTable':'company',} :
+        {
+          'district.id': districtId[_pageIndex],
+          'groupTable':'company',
+        };
+        _getProblemStatis(data: data);
         setState((){});
         return;
       }
       case 1: {
         type = '行业';
-        _pageIndex == 0 ?
-        _getProblemStatis(
-            data: {
-              'groupTable':'industry',
-
-            }) :
-        _getProblemStatis(
-            data: {
-              'district.id': districtId[_pageIndex],
-              'groupTable':'industry'
-            }
-        );
+        data =  _pageIndex == 0 ?
+        {'groupTable':'industry',} :
+        {
+          'district.id': districtId[_pageIndex],
+          'groupTable':'industry',
+        };
+        _getProblemStatis(data: data);
         setState((){});
         return;
       }
       case 2: {
         type = '片区';
-        _pageIndex == 0 ?
-        _getProblemStatis(
-            data: {
-              'groupTable':'district',
-
-            }) :
-        _getProblemStatis(
-            data: {
-              'district.id': districtId[_pageIndex],
-              'groupTable':'district'
-            }
-        );
+        data =  _pageIndex == 0 ?
+        {'groupTable':'district',} :
+        {
+          'district.id': districtId[_pageIndex],
+          'groupTable':'district',
+        };
+        _getProblemStatis(data: data);
         setState((){});
         return;
       }
     }
   }
 
+  //清除偏移量
+  @override
+  void didPop() {
+    // TODO: implement didPop
+    _roviderDetaild!.initOffest();
+    super.didPop();
+  }
   @override
   Widget build(BuildContext context) {
     _roviderDetaild = Provider.of<ProviderDetaild>(context, listen: true);
@@ -264,6 +265,7 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> {
             type:type,
             tableBody:_tableBody,
             callBack:(val){
+              print('val====$val');
               _types = val;
               judge();
             },

@@ -5,6 +5,8 @@ import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 
+import 'components/task_compon.dart';
+
 //个人中心
 class PersonalCenter extends StatefulWidget {
   const PersonalCenter({Key? key}) : super(key: key);
@@ -37,6 +39,7 @@ class _PersonalCenterState extends State<PersonalCenter> {
             height: appTopPadding(context),
             color: Color(0xff19191A),
           ),
+          TaskCompon.topTitle(title: '个人中心'),
           _header(),
           Column(
             children: List.generate(classify.length, (i){
@@ -47,10 +50,10 @@ class _PersonalCenterState extends State<PersonalCenter> {
       ),
     );
   }
+
   ///头部
   Widget _header(){
     return Container(
-      // height: px(100),
       width: double.infinity,
       margin: EdgeInsets.only(left: px(24),right: px(24),top: px(24)),
       padding: EdgeInsets.only(left: px(24),right: px(24),top: px(8),bottom: px(8)),

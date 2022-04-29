@@ -116,6 +116,7 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
           ],
         ),
         onTap: (){
+          Navigator.pushNamed(context, '/backTaskDetails');
         },
       ),
     );

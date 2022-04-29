@@ -164,77 +164,81 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
       ),
     );
   }
-  ///填报整改情况
+
+  ///填报整改情况.
+  ///getLose网络请求是吧，关掉新增按钮
   Widget addAbarbeitung(){
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Container(
-                color: Colors.white,
-                padding: EdgeInsets.only(left: px(24)),
-                margin: EdgeInsets.only(top: px(4)),
-                height: px(56),
-                child: FormCheck.formTitle('整改详情'),
-              ),
-            ),
-            abarbeitung ?
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              child: Container(
-                margin: EdgeInsets.only(left: px(24),right: px(24),bottom: px(4)),
-                padding: EdgeInsets.only(left: px(12),right: px(12),bottom: px(4),top: px(4)),
-                child: Text('修改',style: TextStyle(
-                    fontSize: sp(26),
-                    color: Colors.white
-                  // color: Color(0xff323233),
-                )),
-                decoration: BoxDecoration(
-                  color: Color(0xff4D7FFF),
-                  border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
-                  borderRadius: BorderRadius.all(Radius.circular(px(10))),
+    return Container(
+      padding: EdgeInsets.only(right: px(24)),
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  color: Colors.white,
+                  padding: EdgeInsets.only(left: px(24)),
+                  margin: EdgeInsets.only(top: px(4)),
+                  height: px(56),
+                  child: FormCheck.formTitle('整改详情'),
                 ),
               ),
-              onTap: () async{
-                var res = await Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId});
-                if(res == true){
-                  _getProblems();
-                  _setSolution();
-                }
-              },
-            ) :
-            Container(),
-          ],
-        ),
-        getLose != true && (solutionList.isEmpty || problemList['status'] == 4) && !abarbeitung ?
-        GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          child: Container(
-            margin: EdgeInsets.only(left: px(24),right: px(24),bottom: px(4)),
-            padding: EdgeInsets.only(left: px(12),right: px(12),bottom: px(4),top: px(4)),
-            child: Text('填报整改情况',style: TextStyle(
-              fontSize: sp(26),
-              color: Colors.white
-              // color: Color(0xff323233),
-            )),
-            decoration: BoxDecoration(
-              color: Color(0xff4D7FFF),
-              border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
-              borderRadius: BorderRadius.all(Radius.circular(px(10))),
-            ),
+              abarbeitung ?
+              GestureDetector(
+                child: Container(
+                  padding: EdgeInsets.only(left: px(12),right: px(12),bottom: px(4),top: px(4)),
+                  child: Text('修改',style: TextStyle(
+                      fontSize: sp(26),
+                      color: Colors.white
+                  )),
+                  decoration: BoxDecoration(
+                    color: Color(0xff4D7FFF),
+                    border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
+                    borderRadius: BorderRadius.all(Radius.circular(px(10))),
+                  ),
+                ),
+                onTap: () async{
+                  var res = await Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId});
+                  if(res == true){
+                    _getProblems();
+                    _setSolution();
+                  }
+                },
+              ) :
+              Container(),
+            ],
           ),
-          onTap: () async{
-            var res = await Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId});
-            if(res == true){
-              _getProblems();
-              _setSolution();
-            }
-          },
-        ):
-        Container(),
-      ],);
+          getLose != true && (solutionList.isEmpty || problemList['status'] == 4) && !abarbeitung ?
+          GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            child: Container(
+              margin: EdgeInsets.only(left: px(24),right: px(24),bottom: px(4)),
+              padding: EdgeInsets.only(left: px(12),right: px(12),bottom: px(4),top: px(4)),
+              child: Text('填报整改情况',style: TextStyle(
+                  fontSize: sp(26),
+                  color: Colors.white
+                // color: Color(0xff323233),
+              )),
+              decoration: BoxDecoration(
+                color: Color(0xff4D7FFF),
+                border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
+                borderRadius: BorderRadius.all(Radius.circular(px(10))),
+              ),
+            ),
+            onTap: () async{
+              var res = await Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId});
+              if(res == true){
+                _getProblems();
+                _setSolution();
+              }
+            },
+          ):
+          Container(),
+        ],
+      ),
+    );
   }
 
 }

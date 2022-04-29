@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
@@ -7,9 +8,11 @@ import 'components/law_components.dart';
 
 ///政策标准规范
 ///search：判断要不要输入框
+///topBar: 头部
 class PolicyStand extends StatefulWidget {
   bool search;
-  PolicyStand({Key? key,this.search = true}) : super(key: key);
+  bool topBar;
+  PolicyStand({Key? key,this.search = true,this.topBar = false}) : super(key: key);
 
   @override
   _PolicyStandState createState() => _PolicyStandState();
@@ -50,6 +53,23 @@ class _PolicyStandState extends State<PolicyStand> {
       body: ListView(
         padding: EdgeInsets.only(top: 0),
         children: [
+          Visibility(
+            visible: widget.topBar,
+            child: Container(
+              width: px(750),
+              height: appTopPadding(context),
+              color: Color(0xff19191A),
+            ),
+          ),
+          Visibility(
+            visible: widget.topBar,
+            child: RectifyComponents.topBar(
+                title: '法律规范',
+                callBack: (){
+                  Navigator.pop(context);
+                }
+            ),
+          ),
           widget.search ?
           Container(
             height: px(88),

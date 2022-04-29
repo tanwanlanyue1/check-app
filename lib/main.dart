@@ -12,6 +12,7 @@ import 'package:scet_check/routers/routes.dart';
 import 'package:scet_check/utils/screen/adapter.dart';
 
 import 'model/provider/provider_app.dart';
+import 'model/provider/provider_home.dart';
 
 void main() {
 
@@ -37,7 +38,8 @@ void main() {
       MultiProvider(
         providers: [
           ChangeNotifierProvider<AppState>.value(value: Global.appState,),
-          ChangeNotifierProvider(create: (_) => ProviderDetaild(),)
+          ChangeNotifierProvider(create: (_) => ProviderDetaild(),),
+          ChangeNotifierProvider(create: (_) => HomeModel(),)
         ],
         child:MyApp(routerStr: Global.router,),
       ),

@@ -155,7 +155,6 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
     ///监听路由
     routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
   }
-
   @override
   void didPopNext() {
     ///监听路由是否返回进来
@@ -337,20 +336,9 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
             ),
             FormCheck.rowItem(
               title: "排查人员",
-              // child: !declare ?
               child: Text(checkPersonnel, style: TextStyle(color: Color(0xff323233),
                   fontSize: sp(28),
                   fontFamily: 'Roboto-Condensed'),)
-              // Container(
-              //   color: Color(0xffF5F6FA),
-              //   child: FormCheck.inputWidget(
-              //       hintText: checkPersonnel.isEmpty ? '请输入排查人员' : checkPersonnel,
-              //       onChanged: (val){
-              //         checkPersonnel = val;
-              //         setState(() {});
-              //       }
-              //   ),
-              // ),
             ),
             FormCheck.rowItem(
               title: "问题类型",
@@ -658,10 +646,6 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
 
   ///日期转换
   String formatTime(time) {
-    return utcToLocal(time.toString()).substring(0,10);
-  }
-  ///展示年月日
-  String formatTimes(DateTime time) {
-    return DateFormat("yyyy-MM-dd").format(time);
+    return utcToLocal(time.toString()).substring(0,16);
   }
 }

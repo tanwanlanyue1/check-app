@@ -14,6 +14,9 @@ import 'package:scet_check/page/module_steward/check/hiddenParame/steward_check.
 import 'package:scet_check/page/module_steward/check/potentialRisks/fill_in_form.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/screening_based.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/home_classify.dart';
+import 'package:scet_check/page/module_steward/check/targetClassify/target_classify.dart';
+import 'package:scet_check/page/module_steward/check/targetClassify/target_classify_list.dart';
+import 'package:scet_check/page/module_steward/check/targetClassify/target_details.dart';
 import 'package:scet_check/page/module_steward/enterprise/enterprise_details.dart';
 import 'package:scet_check/page/module_steward/home_page.dart';
 import 'package:scet_check/page/module_steward/law/essential_details.dart';
@@ -22,16 +25,20 @@ import 'package:scet_check/page/module_steward/law/file_lists.dart';
 import 'package:scet_check/page/module_login/guide_page.dart';
 import 'package:scet_check/page/module_login/login_page.dart';
 import 'package:scet_check/page/module_steward/law/fill_details.dart';
+import 'package:scet_check/page/module_steward/law/policy_stand.dart';
+import 'package:scet_check/page/module_steward/message/message_details.dart';
+import 'package:scet_check/page/module_steward/personal/back_task_details.dart';
 import 'package:scet_check/page/module_steward/personal/backlog_task.dart';
 import 'package:scet_check/page/module_steward/personal/have_done_task.dart';
 import 'package:scet_check/page/module_steward/personal/history_task.dart';
+import 'package:scet_check/page/module_steward/personal/task_details.dart';
 
 
 /// 配置静态路由
 final routes = {
   '/': (context) =>  GuidePage(), //引导页  GuidePage
   '/logIn': (context) =>  LoginPage(), //登录页面
-  '/steward': (context) =>  HomePage(), //管家 根路由
+  '/steward': (context,{arguments}) =>  HomePage(index: arguments,), //管家 根路由
   '/enterpriseHome': (context) =>  EnterpriseHome(), //企业 根路由
   '/protectionAgencyHome': (context) =>  ProtectionAgencyHome(), //环保局 根路由
   '/checkPage': (context) =>  CheckPage(), //隐患排查
@@ -47,10 +54,17 @@ final routes = {
   '/stewardCheck': (context,{arguments}) =>  StewardCheck(arguments:arguments), //管家排查
   '/PDFView': (context,{arguments}) =>  PDFView(pathPDF:arguments), //PDF页面
   '/companyFile': (context,{arguments}) =>  CompanyFile(arguments:arguments), //一企一档
+  '/messageDetailsPage': (context) =>  MessageDetailsPage(), //通知消息详情
   '/homeClassify': (context) =>  HomeClassify(), //首页分类
   '/historyTask': (context,{arguments}) =>  HistoryTask(arguments:arguments), //历史台账
   '/backlogTask': (context,{arguments}) =>  BacklogTask(arguments:arguments), //待办任务
-  '/haveDoneTask': (context,{arguments}) =>  HaveDoneTask(arguments:arguments), //已办任务 PolicyStand
+  '/backTaskDetails': (context,{arguments}) =>  BackTaskDetails(), //待办任务详情
+  '/haveDoneTask': (context,{arguments}) =>  HaveDoneTask(arguments:arguments), //已办任务
+  '/taskDetails': (context,{arguments}) =>  TaskDetails(), //任务详情
+  '/policyStand': (context,{arguments}) =>  PolicyStand(topBar: arguments,), //规范标准
+  '/targetClassifyPage': (context) =>  TargetClassifyPage(), //指标分类页
+  '/targetClassifyList': (context,{arguments}) =>  TargetClassifyList(arguments:arguments), //指标详情列表
+  '/targetDetails': (context,{arguments}) =>  TargetDetails(arguments:arguments), //指标详情
 
 ///企业端
   '/enterprisInventory': (context,{arguments}) =>  EnterprisInventory(arguments:arguments), //企业清单详情

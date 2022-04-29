@@ -40,6 +40,10 @@ class _StatisticsState extends State<Statistics> {
   @override
   void didUpdateWidget(covariant Statistics oldWidget) {
     dealWith();
+    if(widget.pageIndex != oldWidget.pageIndex){
+      tabIndex = 0;
+      setState(() {});
+    }
     // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
   }

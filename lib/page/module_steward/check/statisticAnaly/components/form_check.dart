@@ -122,10 +122,11 @@ class FormCheck {
 
   ///输入框
   ///disabled:启用
+  ///filled:填充的背景色
   ///hintText:默认
   ///onChanged:回调
   ///unit:单位
-  static Widget inputWidget({bool? disabled, String? hintText = '请输入', Function? onChanged,int lines = 1, String? unit}) {
+  static Widget inputWidget({bool? disabled, bool filled = false, String? hintText = '请输入', Function? onChanged,int lines = 1, String? unit}) {
     return Row(
       children: [
         Expanded(
@@ -139,7 +140,7 @@ class FormCheck {
                     fontSize: sp(28.0)
                 ),
                 contentPadding: EdgeInsets.all(px(16.0)),
-                // filled: true,
+                filled: filled,
                 fillColor: Color(0XffF5F6FA),
                 border: InputBorder.none,
               ),

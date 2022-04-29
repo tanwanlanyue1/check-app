@@ -89,6 +89,6 @@ class _ReviewSituationState extends State<ReviewSituation> {
   }
   ///日期转换
   String formatTime(time) {
-    return utcToLocal(time.toString()).substring(0,10);
+    return utcToLocal(time.toString()).substring(0,16);
   }
 }

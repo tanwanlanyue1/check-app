@@ -428,7 +428,7 @@ class _StewardCheckState extends State<StewardCheck>{
               ),
               surveyItem('归属片区',area),
               surveyItem('区域位置',location),
-              surveyItem('检查人',stewardCheck),
+              surveyItem('排查人员',stewardCheck),
               Container(
                 margin: EdgeInsets.only(top: px(24)),
                 child: FormCheck.rowItem(
