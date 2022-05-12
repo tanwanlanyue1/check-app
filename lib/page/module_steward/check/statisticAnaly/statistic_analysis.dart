@@ -44,13 +44,7 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
     });
     super.initState();
   }
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-    ///监听路由
-    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
-  }
+
   @override
   void didUpdateWidget(covariant StatisticAnalysis oldWidget) {
     // TODO: implement didUpdateWidget
@@ -58,6 +52,7 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
     dealWith();
     super.didUpdateWidget(oldWidget);
   }
+
   /// 获取片区统计
   /// 获取tabbar表头，不在写死,
   /// 片区id也要获取，传递到页面请求片区详情
@@ -109,7 +104,7 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
     } :
     {
       'status':'[2,3]',
-      'district.id': districtId[_pageIndex]
+      'districtId': districtId[_pageIndex]
     };
     var response = await Request().get(
         Api.url['problemCount'],
@@ -146,10 +141,10 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
   ///默认第一次查询企业类型-company
   void dealWith (){
     _data = _pageIndex == 0 ? {} :
-    { 'district.id': districtId[_pageIndex] };
+    { 'districtId': districtId[_pageIndex] };
     groupTable = _pageIndex == 0 ? {'groupTable':'company'} :
     {
-      'district.id': districtId[_pageIndex],
+      'districtId': districtId[_pageIndex],
       'groupTable':'company'
     };
     _getProblem();
@@ -167,7 +162,7 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
         data =  _pageIndex == 0 ?
        {'groupTable':'company',} :
         {
-          'district.id': districtId[_pageIndex],
+          'districtId': districtId[_pageIndex],
           'groupTable':'company',
         };
         _getProblemStatis(data: data);
@@ -179,7 +174,7 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
         data =  _pageIndex == 0 ?
         {'groupTable':'industry',} :
         {
-          'district.id': districtId[_pageIndex],
+          'districtId': districtId[_pageIndex],
           'groupTable':'industry',
         };
         _getProblemStatis(data: data);
@@ -191,7 +186,7 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
         data =  _pageIndex == 0 ?
         {'groupTable':'district',} :
         {
-          'district.id': districtId[_pageIndex],
+          'districtId': districtId[_pageIndex],
           'groupTable':'district',
         };
         _getProblemStatis(data: data);
@@ -201,6 +196,14 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
     }
   }
 
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    ///监听路由
+    // routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+  }
+
   //清除偏移量
   @override
   void didPop() {
@@ -208,6 +211,7 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
     _roviderDetaild!.initOffest();
     super.didPop();
   }
+
   @override
   Widget build(BuildContext context) {
     _roviderDetaild = Provider.of<ProviderDetaild>(context, listen: true);
@@ -265,7 +269,6 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
             type:type,
             tableBody:_tableBody,
             callBack:(val){
-              print('val====$val');
               _types = val;
               judge();
             },

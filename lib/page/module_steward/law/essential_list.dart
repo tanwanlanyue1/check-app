@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
-import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
+import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 import 'components/law_components.dart';
@@ -20,7 +20,6 @@ class _EssentialListState extends State<EssentialList> {
   Map gistData = {};//一级数据
   List gistChildren = [];//二级数据
   /// 获取排查依据
-  ///
   void _getBasis() async {
     var response = await Request().get(Api.url['basisList'],
         data: {
@@ -45,9 +44,9 @@ class _EssentialListState extends State<EssentialList> {
     return Scaffold(
       body: Column(
         children: [
-          RectifyComponents.appBarBac(),
-          RectifyComponents.topBar(
+          TaskCompon.topTitle(
               title: '${gistData['name']}',
+              left: true,
               callBack: (){
                 Navigator.pop(context);
               }

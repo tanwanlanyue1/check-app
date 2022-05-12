@@ -6,9 +6,9 @@ import 'package:scet_check/page/module_steward/check/hiddenParame/components/rec
 import 'package:scet_check/page/module_steward/check/potentialRisks/enterprise_reform.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/fill_in_form.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/review_situation.dart';
+import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/routers/routes.dart';
 import 'package:scet_check/utils/screen/screen.dart';
-import 'package:scet_check/utils/time/utc_tolocal.dart';
 
 ///企业台账详情
 /// arguments = {check:是否申报,'problemId':问题id}
@@ -31,7 +31,6 @@ class _RectificationProblemState extends State<RectificationProblem> {
   List solutionList = [];//整改详情
   List reviewList = [];//复查详情
   Map argumentMap = {};//传递的参数
-
   ///选择时间所需的key，传递下去
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -67,7 +66,7 @@ class _RectificationProblemState extends State<RectificationProblem> {
   /// 1,2.3只能看提交的
   void _setSolution() async {
     Map<String,dynamic> _data = {
-      'problem.id':problemId,
+      'problemId':problemId,
       'status':"[1,2,3]"
     };
     var response = await Request().get(
@@ -83,7 +82,7 @@ class _RectificationProblemState extends State<RectificationProblem> {
   /// 是否复查结束
   void _getReviewList() async {
     Map<String,dynamic> _data = {
-      'problem.id': problemId,
+      'problemId': problemId,
     };
     var response = await Request().get(
         Api.url['reviewList'],data: _data
@@ -107,7 +106,7 @@ class _RectificationProblemState extends State<RectificationProblem> {
     if(problemList['isProblemCommit']){
       if(solutionList.isNotEmpty && review == false){
         if(problemList['status'] == 2){
-          var res =  await Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId,'review':true});
+          var res =  await Navigator.pushNamed(context, '/fillAbarbeitung',arguments: {'id':problemId,'review':true});
           if(res == true){
             _getReviewList();
             _getProblems();
@@ -165,6 +164,8 @@ class _RectificationProblemState extends State<RectificationProblem> {
                     'problemList':problemList,
                   },
                 ),
+                solutionList.isNotEmpty?
+                detaile() : Container(),
                 //企业整改详情
                 solutionList.isNotEmpty?
                 EnterpriseReform(
@@ -211,29 +212,39 @@ class _RectificationProblemState extends State<RectificationProblem> {
           Expanded(
             flex: 1,
             child: Center(
-              child: Text("隐患排查问题整改详情",style: TextStyle(color: Color(0xff323233),fontSize: sp(36),fontFamily: 'M'),),
+              child: Text("隐患排查问题整改详情",style: TextStyle(color: Color(0xff323233),fontSize: sp(32),fontFamily: 'M'),),
             ),
-          ),
-          GestureDetector(
-            child: Container(
-              margin: EdgeInsets.only(right: px(20)),
-              child: (problemList['isProblemCommit'] ?? false) ? Image.asset(
+          ),//review
+          Visibility(
+            visible: !review,
+            child: GestureDetector(
+              child: Container(
+                margin: EdgeInsets.only(right: px(20)),
+                child: (problemList['isProblemCommit'] ?? false) ? Image.asset(
                   'lib/assets/icons/form/add.png',
-                width: px(50),
-                height: px(51),
-              ):
-              Text('修改详情',style: TextStyle(color: Color(0xff323233),fontSize: sp(28))),
+                  width: px(50),
+                  height: px(51),
+                ):
+                Text('修改详情',style: TextStyle(color: Color(0xff323233),fontSize: sp(28))),
+              ),
+              onTap: (){
+                checkEnd();
+              },
             ),
-            onTap: (){
-              checkEnd();
-            },
           ),
         ],
       ),
     );
   }
-  //日期转换
-  String formatTime(time) {
-    return utcToLocal(time.toString()).substring(0,10);
+
+  ///整改详情
+  Widget detaile(){
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.only(left: px(24)),
+      margin: EdgeInsets.only(top: px(4)),
+      height: px(56),
+      child: FormCheck.formTitle('整改详情'),
+    );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/problem_page.dart';
+import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'inventory_page.dart';
 
@@ -37,8 +38,14 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
     return Scaffold(
       body: Column(
         children: [
-          RectifyComponents.appBarBac(),
-          topBar(),
+          TaskCompon.topTitle(
+              title: companyName,
+              left: true,
+              font: 28,
+              callBack: (){
+                Navigator.pop(context);
+              }
+          ),
           Container(
             height: px(64.0),
             color: Colors.white,
@@ -76,46 +83,6 @@ class _HiddenDetailsState extends State<HiddenDetails>  with SingleTickerProvide
                 ]
             ),
           ),
-        ],
-      ),
-    );
-  }
-  ///头部
-  ///签到
-  Widget topBar(){
-    return Container(
-      color: Colors.white,
-      height: px(88),
-      child: Row(
-        children: [
-          InkWell(
-            child: Container(
-              height: px(40),
-              width: px(41),
-              margin: EdgeInsets.only(left: px(20)),
-              child: Image.asset('lib/assets/icons/other/chevronLeft.png',fit: BoxFit.fill,),
-            ),
-            onTap: (){
-              Navigator.pop(context);
-            },
-          ),
-          Expanded(
-            flex: 1,
-            child: Center(
-              child: Text(companyName,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
-            ),
-          ),
-          // GestureDetector(
-          //   child: Container(
-          //     width: px(40),
-          //     height: px(41),
-          //     margin: EdgeInsets.only(right: px(20)),
-          //     child: Image.asset('lib/assets/icons/form/add.png'),
-          //   ),
-          //   onTap: () async{
-          //     singIn();
-          //   },
-          // ),
         ],
       ),
     );

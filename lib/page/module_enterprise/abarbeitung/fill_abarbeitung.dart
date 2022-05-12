@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
@@ -7,32 +8,38 @@ import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
+import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 import 'package:scet_check/utils/time/utc_tolocal.dart';
 import 'package:uuid/uuid.dart';
 
+import 'abarbeitung_pdf.dart';
+
 ///填报整改问题
 ///arguments:{'id':问题id,'review':是否复查}
-class FillAbarabeitung extends StatefulWidget {
+class FillAbarbeitung extends StatefulWidget {
   final Map? arguments;
-  const FillAbarabeitung({Key? key,this.arguments,}) : super(key: key);
+  const FillAbarbeitung({Key? key,this.arguments,}) : super(key: key);
 
   @override
-  _FillAbarabeitungState createState() => _FillAbarabeitungState();
+  _FillAbarbeitungState createState() => _FillAbarbeitungState();
 }
 
-class _FillAbarabeitungState extends State<FillAbarabeitung> {
+class _FillAbarbeitungState extends State<FillAbarbeitung> {
 
   List imgDetails = [];//图片列表
+  List reportsList = [];//上传报告列表
   String _uuid = '';//uuid
   Uuid uuid = Uuid();//uuid
   String descript = '';//整改措施
   String reviewPerson = '';//复查人员
-  String userId = '';//用户id
+  String userId = '';//用户idt
   String remark = '';//其他说明
   String userName = '';//用户名
+  String pdfString = '';//上传附件
+  String pdfName = '';//上传附件名称
   bool review = false;//复查填报
   bool isImportant = false; //是否完成整改
   List solutionList = [];//整改详情
@@ -60,7 +67,7 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
         'images': imgDetails,
         'userId': userId,
         'problemId': widget.arguments!['id'],
-        // 'remark': remark,
+        'reports':reportsList,
       };
       var response = await Request().post(
         Api.url['solution'],data: _data,
@@ -78,14 +85,15 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
   /// status 1,待复查;2,复查已通过;3,复查未通过 4保存
   void _setSolution() async {
     Map<String,dynamic> _data = {
-      'problem.id':widget.arguments!['id'],
+      'problemId':widget.arguments!['id'],
     };
     var response = await Request().get(
         Api.url['solutionList'],data: _data
     );
-    if(response['statusCode'] == 200 && response['data']!=null) {
+    if(response['statusCode'] == 200 && response['data'] != null) {
       solutionList = response['data']['list'];
-      if(solutionList.isNotEmpty && solutionList[0]['status'] != 3){
+      //修改整改详情时，拿到第一项
+      if(solutionList.isNotEmpty && solutionList[0]['status'] == 4){
         descript = solutionList[0]['descript'];
         if( review == false){
           imgDetails = solutionList[0]['images'];
@@ -93,6 +101,11 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
           imgDetails = [];
         }
         _uuid = solutionList[0]['id'];
+        reportsList = solutionList[0]['reports'] ?? [];
+        if(reportsList.isNotEmpty){
+          pdfString = reportsList[0]['url'];
+          pdfName = reportsList[0]['name'];
+        }
       }
       setState(() {});
     }
@@ -139,7 +152,9 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
     userName= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
     userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
     review = widget.arguments?['review'] ?? false;
-    _setSolution();
+    if(!review){
+      _setSolution();
+    }
     super.initState();
   }
 
@@ -149,9 +164,9 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
       key: _scaffoldKey,
       body: Column(
         children: [
-          RectifyComponents.appBarBac(),
-          RectifyComponents.topBar(
+          TaskCompon.topTitle(
               title: review ? '隐患复查问题填报' : '隐患整改问题填报',
+              left: true,
               callBack: (){
                 Navigator.pop(context);
               }
@@ -175,7 +190,7 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
   Widget fillAgent(){
     return FormCheck.dataCard(
         children: [
-          FormCheck.formTitle('问题详情'),
+          FormCheck.formTitle('整改详情'),
           FormCheck.rowItem(
             title: "整改措施",
             child: FormCheck.inputWidget(
@@ -208,6 +223,19 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
                 fontSize: sp(28),
                 fontFamily: 'Roboto-Condensed'),),
           ),
+          pdfString.isNotEmpty ?
+          GestureDetector(
+            child: FormCheck.rowItem(
+              title: "附件",
+              child: Text(pdfName, style: TextStyle(color: Color(0xff323233),
+                  fontSize: sp(28),
+                  fontFamily: 'Roboto-Condensed'),),
+            ),
+            onTap: (){
+              Navigator.pushNamed(context, '/PDFView',arguments: Api.baseUrlApp+pdfString);
+            },
+          ):
+          Container(),
           Container(
             height: px(88),
             margin: EdgeInsets.only(top: px(4)),
@@ -263,26 +291,16 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
                     );
                   },
                 ),
-                GestureDetector(
-                  child: Container(
-                    width: px(200),
-                    height: px(56),
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.only(left: px(20)),
-                    child: Text(
-                      '上传整改报告',
-                      style: TextStyle(
-                          fontSize: sp(24),
-                          fontFamily: "R",
-                          color: Color(0xFF323233)),
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
-                      borderRadius: BorderRadius.all(Radius.circular(px(28))),
-                    ),
-                  ),
-                  onTap: (){
-                    print('上传整改报告');
+                AbarbeitungPdf(
+                  url: Api.baseUrlApp + 'file/upload?savePath=整改/',
+                  inventoryId: _uuid,
+                  uploading: true,
+                  title: '上传整改报告',
+                  callback: (val){
+                    reportsList = [{'name':val['name'],'url':val['filePath']}];
+                    pdfName = val['name'];
+                    pdfString = val['filePath'];
+                    setState(() {});
                   },
                 ),
               ],
@@ -312,9 +330,12 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
             ),
             FormCheck.rowItem(
               title: "复查时间",
-              child: Text(formatTime(_dateTime), style: TextStyle(color: Color(0xff323233),
-                  fontSize: sp(28),
-                  fontFamily: 'Roboto-Condensed'),),
+              child: Container(
+                margin: EdgeInsets.only(left: px(12)),
+                child: Text(formatTime(_dateTime), style: TextStyle(color: Color(0xff323233),
+                    fontSize: sp(28),
+                    fontFamily: 'Roboto-Condensed'),),
+              ),
             ),
             FormCheck.rowItem(
               title: "复查详情",
@@ -329,17 +350,20 @@ class _FillAbarabeitungState extends State<FillAbarabeitung> {
             FormCheck.rowItem(
               alignStart: true,
               title: "复查图片记录",
-              child: UploadImage(
-                imgList: imgDetails,
-                uuid: _uuid,
-                closeIcon: true,
-                url: Api.baseUrlApp + 'file/upload?savePath=复查/',
-                callback: (List? data) {
-                  if (data != null) {
-                    imgDetails = data;
-                  }
-                  setState(() {});
-                },
+              child: Container(
+                margin: EdgeInsets.only(left: px(12)),
+                child: UploadImage(
+                  imgList: imgDetails,
+                  uuid: _uuid,
+                  closeIcon: true,
+                  url: Api.baseUrlApp + 'file/upload?savePath=复查/',
+                  callback: (List? data) {
+                    if (data != null) {
+                      imgDetails = data;
+                    }
+                    setState(() {});
+                  },
+                ),
               ),
             ),
             FormCheck.rowItem(

@@ -126,7 +126,7 @@ class FormCheck {
   ///hintText:默认
   ///onChanged:回调
   ///unit:单位
-  static Widget inputWidget({bool? disabled, bool filled = false, String? hintText = '请输入', Function? onChanged,int lines = 1, String? unit}) {
+  static Widget inputWidget({bool? disabled, bool filled = true, String? hintText = '请输入', Function? onChanged,int lines = 1, String? unit}) {
     return Row(
       children: [
         Expanded(
@@ -200,7 +200,7 @@ class FormCheck {
   ///提交按钮
   ///cancel:取消回调
   ///submit:提交回调
- static Widget submit({Function? cancel,Function? submit}){
+ static Widget submit({Function? cancel,Function? submit,String? cancels,String? submits,Color? canColors,Color? subColors}){
     return Container(
         height: px(88),
         margin: EdgeInsets.only(top: px(4)),
@@ -214,14 +214,14 @@ class FormCheck {
                 height: px(56),
                 alignment: Alignment.center,
                 child: Text(
-                  '取消',
+                  cancels ?? '取消',
                   style: TextStyle(
                       fontSize: sp(24),
                       fontFamily: "R",
-                      color: Color(0xFF323233)),
+                      color: canColors ?? Color(0xFF323233)),
                 ),
                 decoration: BoxDecoration(
-                  border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
+                  border: Border.all(width: px(2),color: canColors ?? Color(0XffE8E8E8)),
                   borderRadius: BorderRadius.all(Radius.circular(px(28))),
                 ),
               ),
@@ -236,7 +236,7 @@ class FormCheck {
                 alignment: Alignment.center,
                 margin: EdgeInsets.only(left: px(40)),
                 child: Text(
-                  '提交',
+                  submits ?? '提交',
                   style: TextStyle(
                       fontSize: sp(24),
                       fontFamily: "R",

@@ -18,11 +18,13 @@ class AbarbeitungPdf extends StatefulWidget {
   final String? url;
   final String? inventoryId;
   final bool uploading;
+  final String? title;
   const AbarbeitungPdf({Key? key,
     this.callback,
     this.url,
     this.inventoryId,
     this.uploading = false,
+    this.title,
   }) : super(key: key);
   @override
 
@@ -36,6 +38,7 @@ class _AbarbeitungPdfState extends State<AbarbeitungPdf> {
   String _url = Api.url['uploadImg'];//url
   String _uuid = '';//uuid
   String inventoryId = '';//uuid
+  String nameReports = '';//报告名称
   Uuid uuid = Uuid();//uuid
 
   /// 上传pdf文件
@@ -50,9 +53,15 @@ class _AbarbeitungPdfState extends State<AbarbeitungPdf> {
     );
     if (result != null) {
       var isUp = await FileSystem.upload(result, url);
-      _setProblem(isUp?[0]['msg']);
-      if(isUp?[0]!=false){
-        widget.callback?.call(_imagesList);
+      if(widget.title == null){
+        _setProblem(isUp?[0]['msg']);
+        if(isUp?[0]!=false){
+          widget.callback?.call(_imagesList);
+        }
+      }else{
+        String filePath = (isUp![0]['msg']['data']['dir']+'/'+isUp[0]['msg']['data']['base']).replaceAll('\\', '/');
+        nameReports = result.names[0]!;
+        widget.callback?.call({'filePath':filePath,'name':nameReports});
       }
       setState(() {});
     }
@@ -106,11 +115,34 @@ class _AbarbeitungPdfState extends State<AbarbeitungPdf> {
           ToastWidget.showToastMsg('有问题未通过审核，请等待');
         }
       },
-      child: Container(
+      child: widget.title == null ?
+      Container(
         color: Colors.transparent,
         margin: EdgeInsets.only(right: px(24)),
         padding: EdgeInsets.only(left: px(24),right: px(24),top: px(5),bottom: px(5)),
-        child: Text('上传PDF',style: TextStyle(fontSize: sp(28)),),
+        child: Text(widget.title ?? '上传PDF',style: TextStyle(fontSize: sp(28)),),
+      ) :
+      GestureDetector(
+        child: Container(
+          width: px(200),
+          height: px(56),
+          alignment: Alignment.center,
+          margin: EdgeInsets.only(left: px(20)),
+          child: Text(
+            widget.title!,
+            style: TextStyle(
+                fontSize: sp(24),
+                fontFamily: "R",
+                color: Color(0xFF323233)),
+          ),
+          decoration: BoxDecoration(
+            border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
+            borderRadius: BorderRadius.all(Radius.circular(px(28))),
+          ),
+        ),
+        onTap: (){
+          _upload();
+        },
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scet_check/api/api.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/utils/screen/screen.dart';
@@ -50,13 +51,6 @@ class _EnterpriseReformState extends State<EnterpriseReform> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Container(
-        //   color: Colors.white,
-        //   padding: EdgeInsets.only(left: px(24)),
-        //   margin: EdgeInsets.only(top: px(4)),
-        //   height: px(56),
-        //   child: FormCheck.formTitle('整改详情'),
-        // ),
         Column(
           children: List.generate(solutionList.length, (i) => rectification(i)),
         ),
@@ -73,8 +67,8 @@ class _EnterpriseReformState extends State<EnterpriseReform> {
             child: Text('${solutionList[i]['user']?['nickname'] ?? ''}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
-          title: "当前状态",
-          child: Text(_status(solutionList[i]['status']),style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+            title: "当前状态",
+            child: Text(_status(solutionList[i]['status']),style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
             title: "整改措施",
@@ -84,6 +78,16 @@ class _EnterpriseReformState extends State<EnterpriseReform> {
             title: "整改时间",
             child: Text(formatTime(solutionList[i]['createdAt']),style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
+          solutionList[i]['reports'] != null && solutionList[i]['reports'].length >0 ?
+          GestureDetector(
+            child: FormCheck.rowItem(
+              title: "整改附件",
+              child: Text(solutionList[i]['reports'][0]['name'],style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),overflow: TextOverflow.ellipsis,),
+            ),
+            onTap: (){
+              Navigator.pushNamed(context, '/PDFView',arguments: Api.baseUrlApp+solutionList[i]['reports'][0]['url']);
+            },
+          ):Container(),
           FormCheck.rowItem(
               title: "整改图片",
               child: UploadImage(

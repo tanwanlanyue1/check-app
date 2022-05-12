@@ -10,12 +10,12 @@ import 'package:scet_check/page/module_steward/check/hiddenParame/components/rec
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/components/generalduty/time_select.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
+import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 import 'package:scet_check/utils/time/utc_tolocal.dart';
 import 'package:uuid/uuid.dart';
-import 'package:intl/intl.dart';
 
 ///排查问题填报
 ///        arguments = {
@@ -41,7 +41,6 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
   List imgDetails = [];//问题图片列表
   List lawImg = [];//法律法规截图
   List typeList = [];//问题类型列表
-  List lawList = [];//法律法规列表
   Map problemList = {};//问题详情列表
   bool declare = false; //申报
   bool addProblem = false;//新增问题
@@ -67,19 +66,12 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
   String solvedAt = '';//整改期限
   String otherType = '';//其他类型
   bool other = false;//其他类型
+  int remind = 0;//提醒次数
   late GlobalKey<ScaffoldState> _scaffoldKey; //时间选择key
   // DateTime checkTime = DateTime.now();//填报排查日期
   DateTime rectifyTime = DateTime.now().add(Duration(days: 7));//整改期限
 
 
-  /// 获取法律文件
-  void _getProfile() async {
-    var response = await Request().get(Api.url['lawFile']);
-    if(response['statusCode'] == 200) {
-      lawList = response['data'];
-      setState(() {});
-    }
-  }
 
   /// 获取问题类型
   void _getProblemType() async {
@@ -130,8 +122,8 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
     declare = widget.arguments?['declare'] ?? true;
     _scaffoldKey = widget.arguments?['key'] ?? GlobalKey<ScaffoldState>();
     addProblem = widget.arguments?['addProblem'] ?? false;
-    userName= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
-    userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
+    userName = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
+    userId = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
     if(declare){
       inventoryId = widget.arguments?['uuid'];
       companyId = widget.arguments?['companyId'];
@@ -140,7 +132,6 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
       checkPersonnel = widget.arguments?['stewardCheck'] ?? '';
       checkDay = DateTime.now().toString().substring(0,16);
       _getProblemType();
-      _getProfile();
       _getProblems();
     }else{
       _getProblems();
@@ -153,8 +144,9 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     ///监听路由
-    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+    // routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
   }
+
   @override
   void didPopNext() {
     ///监听路由是否返回进来
@@ -232,7 +224,7 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
               arguments: {'check':true,'problemId': problemId.isEmpty ? _uuid : problemId}
           );
         }else{
-          Navigator.pop(context);
+          Navigator.pop(context,true);
         }
         setState(() {});
       }
@@ -241,7 +233,12 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
 
   /// 提交问题类型
   void _postProblemType() async {
-    Request().post(Api.url['problemType'],data: {'id':_uuid,'name':otherType});
+    var response = await  Request().post(Api.url['problemType'],data: {'id':_uuid,'name':otherType});
+    if(response['statusCode'] == 200) {
+      typeId = response['data']['id'];
+      _setProblem();
+      setState(() {});
+    }
   }
 
   @override
@@ -257,7 +254,7 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
   void dispose() {
     // TODO: implement dispose
     /// 取消路由订阅
-    routeObserver.unsubscribe(this);
+    // routeObserver.unsubscribe(this);
     super.dispose();
   }
 
@@ -268,9 +265,9 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
       key: _scaffoldKey,
       body: Column(
         children: [
-          RectifyComponents.appBarBac(),
-          RectifyComponents.topBar(
+          TaskCompon.topTitle(
               title: '隐患排查问题填报',
+              left: true,
               callBack: (){
                 Navigator.pop(context);
               }
@@ -285,8 +282,7 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
           )
         ],
       ),
-    ):
-      rubyAgent();
+    ): rubyAgent();
   }
 
   ///排查问题 详情/填报
@@ -305,34 +301,25 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
                   height: px(48),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                      color: Colorswitchs(problemList['status']),
+                      color: RectifyComponents.Colorswitchs(problemList['status']),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(px(20)),
                         bottomLeft: Radius.circular(px(20)),
                       )
                   ),//状态；1,未整改;2,已整改;3,整改已通过;4,整改未通过
-                  child: Text(switchs(problemList['status'])
-                    ,style: TextStyle(color: Colors.white,fontSize: sp(20)),),
+                  child: Text(
+                    RectifyComponents.switchs(problemList['status']),
+                    style: TextStyle(color: Colors.white,fontSize: sp(20)),),
                 ) :
                 Container(),
               ],
             ),
             FormCheck.rowItem(
                 title: "排查时间",
-                // child: !declare ?
                 child: Text(checkDay, style: TextStyle(
                     color: Color(0xff323233),
                     fontSize: sp(28),
                     fontFamily: 'Roboto-Condensed'),),
-                // TimeSelect(
-                //   scaffoldKey: _scaffoldKey,
-                //   hintText: "请选择排查时间",
-                //   time: checkTime,
-                //   callBack: (time) {
-                //     checkTime = time;
-                //     setState(() {});
-                //   },
-                // )
             ),
             FormCheck.rowItem(
               title: "排查人员",
@@ -377,24 +364,55 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
               ),
             ) :
             Container(),
-
-            FormCheck.rowItem(
-              title: "问题详情",
-              alignStart: true,
-              child: Container(
-                color: !declare? Colors.white : Color(0xffF5F6FA),
-                padding: EdgeInsets.only(top: px(5),left: px(5)),
-                child: !declare ? Text(issueDetails, style: TextStyle(
-                    color: Color(0xff323233), fontSize: sp(28)),)
-                    : FormCheck.inputWidget(
-                    hintText: issueDetails.isEmpty ? '请输入问题详情':issueDetails,
-                    lines: 4,
-                    onChanged: (val){
-                      issueDetails = val;
-                      setState(() {});
-                    }
-                ),
-              ),
+            Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Column(
+                    children: [
+                      SizedBox(
+                          width: px(150),
+                          child: Text(
+                              '问题详情',
+                              textAlign: TextAlign.justify,
+                              style: TextStyle(
+                                  color: Color(0XFF969799),
+                                  fontSize: sp(28.0),
+                                  fontWeight: FontWeight.w500
+                              )
+                          )
+                      ),
+                      declare ?
+                      GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        child: Container(
+                            width: px(150),
+                            height: px(50),
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.only(right: px(24)),
+                            child: Image.asset('lib/assets/icons/my/query.png'),
+                        ),
+                        onTap: (){
+                          Navigator.pushNamed(context, '/screeningBased',arguments: {'law':false,'search':true});
+                        },
+                      ) : Container(),
+                    ],
+                  ),
+                   Expanded(
+                     child: Container(
+                     padding: EdgeInsets.only(top: px(5),left: px(5)),
+                     child: !declare ? Text(issueDetails, style: TextStyle(
+                         color: Color(0xff323233), fontSize: sp(28)),)
+                         : FormCheck.inputWidget(
+                         hintText: issueDetails.isEmpty ? '请输入问题详情':issueDetails,
+                         lines: 4,
+                         onChanged: (val){
+                           issueDetails = val;
+                           setState(() {});
+                         }
+                     ),
+                   ),)
+                ]
             ),
 
             FormCheck.rowItem(
@@ -498,6 +516,37 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
                   fontSize: sp(28),
                   fontFamily: 'Roboto-Condensed'),),
             ),
+
+            // FormCheck.rowItem(
+            //   title: "提醒企业",
+            //   expanded: false,
+            //   child: !declare ?
+            //   Text('$remind', style: TextStyle(color: Colors.red,
+            //       fontSize: sp(28),
+            //       fontFamily: 'Roboto-Condensed'),) :
+            //   GestureDetector(
+            //     child: Container(
+            //       width: px(240),
+            //       height: px(56),
+            //       alignment: Alignment.center,
+            //       child: Text(
+            //         '提醒企业',
+            //         style: TextStyle(
+            //             fontSize: sp(24),
+            //             fontFamily: "R",
+            //             color: Color(0xFF323233)),
+            //       ),
+            //       decoration: BoxDecoration(
+            //         border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
+            //         borderRadius: BorderRadius.all(Radius.circular(px(28))),
+            //       ),
+            //     ),
+            //     onTap: (){
+            //       print('提醒了一次');
+            //     },
+            //   ),
+            // ),
+
             Visibility(
               visible: declare,
               child: FormCheck.submit(
@@ -505,8 +554,9 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
                   //other选中其他类型，且输入有其他类型,就新建其他类型
                   if(other && otherType.isNotEmpty){
                     _postProblemType();
+                  }else{
+                    _setProblem();
                   }
-                  _setProblem();
                 },
                 cancel: (){
                   Navigator.pop(context);
@@ -515,28 +565,6 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
             )
           ]
       );
-  }
-
-  //颜色状态
-  Color Colorswitchs(status){
-    switch(status){
-      case 1 : return Color(0xffFAAA5A);
-      case 2 : return Color(0xff7196F5);
-      case 3 : return Color(0xff95C758);
-      case 4 : return Color(0xffFAAA5A);
-      default: return Color(0xffFAAA5A);
-    }
-  }
-
-  //状态
-  String switchs(status){
-    switch(status){
-      case 1 : return '未整改';
-      case 2 : return '整改中';
-      case 3 : return '整改已通过';
-      case 4 : return '整改未通过';
-      default: return '未整改';
-    }
   }
 
   ///选择排查依据

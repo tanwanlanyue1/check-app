@@ -6,6 +6,7 @@ import 'package:scet_check/components/generalduty/time_select.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
+import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/routers/routes.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/time/utc_tolocal.dart';
@@ -45,11 +46,11 @@ class _StewardCheckState extends State<StewardCheck>{
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Map<String, dynamic> subCompanies = {'companies':[],'environments':[]};//提交的数组
   List typeList = [
-    {'name':'管家排查','id':1},
-    {'name':'其他','id':2},
-    {'name':'专项检查','id':3},
+    {'name':'隐患排查','id':1},
+    {'name':'专项检查','id':2},
+    {'name':'其他','id':0},
   ];//问题类型列表
-
+  List review = [];//复查列表
   /// 获取清单详情
   /// id:清单id
   /// argumentMap 提交问题传递的参数
@@ -65,9 +66,15 @@ class _StewardCheckState extends State<StewardCheck>{
         checkDate = RectifyComponents.formatTime(repertoire['createdAt']);
         abarbeitungDates = repertoire['solvedAt'] != null ? RectifyComponents.formatTime(repertoire['solvedAt']) : '';
         sceneReviewDate = repertoire['reviewedAt'] != null ? RectifyComponents.formatTime(repertoire['reviewedAt']) : '';
-        checkType = repertoire['checkType'] == 1 ? '管家排查':
-        repertoire['checkType'] == 2 ? '其他' : '专项检查';
+        checkType = repertoire['checkType'] == 1 ? '隐患排查':
+        repertoire['checkType'] == 2 ? '专项检查' : '其他';
         subStatus = repertoire['status'] == 6 ? true : false; //状态为6，可以提交问题、修改
+        _problemSearch(
+            data: {
+              'status':2,
+              'companyId':repertoire['company']['id'],
+            }
+        );
         argumentMap = {
           'declare':true,//申报
           'uuid': uuid,//清单ID
@@ -294,6 +301,22 @@ class _StewardCheckState extends State<StewardCheck>{
     _getCompany();
     super.initState();
   }
+  /// 获取企业下的问题/问题搜索筛选
+  ///companyId:公司id
+  ///page:第几页
+  ///size:每页多大
+  /// 'timeSearch':确认传递时间,
+  /// 'startTime':开始时间,
+  /// 'endTime':结束时间,
+  ///添加一个状态 check-提交到企业,environment-提交到环保局
+  _problemSearch({Map<String,dynamic>? data}) async {
+
+    var response = await Request().get(Api.url['problemList'],data: data);
+    if(response['statusCode'] == 200 && response['data'] != null){
+      review = response['data']['list'];
+      setState(() {});
+    }
+  }
 
     @override
   Widget build(BuildContext context) {
@@ -301,9 +324,12 @@ class _StewardCheckState extends State<StewardCheck>{
       key: _scaffoldKey,
       body: Column(
         children: [
-          RectifyComponents.appBarBac(),
-          topBar(
-            '管家排查',
+          TaskCompon.topTitle(
+              title: '隐患排查',
+              left: true,
+              callBack: (){
+                Navigator.pop(context);
+              }
           ),
           Expanded(
             child: ListView(
@@ -316,38 +342,9 @@ class _StewardCheckState extends State<StewardCheck>{
                 survey():
                 Container(),
                 concerns(),
+                notReview(),
                 pigeonhole(),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-  ///头部
-  Widget topBar(String title){
-    return Container(
-      color: Colors.white,
-      height: px(88),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          InkWell(
-            child: Container(
-              height: px(40),
-              width: px(41),
-              alignment: Alignment.centerLeft,
-              margin: EdgeInsets.only(left: px(20)),
-              child: Image.asset('lib/assets/icons/other/chevronLeft.png',fit: BoxFit.fill,),
-            ),
-            onTap: ()async{
-              Navigator.pop(context);
-            },
-          ),
-          Expanded(
-            child: Container(
-              alignment: Alignment.center,
-              child: Text(title,style: TextStyle(color: Color(0xff323233),fontSize: sp(32),fontFamily: 'M'),),
             ),
           ),
         ],
@@ -581,13 +578,47 @@ class _StewardCheckState extends State<StewardCheck>{
                 children: List.generate(problemList.length, (i) => RectifyComponents.rectifyRow(
                     company: problemList[i],
                     i: i,
-                    review: false,
                     callBack:() async {
                       var res = await Navigator.pushNamed(context, '/rectificationProblem',
                           arguments: {'check':true,'problemId':problemList[i]['id']}
                       );
                       if(res == null){
                         _getProblem();
+                      }
+                    }
+                )),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  ///该企业下未复查的列表
+  Widget notReview(){
+    return Container(
+      margin: EdgeInsets.only(top: px(4)),
+      color: Colors.white,
+      child: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: px(20),left: px(32),),
+            height: px(55),
+            child: FormCheck.formTitle(
+              '复查问题',
+            ),
+          ),
+          Column(
+            children: [
+              Column(
+                children: List.generate(review.length, (i) => RectifyComponents.rectifyRow(
+                    company: review[i],
+                    i: i,
+                    callBack:() async {
+                      var res =  await Navigator.pushNamed(context, '/fillAbarbeitung',arguments: {'id':review[i]['id'],'review':true});
+                      if(res == true){
+                        _getCompany();
                       }
                     }
                 )),
@@ -671,6 +702,8 @@ class _StewardCheckState extends State<StewardCheck>{
               }
               if(subStatus && problemList.isNotEmpty){
                 submission();
+              }else if(problemList.isEmpty){
+                ToastWidget.showToastMsg('暂无问题可以提交');
               }else{
                 ToastWidget.showToastMsg('问题已经全部提交');
               }

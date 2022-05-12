@@ -1,7 +1,22 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:scet_check/api/api.dart';
+import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/date_range.dart';
+import 'package:scet_check/components/generalduty/no_data.dart';
+import 'package:scet_check/components/generalduty/sliver_app_bar.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/hidden_details.dart';
+import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
+import 'package:scet_check/utils/easyRefresh/easy_refreshs.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/storage/data_storage_key.dart';
+import 'package:scet_check/utils/storage/storage.dart';
+import 'package:scet_check/utils/time/utc_tolocal.dart';
+
+import 'components/task_compon.dart';
 
 ///历史台账
 ///arguments:{'name':用户名,'id':用户id}
@@ -14,33 +29,255 @@ class HistoryTask extends StatefulWidget {
 }
 
 class _HistoryTaskState extends State<HistoryTask> {
+  String userId = '';//用户id
   String userName = '';//用户名
-  DateTime startTime = DateTime.now();//选择开始时间
+  DateTime startTime = DateTime.now().add(Duration(days: -1));//选择开始时间
   DateTime endTime = DateTime.now();//选择结束时间
   List historyList = [];//历史任务列表
+  int _pageNo = 1; //页码
+  int _total = 10; // 总条数
+  bool _enableLoad = true; // 是否开启加载
+  final EasyRefreshController _controller = EasyRefreshController(); // 上拉组件控制器
+
+  /// 获取企业下的问题/问题搜索筛选
+  /// companyId:公司id
+  /// page:第几页
+  /// size:每页多大
+  /// 'timeSearch':确认传递时间,
+  /// 'startTime':开始时间,
+  /// 'endTime':结束时间,
+  ///添加一个状态 check-提交到企业,environment-提交到环保局
+  _problemSearch({typeStatusEnum? type,Map<String,dynamic>? data}) async {
+    // print("data===$data");
+    var response = await Request().get(Api.url['problemList'],data: data,);
+    if(response['statusCode'] == 200 && response['data'] != null){
+      Map _data = response['data'];
+      _pageNo++;
+      if (mounted) {
+        if(type == typeStatusEnum.onRefresh) {
+          // 下拉刷新
+          _onRefresh(data: _data['list'], total: _data['total']);
+        }else if(type == typeStatusEnum.onLoad) {
+          // 上拉加载
+          _onLoad(data: _data['list'], total: _data['total']);
+        }
+      }
+    }
+  }
+
+  // 下拉刷新
+  _onRefresh({required List data,required int total}) {
+    _total = total;
+    historyList = data;
+    _enableLoad = true;
+    _pageNo = 2;
+    _controller.resetLoadState();
+    _controller.finishRefresh();
+    if(historyList.length >= total){
+      _controller.finishLoad(noMore: true);
+      _enableLoad = false;
+    }
+    setState(() {});
+  }
+
+  /// 上拉加载
+  /// 当前数据等于总数据，关闭上拉加载
+  _onLoad({required List data, required int total}) {
+    _total = total;
+    _controller.finishLoadCallBack!();
+    if(historyList.length >= total){
+      _controller.finishLoad(noMore: true);
+      _enableLoad = false;
+    }else{
+      historyList.addAll(data);
+    }
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
+    //请求页码，大小，时间范围，用户id
+    _problemSearch(
+        type: typeStatusEnum.onRefresh,
+        data: {
+          'page': 1,
+          'size': 10,
+          'timeSearch':'createdAt',
+          'startTime':startTime,
+          'endTime':endTime,
+          "userId":userId,
+          'sort':"status",
+          "order":"ASC"
+        }
+    );
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          Container(
-            width: px(750),
-            height: appTopPadding(context),
-            color: Color(0xff19191A),
-          ),
-          RectifyComponents.topBar(
-              title: '历史台账',
+          TaskCompon.topTitle(
+              title: '台账记录',
+              left: true,
               callBack: (){
                 Navigator.pop(context);
               }
           ),
           selectTime(),
-          Column(
-            children: List.generate(5, (i){
-              return taskList(i);
-            }),
-          )
+          Expanded(
+            child: EasyRefresh.custom(
+              enableControlFinishRefresh: true,
+              enableControlFinishLoad: true,
+              topBouncing: true,
+              controller: _controller,
+              taskIndependence: false,
+              reverse: false,
+              footer: footers(),
+              header: headers(),
+              onLoad:  _enableLoad ? () async {
+                _problemSearch(
+                    type: typeStatusEnum.onLoad,
+                    data: {
+                      'page': _pageNo,
+                      'size': 10,
+                      'timeSearch':'createdAt',
+                      'startTime':startTime,
+                      'endTime':endTime,
+                      "userId":userId,
+                      'sort':"status",
+                      "order":"ASC"
+                    }
+                );
+              } : null,
+              onRefresh: () async {
+                _problemSearch(
+                    type: typeStatusEnum.onRefresh,
+                    data: {
+                      'page': 1,
+                      'size': 10,
+                      'timeSearch':'createdAt',
+                      'startTime':startTime,
+                      'endTime':endTime,
+                      "userId":userId,
+                      'sort':"status",
+                      "order":"ASC"
+                    }
+                );
+              },
+              slivers: <Widget>[
+                historyList.isNotEmpty ?
+                SliverList(
+                  delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+                    return Container(
+                      margin: EdgeInsets.only(top: px(20),left: px(24),right: px(24)),
+                      padding: EdgeInsets.only(left: px(12)),
+                      height: px(55),width: double.maxFinite,
+                      color: Colors.white,
+                      child: FormCheck.formTitle(
+                        '隐患问题',
+                      ),
+                    );
+                  },
+                    childCount: 1,),
+                ) :
+                SliverList(
+                  delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+                    return Container();
+                  },
+                    childCount: 1,),
+                ),
+                historyList.isEmpty ?
+                SliverList(
+                  delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+                    return NoData(timeType: true, state: '未获取到数据!');
+                  },
+                    childCount: 1,),
+                ) :
+                SliverList(
+                  delegate: SliverChildBuilderDelegate((context, i) {
+                    return Visibility(
+                      visible: historyList[i]['status'] != 2,
+                      child: RectifyComponents.rectifyRow(
+                          company: historyList[i],
+                          i: i,
+                          detail: true,
+                          history: true,
+                          callBack:(){
+                            Navigator.pushNamed(context, '/rectificationProblem',
+                                arguments: {'check':true,'problemId':historyList[i]['id']}
+                            );
+                          }
+                      ),
+                    );
+                  },
+                      childCount: historyList.length),
+                ),
+                historyList.isNotEmpty ?
+                SliverList(
+                  delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+                    return Container(
+                      margin: EdgeInsets.only(top: px(20),left: px(24),right: px(24)),
+                      padding: EdgeInsets.only(left: px(12)),
+                      height: px(55),width: double.maxFinite,
+                      color: Colors.white,
+                      child: FormCheck.formTitle(
+                        '复查问题',
+                      ),
+                    );
+                  },
+                    childCount: 1,),
+                ) :
+                SliverList(
+                  delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+                    return Container();
+                  },
+                    childCount: 1,),
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate((context, i) {
+                    return Visibility(
+                      visible: historyList[i]['status'] == 2,
+                      child: RectifyComponents.rectifyRow(
+                          company: historyList[i],
+                          i: i,
+                          detail: true,
+                          history: true,
+                          callBack:(){
+                          }
+                      ),
+                    );
+                  },
+                      childCount: historyList.length),
+                ),
+                SliverPersistentHeader(
+                  floating: false,//floating 与pinned 不能同时为true
+                  pinned: true,
+                  delegate: SliverAppBarDelegate(
+                      minHeight: px(100),
+                      maxHeight: px(100),
+                      child: Visibility(
+                          visible: historyList.isNotEmpty && _enableLoad == false,
+                          child: Container(
+                              padding: EdgeInsets.only(top: px(24.0)),
+                              child: Text(
+                                '到底啦~',
+                                style: TextStyle(
+                                    color: Color(0X99A1A6B3),
+                                    fontSize: sp(22.0)
+                                ),
+                                textAlign: TextAlign.center,
+                              )
+                          )
+                      )
+                  ),
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -57,7 +294,7 @@ class _HistoryTaskState extends State<HistoryTask> {
           Container(
             width: px(140),
             alignment: Alignment.bottomCenter,
-            child: Text('选择日期：',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+            child: Text('日期 ',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           Expanded(
             child: Container(
@@ -68,7 +305,22 @@ class _HistoryTaskState extends State<HistoryTask> {
                 end: endTime,
                 showTime: false,
                 callBack: (val) {
-                  print(val);
+                  startTime = val[0];
+                  endTime = val[1];
+                  _problemSearch(
+                      type: typeStatusEnum.onRefresh,
+                      data: {
+                        'page': 1,
+                        'size': 10,
+                        'timeSearch':'createdAt',
+                        'startTime':startTime,
+                        'endTime':endTime,
+                        "userId":userId,
+                        'sort':"status",
+                        "order":"ASC"
+                      }
+                  );
+                  setState(() {});
                 },
               ),
             ),
@@ -77,8 +329,8 @@ class _HistoryTaskState extends State<HistoryTask> {
       ),
     );
   }
-  ///任务列表
-  Widget taskList(int i){
+  ///清单列表
+  Widget taskList({required int i,required Map company,Function? callBack}){
     return Container(
       margin: EdgeInsets.only(top: px(24),left: px(20),right: px(24)),
       padding: EdgeInsets.only(left: px(16),top: px(20),bottom: px(20)),
@@ -94,25 +346,35 @@ class _HistoryTaskState extends State<HistoryTask> {
               children: [
                 Container(
                   margin: EdgeInsets.only(left: px(16),right: px(12)),
-                  child: Text('${i+1}.标题名称/公司名称',style: TextStyle(color: Color(0xff323233),fontSize: sp(30),overflow: TextOverflow.ellipsis),),
+                  child: Text('${i+1}.${historyList[i]['company']['name']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(30),overflow: TextOverflow.ellipsis),),
                 )
               ],
             ),
             Container(
               margin: EdgeInsets.only(left: px(16),right: px(12)),
-              child: Text('副标题+排查人员',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),overflow: TextOverflow.ellipsis),),
+              child: Text('${historyList[i]['checkPersonnel']}',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),overflow: TextOverflow.ellipsis),),
             ),
             Container(
-              width: px(140),
               height: px(48),
-              alignment: Alignment.center,
-              child: Text('2022-4-21',
+              alignment: Alignment.centerLeft,
+              margin: EdgeInsets.only(left: px(16)),
+              child: Text(formatTime(historyList[i]['createdAt']),
                 style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),),
             ),
           ],
         ),
-        onTap: (){},
+        onTap: (){
+          Navigator.pushNamed(context, '/stewardCheck',arguments: {
+            'uuid':historyList[i]['id'],
+            'company':false
+          });
+        },
       ),
     );
+  }
+  ///时间格式
+  ///time:时间
+  static String formatTime(time) {
+    return utcToLocal(time.toString()).substring(0,16);
   }
 }

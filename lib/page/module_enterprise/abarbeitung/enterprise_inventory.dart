@@ -76,7 +76,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
   ///uploading:判断该是否整改完成
   void _getProblem() async {
     Map<String,dynamic> data = {
-      'inventory.id':uuid
+      'inventoryId':uuid
     };
     var response = await Request().get(Api.url['problemList'],data: data,);
     if(response['statusCode'] == 200 && response['data'] != null) {
@@ -328,7 +328,6 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
                 children: List.generate(problemList.length, (i) => RectifyComponents.rectifyRow(
                     company: problemList[i],
                     i: i,
-                    review: false,
                     callBack:()async{
                      var res = await Navigator.pushNamed(context, '/abarbeitungFrom',arguments: {'id':problemList[i]['id']});
                      if(res == null ){

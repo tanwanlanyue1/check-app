@@ -95,50 +95,59 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
       }
       ''';
     pie =  '''
-{
-  legend: {
-    bottom: '5%',
-    left: 'center',
-     icon: "circle"
-  },
-  series: [
-    {
-      name: '',
-     //hoverAnimation: false, // 取消掉环形图鼠标移上去时自动放大
-     selectedMode:'single',
-      selectedOffset:20,
-      type: 'pie',
-      radius: ['40%', '70%'],
-      avoidLabelOverlap: false,
-      // top: '-30%',//饼图距离上面的距离
-      //color:['red','blue','gray','yellow','teal'],//颜色
-      itemStyle: { //调整相邻的边距和圆角
-        borderRadius: 10,
-        borderColor: '#fff',
-        borderWidth: 2
-      },
-      label: {
-        show: false, /*是否一直显示*/
-        position: 'center',
-         formatter: function (value) {
-                            return `\${value['name']}`+
-                            `\\n`+`\${value['value']}`;
+        {
+         tooltip: {
+            trigger: 'item',
+         },
+          legend: {
+            bottom: '0',
+            left: 'center',
+             icon: "circle",
+              formatter:(name)=>{
+                      if(!name) return ''
+                      if(name.length > 10){
+                        name = name.slice(0,10) + "..."
+                      }
+                      return name
+                    }
+          },
+          series: [
+            {
+             //hoverAnimation: false, // 取消掉环形图鼠标移上去时自动放大
+             selectedMode:'single',
+              selectedOffset:20,
+              type: 'pie',
+              radius: ['40%', '70%'],
+              avoidLabelOverlap: false,
+              top: '-10%',//饼图距离上面的距离
+              //color:['red','blue','gray','yellow','teal'],//颜色
+              itemStyle: { //调整相邻的边距和圆角
+                borderRadius: 10,
+                borderColor: '#fff',
+                borderWidth: 2
+              },
+              label: {
+                show: false, /*是否一直显示*/
+                position: 'center',
+                 formatter: function (value) {
+                            return  `\${value['value']}`+`\\n`+
+                            `\${value['name']}`;
                           },
-      },
-      emphasis: {
-        label: {
-          show: true,
-          fontSize: '12',
-          fontColor:'#323233'
+              },
+              emphasis: {
+                label: {
+                  show: true,
+                  fontSize: '12',
+                  fontColor:'#323233'
+                }
+              },
+              labelLine: {
+                show: false
+              },
+              data: ${jsonEncode(datas)}
+            }
+          ]
         }
-      },
-      labelLine: {
-        show: false
-      },
-      data: ${jsonEncode(datas)}
-    }
-  ]
-}
       ''';
     erectImage =  '''
       {
@@ -211,7 +220,66 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
     series = widget.data ?? [];
     erectName = widget.erectName ?? [];
     datas = widget.pieData ?? [];
-    columnImage =  '''
+    if(widget.pieData != oldWidget.pieData){
+      pie =  '''
+      {
+         tooltip: {
+            trigger: 'item',
+         },
+        legend: {
+          bottom: '0',
+          left: 'center',
+           icon: "circle",
+           formatter:(name)=>{
+              if(!name) return ''
+              if(name.length > 10){
+                name = name.slice(0,10) + "..."
+              }
+             return name
+           }
+        },
+        series: [
+          {
+           //hoverAnimation: false, // 取消掉环形图鼠标移上去时自动放大
+           selectedMode:'single',
+            selectedOffset:20,
+            type: 'pie',
+            radius: ['40%', '70%'],
+            avoidLabelOverlap: false,
+              top: '-10%',//饼图距离上面的距离
+            //color:['red','blue','gray','yellow','teal'],//颜色
+            itemStyle: { //调整相邻的边距和圆角
+              borderRadius: 5,
+              borderColor: '#fff',
+              borderWidth: 2
+            },
+      
+            label: {
+              show: false, /*是否一直显示*/
+              position: 'center',
+                 formatter: function (value) {
+                            return  `\${value['value']}`+
+                            `\\n`+`\${value['name']}`;
+                          },
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: '12',
+                fontColor:'#323233'
+              }
+            },
+            labelLine: {
+              show: false
+            },
+            data: ${jsonEncode(datas)}
+          }
+        ]
+      }
+      ''';
+    }
+    if(widget.data != oldWidget.data){
+      columnImage =  '''
       {
         title: {
           text: '柱状图'
@@ -266,54 +334,7 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
         series: ${jsonEncode(series)}
       }
       ''';
-    pie =  '''
-{
-  legend: {
-    bottom: '5%',
-    left: 'center',
-     icon: "circle"
-  },
-  series: [
-    {
-      name: '',
-     //hoverAnimation: false, // 取消掉环形图鼠标移上去时自动放大
-     selectedMode:'single',
-      selectedOffset:20,
-      type: 'pie',
-      radius: ['40%', '70%'],
-      avoidLabelOverlap: false,
-      // top: '-30%',//饼图距离上面的距离
-      //color:['red','blue','gray','yellow','teal'],//颜色
-      itemStyle: { //调整相邻的边距和圆角
-        borderRadius: 10,
-        borderColor: '#fff',
-        borderWidth: 2
-      },
-
-      label: {
-        show: false, /*是否一直显示*/
-        position: 'center',
-                 formatter: function (value) {
-                            return `\${value['name']}`+
-                            `\\n`+`\${value['value']}`;
-                          },
-      },
-      emphasis: {
-        label: {
-          show: true,
-          fontSize: '12',
-          fontColor:'#323233'
-        }
-      },
-      labelLine: {
-        show: false
-      },
-      data: ${jsonEncode(datas)}
-    }
-  ]
-}
-      ''';
-    erectImage =  '''
+      erectImage =  '''
       {
         title: {
           text: '柱状图'
@@ -375,25 +396,83 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
         series: ${jsonEncode(series)}
       }
       ''';
+    }
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+  @override
   Widget build(BuildContext context) {
     _providerDetaild = Provider.of<ProviderDetaild>(context, listen: true);
-    return SizedBox(
-      width: px(550),
-      height: px(700),
-      child: _providerDetaild.cloumnChart == 0 && !widget.erect ?
-      Echarts(
-        option: pie,
-      ):
-      _providerDetaild.cloumnChart == 1 || widget.erect?
-      Echarts(
-        option: erectImage,
-      ):Echarts(
-        option: columnImage,
-      )
+    return Scaffold(
+      body: SizedBox(
+        // height: px(750),
+          height: px(720+((erectName.length/2)*20)),
+          child: _providerDetaild.cloumnChart == 0 && !widget.erect ?
+          Echarts(
+            option: pie,
+          ):
+          _providerDetaild.cloumnChart == 1 || widget.erect?
+          Echarts(
+            option: erectImage,
+          ):Echarts(
+            option: columnImage,
+          )
+      ),
     );
+//     return SizedBox(
+//       width: 300,
+//       height: 250,
+//       child: Echarts(
+//         option: '''
+//         {
+//   tooltip: {
+//     trigger: 'item'
+//   },
+//   legend: {
+//     top: '5%',
+//     left: 'center'
+//   },
+//   series: [
+//     {
+//       name: 'Access From',
+//       type: 'pie',
+//       radius: ['40%', '70%'],
+//       avoidLabelOverlap: false,
+//       itemStyle: {
+//         borderRadius: 10,
+//         borderColor: '#fff',
+//         borderWidth: 2
+//       },
+//       label: {
+//         show: false,
+//         position: 'center'
+//       },
+//       emphasis: {
+//         label: {
+//           show: true,
+//           fontSize: '40',
+//           fontWeight: 'bold'
+//         }
+//       },
+//       labelLine: {
+//         show: false
+//       },
+//       data: [
+//         { value: 1048, name: 'Search Engine' },
+//         { value: 735, name: 'Direct' },
+//         { value: 580, name: 'Email' },
+//         { value: 484, name: 'Union Ads' },
+//         { value: 300, name: 'Video Ads' }
+//       ]
+//     }
+//   ]
+// }
+//         ''',
+//       ),
+//     );
   }
-
 }

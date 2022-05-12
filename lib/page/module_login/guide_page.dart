@@ -9,7 +9,7 @@ import 'package:scet_check/page/module_login/components/my_painter.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
-
+import 'package:webview_flutter/webview_flutter.dart';
 import 'components/update_app.dart';
 
 ///引导页
@@ -21,6 +21,7 @@ class GuidePage extends StatefulWidget {
 class _GuidePageState extends State<GuidePage> {
   @override
   void initState() {
+    if (Platform.isAndroid) WebView.platform = AndroidWebView();
     super.initState();
     initData();
   }

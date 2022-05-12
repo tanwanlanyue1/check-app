@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
+import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 ///文件列表
@@ -22,9 +22,9 @@ class _FileListsState extends State<FileLists> {
   ///type 类型 具体看arguments
   void hierarchySelect(int? type) {
     switch(type) {
-      case 1: title = '国家标准文件';break;
-      case 2: title = '地方标准文件';break;
-      case 3: title = '行业标准文件';break;
+      case 0: title = '国家标准文件';break;
+      case 1: title = '地方标准文件';break;
+      case 2: title = '行业标准文件';break;
       // case 3: title = '通知文件';break;
       // case 4: title = '其他文件';break;
       default: title = '国家标准文件';
@@ -44,12 +44,12 @@ class _FileListsState extends State<FileLists> {
       body: ListView(
         padding: EdgeInsets.only(top: 0),
         children: [
-          RectifyComponents.appBarBac(),
-          RectifyComponents.topBar(
-            title: title,
-            callBack: (){
-              Navigator.pop(context);
-            }
+          TaskCompon.topTitle(
+              title: title,
+              left: true,
+              callBack: (){
+                Navigator.pop(context);
+              }
           ),
           rectifyRow(),
         ],

@@ -1,4 +1,5 @@
 import 'package:azlistview/azlistview.dart';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:lpinyin/lpinyin.dart';
@@ -41,7 +42,8 @@ class _ClientListPageState extends State<ClientListPage> {
     super.initState();
     LanguageHelper.language = widget.companyList;
     textEditingController = TextEditingController();
-    loadData();
+    // loadData();
+    sortNumber();
   }
 
   @override
@@ -49,10 +51,11 @@ class _ClientListPageState extends State<ClientListPage> {
     // TODO: implement didUpdateWidget
     LanguageHelper.language = widget.companyList;
     textEditingController = TextEditingController();
-    loadData();
+    sortNumber();
+    // loadData();
+
     super.didUpdateWidget(oldWidget);
   }
-
   @override
   void dispose() {
     textEditingController.dispose();
@@ -73,6 +76,26 @@ class _ClientListPageState extends State<ClientListPage> {
       return model;
     }).toList();
     _handleList(originList);
+  }
+
+  ///处理数据
+  ///编号重新排序
+  void sortNumber(){
+    originList = LanguageHelper.getGithubLanguages()!.map((v) {
+      Languages model = Languages.fromJson(v.toJson());
+      return model;
+    }).toList();
+    dataList = originList;
+    // dataList.sort((a,b) {
+    //   if(a.number.split('-')[0] == b.number.split('-')[0]){
+    //     return int.parse(a.number.split('-')[1]).compareTo(int.parse(b.number.split('-')[1]));
+    //   }else{
+    //     // print('a${a.number},b===${b.number}');
+    //     // return 0;
+    //     return int.parse(a.number.split('-')[0]).compareTo(int.parse(b.number.split('-')[0]));
+    //   }
+    // });
+    // _handleList(originList);
   }
 
   ///处理列表
@@ -107,6 +130,7 @@ class _ClientListPageState extends State<ClientListPage> {
       itemScrollController.jumpTo(index: 0);
     }
   }
+
 ///标签组件
   Widget getSusItem(BuildContext context, String? tag, {double susHeight = 40}) {
     return Container(
@@ -166,32 +190,17 @@ class _ClientListPageState extends State<ClientListPage> {
       child: Container(
         color: Colors.white,
         height: px(84),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        margin: EdgeInsets.only(bottom: px(4),top: px(12)),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              margin: EdgeInsets.only(left: px(18),right: px(12),bottom: px(5)),
-              child: Text('编号1.1-1',style: TextStyle(color: Colors.black,fontSize: sp(22),)),
+              margin: EdgeInsets.only(left: px(18),right: px(12)),
+              child: Text('${model.number ?? ''}',style: TextStyle(color: Color(0xFF323233),fontSize: sp(28),)),
             ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: px(40),
-                  height: px(40),
-                  margin: EdgeInsets.only(left: px(16),right: px(12)),
-                  decoration: BoxDecoration(
-                    color: Color(0xff72B1ED),
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text('${model.name?.substring(0,1)}',style: TextStyle(color: Colors.white,fontSize: sp(22),)),
-                ),
-                Expanded(
-                  child: Text("${model.name} ",style: TextStyle(color: Color(0xFF323233),fontSize: sp(24),),),
-                )
-              ],
-            ),
+            Expanded(
+              child: Text("${model.name} ",style: TextStyle(color: Color(0xFF323233),fontSize: sp(28),),),
+            )
           ],
         ),
       ),
@@ -219,49 +228,55 @@ class _ClientListPageState extends State<ClientListPage> {
   Widget build(BuildContext context) {
     _homeModel = Provider.of<HomeModel>(context, listen: true);
     return Container(
-        margin: EdgeInsets.only(left: px(20),right: px(18)),
-        padding: EdgeInsets.only(top: px(24)),
-      color: Colors.white,
-      child:Column(
+      margin: EdgeInsets.only(left: px(20),right: px(18)),
+      // padding: EdgeInsets.only(top: px(24)),
+      // color: Colors.white,
+      child: Column(
         children: [
           Container(
-            height: px(56),
-            margin: EdgeInsets.only(left: px(16),right: px(18)),
+            padding: EdgeInsets.only(left: px(16),right: px(18),top: px(12),bottom: px(12)),
             decoration: BoxDecoration(
                 border: Border.all(color: Color.fromARGB(255, 225, 226, 230), width: 0.33),
-                color: Color(0xffF5F6FA),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(4)),
-            child: TextField(
-              autofocus: false,
-              focusNode: _homeModel!.verifyNode,
-              onChanged: (value) {
-                _search(value);
-              },
-              controller: textEditingController,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                prefixIcon: Image.asset(
-                  'lib/assets/icons/other/search.png',
-                  color: Color(0xffC8C9CC),),
-                suffixIcon: Offstage(
-                  offstage: textEditingController.text.isEmpty,
-                  child: InkWell(
-                    onTap: () {
-                      textEditingController.clear();
-                      _search('');
-                    },
-                    child: Icon(
-                      Icons.cancel,
-                      color: Colors.grey,
+            child: SizedBox(
+              height: px(64),
+              child: Center(
+                child: TextField(
+                  autofocus: false,
+                  focusNode: _homeModel!.verifyNode,
+                  onChanged: (value) {
+                    _search(value);
+                  },
+                  controller: textEditingController,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    filled: true,
+                    fillColor: Color(0XffF5F6FA),
+                    prefixIcon: Image.asset(
+                      'lib/assets/icons/other/search.png',
+                      color: Color(0xffC8C9CC),),
+                    suffixIcon: Offstage(
+                      offstage: textEditingController.text.isEmpty,
+                      child: InkWell(
+                        onTap: () {
+                          textEditingController.clear();
+                          _search('');
+                        },
+                        child: Icon(
+                          Icons.cancel,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                    hintText: '搜索',
+                    hintStyle: TextStyle(
+                        height: 0.8,
+                        fontSize: sp(28),
+                        color: Color(0xffC8C9CC),
+                        decorationStyle: TextDecorationStyle.dashed
                     ),
                   ),
-                ),
-                hintText: '搜索',
-                hintStyle: TextStyle(
-                    height: 0.8,
-                    fontSize: sp(28),
-                    color: Color(0xffC8C9CC),
-                    decorationStyle: TextDecorationStyle.dashed
                 ),
               ),
             ),
@@ -308,10 +323,10 @@ class _ClientListPageState extends State<ClientListPage> {
                   return getItemSort(context, model);
                 },
                 itemScrollController: itemScrollController,
-                susItemBuilder: (BuildContext context, int index) {
-                  Languages model = dataList[index];
-                  return getSusItem(context, model.getSuspensionTag());
-                },
+                // susItemBuilder: (BuildContext context, int index) {
+                //   Languages model = dataList[index];
+                //   return getSusItem(context, model.getSuspensionTag());
+                // },
                 indexBarData: [],
               ),
             ),

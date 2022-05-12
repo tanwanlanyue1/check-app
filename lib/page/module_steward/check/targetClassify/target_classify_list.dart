@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
+import 'package:scet_check/components/generalduty/no_data.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/page/module_steward/law/components/law_components.dart';
+import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 ///指标列表
@@ -40,18 +41,15 @@ class _TargetClassifyListState extends State<TargetClassifyList> with SingleTick
       return px(i * 75+60);
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          Container(
-            width: px(750),
-            height: appTopPadding(context),
-            color: Color(0xff19191A),
-          ),
-          RectifyComponents.topBar(
+          TaskCompon.topTitle(
               title: '企业名称',
+              left: true,
               callBack: (){
                 Navigator.pop(context);
               }
@@ -86,15 +84,28 @@ class _TargetClassifyListState extends State<TargetClassifyList> with SingleTick
                     children: List.generate(2, (i) => gistDataCard(
                       index: i,
                       packup: packs,
+                      title: '原则指标标题',
                       onTaps: (){
                         packs = !packs;
                         setState(() {});
                       }
                     ),
                   )),
-                  Container(),
-                  Container(),
-                  Container(),
+                  Column(
+                    children: [
+                      NoData(timeType: true, state: '未获取到数据!')
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      NoData(timeType: true, state: '未获取到数据!')
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      NoData(timeType: true, state: '未获取到数据!')
+                    ],
+                  ),
                 ]
             ),
           )
@@ -115,7 +126,7 @@ class _TargetClassifyListState extends State<TargetClassifyList> with SingleTick
       crossFadeState:
       packup ? CrossFadeState.showFirst : CrossFadeState.showSecond,
       firstChild: Container(
-        height: calculateHeight(2),
+        height: calculateHeight(4),
         width: px(702),
         margin: EdgeInsets.only(top: px(20),left: px(20),right: px(20)),
         padding: EdgeInsets.all(px(24)),
@@ -138,9 +149,20 @@ class _TargetClassifyListState extends State<TargetClassifyList> with SingleTick
                   children: List.generate(2, (i){
                     return Container(
                       margin: EdgeInsets.only(left: px(32),top: px(24)),
-                      child: LawComponents.rowTwo(
-                          child: Image.asset('lib/assets/icons/other/examine.png'),
-                          textChild: Text('子标题名称',style: TextStyle(color: Color(0xff4D7FFF),fontSize: sp(26),fontFamily: 'R'),)
+                      child: Column(
+                        children: [
+                          LawComponents.rowTwo(
+                              child: Image.asset('lib/assets/icons/other/examine.png'),
+                              textChild: Text('子标题名称',style: TextStyle(color: Color(0xff4D7FFF),fontSize: sp(26),fontFamily: 'R'),)
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: px(32),top: px(24)),
+                            child: LawComponents.rowTwo(
+                                child: Image.asset('lib/assets/icons/other/examine.png'),
+                                textChild: Text('子标题名称',style: TextStyle(color: Color(0xff4D7FFF),fontSize: sp(26),fontFamily: 'R'),)
+                            ),
+                          )
+                        ],
                       ),
                     );
                   }
@@ -165,8 +187,8 @@ class _TargetClassifyListState extends State<TargetClassifyList> with SingleTick
           children: [
             FormCheck.formTitle(
               index < 9 ?
-              "0${index + 1} name":
-              "${index + 1} title",
+              "0${index + 1} $title":
+              "${index + 1} $title",
               showUp: true,
               tidy: packup,
               onTaps: onTaps,

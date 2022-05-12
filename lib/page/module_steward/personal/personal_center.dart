@@ -1,6 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:scet_check/components/generalduty/toast_widget.dart';
+import 'package:scet_check/page/module_login/login_page.dart';
+import 'package:scet_check/routers/router_animate/router_animate.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
@@ -30,24 +33,16 @@ class _PersonalCenterState extends State<PersonalCenter> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Color(0xffE8E8E8),
-      child: Column(
-        children: [
-          Container(
-            width: px(750),
-            height: appTopPadding(context),
-            color: Color(0xff19191A),
-          ),
-          TaskCompon.topTitle(title: '个人中心'),
-          _header(),
-          Column(
-            children: List.generate(classify.length, (i){
-              return taskList(i);
-            }),
-          )
-        ],
-      ),
+    return Column(
+      children: [
+        TaskCompon.topTitle(title: '个人中心'),
+        _header(),
+        Column(
+          children: List.generate(classify.length, (i){
+            return taskList(i);
+          }),
+        )
+      ],
     );
   }
 
@@ -58,45 +53,63 @@ class _PersonalCenterState extends State<PersonalCenter> {
       margin: EdgeInsets.only(left: px(24),right: px(24),top: px(24)),
       padding: EdgeInsets.only(left: px(24),right: px(24),top: px(8),bottom: px(8)),
       color: Colors.white,
-      child: Row(
-        children: [
-          Container(
-            width: px(100),
-            height: px(100),
-            decoration: BoxDecoration(
-                color: Colors.blue,
-                borderRadius:BorderRadius.all(Radius.circular(px(150))),
-                border: Border.all(width: px(2),color: Colors.white)
-            ),
-            child: Image.asset('lib/assets/images/home/header.png',
-              width: px(30),
-              height: px(30),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.only(left: px(25)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    userName,
-                    style: TextStyle(
-                        fontSize: sp(36),
-                        color: Color(0XFF2E2F33),
-                        fontFamily: "M"
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: px(8.0)),
-                    child: Text('环保管家',style: TextStyle(fontSize: sp(22),color: Color(0XFF2E2F33))),
-                  )
-                ],
+      child: InkWell(
+        child: Row(
+          children: [
+            Container(
+              width: px(100),
+              height: px(100),
+              decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius:BorderRadius.all(Radius.circular(px(150))),
+                  border: Border.all(width: px(2),color: Colors.white)
+              ),
+              child: Image.asset('lib/assets/images/home/header.png',
+                width: px(30),
+                height: px(30),
               ),
             ),
-          )
-        ],
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.only(left: px(25)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      userName,
+                      style: TextStyle(
+                          fontSize: sp(36),
+                          color: Color(0XFF2E2F33),
+                          fontFamily: "M"
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: px(8.0)),
+                      child: Text('环保管家',style: TextStyle(fontSize: sp(22),color: Color(0XFF2E2F33))),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              width: px(100),
+              height: px(100),
+              alignment: Alignment.center,
+              child: Text('退出'),
+            ),
+          ],
+        ),
+        onTap: (){
+          ToastWidget.showDialog(
+              msg: '是否退出当前账号？',
+              ok: (){
+                StorageUtil().remove(StorageKey.Token);
+                Navigator.of(context).pushAndRemoveUntil(
+                    CustomRoute(LoginPage()), (router) => false);
+              }
+          );
+        },
       ),
     );
   }

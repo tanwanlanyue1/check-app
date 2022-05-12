@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +39,7 @@ class _ProblemPageState extends State<ProblemPage> {
   final EasyRefreshController _controller = EasyRefreshController(); // 上拉组件控制器
   int _pageNo = 1; // 当前页码
   int _total = 10; // 总条数
+  int firmTotal = 10; // 企业请求的总条数
   bool _enableLoad = true; // 是否开启加载
   bool firm = false; // 是否为企业
   List hiddenProblem = []; //隐患问题数组
@@ -79,9 +81,11 @@ class _ProblemPageState extends State<ProblemPage> {
     _problemSearch(
         type: typeStatusEnum.onRefresh,
         data: {
-          'pageNo': 1,
-          'pageSize': 50,
-          'company.id':companyId,
+          'page': 1,
+          'size': 10,
+          'companyId':companyId,
+          'sort':"status",
+          "order":"ASC"
         }
     );
     _getProblems();
@@ -97,9 +101,7 @@ class _ProblemPageState extends State<ProblemPage> {
   /// 'endTime':结束时间,
   ///添加一个状态 check-提交到企业,environment-提交到环保局
   _problemSearch({typeStatusEnum? type,Map<String,dynamic>? data}) async {
-
     var response = await Request().get(Api.url['problemList'],data: data);
-
     if(response['statusCode'] == 200 && response['data'] != null){
       Map _data = response['data'];
       _pageNo++;
@@ -130,6 +132,7 @@ class _ProblemPageState extends State<ProblemPage> {
   /// 判断是否是企业端,剔除掉非企业端看的问题
   _onRefresh({required List data,required int total}) {
     _total = total;
+    firmTotal = data.length;
     if(firm){
       hiddenProblem = [];
       for(var i = 0; i < data.length; i++){
@@ -144,7 +147,7 @@ class _ProblemPageState extends State<ProblemPage> {
     _pageNo = 2;
     _controller.resetLoadState();
     _controller.finishRefresh();
-    if(hiddenProblem.length >= total){
+    if(firmTotal >= total){
       _controller.finishLoad(noMore: true);
       _enableLoad = false;
     }
@@ -155,20 +158,20 @@ class _ProblemPageState extends State<ProblemPage> {
   /// 当前数据等于总数据，关闭上拉加载
   _onLoad({required List data,required int total}) {
     _total = total;
+    firmTotal += data.length;
     _controller.finishLoadCallBack!();
-    if(hiddenProblem.length >= total){
+    if(firm){
+      for(var i = 0; i < data.length; i++){
+        if(data[i]['isCompanyRead'] == true){
+          hiddenProblem.add(data[i]);
+        }
+      }
+    }else{
+      hiddenProblem.addAll(data);
+    }
+    if(firmTotal >= total){
       _controller.finishLoad(noMore: true);
       _enableLoad = false;
-    }else{
-      if(firm){
-        for(var i = 0; i < data.length; i++){
-          if(data[i]['isCompanyRead'] == true){
-            hiddenProblem.add(data[i]);
-          }
-        }
-      }else{
-        hiddenProblem.addAll(data);
-      }
     }
     setState(() {});
   }
@@ -179,9 +182,11 @@ class _ProblemPageState extends State<ProblemPage> {
     _problemSearch(
         type: typeStatusEnum.onRefresh,
         data: {
-          'pageNo': 1,
-          'pageSize': 50,
-          'company.id':companyId,
+          'page': 1,
+          'size': 10,
+          'companyId':companyId,
+          'sort':"status",
+          "order":"ASC"
         }
     );
   super.didUpdateWidget(oldWidget);
@@ -282,9 +287,8 @@ class _ProblemPageState extends State<ProblemPage> {
                                   style: TextStyle(color: Color(0xff969799),fontSize: sp(28)),),
                               ),
                               position == null ?
-                              Container(
+                              SizedBox(
                                 height: px(48),
-                                margin: EdgeInsets.only(left: px(24)),
                                 child: ElevatedButton(
                                   style: ButtonStyle(
                                     backgroundColor: MaterialStateProperty.all<Color>(Color(0XFF2288F4)),
@@ -318,13 +322,12 @@ class _ProblemPageState extends State<ProblemPage> {
                             title: '排查人员',
                             titleColor: Color(0xff323233),
                             child:  Container(
-                              margin: EdgeInsets.only(left: px(20), right: px(20)),
+                              margin: EdgeInsets.only(right: px(20)),
                               child: Row(
                                 children: [
                                   Expanded(
                                     child: DownInput(
                                       value: checkName,
-                                      // data: [{'name':userName}],checkNameList
                                       data: checkNameList,
                                       more: true,
                                       hitStr: '请选择排查人员',
@@ -375,10 +378,7 @@ class _ProblemPageState extends State<ProblemPage> {
                                                     padding: EdgeInsets.only(left: px(24),top: px(12)),
                                                     decoration: BoxDecoration(
                                                         color: Colors.white,
-                                                        borderRadius: BorderRadius.only(
-                                                          topLeft: Radius.circular(px(15)),
-                                                          topRight: Radius.circular(px(15)),
-                                                        )
+                                                        borderRadius: BorderRadius.all(Radius.circular(px(15)))
                                                     ),
                                                     child: Row(
                                                       children: [
@@ -485,7 +485,9 @@ class _ProblemPageState extends State<ProblemPage> {
                 data: {
                 'regexp':true,//近似搜索
                 'detail': value,
-                'company.id':companyId,
+                'sort':"status",
+                "order":"ASC",
+                'companyId':companyId,
               });
             },
             screen: (){
@@ -506,9 +508,11 @@ class _ProblemPageState extends State<ProblemPage> {
                 _problemSearch(
                     type: typeStatusEnum.onLoad,
                     data: {
-                        'pageNo': _pageNo,
-                        'pageSize': 50,
-                        'company.id':companyId,
+                        'page': _pageNo,
+                        'size': 10,
+                        'sort':"status",
+                        "order":"ASC",
+                        'companyId':companyId,
                       }
                 );
               } : null,
@@ -517,13 +521,36 @@ class _ProblemPageState extends State<ProblemPage> {
                 _problemSearch(
                     type: typeStatusEnum.onRefresh,
                     data: {
-                      'pageNo': 1,
-                      'pageSize': 50,
-                      'company.id':companyId,
+                      'page': 1,
+                      'size': 10,
+                      'sort':"status",
+                      "order":"ASC",
+                      'companyId':companyId,
                     }
                 );
               },
               slivers: <Widget>[
+                 hiddenProblem.isNotEmpty ?
+                SliverList(
+                    delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+                      return Container(
+                        margin: EdgeInsets.only(top: px(20),left: px(24),right: px(24)),
+                        padding: EdgeInsets.only(left: px(12)),
+                        height: px(55),width: double.maxFinite,
+                        color: Colors.white,
+                        child: FormCheck.formTitle(
+                          '隐患问题',
+                        ),
+                      );
+                    },
+                      childCount: 1,),
+                  ) :
+                 SliverList(
+                   delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+                     return Container();
+                   },
+                     childCount: 1,),
+                 ),
                 hiddenProblem.isEmpty ?
                 SliverList(
                   delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
@@ -533,20 +560,65 @@ class _ProblemPageState extends State<ProblemPage> {
                 ) :
                 SliverList(
                   delegate: SliverChildBuilderDelegate((context, i) {
-                    return RectifyComponents.rectifyRow(
-                        company: hiddenProblem[i],
-                        i: i,
-                        detail: true,
-                        review: false,
-                        callBack:(){
-                          if(firm){
-                            Navigator.pushNamed(context, '/abarbeitungFrom',arguments: {'id':hiddenProblem[i]['id']});
-                          }else{
-                            Navigator.pushNamed(context, '/rectificationProblem',
-                                arguments: {'check':true,'problemId':hiddenProblem[i]['id']}
-                            );
+                    return Visibility(
+                      visible: hiddenProblem[i]['status'] != 2,
+                      child: RectifyComponents.rectifyRow(
+                          company: hiddenProblem[i],
+                          i: i,
+                          detail: true,
+                          callBack:(){
+                            if(firm){
+                              Navigator.pushNamed(context, '/abarbeitungFrom',arguments: {'id':hiddenProblem[i]['id']});
+                            }else{
+                              Navigator.pushNamed(context, '/rectificationProblem',
+                                  arguments: {'check':true,'problemId':hiddenProblem[i]['id']}
+                              );
+                            }
                           }
-                        }
+                      ),
+                    );
+                  },
+                      childCount: hiddenProblem.length),
+                ),
+                hiddenProblem.isNotEmpty ?
+                SliverList(
+                  delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+                    return Container(
+                      margin: EdgeInsets.only(top: px(20),left: px(24),right: px(24)),
+                      padding: EdgeInsets.only(left: px(12)),
+                      height: px(55),width: double.maxFinite,
+                      color: Colors.white,
+                      child: FormCheck.formTitle(
+                        '复查问题',
+                      ),
+                    );
+                  },
+                    childCount: 1,),
+                ) :
+                SliverList(
+                  delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+                    return Container();
+                  },
+                    childCount: 1,),
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate((context, i) {
+                    return Visibility(
+                      visible: hiddenProblem[i]['status'] == 2,
+                      child: RectifyComponents.rectifyRow(
+                          company: hiddenProblem[i],
+                          i: i,
+                          detail: true,
+                          callBack:(){
+                            if(firm){
+                              Navigator.pushNamed(context, '/abarbeitungFrom',arguments: {'id':hiddenProblem[i]['id']});
+                            }else{
+                              Navigator.pushNamed(context, '/rectificationProblem',
+                                  arguments: {'check':true,'problemId':hiddenProblem[i]['id']}
+                              );
+                            }
+                          }
+                      ),
                     );
                   },
                       childCount: hiddenProblem.length),
@@ -611,9 +683,11 @@ class _ProblemPageState extends State<ProblemPage> {
             _problemSearch(
                 type: typeStatusEnum.onRefresh,
                 data: {
-                  'pageNo': 1,
-                  'pageSize': 50,
-                  'company.id':companyId,
+                  'page': 1,
+                  'size': 10,
+                  'sort':"status",
+                  "order":"ASC",
+                  'companyId':companyId,
                 }
             );
           },
@@ -634,7 +708,9 @@ class _ProblemPageState extends State<ProblemPage> {
                   type: typeStatusEnum.onRefresh,
                   data: {
                     'status':typeStatus['id'],
-                    'company.id':companyId,
+                    'companyId':companyId,
+                    'sort':"status",
+                    "order":"ASC",
                   }
               );
             }
@@ -643,10 +719,12 @@ class _ProblemPageState extends State<ProblemPage> {
                   type: typeStatusEnum.onRefresh,
                   data: {
                     'status':typeStatus['id'],
-                    'company.id':companyId,
+                    'companyId':companyId,
                     'timeSearch':'createdAt',
                     'startTime':startTime,
                     'endTime':endTime,
+                    'sort':"status",
+                    "order":"ASC",
                   }
               );
             }
@@ -656,4 +734,5 @@ class _ProblemPageState extends State<ProblemPage> {
       ),
     );
   }
+
 }

@@ -1,15 +1,13 @@
 import 'dart:convert';
 
-import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
-import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/page/module_enterprise/abarbeitung/problem_details.dart';
-import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/enterprise_reform.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/review_situation.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
+import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
@@ -61,15 +59,15 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
   /// 判断是否提交，进行修改
   void _setSolution() async {
     Map<String,dynamic> _data = {
-      'problem.id':problemId,
+      'problemId':problemId,
     };
     var response = await Request().get(
         Api.url['solutionList'],data: _data
     );
-    if(response['statusCode'] == 200 && response['data']!=null) {
+    if(response['statusCode'] == 200 && response['data'] != null) {
       solutionList = response['data']['list'];
       abarbeitung = false;
-      for(var i=0;i<solutionList.length;i++){
+      for(var i=0; i < solutionList.length; i++){
         if(solutionList[i]['status'] == 4){//4未提交
           abarbeitung = true;
         }
@@ -85,7 +83,7 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
     Map<String,dynamic> _data = {
       'page':1,
       'size':50,
-      'problem.id': problemId,
+      'problemId': problemId,
     };
     var response = await Request().get(
         Api.url['reviewList'],data: _data
@@ -101,8 +99,13 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
     return Scaffold(
       body: Column(
         children: [
-          RectifyComponents.appBarBac(),
-          topBar(),
+          TaskCompon.topTitle(
+              title: '隐患整改问题详情',
+              left: true,
+              callBack: (){
+                Navigator.pop(context);
+              }
+          ),
           Expanded(
             child: ListView(
               padding: EdgeInsets.only(top: 0),
@@ -135,41 +138,12 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
       ),
     );
   }
-  ///头部
-  Widget topBar(){
-    return Container(
-      color: Colors.white,
-      height: px(88),
-      child: Row(
-        children: [
-          InkWell(
-            child: Container(
-              height: px(40),
-              width: px(41),
-              alignment: Alignment.centerLeft,
-              margin: EdgeInsets.only(left: px(20)),
-              child: Image.asset('lib/assets/icons/other/chevronLeft.png',fit: BoxFit.fill,),
-            ),
-            onTap: ()async{
-              Navigator.pop(context);
-            },
-          ),
-          Expanded(
-            flex: 1,
-            child: Center(
-              child: Text("隐患整改问题详情",style: TextStyle(color: Color(0xff323233),fontSize: sp(36),fontFamily: 'M'),),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   ///填报整改情况.
-  ///getLose网络请求是吧，关掉新增按钮
+  ///getLose网络请求，关掉新增按钮
   Widget addAbarbeitung(){
     return Container(
-      padding: EdgeInsets.only(right: px(24)),
+      padding: EdgeInsets.only(right: px(24),bottom: px(12)),
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,7 +174,7 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
                   ),
                 ),
                 onTap: () async{
-                  var res = await Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId});
+                  var res = await Navigator.pushNamed(context, '/fillAbarbeitung',arguments: {'id':problemId});
                   if(res == true){
                     _getProblems();
                     _setSolution();
@@ -228,7 +202,7 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
               ),
             ),
             onTap: () async{
-              var res = await Navigator.pushNamed(context, '/fillAbarabeitung',arguments: {'id':problemId});
+              var res = await Navigator.pushNamed(context, '/fillAbarbeitung',arguments: {'id':problemId});
               if(res == true){
                 _getProblems();
                 _setSolution();

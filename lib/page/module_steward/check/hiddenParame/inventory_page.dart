@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:scet_check/api/api.dart';
@@ -5,8 +7,6 @@ import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/no_data.dart';
 import 'package:scet_check/components/generalduty/search.dart';
 import 'package:scet_check/components/generalduty/sliver_app_bar.dart';
-import 'package:scet_check/page/module_steward/check/hiddenParame/steward_check.dart';
-import 'package:scet_check/routers/router_animate/router_fade_route.dart';
 import 'package:scet_check/utils/easyRefresh/easy_refreshs.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
@@ -109,9 +109,9 @@ class _InventoryPageState extends State<InventoryPage> {
     _inventorySearch(
         type: typeStatusEnum.onRefresh,
         data: {
-          'pageNo': 1,
-          'pageSize': 50,
-          'company.id':companyId,
+          'page': 1,
+          'size': 10,
+          'companyId':companyId,
         }
     );
     super.initState();
@@ -123,9 +123,9 @@ class _InventoryPageState extends State<InventoryPage> {
     _inventorySearch(
         type: typeStatusEnum.onRefresh,
         data: {
-          'pageNo': 1,
-          'pageSize': 50,
-          'company.id':companyId,
+          'page': 1,
+          'size': 10,
+          'companyId':companyId,
         }
     );
     startTime = null;
@@ -147,7 +147,7 @@ class _InventoryPageState extends State<InventoryPage> {
                   data: {
                     'regexp':true,//近似搜索
                     'detail': value,
-                    'company.id':companyId,
+                    'companyId':companyId,
                   }
               );
             },
@@ -170,9 +170,9 @@ class _InventoryPageState extends State<InventoryPage> {
                 _inventorySearch(
                     type: typeStatusEnum.onLoad,
                     data: {
-                      'pageNo': _pageNo,
-                      'pageSize': 50,
-                      'company.id':companyId,
+                      'page': _pageNo,
+                      'size': 10,
+                      'companyId':companyId,
                     }
                 );
               } : null,
@@ -181,9 +181,9 @@ class _InventoryPageState extends State<InventoryPage> {
                 _inventorySearch(
                     type: typeStatusEnum.onRefresh,
                     data: {
-                      'pageNo': 1,
-                      'pageSize': 50,
-                      'company.id':companyId,
+                      'page': 1,
+                      'size': 10,
+                      'companyId':companyId,
                     }
                 );
               },
@@ -202,9 +202,11 @@ class _InventoryPageState extends State<InventoryPage> {
                         i: i,
                         callBack:()async{
                           if(firm){
+                            //企业端跳转到企业清单详情
                             Navigator.pushNamed(context, '/enterprisInventory',
                                 arguments: {'uuid':hiddenInventory[i]['id'],'company':false});
                           }else{
+                            //管家端
                             Navigator.pushNamed(context, '/stewardCheck',arguments: {
                               'uuid':hiddenInventory[i]['id'],
                               'company':false
@@ -252,9 +254,9 @@ class _InventoryPageState extends State<InventoryPage> {
           _inventorySearch(
               type: typeStatusEnum.onRefresh,
               data: {
-                'pageNo': 1,
-                'pageSize': 50,
-                'company.id':companyId,
+                'page': 1,
+                'size': 10,
+                'companyId':companyId,
               }
           );
         },
@@ -269,12 +271,12 @@ class _InventoryPageState extends State<InventoryPage> {
           setState(() {});
         },
         trueBack: (){
-          if(startTime==null){
+          if(startTime == null){
             _inventorySearch(
                 type: typeStatusEnum.onRefresh,
                 data: {
                   'status':typeStatus['id'],
-                  'company.id':companyId,
+                  'companyId':companyId,
                 }
             );
           }
@@ -283,7 +285,7 @@ class _InventoryPageState extends State<InventoryPage> {
                 type: typeStatusEnum.onRefresh,
                 data: {
                   'status':typeStatus['id'],
-                  'company.id':companyId,
+                  'companyId':companyId,
                   'timeSearch':'createdAt',
                   'startTime':startTime,
                   'endTime':endTime,

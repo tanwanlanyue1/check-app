@@ -13,9 +13,9 @@ class RectifyComponents{
   /// detail:详情使用，序号为圆
   /// review:复查记录是否开启
   /// callBack:回调
- static  Widget rectifyRow({required Map company,required int i,bool detail = false,bool review = false,Function? callBack}){
+ static  Widget rectifyRow({required Map company,required int i,bool detail = false,bool history = false,Function? callBack}){
    return Container(
-     margin: EdgeInsets.only(top: px(20),left: px(20),right: px(20)),
+     margin: EdgeInsets.only(bottom: px(20),left: px(20),right: px(20),top: px(2)),
      padding: EdgeInsets.only(left: px(16),top: px(20),bottom: px(20)),
      decoration: BoxDecoration(
        color: Colors.white,
@@ -78,6 +78,23 @@ class RectifyComponents{
                ),
              ],
            ),
+           Visibility(
+             visible: history,
+             child: Container(
+               margin: EdgeInsets.only(bottom: px(16),top: px(24)),
+               child: Row(
+                 children: [
+                   SizedBox(
+                     height: px(32),
+                     child: Image.asset('lib/assets/icons/my/otherArea.png'),
+                   ),
+                   Expanded(
+                     child: Text(' ${company['district']['name']} ${company['screeningPerson']}',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),fontFamily: 'R',overflow: TextOverflow.ellipsis),),
+                   ),
+                 ],
+               ),
+             ),
+           ),
            Container(
              margin: EdgeInsets.only(top: px(20)),
              child: Row(
@@ -115,28 +132,6 @@ class RectifyComponents{
                ],
              ),
            ),
-           Visibility(
-             visible: review,
-             child: Container(
-               margin: EdgeInsets.only(top: px(20)),
-               child: Row(
-                 crossAxisAlignment: CrossAxisAlignment.start,
-                 mainAxisAlignment: MainAxisAlignment.start,
-                 children: [
-                   Container(
-                     height: px(32),
-                     width: px(32),
-                     margin: EdgeInsets.only(left: px(12)),
-                     child: Image.asset('lib/assets/icons/form/alter.png',fit: BoxFit.fill,),
-                   ),
-                   Container(
-                     margin: EdgeInsets.only(left: px(11)),
-                     child: Text('添加复查记录',style: TextStyle(color: Color(0xff4D7FFF),fontSize: sp(24)),),
-                   ),
-                 ],
-               ),
-             ),
-           )
          ],
        ),
        onTap: (){
@@ -150,7 +145,7 @@ class RectifyComponents{
  /// company:每一项数据
  /// i:第i项
  /// callBack:回调
- static  Widget repertoireRow({required Map company,required int i,Function? callBack}){
+ static Widget repertoireRow({required Map company,required int i,Function? callBack}){
    return Container(
      margin: EdgeInsets.only(top: px(20),left: px(20),right: px(20)),
      padding: EdgeInsets.only(left: px(16),top: px(20),bottom: px(20)),
@@ -222,12 +217,12 @@ class RectifyComponents{
                children: [
                  Container(
                    margin: EdgeInsets.only(left: px(12)),
-                   child: Text('排查人',style: TextStyle(color: Color(0xff969799),fontSize: sp(24))),
+                   child: Text('排查人员',style: TextStyle(color: Color(0xff969799),fontSize: sp(24))),
                  ),
                  Expanded(
                    child: Container(
                      margin: EdgeInsets.only(left: px(24),right: px(20)),
-                     child: Text('${company["checkPersonnel"]}',style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),),
+                     child: Text('${company["checkPersonnel"]}',style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),overflow: TextOverflow.ellipsis,),
                    ),
                  ),
                  Visibility(
@@ -263,7 +258,7 @@ class RectifyComponents{
    );
  }
 
-//颜色状态
+//问题颜色状态
  static Color Colorswitchs(status){
     switch(status){
       case 1 : return Color(0xffFAAA5A);
@@ -274,7 +269,7 @@ class RectifyComponents{
     }
   }
 
-  //状态
+  //问题状态
   static String switchs(status){
     switch(status){
       case 1 : return '未整改';
@@ -310,47 +305,6 @@ class RectifyComponents{
       default: return Color(0xffFAAA5A);
     }
   }
- ///头部
- /// title :标题名
- /// left :左侧按钮/图标
- /// right :右侧按钮/图标
- /// callBack :回调
- /// left/right: true-展示，false-隐藏，
- static Widget topBar({String? title,bool left = true,bool right = false,Function? callBack}){
-   return Container(
-     color: Colors.white,
-     height: px(88),
-     child: Row(
-       children: [
-         InkWell(
-           child: Container(
-             height: px(40),
-             width: px(41),
-             margin: EdgeInsets.only(left: px(20)),
-             child: left ? Image.asset('lib/assets/icons/other/chevronLeft.png',fit: BoxFit.fill,):
-             Text(''),
-           ),
-           onTap: (){
-             callBack?.call();
-           },
-         ),
-         Expanded(
-           flex: 1,
-           child: Center(
-             child: Text("$title",style: TextStyle(color: Color(0xff323233),fontSize: sp(32),fontFamily: 'M'),),
-           ),
-         ),
-         Container(
-           height: px(50),
-           margin: EdgeInsets.only(right: px(20)),
-           child: right ? Image.asset('lib/assets/icons/form/alter.png',fit: BoxFit.cover,):
-           Text(''),
-         ),
-       ],
-     ),
-   );
- }
-
   ///状态
   ///title:标题
   ///str:内容
@@ -417,6 +371,7 @@ class RectifyComponents{
   ///callBack 下拉选择回调
   ///trueBack 确认回调
   ///timeBack 日期选择回调
+  ///callPop 清空已选择状态
   static Widget endDrawers(context,{
     required Map typeStatus,
     required List status,

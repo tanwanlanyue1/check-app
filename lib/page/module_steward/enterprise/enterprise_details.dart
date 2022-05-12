@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
-import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
+import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 import 'components/basic_information.dart';
@@ -11,7 +11,7 @@ import 'components/hazardous_wastes.dart';
 import 'components/pollution_discharge.dart';
 
 ///企业管理详情
-///arguments{"id":企业id，name，企业名}
+///arguments{"id":企业id，name，企业名,"company":是否企业端}
 class EnterpriseDetails extends StatefulWidget {
   Map? arguments;
   EnterpriseDetails({Key? key,this.arguments}) : super(key: key);
@@ -26,7 +26,9 @@ class _EnterpriseDetailsState extends State<EnterpriseDetails> {
   final ScrollController _tabScrController = ScrollController(); //tab控制器
   int pageIndex = 0; //下标
   String companyId = ''; //企业id
-  Map companyList = {};//企业数据
+  Map companyList = {}; //企业数据
+  bool company = false; //企业端
+
   /// 获取问题
   /// status:1,未整改;2,已整改;3,整改已通过;4,整改未通过
   void _getProblems() async {
@@ -41,6 +43,7 @@ class _EnterpriseDetailsState extends State<EnterpriseDetails> {
   void initState() {
     // TODO: implement initState
     companyId = widget.arguments?['id'];
+    company = widget.arguments?['company'] ?? false;
     _getProblems();
     super.initState();
   }
@@ -50,13 +53,13 @@ class _EnterpriseDetailsState extends State<EnterpriseDetails> {
     return Scaffold(
       body: Column(
         children: [
-          RectifyComponents.appBarBac(),
-          RectifyComponents.topBar(
-            title: widget.arguments?['name'],
-            callBack: (){
-              Navigator.pop(context);
-            }
-        ),
+          TaskCompon.topTitle(
+              title: widget.arguments?['name'],
+              left: !company,
+              callBack: (){
+                Navigator.pop(context);
+              }
+          ),
           tabCut(),
           Expanded(
             child: PageView(

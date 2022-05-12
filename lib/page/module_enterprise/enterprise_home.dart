@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:scet_check/page/module_steward/enterprise/enterprise_details.dart';
-import 'package:scet_check/page/module_steward/enterprise/enterprise_page.dart';
 import 'package:scet_check/page/module_steward/message/message_page.dart';
 import 'package:scet_check/utils/logOut/log_out.dart';
 import 'package:scet_check/utils/screen/adapter.dart';
@@ -52,9 +51,15 @@ class _EnterpriseHomeState extends State<EnterpriseHome> {
     _pageList = [
       EnterpriseTaskDetails(),//企业任务详情
       EnterpriseDetails(
-        arguments: {"id":companyId,'name':companyName},
+        arguments: {
+          "id":companyId,
+          'name':companyName,
+          'company':true
+        },
       ),//一企一档
-      MessagePage(),//通知中心
+      MessagePage(
+        arguments: const {'company':true},
+      ),//通知中心
     ];
     super.initState();
   }

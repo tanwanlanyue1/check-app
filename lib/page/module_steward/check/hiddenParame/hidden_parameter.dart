@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
+import 'package:scet_check/model/provider/provider_details.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/layout_page.dart';
+import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
+import '../../../../main.dart';
 import 'Components/client_list_page.dart';
 
 /// 隐患台账
@@ -14,7 +18,7 @@ class HiddenParameter extends StatefulWidget {
   _HiddenParameterState createState() => _HiddenParameterState();
 }
 
-class _HiddenParameterState extends State<HiddenParameter> {
+class _HiddenParameterState extends State<HiddenParameter> with RouteAware{
 
   List tabBar = [];//头部
   String _companyId = '';//公司id
@@ -24,6 +28,7 @@ class _HiddenParameterState extends State<HiddenParameter> {
   List districtList = [];//片区统计数据
   List districtId = [""];//片区id
   Map<String,dynamic> data = {};//获取企业数据传递的参数
+  ProviderDetaild? _roviderDetaild;//全局数据
 
   /// 获取片区统计
   /// 获取tabbar表头，不在写死,
@@ -48,10 +53,15 @@ class _HiddenParameterState extends State<HiddenParameter> {
   void _getCompany() async {
     if(pageIndex != 0){
       data = {
-        'district.id': districtId[pageIndex]
+        'districtId': districtId[pageIndex],
+        "sort":["CAST(substring_index(number,'-',1) AS SIGNED)","CAST(substring_index(number,'-',-1) AS SIGNED)"],
+        "order":["ASC","ASC"],
       };
     }else{
-      data = {};
+      data = {
+        "sort":["CAST(substring_index(number,'-',1) AS SIGNED)","CAST(substring_index(number,'-',-1) AS SIGNED)"],
+        "order":["ASC","ASC"],
+      };
     }
     var response = await Request().get(
         Api.url['companyList'],
@@ -71,37 +81,65 @@ class _HiddenParameterState extends State<HiddenParameter> {
   }
 
   @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    ///监听路由
+    // routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+  }
+
+  //清除偏移量
+  @override
+  void didPop() {
+    // TODO: implement didPop
+    _roviderDetaild!.initOffest();
+    super.didPop();
+  }
+  @override
   Widget build(BuildContext context) {
-    return LayoutPage(
-      tabBar: tabBar,
-      pageBody: List.generate(tabBar.length, (index) => Column(
+    _roviderDetaild = Provider.of<ProviderDetaild>(context, listen: true);
+    return Scaffold(
+      body: Column(
         children: [
-          Container(
-            height: px(24),
-            margin: EdgeInsets.only(left:px(20),right: px(20)),
-            color: Colors.white,
-          ),
-          Visibility(
-            visible: companyList.isNotEmpty,
-            child: Expanded(
-              child: ClientListPage(
-                companyList: companyList,
-                callBack: (id,name){
-                  _companyId = id;
-                  _companyName = name;
-                  Navigator.pushNamed(context, '/hiddenDetails',arguments: {'companyId': _companyId,'companyName': _companyName,});
-                  setState(() {});
-                },
-              ),
+        TaskCompon.topTitle(
+          title: '隐患排查',
+        ),
+          Expanded(
+            child: LayoutPage(
+              tabBar: tabBar,
+              pageBody: List.generate(tabBar.length, (index) => Column(
+                children: [
+                  Container(
+                    height: px(24),
+                    margin: EdgeInsets.only(left:px(20),right: px(20)),
+                    color: Colors.white,
+                  ),
+                  Visibility(
+                    visible: companyList.isNotEmpty,
+                    child: Expanded(
+                      child: ClientListPage(
+                        companyList: companyList,
+                        sort: true,
+                        callBack: (id,name){
+                          _companyId = id;
+                          _companyName = name;
+                          Navigator.pushNamed(context, '/hiddenDetails',arguments: {'companyId': _companyId,'companyName': _companyName,});
+                          setState(() {});
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              )),
+              callBack: (val){
+                pageIndex = val;
+                _getCompany();
+                setState(() {});
+              },
             ),
           ),
         ],
-      )),
-      callBack: (val){
-        pageIndex = val;
-        _getCompany();
-        setState(() {});
-      },
+      ),
     );
   }
 

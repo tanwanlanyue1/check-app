@@ -9,6 +9,7 @@ import 'package:scet_check/utils/logOut/log_out.dart';
 import 'package:scet_check/utils/screen/adapter.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
+import 'check/hiddenParame/hidden_parameter.dart';
 import 'check/statisticAnaly/home_classify.dart';
 import 'enterprise/enterprise_page.dart';
 
@@ -32,11 +33,11 @@ class _HomePageState extends State<HomePage> {
   HomeModel? _homeModel; //全局的焦点
 
   final List _pageList = [
-    // const CheckPage(),//隐患排查
     const HomeClassify(),// 首页分类
     const EnterprisePage(),//企业管理
-    const LawPage(),//法律法规
-    const MessagePage(),//通知中心
+    // const MessagePage(),//通知中心
+    const HiddenParameter(),//隐患排查
+    const LawPage(),//工具箱
     const PersonalCenter(),//个人中心
   ];
 

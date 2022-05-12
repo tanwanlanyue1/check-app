@@ -29,7 +29,7 @@ class _HomeClassifyState extends State<HomeClassify> {
          'groupTable':'company'
        }
    );
-   if(response['statusCode'] == 200) {
+   if(response['statusCode'] == 200 && mounted) {
      setState(() {
        statisticsData = response['data'];
        for(var i=0;i<statisticsData.length;i++){
@@ -50,12 +50,13 @@ class _HomeClassifyState extends State<HomeClassify> {
  //选择事件
  void selectClass(int index){
    switch(index) {
+     // case 0: Navigator.pushNamed(context, '/checkPage'); break;
      case 0: Navigator.pushNamed(context, '/checkPage'); break;
      case 1: Navigator.pushNamed(context, '/backlogTask'); break;
      case 2: Navigator.pushNamed(context, '/haveDoneTask'); break;
-     case 3: Navigator.pushNamed(context, '/historyTask'); break;
+     case 3: Navigator.pushNamed(context, '/enterprisePage',arguments: {"history":true}); break;
      case 4: Navigator.pushNamed(context, '/policyStand',arguments: true); break;
-     case 5: Navigator.pushNamed(context, '/steward',arguments: 3); break;
+     case 5: Navigator.pushNamed(context, '/messagePage',arguments: {'company':false}); break;
      case 6: Navigator.pushNamed(context, '/targetClassifyPage'); break;
      // case 7: Navigator.pushNamed(context, '/'); break;
      default: ToastWidget.showToastMsg('暂无更多页面');
@@ -74,11 +75,6 @@ class _HomeClassifyState extends State<HomeClassify> {
     return Scaffold(
       body: Column(
         children: [
-          Container(
-            width: px(750),
-            height: appTopPadding(context),
-            color: Color(0xff19191A),
-          ),
           TaskCompon.topTitle(title: '首页'),
           Expanded(
             child: ListView(

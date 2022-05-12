@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
+import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 ///指标详情页
@@ -22,13 +22,9 @@ class _TargetDetailsState extends State<TargetDetails> {
     return Scaffold(
       body: Column(
         children: [
-          Container(
-            width: px(750),
-            height: appTopPadding(context),
-            color: Color(0xff19191A),
-          ),
-          RectifyComponents.topBar(
+          TaskCompon.topTitle(
               title: '企业名称',
+              left: true,
               callBack: (){
                 Navigator.pop(context);
               }
@@ -86,6 +82,13 @@ class _TargetDetailsState extends State<TargetDetails> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          Container(
+            margin: EdgeInsets.only(left: px(24)),
+            child: Text(
+              "相符性：",
+              style: TextStyle(fontSize: sp(28)),
+            ),
+          ),
           SizedBox(
             width: px(70),
             child: Radio(

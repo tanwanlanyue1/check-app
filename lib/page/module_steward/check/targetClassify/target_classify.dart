@@ -3,6 +3,7 @@ import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/client_list_page.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
+import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 ///指标分类页
@@ -39,13 +40,9 @@ class _TargetClassifyPageState extends State<TargetClassifyPage> {
     return Scaffold(
       body: Column(
         children: [
-          Container(
-            width: px(750),
-            height: appTopPadding(context),
-            color: Color(0xff19191A),
-          ),
-          RectifyComponents.topBar(
+          TaskCompon.topTitle(
               title: '分类分级',
+              left: true,
               callBack: (){
                 Navigator.pop(context);
               }

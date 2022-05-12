@@ -1,35 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
+import 'package:scet_check/main.dart';
+import 'package:scet_check/model/provider/provider_details.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/Components/client_list_page.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/layout_page.dart';
+import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 ///企业管理
+///arguments:{'history':true}历史台账进入
 class EnterprisePage extends StatefulWidget {
-  const EnterprisePage({Key? key}) : super(key: key);
+  final Map? arguments;
+  const EnterprisePage({Key? key,this.arguments}) : super(key: key);
 
   @override
   _EnterprisePageState createState() => _EnterprisePageState();
 }
 
-class _EnterprisePageState extends State<EnterprisePage> {
+class _EnterprisePageState extends State<EnterprisePage> with RouteAware{
   List tabBar = [""];//tab
   int pageIndex = 0;//页面下标
   List companyList = [];//公司列表
   List districtId = [""];//片区id
   List districtList = [];//片区统计数据
   Map<String,dynamic> data = {};//获取企业数据传递的参数
+  ProviderDetaild? _roviderDetaild;//全局数据
 
   /// 获取企业统计
   /// district.id:片区id
   void _getCompany() async {
     if(pageIndex != 0){
       data = {
-        'district.id': districtId[pageIndex]
+        'districtId': districtId[pageIndex],
+        "sort":["CAST(substring_index(number,'-',1) AS SIGNED)","CAST(substring_index(number,'-',-1) AS SIGNED)"],
+        "order":["ASC","ASC"],
       };
     }else{
-      data = {};
+      data = {
+        "sort":["CAST(substring_index(number,'-',1) AS SIGNED)","CAST(substring_index(number,'-',-1) AS SIGNED)"],
+        "order":["ASC","ASC"],
+      };
     }
     var response = await Request().get(
         Api.url['companyList'],
@@ -58,41 +70,67 @@ class _EnterprisePageState extends State<EnterprisePage> {
       _getCompany();
     }
   }
+
   @override
   void initState() {
     super.initState();
     _getStatistics();// 获取片区
   }
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    ///监听路由
+    // routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+  }
 
+  //清除偏移量
+  @override
+  void didPop() {
+    // TODO: implement didPop
+    _roviderDetaild!.initOffest();
+    super.didPop();
+  }
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: px(750),
-          height: appTopPadding(context),
-          color: Color(0xff19191A),
-        ),
-        Expanded(
-          child: LayoutPage(
-            tabBar: tabBar,
-            callBack: (val){
-              pageIndex = val;
-              _getCompany();
-              setState(() {});
-            },
-            pageBody: List.generate(tabBar.length, (index) => Visibility(
-              visible: companyList.isNotEmpty,
-              child: ClientListPage(
-                companyList: companyList,
-                callBack: (id,name){
-                  Navigator.pushNamed(context, '/enterpriseDetails',arguments: {'name':name,"id":id});
-                },
-              ),
-            ),),
+    _roviderDetaild = Provider.of<ProviderDetaild>(context, listen: true);
+    return Scaffold(
+      body: Column(
+        children: [
+          TaskCompon.topTitle(
+              title: '企业管理',
+              home: widget.arguments?['history'] ?? false,
+              colors: widget.arguments?['history'] ?? false ? Colors.transparent : Colors.white,
+              callBack: (){
+                Navigator.pop(context);
+              }
           ),
-        ),
-      ],
+          Expanded(
+            child: LayoutPage(
+              tabBar: tabBar,
+              callBack: (val){
+                pageIndex = val;
+                _getCompany();
+                setState(() {});
+              },
+              pageBody: List.generate(tabBar.length, (index) => Visibility(
+                visible: companyList.isNotEmpty,
+                child: ClientListPage(
+                  companyList: companyList,
+                  sort: true,
+                  callBack: (id,name){
+                    if(widget.arguments?['history'] ?? false){
+                      Navigator.pushNamed(context, '/historyTask',arguments: {'name':name,"id":id});
+                    }else{
+                      Navigator.pushNamed(context, '/enterpriseDetails',arguments: {'name':name,"id":id});
+                    }
+                  },
+                ),
+              ),),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
