@@ -81,7 +81,7 @@ class _EnterprisePageState extends State<EnterprisePage> with RouteAware{
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     ///监听路由
-    // routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
   }
 
   //清除偏移量

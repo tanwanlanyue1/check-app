@@ -21,7 +21,6 @@ class GuidePage extends StatefulWidget {
 class _GuidePageState extends State<GuidePage> {
   @override
   void initState() {
-    if (Platform.isAndroid) WebView.platform = AndroidWebView();
     super.initState();
     initData();
   }

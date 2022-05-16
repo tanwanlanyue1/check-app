@@ -40,6 +40,15 @@ class _HomePageState extends State<HomePage> {
     const LawPage(),//工具箱
     const PersonalCenter(),//个人中心
   ];
+  List tabTitles = ['首页', '一企一档', '隐患排查', '工具箱','个人中心'];   // 菜单文案
+
+  List tabIcons = [
+    'lib/assets/icons/my/backHome.png',
+    'lib/assets/icons/bottom-bar/select_firm.png',
+    'lib/assets/icons/bottom-bar/select_check.png',
+    'lib/assets/icons/my/setting.png',
+    'lib/assets/icons/bottom-bar/DD.png',
+  ];
 
   @override
   void initState() {
@@ -67,33 +76,8 @@ class _HomePageState extends State<HomePage> {
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  _buildItemMenu(
-                      index: 0,
-                      commonImage: 'lib/assets/icons/bottom-bar/A.png',
-                      activeImage: 'lib/assets/icons/bottom-bar/A1.png'
-                  ),
-                  _buildItemMenu(
-                      index: 1,
-                      commonImage: 'lib/assets/icons/bottom-bar/B.png',
-                      activeImage: 'lib/assets/icons/bottom-bar/B1.png'
-                  ),
-                  _buildItemMenu(
-                      index: 2,
-                      commonImage: 'lib/assets/icons/bottom-bar/C.png',
-                      activeImage: 'lib/assets/icons/bottom-bar/C1.png'
-                  ),
-                  _buildItemMenu(
-                      index: 3,
-                      commonImage: 'lib/assets/icons/bottom-bar/D.png',
-                      activeImage: 'lib/assets/icons/bottom-bar/D1.png'
-                  ),
-                  _buildItemMenu(
-                      index: 4,
-                      commonImage: 'lib/assets/icons/bottom-bar/mine.png',
-                      activeImage: 'lib/assets/icons/bottom-bar/mine-active.png'
-                  ),
-                ],
+                // children: getBottomNavigationBarItem(),
+                children: getBottomNavigationBarItem(),
               ),
             ),
           )
@@ -101,11 +85,44 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  ///底部菜单
+  List<Widget> getBottomNavigationBarItem() {
+    _roviderDetaild = Provider.of<ProviderDetaild>(context, listen: true);
+    _homeModel = Provider.of<HomeModel>(context, listen: true);
+    List<Widget> list = [];
+    for (int i = 0; i < tabTitles.length; i++) {
+      list.add(
+          GestureDetector(
+            // behavior: HitTestBehavior.translucent,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: px(40),
+                  width: px(41),
+                  child: Image.asset(tabIcons[i],color: _tabIndex == i ? Color(0xff4D7FFF):Color(0xff8FA0CC),),
+                ),
+                Text("${tabTitles[i]}",style: TextStyle(color: _tabIndex == i ? Color(0xff4D7FFF):Color(0xff8FA0CC),fontSize: sp(20)),),
+              ],
+            ),
+            onTap: (){
+              _pageController.jumpToPage(i);
+              _roviderDetaild!.initOffest();
+              _homeModel!.onVerifyNodes();
+              setState(() {
+                _tabIndex = i;
+              });
+            },
+          ),
+      );
+    }
+    return list;
+  }
 ///每一项菜单
 ///index: 下标
 ///commonImage: 未选中图片
 ///activeImage: 选中图片
-  Widget _buildItemMenu({required int index, required String commonImage, required String activeImage}) {
+  Widget _buildItemMenu({required int index, required String commonImage, required String activeImage,Widget? childs}) {
     _roviderDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     _homeModel = Provider.of<HomeModel>(context, listen: true);
     Widget menuItem = GestureDetector(
@@ -117,12 +134,13 @@ class _HomePageState extends State<HomePage> {
             _tabIndex = index;
           });
         },
-        child: Image.asset(
-            _tabIndex == index ? activeImage : commonImage,
-            width: px(80.0),
-            height: px(74.0),
-            fit: BoxFit.cover
-        )
+        // child: Image.asset(
+        //     _tabIndex == index ? activeImage : commonImage,
+        //     width: px(80.0),
+        //     height: px(74.0),
+        //     fit: BoxFit.cover
+        // )
+      child: childs,
     );
     return menuItem;
   }

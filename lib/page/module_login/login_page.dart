@@ -42,7 +42,12 @@ class _LoginPageState extends State<LoginPage> {
         saveInfo(response['data']['access_token'], _data['username']!, _data['password']!, response['data']);
           switch(response['data']['role']['name']){
             case '环保管家' :
-              Navigator.pushNamedAndRemoveUntil(context,'/steward', (Route route)=>false);
+              // WidgetsBinding.instance!.addPostFrameCallback((_) {
+              //   Navigator.of(context).popAndPushNamed('/steward');});
+              Future.delayed(Duration.zero, () {
+                Navigator.pushNamedAndRemoveUntil(context,'/steward', (Route route)=>false);
+              });
+              // Navigator.pushNamedAndRemoveUntil(context,'/steward', (Route route)=>false);
               break;
             case '企业' :
               Navigator.of(context).pushAndRemoveUntil(CustomRoute(EnterpriseHome()), (router) => router == null);

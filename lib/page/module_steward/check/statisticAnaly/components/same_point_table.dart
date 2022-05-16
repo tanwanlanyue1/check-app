@@ -455,6 +455,7 @@ class _SamePointTableState extends State<SamePointTable> {
         return topRow(industryHeader);
     }
   }
+
   @override
   Widget build(BuildContext context) {
     _providerDetaild = Provider.of<ProviderDetaild>(context, listen: true);
@@ -472,9 +473,7 @@ class _SamePointTableState extends State<SamePointTable> {
             style: TextStyle(fontSize: sp(30),color: Color(0xff323233),fontFamily: 'M'),),
         ),
         SizedBox(
-          // height: px(720 + ((name.length/2)*20)),
-          // width: double.maxFinite,
-          height: px(750),
+          height: px(720 + ((name.length/2)*20)),
           child: ColumnEcharts(
             erectName: name,
             data: echartData,

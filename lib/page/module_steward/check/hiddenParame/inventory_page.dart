@@ -90,15 +90,18 @@ class _InventoryPageState extends State<InventoryPage> {
   /// 上拉加载
   /// 当前数据等于总数据，关闭上拉加载
   _onLoad({required List data, required int total}) {
-    _total = total;
-    _controller.finishLoadCallBack!();
-    if(hiddenInventory.length >= total){
-      _controller.finishLoad(noMore: true);
-      _enableLoad = false;
-    }else{
-      hiddenInventory.addAll(data);
+    if(mounted){
+      setState(() {
+        _total = total;
+        _controller.finishLoadCallBack!();
+        if(hiddenInventory.length >= total){
+          _controller.finishLoad(noMore: true);
+          _enableLoad = false;
+        }else{
+          hiddenInventory.addAll(data);
+        }
+      });
     }
-    setState(() {});
   }
 
   @override

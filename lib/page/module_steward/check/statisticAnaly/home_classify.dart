@@ -14,12 +14,13 @@ class HomeClassify extends StatefulWidget {
 }
 
 ///首页分类
-class _HomeClassifyState extends State<HomeClassify> {
+class _HomeClassifyState extends State<HomeClassify> with RouteAware{
   List classify = ['统计分析','待办任务','已办任务','台账记录','法律规范','通知中心','分类分级','更多'];//分类
   List statisticsData = [];//统计数据
   List issue = [];//问题
   List name = [];//问题
   List echartData = [];//问题
+  bool show = true;//展示echarts
 
  /// 问题统计数据
  void _getProblemStatis() async {
@@ -32,7 +33,7 @@ class _HomeClassifyState extends State<HomeClassify> {
    if(response['statusCode'] == 200 && mounted) {
      setState(() {
        statisticsData = response['data'];
-       for(var i=0;i<statisticsData.length;i++){
+       for(var i = 0; i < statisticsData.length; i++){
          issue.add(int.parse(statisticsData[i]['allCount']));
          name.add(statisticsData[i]['companyName']);
        }
@@ -48,17 +49,20 @@ class _HomeClassifyState extends State<HomeClassify> {
  }
 
  //选择事件
- void selectClass(int index){
+  void selectClass(int index){
    switch(index) {
-     // case 0: Navigator.pushNamed(context, '/checkPage'); break;
-     case 0: Navigator.pushNamed(context, '/checkPage'); break;
+     case 0: echartPop(callBack: (){
+       Navigator.pushNamed(context, '/checkPage').then((value){
+         setState(() {
+           show = true;
+         });});
+     }); break;
      case 1: Navigator.pushNamed(context, '/backlogTask'); break;
      case 2: Navigator.pushNamed(context, '/haveDoneTask'); break;
      case 3: Navigator.pushNamed(context, '/enterprisePage',arguments: {"history":true}); break;
      case 4: Navigator.pushNamed(context, '/policyStand',arguments: true); break;
      case 5: Navigator.pushNamed(context, '/messagePage',arguments: {'company':false}); break;
      case 6: Navigator.pushNamed(context, '/targetClassifyPage'); break;
-     // case 7: Navigator.pushNamed(context, '/'); break;
      default: ToastWidget.showToastMsg('暂无更多页面');
    }
  }
@@ -68,6 +72,15 @@ class _HomeClassifyState extends State<HomeClassify> {
     // TODO: implement initState
    _getProblemStatis();
     super.initState();
+  }
+
+  ///首次登录进入页面，再跳转到有echart详情时，会闪退
+  ///需要添加一个延时，用来关闭echart
+  void echartPop({Function? callBack}){
+    setState(() {show = false;});
+    Future.delayed(Duration(milliseconds: 200)).then((onValue) {
+      callBack?.call();
+    });
   }
 
  @override
@@ -80,7 +93,7 @@ class _HomeClassifyState extends State<HomeClassify> {
             child: ListView(
               padding: EdgeInsets.only(top: px(0)),
               children: [
-                Container(
+                show ? Container(
                   margin: EdgeInsets.only(bottom: px(24)),
                   height: px(700),
                   width: px(550),
@@ -88,10 +101,18 @@ class _HomeClassifyState extends State<HomeClassify> {
                     erect: true,
                     erectName: name,
                     data: echartData,
+                    title:'园区企业问题数统计',
                   ),
+                ):
+                Container(
+                  margin: EdgeInsets.only(bottom: px(24)),
+                  height: px(700),
+                  width: px(550),
                 ),//图表
                 Container(
-                  margin: EdgeInsets.only(left: px(24),right: px(24)),
+                  margin: EdgeInsets.only(left: px(24),right: px(24),bottom: px(24)),
+                  padding: EdgeInsets.only(top: px(12),left: px(12),right: px(12)),
+                  color: Colors.white,
                   child: GridView.builder(
                     shrinkWrap:true,
                     physics: NeverScrollableScrollPhysics(),

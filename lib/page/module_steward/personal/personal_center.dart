@@ -9,6 +9,7 @@ import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 
 import 'components/task_compon.dart';
+import 'history_task.dart';
 
 //个人中心
 class PersonalCenter extends StatefulWidget {
@@ -30,7 +31,15 @@ class _PersonalCenterState extends State<PersonalCenter> {
     userName= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
     super.initState();
   }
-
+  //选择事件
+  void selectClass(int index){
+    switch(index) {
+      case 0: Navigator.pushNamed(context, '/historyTask'); break;
+      case 1: Navigator.pushNamed(context, '/backlogTask'); break;
+      case 2: Navigator.pushNamed(context, '/haveDoneTask'); break;
+      default: ToastWidget.showToastMsg('暂无更多页面');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -39,7 +48,9 @@ class _PersonalCenterState extends State<PersonalCenter> {
         _header(),
         Column(
           children: List.generate(classify.length, (i){
-            return taskList(i);
+            return taskList(
+              i: i,
+            );
           }),
         )
       ],
@@ -116,7 +127,7 @@ class _PersonalCenterState extends State<PersonalCenter> {
 
   ///任务列表
   ///判断跳转位置
-  Widget taskList(int i){
+  Widget taskList({required int i}){
     return Container(
       margin: EdgeInsets.only(top: px(24),left: px(20),right: px(24)),
       padding: EdgeInsets.only(left: px(16),top: px(20),bottom: px(20)),
@@ -124,7 +135,8 @@ class _PersonalCenterState extends State<PersonalCenter> {
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(px(8.0))),
       ),
-      child: InkWell(
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
         child: Column(
           children: [
             Row(
@@ -167,13 +179,7 @@ class _PersonalCenterState extends State<PersonalCenter> {
           ],
         ),
         onTap: () {
-          if (i == 0) {
-            Navigator.pushNamed(context, '/historyTask');
-          } else if (i == 1) {
-            Navigator.pushNamed(context, '/backlogTask');
-          } else {
-            Navigator.pushNamed(context, '/haveDoneTask');
-          }
+          selectClass(i);
         }
       ),
     );

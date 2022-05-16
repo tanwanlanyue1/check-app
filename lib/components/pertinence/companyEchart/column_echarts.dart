@@ -16,7 +16,8 @@ class ColumnEcharts extends StatefulWidget {
   final List? pieData;//饼图data
   final List? data;//竖状图data
   final bool erect;//竖状图
-  const ColumnEcharts({Key? key, this.erectName,this.pieData,this.data,this.erect = false}) : super(key: key);
+  final String? title;//标题
+  const ColumnEcharts({Key? key, this.erectName,this.pieData,this.data,this.erect = false,this.title}) : super(key: key);
 
   @override
   _ColumnEchartsState createState() => _ColumnEchartsState();
@@ -28,6 +29,7 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
   List series =  []; //柱状图，数据
   List datas = []; // 饼图所需数据
 
+  String columntitle = '';//标题
   String columnImage = ''' ''';//横
   String erectImage = ''' ''';//竖状图
   String pie =  ''' ''';//饼图
@@ -37,6 +39,7 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
 
   @override
   void initState() {
+    columntitle = widget.title ?? '';
     series = widget.data ?? [];
     erectName = widget.erectName ?? [];
     datas = widget.pieData ?? [];
@@ -44,7 +47,7 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
     columnImage =  '''
       {
         title: {
-          text: '柱状图'
+          text: '$columntitle'
         },
         tooltip: {
           trigger: 'axis',
@@ -152,7 +155,7 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
     erectImage =  '''
       {
         title: {
-          text: '柱状图'
+          text: '$columntitle'
         },
           legend: {
             top: '5%',
@@ -217,6 +220,7 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
   @override
   void didUpdateWidget(ColumnEcharts oldWidget) {
     super.didUpdateWidget(oldWidget);
+    columntitle = widget.title ?? '';
     series = widget.data ?? [];
     erectName = widget.erectName ?? [];
     datas = widget.pieData ?? [];
@@ -282,7 +286,7 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
       columnImage =  '''
       {
         title: {
-          text: '柱状图'
+          text: '$columntitle'
         },
         tooltip: {
           trigger: 'axis',
@@ -337,7 +341,7 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
       erectImage =  '''
       {
         title: {
-          text: '柱状图'
+          text: '$columntitle'
         },
           legend: {
             top: '5%',
@@ -409,70 +413,21 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
     _providerDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     return Scaffold(
       body: SizedBox(
-        // height: px(750),
           height: px(720+((erectName.length/2)*20)),
           child: _providerDetaild.cloumnChart == 0 && !widget.erect ?
           Echarts(
+            reloadAfterInit: true,
             option: pie,
           ):
           _providerDetaild.cloumnChart == 1 || widget.erect?
           Echarts(
+            reloadAfterInit: true,
             option: erectImage,
           ):Echarts(
+            reloadAfterInit: true,
             option: columnImage,
           )
       ),
     );
-//     return SizedBox(
-//       width: 300,
-//       height: 250,
-//       child: Echarts(
-//         option: '''
-//         {
-//   tooltip: {
-//     trigger: 'item'
-//   },
-//   legend: {
-//     top: '5%',
-//     left: 'center'
-//   },
-//   series: [
-//     {
-//       name: 'Access From',
-//       type: 'pie',
-//       radius: ['40%', '70%'],
-//       avoidLabelOverlap: false,
-//       itemStyle: {
-//         borderRadius: 10,
-//         borderColor: '#fff',
-//         borderWidth: 2
-//       },
-//       label: {
-//         show: false,
-//         position: 'center'
-//       },
-//       emphasis: {
-//         label: {
-//           show: true,
-//           fontSize: '40',
-//           fontWeight: 'bold'
-//         }
-//       },
-//       labelLine: {
-//         show: false
-//       },
-//       data: [
-//         { value: 1048, name: 'Search Engine' },
-//         { value: 735, name: 'Direct' },
-//         { value: 580, name: 'Email' },
-//         { value: 484, name: 'Union Ads' },
-//         { value: 300, name: 'Video Ads' }
-//       ]
-//     }
-//   ]
-// }
-//         ''',
-//       ),
-//     );
   }
 }

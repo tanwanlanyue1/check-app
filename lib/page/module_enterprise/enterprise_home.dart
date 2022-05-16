@@ -27,21 +27,6 @@ class _EnterpriseHomeState extends State<EnterpriseHome> {
   String companyName = '';//公司名称
   List _pageList = []; //页面内容
 
-  ///底部tab图标
-  List tabIcons = [
-    [
-      const Icon(Icons.map, size: 20.0,color: Color(0XFFB9B9B9)),
-      const Icon(Icons.map, size: 20.0,color: Color(0XFF4D7CFF)),
-    ],
-    [
-      const Icon(Icons.date_range, size: 20.0,color: Color(0XFFB9B9B9)),
-      const Icon(Icons.date_range, size: 20.0,color: Color(0XFF4D7CFF)),
-    ],
-    [
-      const Icon(Icons.date_range, size: 20.0,color: Color(0XFFB9B9B9)),
-      const Icon(Icons.date_range, size: 20.0,color: Color(0XFF4D7CFF)),
-    ]
-  ];
 
   @override
   void initState() {

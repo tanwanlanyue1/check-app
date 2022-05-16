@@ -144,7 +144,7 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     ///监听路由
-    // routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
   }
 
   @override
@@ -254,7 +254,7 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
   void dispose() {
     // TODO: implement dispose
     /// 取消路由订阅
-    // routeObserver.unsubscribe(this);
+    routeObserver.unsubscribe(this);
     super.dispose();
   }
 
@@ -393,7 +393,7 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
                             child: Image.asset('lib/assets/icons/my/query.png'),
                         ),
                         onTap: (){
-                          Navigator.pushNamed(context, '/screeningBased',arguments: {'law':false,'search':true});
+                          Navigator.pushNamed(context, '/screeningBased',arguments: {'law':checkGist,'search':true});
                         },
                       ) : Container(),
                     ],

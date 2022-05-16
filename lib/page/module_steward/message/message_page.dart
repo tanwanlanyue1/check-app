@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/page/module_login/login_page.dart';
@@ -20,11 +22,15 @@ class MessagePage extends StatefulWidget {
 class _MessagePageState extends State<MessagePage> {
 
   bool company = false;
+  String companyId = '';//公司id
+  String companyName = '';//公司名称
 
   @override
   void initState() {
     // TODO: implement initState
-    company = widget.arguments?['company'];
+    company = widget.arguments?['company'] ?? false;
+    companyId = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))?['companyId'] ?? "";
+    companyName = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['company']?['name'] ?? '';
     super.initState();
   }
 
@@ -42,20 +48,8 @@ class _MessagePageState extends State<MessagePage> {
               }
           ),
           Visibility(
-            visible: (widget.arguments?['company'] ?? false),
-            child: InkWell(
-              child: Icon(Icons.people_alt_outlined,size: px(100),),
-              onTap: (){
-                ToastWidget.showDialog(
-                    msg: '是否退出当前账号？',
-                    ok: (){
-                      StorageUtil().remove(StorageKey.Token);
-                      Navigator.of(context).pushAndRemoveUntil(
-                          CustomRoute(LoginPage()), (router) => false);
-                    }
-                );
-              },
-            ),
+            visible: company,
+            child: _header(),
           ),
           Column(
             children: List.generate(3, (i){
@@ -67,6 +61,69 @@ class _MessagePageState extends State<MessagePage> {
     );
   }
 
+  ///头部
+  Widget _header(){
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.only(left: px(24),right: px(24),top: px(24)),
+      padding: EdgeInsets.only(left: px(24),right: px(24),top: px(8),bottom: px(8)),
+      color: Colors.white,
+      child: InkWell(
+        child: Row(
+          children: [
+            Container(
+              width: px(100),
+              height: px(100),
+              decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius:BorderRadius.all(Radius.circular(px(150))),
+                  border: Border.all(width: px(2),color: Colors.white)
+              ),
+              child: Image.asset('lib/assets/images/home/header.png',
+                width: px(30),
+                height: px(30),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.only(left: px(25)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      companyName,
+                      style: TextStyle(
+                          fontSize: sp(36),
+                          color: Color(0XFF2E2F33),
+                          fontFamily: "M"
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              width: px(100),
+              height: px(100),
+              alignment: Alignment.center,
+              child: Text('退出'),
+            ),
+          ],
+        ),
+        onTap: (){
+          ToastWidget.showDialog(
+              msg: '是否退出当前账号？',
+              ok: (){
+                StorageUtil().remove(StorageKey.Token);
+                Navigator.of(context).pushAndRemoveUntil(
+                    CustomRoute(LoginPage()), (router) => false);
+              }
+          );
+        },
+      ),
+    );
+  }
   ///通知列表
   Widget messageList(){
     return Container(

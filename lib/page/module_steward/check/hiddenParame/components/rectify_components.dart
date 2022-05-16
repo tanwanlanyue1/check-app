@@ -13,6 +13,7 @@ class RectifyComponents{
   /// detail:详情使用，序号为圆
   /// review:复查记录是否开启
   /// callBack:回调
+  /// history:历史台账
  static  Widget rectifyRow({required Map company,required int i,bool detail = false,bool history = false,Function? callBack}){
    return Container(
      margin: EdgeInsets.only(bottom: px(20),left: px(20),right: px(20),top: px(2)),

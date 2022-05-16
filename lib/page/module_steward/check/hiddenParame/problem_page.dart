@@ -609,13 +609,23 @@ class _ProblemPageState extends State<ProblemPage> {
                           company: hiddenProblem[i],
                           i: i,
                           detail: true,
-                          callBack:(){
+                          callBack:() async {
                             if(firm){
                               Navigator.pushNamed(context, '/abarbeitungFrom',arguments: {'id':hiddenProblem[i]['id']});
                             }else{
-                              Navigator.pushNamed(context, '/rectificationProblem',
-                                  arguments: {'check':true,'problemId':hiddenProblem[i]['id']}
-                              );
+                              var res =  await Navigator.pushNamed(context, '/fillAbarbeitung',arguments: {'id':hiddenProblem[i]['id'],'review':true});
+                              if(res == true){
+                                _problemSearch(
+                                    type: typeStatusEnum.onRefresh,
+                                    data: {
+                                      'page': 1,
+                                      'size': 10,
+                                      'sort':"status",
+                                      "order":"ASC",
+                                      'companyId':companyId,
+                                    }
+                                );
+                              }
                             }
                           }
                       ),

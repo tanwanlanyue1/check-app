@@ -8,7 +8,7 @@ import 'package:scet_check/components/generalduty/date_range.dart';
 import 'package:scet_check/components/generalduty/no_data.dart';
 import 'package:scet_check/components/generalduty/sliver_app_bar.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
-import 'package:scet_check/page/module_steward/check/hiddenParame/hidden_details.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/inventory_page.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/utils/easyRefresh/easy_refreshs.dart';
 import 'package:scet_check/utils/screen/screen.dart';
@@ -38,6 +38,9 @@ class _HistoryTaskState extends State<HistoryTask> {
   int _total = 10; // 总条数
   bool _enableLoad = true; // 是否开启加载
   final EasyRefreshController _controller = EasyRefreshController(); // 上拉组件控制器
+  String companyId = '';//企业id
+  Map<String,dynamic> data = {};
+  bool createdAt = false;
 
   /// 获取企业下的问题/问题搜索筛选
   /// companyId:公司id
@@ -47,8 +50,21 @@ class _HistoryTaskState extends State<HistoryTask> {
   /// 'startTime':开始时间,
   /// 'endTime':结束时间,
   ///添加一个状态 check-提交到企业,environment-提交到环保局
-  _problemSearch({typeStatusEnum? type,Map<String,dynamic>? data}) async {
-    // print("data===$data");
+  _problemSearch({typeStatusEnum? type,}) async {
+        if(companyId.isNotEmpty){
+          data.addAll(
+              {'companyId':companyId,}
+          );
+        }
+        if(createdAt){
+          data.addAll(
+            {
+              'timeSearch':'createdAt',
+              'startTime':formatTime(startTime),
+              'endTime':formatTime(endTime),
+            }
+          );
+        }
     var response = await Request().get(Api.url['problemList'],data: data,);
     if(response['statusCode'] == 200 && response['data'] != null){
       Map _data = response['data'];
@@ -98,20 +114,20 @@ class _HistoryTaskState extends State<HistoryTask> {
   void initState() {
     // TODO: implement initState
     userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
+    if(widget.arguments != null){
+      companyId = widget.arguments!['id'];
+    }
     //请求页码，大小，时间范围，用户id
-    _problemSearch(
-        type: typeStatusEnum.onRefresh,
-        data: {
-          'page': 1,
-          'size': 10,
-          'timeSearch':'createdAt',
-          'startTime':startTime,
-          'endTime':endTime,
-          "userId":userId,
-          'sort':"status",
-          "order":"ASC"
-        }
-    );
+    data = {
+      'page': _pageNo,
+      'size': 10,
+      "userId":userId,
+      'sort':"status",
+      "order":"ASC",
+    };
+    // _problemSearch(
+    //     type: typeStatusEnum.onRefresh,
+    // );
     super.initState();
   }
 
@@ -141,31 +157,12 @@ class _HistoryTaskState extends State<HistoryTask> {
               onLoad:  _enableLoad ? () async {
                 _problemSearch(
                     type: typeStatusEnum.onLoad,
-                    data: {
-                      'page': _pageNo,
-                      'size': 10,
-                      'timeSearch':'createdAt',
-                      'startTime':startTime,
-                      'endTime':endTime,
-                      "userId":userId,
-                      'sort':"status",
-                      "order":"ASC"
-                    }
                 );
               } : null,
               onRefresh: () async {
+                _pageNo = 1;
                 _problemSearch(
                     type: typeStatusEnum.onRefresh,
-                    data: {
-                      'page': 1,
-                      'size': 10,
-                      'timeSearch':'createdAt',
-                      'startTime':startTime,
-                      'endTime':endTime,
-                      "userId":userId,
-                      'sort':"status",
-                      "order":"ASC"
-                    }
                 );
               },
               slivers: <Widget>[
@@ -175,7 +172,7 @@ class _HistoryTaskState extends State<HistoryTask> {
                     return Container(
                       margin: EdgeInsets.only(top: px(20),left: px(24),right: px(24)),
                       padding: EdgeInsets.only(left: px(12)),
-                      height: px(55),width: double.maxFinite,
+                      height: px(64),width: double.maxFinite,
                       color: Colors.white,
                       child: FormCheck.formTitle(
                         '隐患问题',
@@ -222,7 +219,7 @@ class _HistoryTaskState extends State<HistoryTask> {
                     return Container(
                       margin: EdgeInsets.only(top: px(20),left: px(24),right: px(24)),
                       padding: EdgeInsets.only(left: px(12)),
-                      height: px(55),width: double.maxFinite,
+                      height: px(64),width: double.maxFinite,
                       color: Colors.white,
                       child: FormCheck.formTitle(
                         '复查问题',
@@ -246,7 +243,14 @@ class _HistoryTaskState extends State<HistoryTask> {
                           i: i,
                           detail: true,
                           history: true,
-                          callBack:(){
+                          callBack:() async {
+                            var res =  await Navigator.pushNamed(context, '/fillAbarbeitung',arguments: {'id':historyList[i]['id'],'review':true});
+                            if(res == true){
+                              _pageNo = 1;
+                              _problemSearch(
+                                  type: typeStatusEnum.onRefresh,
+                              );
+                            }
                           }
                       ),
                     );
@@ -307,18 +311,10 @@ class _HistoryTaskState extends State<HistoryTask> {
                 callBack: (val) {
                   startTime = val[0];
                   endTime = val[1];
+                  _pageNo = 1;
+                  createdAt = true;
                   _problemSearch(
                       type: typeStatusEnum.onRefresh,
-                      data: {
-                        'page': 1,
-                        'size': 10,
-                        'timeSearch':'createdAt',
-                        'startTime':startTime,
-                        'endTime':endTime,
-                        "userId":userId,
-                        'sort':"status",
-                        "order":"ASC"
-                      }
                   );
                   setState(() {});
                 },
@@ -329,49 +325,7 @@ class _HistoryTaskState extends State<HistoryTask> {
       ),
     );
   }
-  ///清单列表
-  Widget taskList({required int i,required Map company,Function? callBack}){
-    return Container(
-      margin: EdgeInsets.only(top: px(24),left: px(20),right: px(24)),
-      padding: EdgeInsets.only(left: px(16),top: px(20),bottom: px(20)),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(px(8.0))),
-      ),
-      child: InkWell(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(left: px(16),right: px(12)),
-                  child: Text('${i+1}.${historyList[i]['company']['name']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(30),overflow: TextOverflow.ellipsis),),
-                )
-              ],
-            ),
-            Container(
-              margin: EdgeInsets.only(left: px(16),right: px(12)),
-              child: Text('${historyList[i]['checkPersonnel']}',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),overflow: TextOverflow.ellipsis),),
-            ),
-            Container(
-              height: px(48),
-              alignment: Alignment.centerLeft,
-              margin: EdgeInsets.only(left: px(16)),
-              child: Text(formatTime(historyList[i]['createdAt']),
-                style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),),
-            ),
-          ],
-        ),
-        onTap: (){
-          Navigator.pushNamed(context, '/stewardCheck',arguments: {
-            'uuid':historyList[i]['id'],
-            'company':false
-          });
-        },
-      ),
-    );
-  }
+
   ///时间格式
   ///time:时间
   static String formatTime(time) {

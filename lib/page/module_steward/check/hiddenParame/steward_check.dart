@@ -573,22 +573,18 @@ class _StewardCheckState extends State<StewardCheck>{
             ],
           ),
           Column(
-            children: [
-              Column(
-                children: List.generate(problemList.length, (i) => RectifyComponents.rectifyRow(
-                    company: problemList[i],
-                    i: i,
-                    callBack:() async {
-                      var res = await Navigator.pushNamed(context, '/rectificationProblem',
-                          arguments: {'check':true,'problemId':problemList[i]['id']}
-                      );
-                      if(res == null){
-                        _getProblem();
-                      }
-                    }
-                )),
-              ),
-            ],
+            children: List.generate(problemList.length, (i) => RectifyComponents.rectifyRow(
+                company: problemList[i],
+                i: i,
+                callBack:() async {
+                  var res = await Navigator.pushNamed(context, '/rectificationProblem',
+                      arguments: {'check':true,'problemId':problemList[i]['id']}
+                  );
+                  if(res == null){
+                    _getProblem();
+                  }
+                }
+            )),
           ),
         ],
       ),
@@ -610,20 +606,16 @@ class _StewardCheckState extends State<StewardCheck>{
             ),
           ),
           Column(
-            children: [
-              Column(
-                children: List.generate(review.length, (i) => RectifyComponents.rectifyRow(
-                    company: review[i],
-                    i: i,
-                    callBack:() async {
-                      var res =  await Navigator.pushNamed(context, '/fillAbarbeitung',arguments: {'id':review[i]['id'],'review':true});
-                      if(res == true){
-                        _getCompany();
-                      }
-                    }
-                )),
-              ),
-            ],
+            children: List.generate(review.length, (i) => RectifyComponents.rectifyRow(
+                company: review[i],
+                i: i,
+                callBack:() async {
+                  var res =  await Navigator.pushNamed(context, '/fillAbarbeitung',arguments: {'id':review[i]['id'],'review':true});
+                  if(res == true){
+                    _getCompany();
+                  }
+                }
+            )),
           ),
         ],
       ),
