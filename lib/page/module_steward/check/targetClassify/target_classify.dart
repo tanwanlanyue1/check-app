@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/client_list_page.dart';
-import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
@@ -22,6 +21,10 @@ class _TargetClassifyPageState extends State<TargetClassifyPage> {
   void _getCompany() async {
     var response = await Request().get(
         Api.url['companyList'],
+        data: {
+          "sort":["CAST(substring_index(number,'-',1) AS SIGNED)","CAST(substring_index(number,'-',-1) AS SIGNED)"],
+          "order":["ASC","ASC"],
+        }
     );
     if(response['statusCode'] == 200) {
       companyList = response["data"]['list'];
@@ -52,7 +55,7 @@ class _TargetClassifyPageState extends State<TargetClassifyPage> {
               companyList: companyList,
               sort: true,
               callBack: (id,name){
-                Navigator.pushNamed(context, '/targetClassifyList');
+                Navigator.pushNamed(context, '/targetClassifyList',arguments: {'name':name,'id':id});
               },
             ),
           ),

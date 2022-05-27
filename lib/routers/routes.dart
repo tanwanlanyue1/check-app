@@ -33,6 +33,7 @@ import 'package:scet_check/page/module_steward/message/message_details.dart';
 import 'package:scet_check/page/module_steward/message/message_page.dart';
 import 'package:scet_check/page/module_steward/personal/back_task_details.dart';
 import 'package:scet_check/page/module_steward/personal/backlog_task.dart';
+import 'package:scet_check/page/module_steward/personal/check_task.dart';
 import 'package:scet_check/page/module_steward/personal/have_done_task.dart';
 import 'package:scet_check/page/module_steward/personal/history_task.dart';
 import 'package:scet_check/page/module_steward/personal/task_details.dart';
@@ -73,6 +74,7 @@ final routes = {
   '/hiddenParameter': (context) =>  HiddenParameter(), //隐患台账
   '/columnEcharts': (context) =>  ColumnEcharts(), //隐患台账
   '/messagePage': (context,{arguments}) =>  MessagePage(arguments:arguments), //通知中心
+  '/checkTask': (context,{arguments}) =>  CheckTask(arguments:arguments), //选择任务
 
 ///企业端
   '/enterprisInventory': (context,{arguments}) =>  EnterprisInventory(arguments:arguments), //企业清单详情

@@ -106,20 +106,20 @@ class TaskCompon{
                 ),
               ],
             ),
+            // Container(
+            //   margin: EdgeInsets.only(bottom: px(16),top: px(24)),
+            //   child: Row(
+            //     children: [
+            //       SizedBox(
+            //         height: px(32),
+            //         child: Image.asset('lib/assets/icons/my/otherArea.png'),
+            //       ),
+            //       Text(' 第三片区',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),fontFamily: 'R'),),
+            //     ],
+            //   ),
+            // ),
             Container(
-              margin: EdgeInsets.only(bottom: px(16),top: px(24)),
-              child: Row(
-                children: [
-                  SizedBox(
-                    height: px(32),
-                    child: Image.asset('lib/assets/icons/my/otherArea.png'),
-                  ),
-                  Text(' 第三片区',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),fontFamily: 'R'),),
-                ],
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(bottom: px(16)),
+              margin: EdgeInsets.only(bottom: px(16),top: px(12)),
               child: Row(
                 children: [
                   SizedBox(

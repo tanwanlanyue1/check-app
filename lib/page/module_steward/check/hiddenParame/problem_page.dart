@@ -159,7 +159,6 @@ class _ProblemPageState extends State<ProblemPage> {
   _onLoad({required List data,required int total}) {
     _total = total;
     firmTotal += data.length;
-    _controller.finishLoadCallBack!();
     if(firm){
       for(var i = 0; i < data.length; i++){
         if(data[i]['isCompanyRead'] == true){
@@ -173,6 +172,7 @@ class _ProblemPageState extends State<ProblemPage> {
       _controller.finishLoad(noMore: true);
       _enableLoad = false;
     }
+    _controller.finishLoadCallBack!();
     setState(() {});
   }
 
@@ -302,7 +302,7 @@ class _ProblemPageState extends State<ProblemPage> {
                                         }
                                     );
                                     position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-                                    if(position!=null){
+                                    if(position != null){
                                       BotToast.cleanAll();
                                     }
                                     state(() {});},
@@ -334,7 +334,7 @@ class _ProblemPageState extends State<ProblemPage> {
                                       callback: (val){
                                         checkName = '';
                                         for(var i = 0; i < val.length;i++){
-                                          if(i>0){
+                                          if(i > 0){
                                             checkName = checkName + ',' + val[i]['name'];
                                           }else{
                                             checkName = val[i]['name'];

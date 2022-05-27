@@ -1,50 +1,43 @@
-import 'dart:developer';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
+import 'package:scet_check/components/generalduty/date_range.dart';
 import 'package:scet_check/components/generalduty/no_data.dart';
-import 'package:scet_check/components/generalduty/search.dart';
 import 'package:scet_check/components/generalduty/sliver_app_bar.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/utils/easyRefresh/easy_refreshs.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/storage/data_storage_key.dart';
+import 'package:scet_check/utils/storage/storage.dart';
+import 'package:scet_check/utils/time/utc_tolocal.dart';
 
-import 'components/rectify_components.dart';
 
 ///排查清单页
 ///hiddenInventory:隐患清单数据
-///firm 是否为企业端
-class InventoryPage extends StatefulWidget {
-  String companyId;
-  bool firm;
-  InventoryPage({Key? key,required this.companyId,required this.firm}) : super(key: key);
+class HistoryInventory extends StatefulWidget {
+  final String? companyId;
+  const HistoryInventory({Key? key, this.companyId,}) : super(key: key);
 
 
   @override
-  _InventoryPageState createState() => _InventoryPageState();
+  _HistoryInventoryState createState() => _HistoryInventoryState();
 }
 
-class _InventoryPageState extends State<InventoryPage> {
+class _HistoryInventoryState extends State<HistoryInventory> {
   final EasyRefreshController _controller = EasyRefreshController(); // 上拉组件控制器
+  String userId = '';//用户id
   int _pageNo = 1; // 当前页码
   int _total = 10; // 总条数
   bool _enableLoad = true; // 是否开启加载
-  bool firm = false; // 是否为企业
   List hiddenInventory = []; //隐患清单数据
-  List inventoryStatus = [
-    {'name':'整改中','id':1},
-    {'name':'已归档','id':2},
-    {'name':'待审核','id':3},
-    {'name':'审核已通过','id':4},
-    {'name':'审核未通过','id':5},
-    {'name':'未提交','id':6},
-  ]; //清单的状态
   String companyId = '';//企业id
-  DateTime? startTime;//选择开始时间
-  DateTime? endTime;//选择结束时间
-  Map<String,dynamic> typeStatus = {'name':'请选择','id':0};//默认类型
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();//侧边栏key
+  DateTime startTime = DateTime.now().add(Duration(days: -1));//选择开始时间
+  DateTime endTime = DateTime.now();//选择结束时间
+  Map<String,dynamic> data = {};
+  bool createdAt = false;
 
   /// 获取企业下的问题/问题搜索筛选
   /// companyId:公司id
@@ -54,9 +47,23 @@ class _InventoryPageState extends State<InventoryPage> {
   /// 'startTime':开始时间,
   /// 'endTime':结束时间,
   ///添加一个状态 check-提交到企业,environment-提交到环保局
-  _inventorySearch({typeStatusEnum? type,Map<String,dynamic>? data}) async {
+  _inventorySearch({typeStatusEnum? type,}) async {
+    if(companyId.isNotEmpty){
+      data.addAll(
+          {'companyId':companyId,}
+      );
+    }
+    if(createdAt){
+      data.addAll(
+          {
+            'timeSearch':'createdAt',
+            'startTime':formatTime(startTime),
+            'endTime':formatTime(endTime),
+          }
+      );
+    }
     var response = await Request().get(Api.url['inventoryList'],data: data,);
-
+    // print("data===$data");
     if(response['statusCode'] == 200 && response['data'] != null){
       Map _data = response['data'];
       _pageNo++;
@@ -107,57 +114,25 @@ class _InventoryPageState extends State<InventoryPage> {
   @override
   void initState() {
     // TODO: implement initState
-    companyId = widget.companyId;
-    firm = widget.firm;
+    companyId = widget.companyId ?? "";
+    userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
+    data = {
+      'page': _pageNo,
+      'size': 10,
+      "userId":userId,
+    };
     _inventorySearch(
         type: typeStatusEnum.onRefresh,
-        data: {
-          'page': 1,
-          'size': 10,
-          'companyId':companyId,
-        }
     );
     super.initState();
   }
 
   @override
-  void didUpdateWidget(covariant InventoryPage oldWidget) {
-    // TODO: implement didUpdateWidget
-    _inventorySearch(
-        type: typeStatusEnum.onRefresh,
-        data: {
-          'page': 1,
-          'size': 10,
-          'companyId':companyId,
-        }
-    );
-    startTime = null;
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
       body: Column(
         children: [
-          Search(
-            bgColor: Color(0xffffffff),
-            textFieldColor: Color(0xFFF0F1F5),
-            search: (value) {
-              _inventorySearch(
-                  type: typeStatusEnum.onRefresh,
-                  data: {
-                    'regexp':true,//近似搜索
-                    'detail': value,
-                    'companyId':companyId,
-                  }
-              );
-            },
-            screen: (){
-              _scaffoldKey.currentState!.openEndDrawer();
-            },
-          ),
+          selectTime(),
           Expanded(
             child: EasyRefresh.custom(
               enableControlFinishRefresh: true,
@@ -166,28 +141,17 @@ class _InventoryPageState extends State<InventoryPage> {
               controller: _controller,
               taskIndependence: false,
               reverse: false,
-              // firstRefresh:true,
               footer: footers(),
               header: headers(),
               onLoad:  _enableLoad ? () async {
                 _inventorySearch(
                     type: typeStatusEnum.onLoad,
-                    data: {
-                      'page': _pageNo,
-                      'size': 10,
-                      'companyId':companyId,
-                    }
                 );
               } : null,
               onRefresh: () async {
                 _pageNo = 1;
                 _inventorySearch(
                     type: typeStatusEnum.onRefresh,
-                    data: {
-                      'page': 1,
-                      'size': 10,
-                      'companyId':companyId,
-                    }
                 );
               },
               slivers: <Widget>[
@@ -203,22 +167,23 @@ class _InventoryPageState extends State<InventoryPage> {
                     return RectifyComponents.repertoireRow(
                         company: hiddenInventory[i],
                         i: i,
-                        callBack:()async{
-                          if(firm){
-                            //企业端跳转到企业清单详情
-                            Navigator.pushNamed(context, '/enterprisInventory',
-                                arguments: {'uuid':hiddenInventory[i]['id'],'company':false});
-                          }else{
-                            //管家端
-                            Navigator.pushNamed(context, '/stewardCheck',arguments: {
+                        callBack:() async {
+                          if(mounted){
+                            var res = await Navigator.pushNamed(context, '/stewardCheck',arguments: {
                               'uuid':hiddenInventory[i]['id'],
                               'company':false
                             });
+                            if(res == null){
+                              _pageNo = 1;
+                              _inventorySearch(
+                                  type: typeStatusEnum.onRefresh,
+                              );
+                            }
                           }
                         }
                     );
                   },
-                  childCount: hiddenInventory.length),
+                      childCount: hiddenInventory.length),
                 ),
                 SliverPersistentHeader(
                   floating: false,//floating 与pinned 不能同时为true
@@ -247,58 +212,50 @@ class _InventoryPageState extends State<InventoryPage> {
           ),
         ],
       ),
-      endDrawer: RectifyComponents.endDrawers(
-        context,
-        typeStatus: typeStatus,
-        status: inventoryStatus,
-        startTime: startTime ?? DateTime.now(),
-        endTime: endTime ?? DateTime.now(),
-        callPop: (){
-          _inventorySearch(
-              type: typeStatusEnum.onRefresh,
-              data: {
-                'page': 1,
-                'size': 10,
-                'companyId':companyId,
-              }
-          );
-        },
-        callBack: (val){
-          typeStatus['name'] = val['name'];
-          typeStatus['id'] = val['id'];
-          setState(() {});
-        },
-        timeBack: (val){
-          startTime = val[0];
-          endTime = val[1];
-          setState(() {});
-        },
-        trueBack: (){
-          if(startTime == null){
-            _inventorySearch(
-                type: typeStatusEnum.onRefresh,
-                data: {
-                  'status':typeStatus['id'],
-                  'companyId':companyId,
-                }
-            );
-          }
-          else{
-            _inventorySearch(
-                type: typeStatusEnum.onRefresh,
-                data: {
-                  'status':typeStatus['id'],
-                  'companyId':companyId,
-                  'timeSearch':'createdAt',
-                  'startTime':startTime,
-                  'endTime':endTime,
-                }
-            );
-          }
-          Navigator.pop(context);
-          setState(() {});
-        },
+    );
+  }
+  ///日期选择
+  Widget selectTime(){
+    return Container(
+      margin: EdgeInsets.only(left: px(24),top: px(24),right: px(24)),
+      padding: EdgeInsets.only(bottom: px(12),left: px(12),top: px(12)),
+      color: Colors.white,
+      child: Row(
+        children: [
+          Container(
+            width: px(140),
+            alignment: Alignment.bottomCenter,
+            child: Text('日期 ',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+          ),
+          Expanded(
+            child: Container(
+              width: px(580),
+              margin: EdgeInsets.only(left: px(24),right: px(24)),
+              child: DateRange(
+                start: startTime,
+                end: endTime,
+                showTime: false,
+                callBack: (val) {
+                  startTime = val[0];
+                  endTime = val[1];
+                  _pageNo = 1;
+                  createdAt = true;
+                  _inventorySearch(
+                    type: typeStatusEnum.onRefresh,
+                  );
+                  setState(() {});
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  ///时间格式
+  ///time:时间
+  static String formatTime(time) {
+    return utcToLocal(time.toString()).substring(0,16);
   }
 }

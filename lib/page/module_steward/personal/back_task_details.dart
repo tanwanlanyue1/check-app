@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
@@ -6,6 +8,8 @@ import 'package:scet_check/components/generalduty/upload_image.dart';
 import 'package:scet_check/components/pertinence/companyFile/components/file_system.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/storage/data_storage_key.dart';
+import 'package:scet_check/utils/storage/storage.dart';
 
 import 'components/task_compon.dart';
 
@@ -22,6 +26,8 @@ class BackTaskDetails extends StatefulWidget {
 
 class _BackTaskDetailsState extends State<BackTaskDetails> {
   List imgDetails = [];//任务图片列表
+  String userName = ''; //用户名
+  bool check = false;//是否选择
   /// 上传文件
   /// result: 文件数组
   /// 处理上传图片返回回来的格式，将\转化为/
@@ -39,25 +45,74 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
       setState(() {});
     }
   }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    userName= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          TaskCompon.topTitle(
-              title: '待办任务-未处理',
-              left: true,
-              font: 32,
-              callBack: (){
-                Navigator.pop(context);
-              }
+          // TaskCompon.topTitle(
+          //     title: '待办任务-未处理',
+          //     left: true,
+          //     font: 32,
+          //     callBack: (){
+          //       Navigator.pop(context);
+          //     }
+          // ),
+          Container(
+            width: px(750),
+            height: Adapt.padTopH(),
+            color: Color(0xff19191A),
+          ),
+          Container(
+            height: px(88),
+            child: Row(
+              children: [
+                InkWell(
+                  child: Container(
+                    height: px(88),
+                    width: px(55),
+                    color: Colors.transparent,
+                    padding: EdgeInsets.only(left: px(12)),
+                    margin: EdgeInsets.only(left: px(12)),
+                    child: Image.asset('lib/assets/icons/other/chevronLeft.png',),
+                  ),
+                  onTap: (){
+                    Navigator.pop(context);
+                  },
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    alignment: Alignment.center,
+                    child: Text('待办任务',style: TextStyle(color: Color(0xff323233),fontSize: sp(36),fontFamily: 'M'),),
+                  ),
+                ),
+                GestureDetector(
+                  child: Container(
+                      margin: EdgeInsets.only(right: px(20)),
+                      child: Text('选择',style: TextStyle(color: Color(0xff323233),fontSize: sp(24)),)),
+                  onTap: () async{
+                    Navigator.pop(context);
+                    Navigator.pop(context,'true');
+                  },
+                )
+              ],
+            ),
           ),
           Expanded(
             child: ListView(
               padding: EdgeInsets.only(top: 0),
               children: [
                 backLog(),
-                checkAgenda(),
+                // checkAgenda(),
+                check ?
                 Container(
                   margin: EdgeInsets.only(left: px(24),right: px(24)),
                   child: FormCheck.submit(
@@ -70,7 +125,7 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
                         Navigator.pop(context);
                       }
                   ),
-                ),
+                ):Container(),
               ],
             ),
           ),
@@ -110,6 +165,11 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
             title: '所在片区:',
             titleColor: Color(0XFF323232),
             child: Text('第三片区',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+          ),
+          FormCheck.rowItem(
+            title: '填报人员:',
+            titleColor: Color(0XFF323232),
+            child: Text(userName,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
             title: '待办任务:',

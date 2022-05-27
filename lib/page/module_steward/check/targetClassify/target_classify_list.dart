@@ -25,6 +25,7 @@ class _TargetClassifyListState extends State<TargetClassifyList> with SingleTick
   void initState() {
     // TODO: implement initState
     _tabController = TabController(vsync: this,length: tabBar.length);
+    companyName = widget.arguments?['name'];
     super.initState();
   }
 
@@ -48,7 +49,7 @@ class _TargetClassifyListState extends State<TargetClassifyList> with SingleTick
       body: Column(
         children: [
           TaskCompon.topTitle(
-              title: '企业名称',
+              title: companyName,
               left: true,
               callBack: (){
                 Navigator.pop(context);

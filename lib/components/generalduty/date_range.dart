@@ -94,18 +94,23 @@ class _DateRangeState extends State<DateRange> {
                     },
                     onSubmit: (val) async{
                       Navigator.pop(context);
+                      List picked = [];
                       if (val is PickerDateRange) {
-                        // var picked = [
-                        //   val.startDate,
-                        //   val.endDate,];
                         //拿到当天的最后一秒
-                        var picked = [
-                          val.startDate,
-                          DateTime(val.endDate!.year,val.endDate!.month,val.endDate!.day, 23,59,59),
-                        ];
+                        if(val.endDate != null){
+                          picked = [
+                            val.startDate,
+                            DateTime(val.endDate!.year,val.endDate!.month,val.endDate!.day, 23,59,59),
+                          ];
+                        }else{
+                          picked = [
+                            val.startDate,
+                            DateTime(val.startDate!.year,val.startDate!.month,val.startDate!.day, 23,59,59),
+                          ];
+                        }
                         widget.callBack?.call(picked);
                         startTime = formatTime(val.startDate);
-                        endTime = formatTime(val.endDate);
+                        endTime = formatTime(picked[1]);
                         setState(() {});
                       }
                     },

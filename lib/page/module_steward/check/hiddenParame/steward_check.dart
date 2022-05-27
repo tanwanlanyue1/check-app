@@ -51,6 +51,7 @@ class _StewardCheckState extends State<StewardCheck>{
     {'name':'其他','id':0},
   ];//问题类型列表
   List review = [];//复查列表
+
   /// 获取清单详情
   /// id:清单id
   /// argumentMap 提交问题传递的参数
@@ -343,6 +344,7 @@ class _StewardCheckState extends State<StewardCheck>{
                 Container(),
                 concerns(),
                 notReview(),
+                taskList(),
                 pigeonhole(),
               ],
             ),
@@ -500,6 +502,35 @@ class _StewardCheckState extends State<StewardCheck>{
                   ),
                 ),
               ),
+              GestureDetector(
+                child: Container(
+                  margin: EdgeInsets.only(top: px(24)),
+                  child: Row(
+                    children: [
+                      Text(
+                          '选择任务',
+                          textAlign: TextAlign.justify,
+                          style: TextStyle(
+                              color: Color(0XFF969799),
+                              fontSize: sp(28.0),
+                              fontWeight: FontWeight.w500
+                          )
+                      ),
+                      Expanded(
+                        child: Container(
+                          alignment: Alignment.centerRight,
+                          child: Icon(Icons.keyboard_arrow_right_rounded,color: Colors.grey,),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                onTap: () async{
+                  //判断是否选择了任务
+                 var res = await Navigator.pushNamed(context, '/checkTask');
+                 print('res====$res');
+                },
+              ),
             ]
         ),
         replacement: SizedBox(
@@ -613,6 +644,39 @@ class _StewardCheckState extends State<StewardCheck>{
                   var res =  await Navigator.pushNamed(context, '/fillAbarbeitung',arguments: {'id':review[i]['id'],'review':true});
                   if(res == true){
                     _getCompany();
+                  }
+                }
+            )),
+          ),
+        ],
+      ),
+    );
+  }
+
+  ///任务问题
+  Widget taskList(){
+    return Container(
+      margin: EdgeInsets.only(top: px(4)),
+      color: Colors.white,
+      child: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: px(20),left: px(32),),
+            height: px(55),
+            child: FormCheck.formTitle(
+              '任务问题',
+            ),
+          ),
+          Column(
+            children: List.generate(problemList.length, (i) => RectifyComponents.rectifyRow(
+                company: problemList[i],
+                i: i,
+                callBack:() async {
+                  var res = await Navigator.pushNamed(context, '/rectificationProblem',
+                      arguments: {'check':true,'problemId':problemList[i]['id']}
+                  );
+                  if(res == null){
+                    _getProblem();
                   }
                 }
             )),

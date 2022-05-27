@@ -4,25 +4,22 @@ import 'package:scet_check/utils/screen/screen.dart';
 
 import 'components/task_compon.dart';
 
-///待办任务
+///选择任务列表
 ///arguments:{'name':用户名,'id':用户id}
-class BacklogTask extends StatefulWidget {
+class CheckTask extends StatefulWidget {
   Map? arguments;
-  BacklogTask({Key? key,this.arguments}) : super(key: key);
+  CheckTask({Key? key,this.arguments}) : super(key: key);
 
   @override
-  _BacklogTaskState createState() => _BacklogTaskState();
+  _CheckTaskState createState() => _CheckTaskState();
 }
 
-class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStateMixin{
-  List tabBar = ["现场检查","表格填报",'其他专项'];//tab列表
-  late TabController _tabController; //TabBar控制器
+class _CheckTaskState extends State<CheckTask> {
   String checkPeople = '';//排查人员
 
   @override
   void initState() {
     // TODO: implement initState
-    _tabController = TabController(vsync: this,length: tabBar.length);
     super.initState();
   }
   @override
@@ -57,7 +54,7 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
                   child: Container(
                     alignment: Alignment.center,
                     margin: EdgeInsets.only(right: px(55)),
-                    child: Text('待办任务',style: TextStyle(color: Color(0xff323233),fontSize: sp(36),fontFamily: 'M'),),
+                    child: Text('选择任务',style: TextStyle(color: Color(0xff323233),fontSize: sp(36),fontFamily: 'M'),),
                   ),
                 ),
                 GestureDetector(
@@ -73,58 +70,18 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
               ],
             ),
           ),
-          Container(
-            height: px(96),
-            child: DefaultTabController(
-              length: tabBar.length,
-              child: Container(
-                color: Colors.white,
-                margin: EdgeInsets.only(left: px(20),right: px(20)),
-                child: TabBar(
-                    controller: _tabController,
-                    indicatorSize: TabBarIndicatorSize.label,
-                    indicatorPadding: EdgeInsets.only(bottom: px(16)),
-                    isScrollable: false,
-                    labelColor: Color(0xff4D7FFF),
-                    labelStyle: TextStyle(fontSize: sp(32.0),fontFamily: 'M'),
-                    unselectedLabelColor: Color(0xff646566),
-                    unselectedLabelStyle: TextStyle(fontSize: sp(30.0),fontFamily: 'R'),
-                    indicatorColor:Color(0xff4D7FFF),
-                    indicatorWeight: px(4),
-                    tabs: tabBar.map((item) {
-                      return Tab(text: '$item');
-                    }).toList()
-                ),
-              ),
-            ),
-          ),
           Expanded(
-            child: TabBarView(
-                controller: _tabController,
-                children: <Widget>[
-                  ListView(
-                    padding: EdgeInsets.only(top: 0),
-                    children: List.generate(5, (i){
-                      return TaskCompon.taskList(
-                          i: i,
-                          company: {},
-                          callBack: (){
-                            Navigator.pushNamed(context, '/backTaskDetails');
-                          }
-                      );
-                    }),
-                  ),
-                  Column(
-                    children: [
-                      NoData(timeType: true, state: '未获取到数据!')
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      NoData(timeType: true, state: '未获取到数据!')
-                    ],
-                  ),
-                ]
+            child: ListView(
+              padding: EdgeInsets.only(top: 0),
+              children: List.generate(5, (i){
+                return TaskCompon.taskList(
+                    i: i,
+                    company: {},
+                    callBack: (){
+                      Navigator.pushNamed(context, '/backTaskDetails');
+                    }
+                );
+              }),
             ),
           ),
         ],

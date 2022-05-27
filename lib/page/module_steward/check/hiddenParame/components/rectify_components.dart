@@ -226,13 +226,10 @@ class RectifyComponents{
                      child: Text('${company["checkPersonnel"]}',style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),overflow: TextOverflow.ellipsis,),
                    ),
                  ),
-                 Visibility(
-                   visible: company["isImportant"] ?? false,
-                   child: SizedBox(
-                     height: px(32),
-                     width: px(32),
-                     child: Image.asset('lib/assets/icons/check/sandClock.png'),//problem.png
-                   ),
+                 SizedBox(
+                   height: px(32),
+                   width: px(32),
+                   child: Image.asset('lib/assets/icons/check/sandClock.png'),
                  ),
                  Container(
                    margin: EdgeInsets.only(left: px(24),right: px(80)),
