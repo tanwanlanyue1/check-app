@@ -7,7 +7,8 @@ import 'package:scet_check/utils/time/utc_tolocal.dart';
 ///问题详情
 class ProblemDetails extends StatefulWidget {
   final Map? problemList;
-  const ProblemDetails({Key? key,this.problemList}) : super(key: key);
+  final int? inventoryStatus;
+  const ProblemDetails({Key? key,this.problemList,this.inventoryStatus}) : super(key: key);
 
   @override
   _ProblemDetailsState createState() => _ProblemDetailsState();
@@ -16,16 +17,19 @@ class ProblemDetails extends StatefulWidget {
 class _ProblemDetailsState extends State<ProblemDetails> {
 
   List imgDetails = [];//图片列表
-  List lawImg = [];//法律法规截图列表
+  // List lawImg = [];//法律法规截图列表
   Map problemList = {};//问题详情列表
   bool isImportant = false; //重点问题
   String checkPersonnel = '';//排查人员
   String checkTime = '';//排查时间
   String solvedAt = '';//整改期限
   String rectifyPlan = '';//问题详情
-  String lawTitle = '';//法律文件
+  String problemTitle = '';//问题概述
+  // String lawTitle = '';//法律文件
   String fillPerson = '';//填报人员
   String problemType = '';//问题类型
+  String flowStatus = '';//流程状态
+  String inventoryId = '';//清单id
 
   /// 获取问题数据
   void _evaluation() async {
@@ -34,15 +38,11 @@ class _ProblemDetailsState extends State<ProblemDetails> {
     imgDetails = problemList['images'];
     isImportant = problemList['isImportant'];
     checkPersonnel = problemList['inventory']['checkPersonnel'];
-    lawImg = problemList['lawImages'] ?? [];
-    if(problemList['law'] == null){
-      lawTitle = problemList['basis']['name'] ?? '';
-    }else{
-      lawTitle = problemList['law']['title'] ?? '';
-    }
     fillPerson = problemList['user']['nickname'];
     problemType = problemList['problemType']['name'];
     rectifyPlan = problemList['detail'] ?? '';
+    problemTitle = problemList['name'];
+    inventoryId = problemList['inventoryId'];
     setState(() {});
   }
 
@@ -50,11 +50,35 @@ class _ProblemDetailsState extends State<ProblemDetails> {
   void initState() {
     // TODO: implement initState
     problemList = widget.problemList ?? {};
-    if(problemList.isNotEmpty){
+    if(problemList.isNotEmpty && widget.inventoryStatus != null){
+      flow();
       _evaluation();
     }
     super.initState();
   }
+  ///判断流程
+  void flow(){
+    if(widget.inventoryStatus == 1){
+      flowStatus = '审核通过';
+      if(problemList['status'] == 2){
+        flowStatus = '填报整改详情';
+      }else if(problemList['status'] == 3){
+        flowStatus = '整改完成';
+      }else if(problemList['status'] == 4){
+        flowStatus = '复查未整改';
+      }
+    }else if(widget.inventoryStatus == 2){
+      flowStatus = '整改完成';
+    }else if(widget.inventoryStatus == 3){
+      flowStatus = '审核中';
+    }else if(widget.inventoryStatus == 5){
+      flowStatus = '审核不通过';
+    }else if(widget.inventoryStatus == 6){
+      flowStatus = '新建排查流程';
+    }
+    setState(() {});
+  }
+
   @override
   void didUpdateWidget(covariant ProblemDetails oldWidget) {
     // TODO: implement didUpdateWidget
@@ -69,6 +93,7 @@ class _ProblemDetailsState extends State<ProblemDetails> {
 
   @override
   Widget build(BuildContext context) {
+    flow();
     return rubyAgent();
   }
   ///排查问题 详情
@@ -80,26 +105,31 @@ class _ProblemDetailsState extends State<ProblemDetails> {
               Expanded(
                 child: FormCheck.formTitle('问题详情'),
               ),
-              Container(
-                width: px(110),
-                height: px(48),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: RectifyComponents.Colorswitchs(problemList['status']),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(px(20)),
-                      bottomLeft: Radius.circular(px(20)),
-                    )
-                ),//状态；1,未整改;2,已整改;3,整改已通过;4,整改未通过
-                child: Text(RectifyComponents.switchs(problemList['status'])
-                  ,style: TextStyle(color: Colors.white,fontSize: sp(20)),),
+              GestureDetector(
+                child: Container(
+                  height: px(48),
+                  padding: EdgeInsets.only(left: px(12),right: px(12)),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      color: RectifyComponents.Colorswitchs(problemList['status']),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(px(20)),
+                        bottomLeft: Radius.circular(px(20)),
+                      )
+                  ),
+                  child: Text(flowStatus,
+                    style: TextStyle(color: Colors.white,fontSize: sp(20)),),
+                ),
+                onTap: (){
+                  Navigator.pushNamed(context, '/problemSchedule',arguments: {"status":problemList['status'],'inventoryId':inventoryId});
+
+                },
               ),
             ],
           ),
           FormCheck.rowItem(
               title: "排查时间",
-              child:
-              Text(checkTime, style: TextStyle(
+              child: Text(checkTime, style: TextStyle(
                   color: Color(0xff323233),
                   fontSize: sp(28),
                   fontFamily: 'Roboto-Condensed'),)
@@ -118,6 +148,11 @@ class _ProblemDetailsState extends State<ProblemDetails> {
                 fontFamily: 'Roboto-Condensed'),),
           ),
           FormCheck.rowItem(
+              alignStart: true,
+              title: "问题概述",
+              child:  Text(problemTitle, style: TextStyle(
+                  color: Color(0xff323233), fontSize: sp(28)),)),
+          FormCheck.rowItem(
             title: "问题详情",
             child: Text(rectifyPlan, style: TextStyle(
                 color: Color(0xff323233), fontSize: sp(28)),),
@@ -129,21 +164,6 @@ class _ProblemDetailsState extends State<ProblemDetails> {
                 closeIcon: false,
               )
           ),
-          FormCheck.rowItem(
-            title: "排查依据",
-            child: Text(lawTitle, style: TextStyle(color: Color(0xff4D7FFF),
-                fontSize: sp(28),
-                fontFamily: 'Roboto-Condensed'),),
-          ),
-          lawImg.isNotEmpty ?
-          FormCheck.rowItem(
-              alignStart: true,
-              title: "法律法规截图",
-              child: UploadImage(
-                imgList: lawImg,
-                closeIcon: false,
-              )) :
-          Container(),
           FormCheck.rowItem(
             title: "整改期限",
             child: Text(solvedAt, style: TextStyle(

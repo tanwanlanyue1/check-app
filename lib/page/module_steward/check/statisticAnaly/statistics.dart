@@ -10,13 +10,15 @@ import 'Components/same_point_table.dart';
 ///type:排名类型
 ///tableBody:表单数据
 ///callBack:回调函数
+///问题类型:回调函数
 class Statistics extends StatefulWidget {
   int pageIndex;
   List? number;
   List? tableBody;
+  List? problemType;
   String? type;
   Function? callBack;
-  Statistics({Key? key,required this.pageIndex,this.number,this.type,this.tableBody,this.callBack}) : super(key: key);
+  Statistics({Key? key,required this.pageIndex,this.number,this.type,this.problemType,this.tableBody,this.callBack}) : super(key: key);
 
   @override
   _StatisticsState createState() => _StatisticsState();
@@ -34,6 +36,7 @@ class _StatisticsState extends State<Statistics> {
   List columns = [];//表头
   List problemStatist = [];//问题统计分析
   List allStatist = []; //全园区的统计
+  List problemType = []; //园区问题类型统计
 
   @override
   void initState() {
@@ -51,7 +54,7 @@ class _StatisticsState extends State<Statistics> {
     );
     if(response['statusCode'] == 200) {
       setState(() {
-        allStatist = response['data'];
+        allStatist = response['data']['list'];
       });
     }
   }
@@ -72,6 +75,7 @@ class _StatisticsState extends State<Statistics> {
     number = widget.number ?? [];
     type = widget.type ?? type;
     _tableBody = widget.tableBody ?? [];
+    problemType = widget.problemType ?? [];
     if(number.isNotEmpty){
       companyTotal = number[0]['total'];
       questionTotal = number[1]['total'];
@@ -105,6 +109,7 @@ class _StatisticsState extends State<Statistics> {
             tableTitle: type,
             tableBody: _tableBody,
             questionTotal:questionTotal,
+            problemType:problemType,
             callBack: (){
               //全部分区需要请求片区的接口，其他片区不需要,左箭头回调时间
               if(widget.pageIndex == 0){

@@ -45,6 +45,7 @@ void main() {
       ),
     );
   }, (Object error, StackTrace stack) {
+    // ignore_for_file: avoid_print
     print('出错：error==>,$error \n 出错：stack==>,$stack\n');
   });
 }
@@ -54,7 +55,7 @@ final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 class MyApp extends StatelessWidget {
   final String? routerStr;
-  MyApp({Key? key, this.routerStr,}) : super(key: key);
+  const MyApp({Key? key, this.routerStr,}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(

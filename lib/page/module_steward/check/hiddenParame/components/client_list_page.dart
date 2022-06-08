@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:azlistview/azlistview.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:common_utils/common_utils.dart';
@@ -18,11 +20,13 @@ class ClientListPage extends StatefulWidget {
   final List? companyList;
   Function? callBack;
   bool sort;//不排序
+  bool select;//多选
   ClientListPage({
     Key? key,
     this.callBack,
     this.companyList,
     this.sort = false,
+    this.select = false,
   }) : super(key: key);
 
   @override
@@ -91,7 +95,6 @@ class _ClientListPageState extends State<ClientListPage> {
     //     return int.parse(a.number.split('-')[1]).compareTo(int.parse(b.number.split('-')[1]));
     //   }else{
     //     // print('a${a.number},b===${b.number}');
-    //     // return 0;
     //     return int.parse(a.number.split('-')[0]).compareTo(int.parse(b.number.split('-')[0]));
     //   }
     // });
@@ -103,7 +106,8 @@ class _ClientListPageState extends State<ClientListPage> {
     dataList.clear();
     if (ObjectUtil.isEmpty(list)) {
       setState(() {});
-      return;
+      dataList.addAll(list);
+      return ;
     }
     // 将中文也进行排序
     for (int i = 0, length = list.length; i < length; i++) {
@@ -178,7 +182,7 @@ class _ClientListPageState extends State<ClientListPage> {
         ),
       ),
       onTap: (){
-          widget.callBack?.call(model.id,model.name);
+          widget.callBack?.call(model.id,model.name,model.user);
       },
     );
   }
@@ -188,7 +192,7 @@ class _ClientListPageState extends State<ClientListPage> {
       {double susHeight = 50}) {
     return GestureDetector(
       child: Container(
-        color: Colors.white,
+        color: widget.select ? (_homeModel?.select.contains(model.id) ? Colors.blue : Colors.white) : Colors.white,
         height: px(84),
         margin: EdgeInsets.only(bottom: px(4),top: px(12)),
         child: Row(
@@ -196,7 +200,7 @@ class _ClientListPageState extends State<ClientListPage> {
           children: [
             Container(
               margin: EdgeInsets.only(left: px(18),right: px(12)),
-              child: Text('${model.number ?? ''}',style: TextStyle(color: Color(0xFF323233),fontSize: sp(28),)),
+              child: Text(model.number ?? '',style: TextStyle(color: Color(0xFF323233),fontSize: sp(28),)),
             ),
             Expanded(
               child: Text("${model.name} ",style: TextStyle(color: Color(0xFF323233),fontSize: sp(28),),),
@@ -205,7 +209,21 @@ class _ClientListPageState extends State<ClientListPage> {
         ),
       ),
       onTap: (){
-        widget.callBack?.call(model.id,model.name);
+        if(widget.select){
+          if(_homeModel?.select.contains(model.id)){
+            _homeModel?.select.remove(model.id);
+            int index =  _homeModel?.selectCompany.indexWhere((item) =>  item['id'] == model.id);
+            if(index != -1) {
+              _homeModel?.selectCompany.removeAt(index);
+            }
+          }else{
+            _homeModel?.select.add(model.id);
+            _homeModel?.selectCompany.add({'id':model.id!,"user":model.toJson()['user'],"name":model.name});
+          }
+        }else{
+          widget.callBack?.call(model.id,model.name,model.toJson()['user']);
+        }
+        setState(() {});
       },
     );
   }
@@ -213,7 +231,15 @@ class _ClientListPageState extends State<ClientListPage> {
   ///搜索方法
   void _search(String text) {
     if (ObjectUtil.isEmpty(text)) {
-      _handleList(originList);
+      setState(() {
+        originList = LanguageHelper.getGithubLanguages()!.map((v) {
+          Languages model = Languages.fromJson(v.toJson());
+          return model;
+        }).toList();
+        dataList.clear();
+        dataList = originList;
+      });
+      return ;
     } else {
       List<Languages> list = originList.where((v) {
         return v.name!.toLowerCase().contains(text.toLowerCase());

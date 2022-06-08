@@ -120,7 +120,7 @@ class _HiddenParameterState extends State<HiddenParameter> with RouteAware{
                       child: ClientListPage(
                         companyList: companyList,
                         sort: true,
-                        callBack: (id,name){
+                        callBack: (id,name,user){
                           _companyId = id;
                           _companyName = name;
                           Navigator.pushNamed(context, '/hiddenDetails',arguments: {'companyId': _companyId,'companyName': _companyName,});

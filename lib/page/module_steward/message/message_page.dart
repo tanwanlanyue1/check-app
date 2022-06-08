@@ -96,7 +96,8 @@ class _MessagePageState extends State<MessagePage> {
                       style: TextStyle(
                           fontSize: sp(36),
                           color: Color(0XFF2E2F33),
-                          fontFamily: "M"
+                          fontFamily: "M",
+                          overflow: TextOverflow.ellipsis
                       ),
                     ),
                   ],

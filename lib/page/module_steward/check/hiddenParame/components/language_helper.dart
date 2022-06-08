@@ -12,18 +12,27 @@ class LanguageHelper {
 
 }
 
-///Contact: json解析
-/// createdAt : "2022-03-10T07:43:43.512Z"
-/// updatedAt : "2022-03-11T03:01:39.179Z"
-/// number : 编号
+/// createdAt : "2022-03-10T07:43:43.298Z"
+/// updatedAt : "2022-05-10T08:32:31.427Z"
 /// deletedAt : null
-/// id : "cf7123d1-a045-11ec-b9e7-40b07680bfb9" 公司id
-/// name : "沧州康达制药有限公司临港分公司" 公司名
-/// shortName : "康达制药" 公司简称
-/// region : "东区"
-/// status : 1 状态: 1,正常生产; 2,停产
-/// districtId : "5e007c3c-eba8-4f90-962b-6bfe35c348bd"片区ID
-/// industryId : null 行业ID
+/// id : "cf509f49-a045-11ec-b9e7-40b07680bfb9"
+/// name : "沧州临港赫基化工有限公司"
+/// number : "1-3"
+/// shortName : "赫基化工"
+/// address : null
+/// environmentPrincipal : null
+/// environmentPhone : null
+/// pollutionDischarge : null
+/// pollutionDischargeType : 1
+/// pollutionDischargeStart : null
+/// pollutionDischargeEnd : null
+/// isPollutionDischarge : true
+/// status : 1
+/// region : {"id":"641b0fdf-59b6-4eff-8bfd-bee384c1f298","name":"西区"}
+/// district : {"id":"b2eda75e-860b-4ed3-b923-092eee3e05a4","name":"第一片区"}
+/// industry : {"id":"0a18c900-a0e0-11ec-96b0-40b07680bfb9","name":"医药行业"}
+/// user : [{"id":"46b9c804-7cf3-4995-9404-e01a96e0ea26","nickname":"甄先生"}]
+
 class Contact {
   Contact({
     this.createdAt,
@@ -44,7 +53,8 @@ class Contact {
     this.status,
     this.region,
     this.district,
-    this.industry,});
+    this.industry,
+    this.user,});
 
   Contact.fromJson(dynamic json) {
     createdAt = json['createdAt'];
@@ -66,13 +76,19 @@ class Contact {
     region = json['region'] != null ? Region.fromJson(json['region']) : null;
     district = json['district'] != null ? District.fromJson(json['district']) : null;
     industry = json['industry'] != null ? Industry.fromJson(json['industry']) : null;
+    if (json['user'] != null) {
+      user = [];
+      json['user'].forEach((v) {
+        user?.add(User.fromJson(v));
+      });
+    }
   }
   String? createdAt;
   String? updatedAt;
   dynamic deletedAt;
   String? id;
   String? name;
-  dynamic number;
+  String? number;
   String? shortName;
   dynamic address;
   dynamic environmentPrincipal;
@@ -86,6 +102,7 @@ class Contact {
   Region? region;
   District? district;
   Industry? industry;
+  List<User>? user;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -113,6 +130,9 @@ class Contact {
     }
     if (industry != null) {
       map['industry'] = industry?.toJson();
+    }
+    if (user != null) {
+      map['user'] = user?.map((v) => v.toJson()).toList();
     }
     return map;
   }
@@ -144,6 +164,9 @@ class Region {
 /// id : "0a18c900-a0e0-11ec-96b0-40b07680bfb9"
 /// name : "医药行业"
 
+/// id : "0a18c900-a0e0-11ec-96b0-40b07680bfb9"
+/// name : "医药行业"
+
 class Industry {
   Industry({
     this.id,
@@ -164,8 +187,6 @@ class Industry {
   }
 
 }
-/// id : "b2eda75e-860b-4ed3-b923-092eee3e05a4"
-/// name : "第一片区"
 
 class District {
   District({
@@ -183,6 +204,29 @@ class District {
     final map = <String, dynamic>{};
     map['id'] = id;
     map['name'] = name;
+    return map;
+  }
+
+}
+/// id : "46b9c804-7cf3-4995-9404-e01a96e0ea26"
+/// nickname : "甄先生"
+
+class User {
+  User({
+    this.id,
+    this.nickname,});
+
+  User.fromJson(dynamic json) {
+    id = json['id'];
+    nickname = json['nickname'];
+  }
+  String? id;
+  String? nickname;
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['id'] = id;
+    map['nickname'] = nickname;
     return map;
   }
 

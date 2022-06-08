@@ -9,7 +9,6 @@ import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 
 import 'components/task_compon.dart';
-import 'history_task.dart';
 
 //个人中心
 class PersonalCenter extends StatefulWidget {
@@ -22,17 +21,33 @@ class PersonalCenter extends StatefulWidget {
 class _PersonalCenterState extends State<PersonalCenter> {
   String userName = ''; //用户名
   String userId = ''; //用户id
-  List classify = ['历史台账','待办任务','已办任务'];//分类
+  List classify = ['历史台账','发布任务','待办任务','已办任务','审核问题'];//分类
+  List commonClassify = ['历史台账','待办任务','已办任务'];//普通用户分类分类
+  bool manager = false;//当前账号是否为项目经理
 
   @override
   void initState() {
     // TODO: implement initState
-    userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
-    userName= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
+    userId = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
+    userName = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
+    manager = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['role']['name'] == '项目经理' ? true : false;
     super.initState();
   }
-  //选择事件
+
+  //项目经理选择事件
   void selectClass(int index){
+    switch(index) {
+      case 0: Navigator.pushNamed(context, '/historyTask'); break;
+      case 1: Navigator.pushNamed(context, '/backTaskDetails'); break;
+      case 2: Navigator.pushNamed(context, '/backlogTask'); break;
+      case 3: Navigator.pushNamed(context, '/haveDoneTask'); break;
+      case 4: Navigator.pushNamed(context, '/auditList'); break;
+      default: ToastWidget.showToastMsg('暂无更多页面');
+    }
+  }
+
+  //普通用户选择事件
+  void generalClass(int index){
     switch(index) {
       case 0: Navigator.pushNamed(context, '/historyTask'); break;
       case 1: Navigator.pushNamed(context, '/backlogTask'); break;
@@ -40,6 +55,7 @@ class _PersonalCenterState extends State<PersonalCenter> {
       default: ToastWidget.showToastMsg('暂无更多页面');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -47,9 +63,10 @@ class _PersonalCenterState extends State<PersonalCenter> {
         TaskCompon.topTitle(title: '个人中心'),
         _header(),
         Column(
-          children: List.generate(classify.length, (i){
+          children: List.generate(manager ? classify.length : commonClassify.length, (i){
             return taskList(
               i: i,
+              classify: manager ? classify : commonClassify
             );
           }),
         )
@@ -127,7 +144,7 @@ class _PersonalCenterState extends State<PersonalCenter> {
 
   ///任务列表
   ///判断跳转位置
-  Widget taskList({required int i}){
+  Widget taskList({required int i,required List classify}){
     return Container(
       margin: EdgeInsets.only(top: px(24),left: px(20),right: px(24)),
       padding: EdgeInsets.only(left: px(16),top: px(20),bottom: px(20)),
@@ -137,49 +154,32 @@ class _PersonalCenterState extends State<PersonalCenter> {
       ),
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
-        child: Column(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(left: px(16),right: px(12)),
-                  child: Text('${classify[i]}',style: TextStyle(color: Color(0xff323233),fontSize: sp(30),overflow: TextOverflow.ellipsis),),
-                ),
-                Spacer(),
-                SizedBox(
-                  width: px(140),
-                  height: px(48),
-                  child: Text('2022-4-21',
-                    style: TextStyle(color: Color(0xff323233),fontSize: sp(24)),),
-                ),
-              ],
-            ),
             Container(
-              margin: EdgeInsets.only(top: px(20)),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(left: px(12)),
-                    child: Text('副标题',
-                      style: TextStyle(color: Color(0xff323233),fontSize: sp(24)),),
-                  ),
-                  Spacer(),
-                  Container(
-                      width: px(64),
-                      height: px(64),
-                      margin: EdgeInsets.only(right: px(24),left: px(20)),
-                      child: Image.asset('lib/assets/icons/other/right.png')
-                  ),
-                ],
+              margin: EdgeInsets.only(left: px(16),right: px(12)),
+              child: Text('${classify[i]}',style: TextStyle(color: Color(0xff323233),fontSize: sp(30),overflow: TextOverflow.ellipsis),),
+            ),
+            Spacer(),
+            SizedBox(
+              width: px(140),
+              height: px(48),
+              child: Container(
+                  width: px(64),
+                  height: px(64),
+                  margin: EdgeInsets.only(right: px(24),left: px(20)),
+                  child: Image.asset('lib/assets/icons/other/right.png')
               ),
             ),
           ],
         ),
         onTap: () {
-          selectClass(i);
+          if(manager){
+            selectClass(i);
+          }else{
+            generalClass(i);
+          }
         }
       ),
     );

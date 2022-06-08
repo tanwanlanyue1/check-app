@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +39,7 @@ class _ProblemPageState extends State<ProblemPage> {
   int _pageNo = 1; // 当前页码
   int _total = 10; // 总条数
   int firmTotal = 10; // 企业请求的总条数
+  int inventoryStatus = 1; // 清单id
   bool _enableLoad = true; // 是否开启加载
   bool firm = false; // 是否为企业
   List hiddenProblem = []; //隐患问题数组
@@ -54,6 +54,7 @@ class _ProblemPageState extends State<ProblemPage> {
     {'name':'整改未通过','id':4},
   ]; //问题的状态
   List checkNameList = [];//排查人员数组
+  List typeList = [];//问题类型列表
   DateTime? startTime;//选择开始时间
   DateTime? endTime;//选择结束时间
   String checkName = ''; //排查人员
@@ -64,10 +65,12 @@ class _ProblemPageState extends State<ProblemPage> {
   String region = '';//企业归属区域
   String userName = ''; //用户名
   String userId = ''; //用户id
+  String typeProblem = ''; //问题类型
   final DateTime _dateTime = DateTime.now();
   DateTime solvedAt = DateTime.now().add(Duration(days: 7));//整改期限
   DateTime reviewedAt = DateTime.now().add(Duration(days: 14));//复查期限
   Map<String,dynamic> typeStatus = {'name':'请选择','id':0};//默认类型
+  Map<String,dynamic> typeProblemStatu = {'name':'请选择','id':''};//问题的默认类型
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();//侧边栏key
 
   @override
@@ -89,7 +92,16 @@ class _ProblemPageState extends State<ProblemPage> {
         }
     );
     _getProblems();
+    _getProblemType();
     super.initState();
+  }
+  /// 获取问题类型
+  void _getProblemType() async {
+    var response = await Request().get(Api.url['problemType']);
+    if(response['statusCode'] == 200) {
+      typeList = response['data'];
+      setState(() {});
+    }
   }
 
   /// 获取企业下的问题/问题搜索筛选
@@ -125,6 +137,38 @@ class _ProblemPageState extends State<ProblemPage> {
       district = response['data']['district']['name'];
       region = response['data']['region']['name'];
       setState(() {});
+    }
+  }
+  /// 获取清单详情
+  /// id:清单id
+  /// argumentMap 提交问题传递的参数
+  void _getCompany({String? problemId,String? inventoryId,bool revem = false}) async {
+    var response = await Request().get(Api.url['inventory']+'/$inventoryId',);
+    if(response['statusCode'] == 200 && response['data'] != null) {
+      setState(() {
+        if(revem){
+          if(firm){
+            Navigator.pushNamed(context, '/abarbeitungFrom',arguments: {'id':problemId,'inventoryStatus': response['data']['status']});
+          }else{
+            Navigator.pushNamed(context, '/fillAbarbeitung',arguments: {'id':problemId,'review':true});
+          }
+        }else {
+          if (firm) {
+            Navigator.pushNamed(context, '/abarbeitungFrom', arguments: {
+              'id': problemId,
+              'inventoryStatus': response['data']['status']
+            });
+          } else {
+            Navigator.pushNamed(context, '/rectificationProblem',
+                arguments: {
+                  'check': true,
+                  'problemId': problemId,
+                  'inventoryStatus': response['data']['status']
+                }
+            );
+          }
+        }
+      });
     }
   }
 
@@ -265,7 +309,6 @@ class _ProblemPageState extends State<ProblemPage> {
                           titleColor: Color(0xff323233),
                           child: Text(district,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
                         ),
-
                         FormCheck.rowItem(
                           title: '区域位置',
                           titleColor: Color(0xff323233),
@@ -352,7 +395,6 @@ class _ProblemPageState extends State<ProblemPage> {
                                       child: Text('添加人员',style: TextStyle(
                                           fontSize: sp(26),
                                           color: Colors.white
-                                        // color: Color(0xff323233),
                                       )),
                                       decoration: BoxDecoration(
                                         color: Color(0xff4D7FFF),
@@ -567,13 +609,7 @@ class _ProblemPageState extends State<ProblemPage> {
                           i: i,
                           detail: true,
                           callBack:(){
-                            if(firm){
-                              Navigator.pushNamed(context, '/abarbeitungFrom',arguments: {'id':hiddenProblem[i]['id']});
-                            }else{
-                              Navigator.pushNamed(context, '/rectificationProblem',
-                                  arguments: {'check':true,'problemId':hiddenProblem[i]['id']}
-                              );
-                            }
+                            _getCompany(problemId:hiddenProblem[i]['id'],inventoryId: hiddenProblem[i]['inventory']['id']);
                           }
                       ),
                     );
@@ -610,23 +646,7 @@ class _ProblemPageState extends State<ProblemPage> {
                           i: i,
                           detail: true,
                           callBack:() async {
-                            if(firm){
-                              Navigator.pushNamed(context, '/abarbeitungFrom',arguments: {'id':hiddenProblem[i]['id']});
-                            }else{
-                              var res =  await Navigator.pushNamed(context, '/fillAbarbeitung',arguments: {'id':hiddenProblem[i]['id'],'review':true});
-                              if(res == true){
-                                _problemSearch(
-                                    type: typeStatusEnum.onRefresh,
-                                    data: {
-                                      'page': 1,
-                                      'size': 10,
-                                      'sort':"status",
-                                      "order":"ASC",
-                                      'companyId':companyId,
-                                    }
-                                );
-                              }
-                            }
+                            _getCompany(problemId:hiddenProblem[i]['id'],inventoryId: hiddenProblem[i]['inventory']['id'],revem: true);
                           }
                       ),
                     );
@@ -663,8 +683,8 @@ class _ProblemPageState extends State<ProblemPage> {
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
               child: Container(
-                height: px(64),
-                margin: EdgeInsets.only(left: px(24),right: px(24),bottom: px(4)),
+                height: px(60),
+                margin: EdgeInsets.only(left: px(24),right: px(24),bottom: px(4),top: px(4)),
                 padding: EdgeInsets.only(left: px(12),right: px(12),top: px(8)),
                 child: Text('签到清单',style: TextStyle(
                     fontSize: sp(26),
@@ -672,8 +692,7 @@ class _ProblemPageState extends State<ProblemPage> {
                 ),),
                 decoration: BoxDecoration(
                   color: Color(0xff4D7FFF),
-                  border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
-                  borderRadius: BorderRadius.all(Radius.circular(px(20))),
+                  borderRadius: BorderRadius.all(Radius.circular(px(10))),
                 ),
               ),
               onTap: () async{
@@ -687,9 +706,27 @@ class _ProblemPageState extends State<ProblemPage> {
           context,
           typeStatus: typeStatus,
           status: problemStatus,
+          typeProblemStatu: typeProblemStatu,
+          problemType: typeList,
           startTime: startTime ?? DateTime.now(),
           endTime: endTime ?? DateTime.now(),
+          typeBack: (val){
+            typeProblemStatu = val;
+            _problemSearch(
+                type: typeStatusEnum.onRefresh,
+                data: {
+                  'page': 1,
+                  'size': 10,
+                  'sort':"status",
+                  "order":"ASC",
+                  'companyId':companyId,
+                  "problemTypeId":val['id']
+                }
+            );
+          },
           callPop: (){
+            typeStatus = {'name':'请选择','id':0};
+            typeProblemStatu = {'name':'请选择','id':''};
             _problemSearch(
                 type: typeStatusEnum.onRefresh,
                 data: {
@@ -719,6 +756,7 @@ class _ProblemPageState extends State<ProblemPage> {
                   data: {
                     'status':typeStatus['id'],
                     'companyId':companyId,
+                    "problemTypeId":typeProblemStatu['id'],
                     'sort':"status",
                     "order":"ASC",
                   }
@@ -729,6 +767,7 @@ class _ProblemPageState extends State<ProblemPage> {
                   type: typeStatusEnum.onRefresh,
                   data: {
                     'status':typeStatus['id'],
+                    "problemTypeId":typeProblemStatu['id'],
                     'companyId':companyId,
                     'timeSearch':'createdAt',
                     'startTime':startTime,
@@ -744,5 +783,4 @@ class _ProblemPageState extends State<ProblemPage> {
       ),
     );
   }
-
 }

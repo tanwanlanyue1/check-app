@@ -37,7 +37,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
   String checkDate = '';//排查日期
   String abarbeitungDate = '';//整改日期
   String sceneReviewDate = '';//现场复查日期
-  String checkType = '管家排查';//检查类型
+  String checkType = '隐患排查';//检查类型
   String companyId = '';//企业用户id
   bool uploading = true;//判断是否可以上传pdf
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -48,13 +48,17 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
     var response = await Request().get(Api.url['inventory']+'/$uuid',);
     if(response['statusCode'] == 200 && response['data'] != null) {
       setState(() {
-        repertoire = response['data'] ;
+        repertoire = response['data'];
         stewardCheck = repertoire['checkPersonnel'];
         location = repertoire['company']['region']['name'];
         area = repertoire['company']['district']['name'];
         checkDate = RectifyComponents.formatTime(repertoire['createdAt']);
         abarbeitungDate = repertoire['solvedAt'] != null ? RectifyComponents.formatTime(repertoire['solvedAt']) : '';
         sceneReviewDate = repertoire['reviewedAt'] != null ? RectifyComponents.formatTime(repertoire['reviewedAt']) : '';
+        checkType = repertoire['checkType'] == 1 ? '隐患排查':
+        repertoire['checkType'] == 2 ? '专项检查' :
+        repertoire['checkType'] == 3 ? '现场检查':
+        repertoire['checkType'] == 4 ? '表格填报': '其他类型';
         argumentMap = {
           'declare':true,//申报
           'uuid': uuid,//清单ID
@@ -80,14 +84,11 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
     };
     var response = await Request().get(Api.url['problemList'],data: data,);
     if(response['statusCode'] == 200 && response['data'] != null) {
-      problemList = [];
       setState(() {
-       for(var i=0; i < response['data']['list'].length; i++){
-          if(response['data']['list'][i]['isCompanyRead'] == true){
-            problemList.add(response['data']['list'][i]);
-          }
-        }
-       for(var i=0; i<problemList.length; i++){
+       if(repertoire['status'] == 1 || repertoire['status'] == 2 || repertoire['status'] == 4 ){
+         problemList = response['data']['list'];
+       }
+       for(var i = 0; i<problemList.length; i++){
          if(problemList[i]['status'] != 3){
            uploading = false;
          }
@@ -112,7 +113,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
         children: [
           RectifyComponents.appBarBac(),
           topBar(
-              '排查问题详情'
+              '隐患排查问题详情'
           ),
           Expanded(
             child: ListView(
@@ -229,6 +230,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
       ),
     );
   }
+
   ///排查概况
   Widget survey(){
     return Container(
@@ -309,18 +311,12 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
       color: Colors.white,
       child: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.only(top: px(20),left: px(32),),
-                  height: px(55),
-                  child: FormCheck.formTitle(
-                    '整改问题',
-                  ),
-                ),
-              ),
-            ],
+          Container(
+            margin: EdgeInsets.only(top: px(20),left: px(32),),
+            height: px(55),
+            child: FormCheck.formTitle(
+              '整改问题',
+            ),
           ),
           Column(
             children: [
@@ -329,7 +325,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
                     company: problemList[i],
                     i: i,
                     callBack:()async{
-                     var res = await Navigator.pushNamed(context, '/abarbeitungFrom',arguments: {'id':problemList[i]['id']});
+                     var res = await Navigator.pushNamed(context, '/abarbeitungFrom',arguments: {'id':problemList[i]['id'],'inventoryStatus': repertoire['status']});
                      if(res == null ){
                        _getProblem();
                      }
@@ -386,7 +382,8 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
                       ),
                     ],
                   ),
-                ):Container(),
+                ) :
+                Container(),
               ],
             ),
           ),
@@ -438,6 +435,8 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
             ),
           ],
         ),
+        repertoire['status'] == 2?
+        Container():
         Positioned(
             top: 0,
             right: 0,
@@ -457,6 +456,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
       ],
     );
   }
+
   ///日期转换
   String formatTime(time) {
     return utcToLocal(time.toString()).substring(0,10);

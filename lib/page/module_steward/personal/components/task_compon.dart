@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/time/utc_tolocal.dart';
 
 ///任务组件
 class TaskCompon{
 
-  static Widget topTitle({required String title,bool left = false,bool home = false,Color? colors,Function? callBack,double? font}){
+  ///title:标题
+  ///left:左按钮
+  ///home：首页按钮
+  ///colors:背景色
+  ///callBack:回调
+  ///font:字体
+  ///child:右侧组件
+  static Widget topTitle({required String title,bool left = false,bool home = false,Color? colors,Widget? child,Function? callBack,double? font}){
     return Column(
       children: [
         Container(
@@ -40,9 +46,11 @@ class TaskCompon{
                 flex: 1,
                 child: Container(
                   alignment: Alignment.center,
-                  margin: EdgeInsets.only(right: px(55)),
                   child: Text(title,style: TextStyle(color: Color(0xff323233),fontSize: sp(font ?? 36),fontFamily: 'M'),),
                 ),
+              ),
+              Container(
+                child: child,
               ),
             ],
           ),
@@ -86,7 +94,7 @@ class TaskCompon{
                   ),
                   child: Container(
                     margin: EdgeInsets.only(left: px(16),right: px(12)),
-                    child: Text('标题名称/公司名称',style: TextStyle(color: Color(0xff323233),fontSize: sp(30),fontFamily: "M",overflow: TextOverflow.ellipsis),),
+                    child: Text('${company['company']['name']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(30),fontFamily: "M",overflow: TextOverflow.ellipsis),),
                   ),
                 ),
                 Spacer(),
@@ -95,38 +103,38 @@ class TaskCompon{
                   height: px(48),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                      color: TaskCompon.firmTaskColor(i),
+                      color: TaskCompon.firmTaskColor(company['status']),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(px(20)),
                         bottomLeft: Radius.circular(px(20)),
                       )
                   ),//状态；1,未整改;2,已整改;3,整改已通过;4,整改未通过
-                  child: Text(TaskCompon.firmTask(i)
+                  child: Text(TaskCompon.firmTask(company['status'])
                     ,style: TextStyle(color: Colors.white,fontSize: sp(22)),),
                 ),
               ],
             ),
-            // Container(
-            //   margin: EdgeInsets.only(bottom: px(16),top: px(24)),
-            //   child: Row(
-            //     children: [
-            //       SizedBox(
-            //         height: px(32),
-            //         child: Image.asset('lib/assets/icons/my/otherArea.png'),
-            //       ),
-            //       Text(' 第三片区',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),fontFamily: 'R'),),
-            //     ],
-            //   ),
-            // ),
             Container(
-              margin: EdgeInsets.only(bottom: px(16),top: px(12)),
+              margin: EdgeInsets.only(bottom: px(16),top: px(24)),
+              child: Row(
+                children: [
+                  SizedBox(
+                    height: px(32),
+                    child: Image.asset('lib/assets/icons/my/otherArea.png'),
+                  ),
+                  Text(' ${company['district'][0]['name']}',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),fontFamily: 'R'),),
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(bottom: px(16)),
               child: Row(
                 children: [
                   SizedBox(
                     height: px(32),
                     child: Image.asset('lib/assets/icons/my/group.png'),
                   ),
-                  Text(' 排查人员',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),overflow: TextOverflow.ellipsis),),
+                  Text(checkPeople(people: company['checkUserList']),style: TextStyle(color: Color(0xff969799),fontSize: sp(26),overflow: TextOverflow.ellipsis),),
                 ],
               ),
             ),
@@ -138,26 +146,38 @@ class TaskCompon{
                   width: px(32),
                   child: Image.asset('lib/assets/icons/check/sandClock.png'),
                 ),
-                Text(' 2022-4-21 12:00',
+                Text(formatTime(company['createdAt']),
                   style: TextStyle(color: Color(0xff969799),fontSize: sp(26)),),
               ],
             ),
           ],
         ),
         onTap: (){
-          callBack?.call();
+          callBack?.call(company['id']);
         },
       ),
     );
   }
 
+  ///处理排查人员
+  static String checkPeople({required List people}){
+    String checkList = '';
+    for(var i = 0; i < people.length; i++){
+      if(i > 0){
+        checkList = checkList + ',' + people[i]['nickname'];
+      }else{
+        checkList = people[i]['nickname'];
+      }
+    }
+    return checkList;
+  }
+
   //任务状态 1,整改中;2,已归档;3,待审核;4,审核已通过;5,审核未通过;6,未提交;
   static String firmTask(status){
     switch(status){
-      case 1 : return '未处理';
-      case 2 : return '处理中';
-      case 3 : return '已处理';
-      default: return '未处理';
+      case 1 : return '待处理';
+      case 2 : return '已处理';
+      default: return '待处理';
     }
   }
 
@@ -166,7 +186,6 @@ class TaskCompon{
     switch(status){
       case 1 : return Color(0xffFAAA5A);
       case 2 : return Color(0xff7196F5);
-      case 3 : return Color(0xffB8C5E6);
       default: return Color(0xffFAAA5A);
     }
   }

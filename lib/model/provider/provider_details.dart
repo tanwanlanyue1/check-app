@@ -3,6 +3,7 @@ import 'package:scet_check/utils/screen/adapter.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 class ProviderDetaild with ChangeNotifier {
+
   bool _pieChart = false; //展示图表或者echart
   int _cloumnChart = 0;// 0-饼图 1-竖状图 2-横状图
   double _offestLeft = 0.0; // 偏移量

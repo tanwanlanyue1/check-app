@@ -11,6 +11,7 @@ import 'package:scet_check/page/module_protection_agency/protection_agency_home.
 import 'package:scet_check/page/module_steward/check/check_page.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/hidden_details.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/hidden_parameter.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/problem_schedule.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/rectification_problem.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/steward_check.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/fill_in_form.dart';
@@ -28,9 +29,12 @@ import 'package:scet_check/page/module_steward/law/file_lists.dart';
 import 'package:scet_check/page/module_login/guide_page.dart';
 import 'package:scet_check/page/module_login/login_page.dart';
 import 'package:scet_check/page/module_steward/law/fill_details.dart';
+import 'package:scet_check/page/module_steward/law/law_page.dart';
 import 'package:scet_check/page/module_steward/law/policy_stand.dart';
 import 'package:scet_check/page/module_steward/message/message_details.dart';
 import 'package:scet_check/page/module_steward/message/message_page.dart';
+import 'package:scet_check/page/module_steward/personal/audit_list.dart';
+import 'package:scet_check/page/module_steward/personal/audit_problem.dart';
 import 'package:scet_check/page/module_steward/personal/back_task_details.dart';
 import 'package:scet_check/page/module_steward/personal/backlog_task.dart';
 import 'package:scet_check/page/module_steward/personal/check_task.dart';
@@ -75,6 +79,10 @@ final routes = {
   '/columnEcharts': (context) =>  ColumnEcharts(), //隐患台账
   '/messagePage': (context,{arguments}) =>  MessagePage(arguments:arguments), //通知中心
   '/checkTask': (context,{arguments}) =>  CheckTask(arguments:arguments), //选择任务
+  '/lawPage': (context,{arguments}) =>  LawPage(skip:arguments), //工具箱
+  '/problemSchedule': (context,{arguments}) =>  ProblemSchedule(arguments:arguments), //问题进度
+  '/auditList': (context,{arguments}) =>  AuditList(), //清单审核列表
+  '/auditProblem': (context,{arguments}) =>  AuditProblem(arguments:arguments), //清单问题审核
 
 ///企业端
   '/enterprisInventory': (context,{arguments}) =>  EnterprisInventory(arguments:arguments), //企业清单详情

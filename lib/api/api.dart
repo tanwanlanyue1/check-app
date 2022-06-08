@@ -2,8 +2,8 @@
 class Api {
 
   // static const baseUrlApp = 'http://10.10.1.217:9750';
-  // static const baseUrlApp = 'http://10.10.1.217:8687/';
-  static const baseUrlApp = 'https://dev.scet.com.cn/yhpc/';
+  static const baseUrlApp = 'http://10.10.1.217:8687/';
+  // static const baseUrlApp = 'https://dev.scet.com.cn/yhpc/';
 
 
   static final Map url = {
@@ -60,6 +60,10 @@ class Api {
     'reviewList': baseUrlApp + 'review/list',//复查分页列表
 
     'inventoryReport': baseUrlApp + 'inventory_report',//清单报告
+
+    'addTask': baseUrlApp + 'task',//任务/任务详情
+
+    'taskList': baseUrlApp + 'task/list',//任务分页列表
 
     'fileSearch': baseUrlApp + 'law/search',//法律文件搜索
 

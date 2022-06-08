@@ -13,10 +13,11 @@ class SamePointTable extends StatefulWidget {
    String tableTitle;
    bool? allStatist;
    List? tableBody;
+   List? problemType;
    int questionTotal;
    Function? callBack;
    Function? callPrevious;
-   SamePointTable({Key? key, this.allStatist = false,required this.questionTotal,required this.tableTitle,this.tableBody,this.callBack,this.callPrevious}) : super(key: key);
+   SamePointTable({Key? key, this.allStatist = false,required this.questionTotal,this.problemType,required this.tableTitle,this.tableBody,this.callBack,this.callPrevious}) : super(key: key);
 
   @override
   _SamePointTableState createState() => _SamePointTableState();
@@ -24,6 +25,7 @@ class SamePointTable extends StatefulWidget {
 
 class _SamePointTableState extends State<SamePointTable> {
   List tableBody = [];//表单
+  List problemType = [];//问题类型统计
   List allHeader = ['片区','隐患问题','未完成整改','整改率',];//全园区表头
   List industryHeader = ['序号','行业','百分比','问题','已整改','未整改'];//行业表头
   List areaHeader = ['序号','片区','隐患问题','已整改','未整改'];//片区表头
@@ -37,16 +39,15 @@ class _SamePointTableState extends State<SamePointTable> {
   bool cutPie = true;
   int questionTotal = 0;//问题总数
   double allPercent = 0;//百分比总数
-  ///全局变量  判断展示哪一个图表
-  late ProviderDetaild _providerDetaild;
 
   @override
   void initState() {
     super.initState();
     tableBody = widget.tableBody ?? [];
+    problemType = widget.problemType ?? [];
     judge();
     percents();
-    manage(tableBody);
+    manage(problemType);
     questionTotal = widget.questionTotal;
   }
 
@@ -54,11 +55,12 @@ class _SamePointTableState extends State<SamePointTable> {
   void didUpdateWidget(SamePointTable oldWidget) {
     super.didUpdateWidget(oldWidget);
     tableBody = widget.tableBody ?? [];
+    problemType = widget.problemType ?? [];
     questionTotal = widget.questionTotal;
     judge();
     percents();
-    if(widget.tableBody != oldWidget.tableBody){
-      manage(tableBody);
+    if(widget.problemType != oldWidget.problemType){
+      manage(problemType);
     }
   }
 
@@ -73,13 +75,13 @@ class _SamePointTableState extends State<SamePointTable> {
     int issueTotal = 0; //问题总数
     int notCorrectedTotal = 0; //未整改总数
     for(var i=0;i<item.length;i++){
-      name.add(item[i][companyName]);
+      name.add(item[i]['problemTypeName']);
       issueTotal = int.parse(item[i]['allCount']);
       issue.add(int.parse(item[i]['allCount']));
       notCorrected.add(int.parse(item[i]['unsolvedCount']));
       notCorrectedTotal = int.parse(item[i]['unsolvedCount'])+notCorrectedTotal;
       pieData.add({
-        'value':item[i]['allCount'],'name':item[i][companyName]
+        'value':item[i]['allCount'],'name':item[i]['problemTypeName']
       });
     }
     echartData = [
@@ -458,7 +460,6 @@ class _SamePointTableState extends State<SamePointTable> {
 
   @override
   Widget build(BuildContext context) {
-    _providerDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     return widget.allStatist != true ?
     Column(
       crossAxisAlignment: CrossAxisAlignment.start,

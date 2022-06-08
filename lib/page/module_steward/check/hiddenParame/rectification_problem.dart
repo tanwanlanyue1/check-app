@@ -11,7 +11,7 @@ import 'package:scet_check/routers/routes.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 ///企业台账详情
-/// arguments = {check:是否申报,'problemId':问题id}
+/// arguments = {check:是否申报,'problemId':问题id,"inventoryStatus":清单状态}
 class RectificationProblem extends StatefulWidget {
   final arguments;
   const RectificationProblem({Key? key,this.arguments}) : super(key: key);
@@ -103,7 +103,7 @@ class _RectificationProblemState extends State<RectificationProblem> {
   ///判断是否是复查还是修改问题详情
   ///问题是否复查结束
   void checkEnd () async{
-    if(problemList['isProblemCommit']){
+    if(widget.arguments['inventoryStatus'] != 5 && widget.arguments['inventoryStatus'] != 6){
       if(solutionList.isNotEmpty && review == false){
         if(problemList['status'] == 2){
           var res =  await Navigator.pushNamed(context, '/fillAbarbeitung',arguments: {'id':problemId,'review':true});
@@ -123,11 +123,7 @@ class _RectificationProblemState extends State<RectificationProblem> {
         }
       }
     }else{
-      final Function? pageContentBuilder = routes['/fillInForm'];
-      var res = await Navigator.push(context, MaterialPageRoute(
-          settings: RouteSettings(name: '/fillInForm'),//修改问题
-          builder: (context) => pageContentBuilder!(context, arguments: argumentMap)
-      ));
+      var res = await Navigator.pushNamed(context, '/fillInForm', arguments: argumentMap);
       if(res == true){
         _getProblems();
         _getReviewList();
@@ -152,7 +148,7 @@ class _RectificationProblemState extends State<RectificationProblem> {
                   color: Colors.white,
                   child: RectifyComponents.tabText(
                     title: "01",
-                    str: '${problemList['detail']}',
+                    str: '${problemList['name']}',
                     status: problemList['status'] ?? 1
                   ),
                 ),
@@ -162,6 +158,7 @@ class _RectificationProblemState extends State<RectificationProblem> {
                     'declare':false,//申报
                     'key':_scaffoldKey,
                     'problemList':problemList,
+                    "inventoryStatus":widget.arguments['inventoryStatus'],
                   },
                 ),
                 solutionList.isNotEmpty?
@@ -220,7 +217,7 @@ class _RectificationProblemState extends State<RectificationProblem> {
             child: GestureDetector(
               child: Container(
                 margin: EdgeInsets.only(right: px(20)),
-                child: (problemList['isProblemCommit'] ?? false) ? Image.asset(
+                child: (widget.arguments['inventoryStatus'] != 5 && widget.arguments['inventoryStatus'] != 6) ? Image.asset(
                   'lib/assets/icons/form/add.png',
                   width: px(50),
                   height: px(51),

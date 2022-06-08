@@ -24,8 +24,6 @@ class StewardCheck extends StatefulWidget {
 }
 
 class _StewardCheckState extends State<StewardCheck>{
-  /// 1,未整改;2,已整改;3,整改已通过;4,整改未通过
-  int type = 1;
   bool tidy = true; //展开/收起
   bool sing = false; //展开/收起
   Map repertoire = {};//清单
@@ -45,11 +43,6 @@ class _StewardCheckState extends State<StewardCheck>{
   bool isEnvironmentRead = false;//是否环保局查看
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Map<String, dynamic> subCompanies = {'companies':[],'environments':[]};//提交的数组
-  List typeList = [
-    {'name':'隐患排查','id':1},
-    {'name':'专项检查','id':2},
-    {'name':'其他','id':0},
-  ];//问题类型列表
   List review = [];//复查列表
 
   /// 获取清单详情
@@ -60,7 +53,7 @@ class _StewardCheckState extends State<StewardCheck>{
     if(response['statusCode'] == 200 && response['data'] != null) {
       setState(() {
         _getProblem();
-        repertoire = response['data'] ;
+        repertoire = response['data'];
         stewardCheck = repertoire['checkPersonnel'];
         location = repertoire['company']['region']['name'];
         area = repertoire['company']['district']['name'];
@@ -68,7 +61,9 @@ class _StewardCheckState extends State<StewardCheck>{
         abarbeitungDates = repertoire['solvedAt'] != null ? RectifyComponents.formatTime(repertoire['solvedAt']) : '';
         sceneReviewDate = repertoire['reviewedAt'] != null ? RectifyComponents.formatTime(repertoire['reviewedAt']) : '';
         checkType = repertoire['checkType'] == 1 ? '隐患排查':
-        repertoire['checkType'] == 2 ? '专项检查' : '其他';
+        repertoire['checkType'] == 2 ? '专项检查' :
+        repertoire['checkType'] == 3 ? '现场检查':
+        repertoire['checkType'] == 4 ? '表格填报': '其他类型';
         subStatus = repertoire['status'] == 6 ? true : false; //状态为6，可以提交问题、修改
         _problemSearch(
             data: {
@@ -84,6 +79,7 @@ class _StewardCheckState extends State<StewardCheck>{
           'districtId': repertoire['company']['districtId'],//片区id
           'companyId': repertoire['company']['id'],//企业id
           'industryId': repertoire['company']['industryId'],//行业ID
+          'inventoryStatus': repertoire['status'],//清单状态
         };
       });
     }
@@ -115,17 +111,6 @@ class _StewardCheckState extends State<StewardCheck>{
     }
   }
 
-  /// 提交问题
-  void _submit() async {
-    var response = await Request().post(Api.url['problemSubmit'],data: subCompanies,);
-    if(response['statusCode'] == 200) {
-      setState(() {
-        _getProblem();
-        ToastWidget.showToastMsg('提交成功');
-        Navigator.pop(context);
-      });
-    }
-  }
 
   /// 签到清单
   /// id: uuid
@@ -139,160 +124,10 @@ class _StewardCheckState extends State<StewardCheck>{
       if(response['statusCode'] == 200) {
         _getCompany();
         setState(() {});
-        ToastWidget.showToastMsg('修改成功');
+        ToastWidget.showToastMsg('修改并提交成功');
       }
   }
 
-  ///筛选提交的问题
-  void submission(){
-    Future.microtask(() {
-      showDialog<void>(
-        context: context,//StatefulBuilder
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return StatefulBuilder(builder: (context,setState){
-            return Material(
-              color: Color.fromRGBO(0, 0, 0, 0.3),
-              child: Center(
-                child: Container(
-                  margin: EdgeInsets.only(left: px(24),right: px(24)),
-                  decoration:const ShapeDecoration(
-                      color: Color(0xffF9F9F9),
-                      shape: RoundedRectangleBorder(
-                          borderRadius:  BorderRadius.all( Radius.circular(5))
-                      )
-                  ),
-                  height: Adapt.screenH()*0.75,
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(top: px(24),left: px(24),right: px(24),bottom: px(12)),
-                        color: Color(0XFFE5E6E9),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text('提交到企业',style: TextStyle(color: Color(0xff4D7FFF),fontSize: sp(30)),textAlign: TextAlign.center,),
-                            ),
-                            Expanded(
-                              child: Text('提交到环保局',style: TextStyle(color: Color(0xff4D7FFF),fontSize: sp(30)),textAlign: TextAlign.center,),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(left: px(24),right: px(24),bottom: px(12)),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: ListView(
-                                  padding: EdgeInsets.only(top: 0),
-                                  children: List.generate(
-                                    problemList.length, (i) =>
-                                      Row(
-                                        children: [
-                                          SizedBox(
-                                            width: px(70),
-                                            child: Radio(
-                                              value: false,
-                                              groupValue: problemList[i]['isEnvironmentRead'],
-                                              onChanged: (val) {
-                                                setState(() {
-                                                  problemList[i]['isEnvironmentRead'] = val!;
-                                                });
-                                              },
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: InkWell(
-                                              child: Text('${problemList[i]['detail']}',style: TextStyle(
-                                                  color: Color(0xff323233),
-                                                  fontSize: sp(30),
-                                                  overflow: TextOverflow.ellipsis)),
-                                              onTap: (){
-                                                //判断问题是否已提交
-                                                //isCompanyRead是否企业可以查看,isEnvironmentRead是否环保局可以查看
-                                                problemList[i]['isEnvironmentRead'] = false;
-                                                setState(() {});
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: List.generate(
-                                    problemList.length, (i) =>
-                                      Row(
-                                        children: [
-                                          SizedBox(
-                                            width: px(70),
-                                            child: Radio(
-                                              value: true,
-                                              groupValue: problemList[i]['isEnvironmentRead'],
-                                              onChanged: (val) {
-                                                setState(() {
-                                                  problemList[i]['isEnvironmentRead'] = val!;
-                                                });
-                                              },
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: InkWell(
-                                              child: Text('${problemList[i]['detail']}',style: TextStyle(
-                                                  color: Color(0xff323233),
-                                                  fontSize: sp(30),
-                                                  overflow: TextOverflow.ellipsis)),
-                                              onTap: (){
-                                                problemList[i]['isEnvironmentRead'] = true;
-                                                setState(() {});
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(left: px(24),right: px(24),top: px(24)),
-                        child: FormCheck.submit(
-                            cancel: (){
-                              Navigator.pop(context);
-                            },
-                            submit: (){
-                              //默认选择企业，排除掉已选过的
-                              for (var item in problemList) {
-                                if(item['isEnvironmentRead'] == false){
-                                  subCompanies['companies'].add(item['id']);
-                                }else{
-                                  subCompanies['environments'].add(item['id'],);
-                                }
-                              }
-                              _submit();
-                              Navigator.pop(context);
-                            }
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          });
-        },
-      );
-    });
-  }
 
   @override
   void initState() {
@@ -311,7 +146,6 @@ class _StewardCheckState extends State<StewardCheck>{
   /// 'endTime':结束时间,
   ///添加一个状态 check-提交到企业,environment-提交到环保局
   _problemSearch({Map<String,dynamic>? data}) async {
-
     var response = await Request().get(Api.url['problemList'],data: data);
     if(response['statusCode'] == 200 && response['data'] != null){
       review = response['data']['list'];
@@ -344,7 +178,6 @@ class _StewardCheckState extends State<StewardCheck>{
                 Container(),
                 concerns(),
                 notReview(),
-                taskList(),
                 pigeonhole(),
               ],
             ),
@@ -433,23 +266,7 @@ class _StewardCheckState extends State<StewardCheck>{
                 child: FormCheck.rowItem(
                   title: '检查类型',
                   expandedLeft: true,
-                  child: !subStatus ?
-                  Text(checkType,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,):
-                  DownInput(
-                    value: checkType,
-                    data: typeList,
-                    callback: (val){
-                      checkType = val['name'];
-                      // 修改清单的排查类型
-                      _setInventory(
-                          {
-                            'id':uuid,
-                            'checkType': val['id'],
-                          }
-                      );
-                      setState(() {});
-                    },
-                  ),
+                  child: Text(checkType,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,),
                 ),
               ),
               surveyItem('排查日期',checkDate.substring(0,10)),
@@ -501,35 +318,6 @@ class _StewardCheckState extends State<StewardCheck>{
                     },
                   ),
                 ),
-              ),
-              GestureDetector(
-                child: Container(
-                  margin: EdgeInsets.only(top: px(24)),
-                  child: Row(
-                    children: [
-                      Text(
-                          '选择任务',
-                          textAlign: TextAlign.justify,
-                          style: TextStyle(
-                              color: Color(0XFF969799),
-                              fontSize: sp(28.0),
-                              fontWeight: FontWeight.w500
-                          )
-                      ),
-                      Expanded(
-                        child: Container(
-                          alignment: Alignment.centerRight,
-                          child: Icon(Icons.keyboard_arrow_right_rounded,color: Colors.grey,),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                onTap: () async{
-                  //判断是否选择了任务
-                 var res = await Navigator.pushNamed(context, '/checkTask');
-                 print('res====$res');
-                },
               ),
             ]
         ),
@@ -589,16 +377,12 @@ class _StewardCheckState extends State<StewardCheck>{
                   height: px(41),
                   margin: EdgeInsets.only(right: px(20)),
                   child: Image.asset('lib/assets/icons/form/add.png')),
-                onTap: () async{
-                  final Function? pageContentBuilder = routes['/fillInForm'];
-                  var res = await Navigator.push(context, MaterialPageRoute(
-                      settings: RouteSettings(name: '/fillInForm'),
-                      builder: (context) => pageContentBuilder!(context, arguments: argumentMap)
-                  ));
-                  if(res == null){
-                    _getProblem();
-                  }
-                },
+                  onTap: () async {
+                    var res = await Navigator.pushNamed(context, '/fillInForm', arguments: argumentMap);
+                    if(res == null){
+                      _getProblem();
+                    }
+                  },
               ) :
               Container(),
             ],
@@ -609,7 +393,7 @@ class _StewardCheckState extends State<StewardCheck>{
                 i: i,
                 callBack:() async {
                   var res = await Navigator.pushNamed(context, '/rectificationProblem',
-                      arguments: {'check':true,'problemId':problemList[i]['id']}
+                      arguments: {'check':true,'problemId':problemList[i]['id'],'inventoryStatus': repertoire['status'],}
                   );
                   if(res == null){
                     _getProblem();
@@ -653,40 +437,9 @@ class _StewardCheckState extends State<StewardCheck>{
     );
   }
 
-  ///任务问题
-  Widget taskList(){
-    return Container(
-      margin: EdgeInsets.only(top: px(4)),
-      color: Colors.white,
-      child: Column(
-        children: [
-          Container(
-            margin: EdgeInsets.only(top: px(20),left: px(32),),
-            height: px(55),
-            child: FormCheck.formTitle(
-              '任务问题',
-            ),
-          ),
-          Column(
-            children: List.generate(problemList.length, (i) => RectifyComponents.rectifyRow(
-                company: problemList[i],
-                i: i,
-                callBack:() async {
-                  var res = await Navigator.pushNamed(context, '/rectificationProblem',
-                      arguments: {'check':true,'problemId':problemList[i]['id']}
-                  );
-                  if(res == null){
-                    _getProblem();
-                  }
-                }
-            )),
-          ),
-        ],
-      ),
-    );
-  }
 
   ///归档
+  ///是否可以提交问题
   Widget pigeonhole(){
     return Container(
       height: px(88),
@@ -752,16 +505,15 @@ class _StewardCheckState extends State<StewardCheck>{
               ),
             ),
             onTap: (){
-              subCompanies = {'companies':[],'environments':[],'inventoryId':uuid};
-              for (var item in problemList) {
-                item['isEnvironmentRead'] = false;
-              }
-              if(subStatus && problemList.isNotEmpty){
-                submission();
-              }else if(problemList.isEmpty){
-                ToastWidget.showToastMsg('暂无问题可以提交');
+              if(repertoire['status'] == 6 || repertoire['status'] == 5){
+                _setInventory(
+                    {
+                      'id':uuid,
+                      'status': 3,
+                    }
+                );
               }else{
-                ToastWidget.showToastMsg('问题已经全部提交');
+                ToastWidget.showToastMsg('当前状态不可提交');
               }
               setState(() {});
             },

@@ -12,18 +12,21 @@ import 'package:uuid/uuid.dart';
 ///uuid:uuid
 /// inventoryId : 清单id
 /// callback 回调方法
+/// pigeonhole 是否归档
 /// uploading ：是否允许上传
 class AbarbeitungPdf extends StatefulWidget {
   final Function? callback;
   final String? url;
   final String? inventoryId;
   final bool uploading;
+  final bool? pigeonhole;
   final String? title;
   const AbarbeitungPdf({Key? key,
     this.callback,
     this.url,
     this.inventoryId,
     this.uploading = false,
+    this.pigeonhole,
     this.title,
   }) : super(key: key);
   @override
@@ -111,8 +114,8 @@ class _AbarbeitungPdfState extends State<AbarbeitungPdf> {
       onTap: () async{
         if(widget.uploading){
           _upload();
-        }else{
-          ToastWidget.showToastMsg('有问题未通过审核，请等待');
+        } else{
+          ToastWidget.showToastMsg('有问题未通过审核，无法上传报告');
         }
       },
       child: widget.title == null ?

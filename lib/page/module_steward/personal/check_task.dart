@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:scet_check/components/generalduty/no_data.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 import 'components/task_compon.dart';
@@ -22,6 +21,7 @@ class _CheckTaskState extends State<CheckTask> {
     // TODO: implement initState
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +32,7 @@ class _CheckTaskState extends State<CheckTask> {
             height: Adapt.padTopH(),
             color: Color(0xff19191A),
           ),
-          Container(
+          SizedBox(
             height: px(88),
             child: Row(
               children: [
@@ -57,16 +57,6 @@ class _CheckTaskState extends State<CheckTask> {
                     child: Text('选择任务',style: TextStyle(color: Color(0xff323233),fontSize: sp(36),fontFamily: 'M'),),
                   ),
                 ),
-                GestureDetector(
-                  child: Container(
-                      width: px(40),
-                      height: px(41),
-                      margin: EdgeInsets.only(right: px(20)),
-                      child: Image.asset('lib/assets/icons/form/add.png')),
-                  onTap: () async{
-                    Navigator.pushNamed(context, '/backTaskDetails');
-                  },
-                )
               ],
             ),
           ),
@@ -78,7 +68,7 @@ class _CheckTaskState extends State<CheckTask> {
                     i: i,
                     company: {},
                     callBack: (){
-                      Navigator.pushNamed(context, '/backTaskDetails');
+                      Navigator.pushNamed(context, '/backTaskDetails',arguments: {'check':true});
                     }
                 );
               }),
@@ -169,9 +159,6 @@ class _CheckTaskState extends State<CheckTask> {
             ),
           ],
         ),
-        onTap: (){
-          Navigator.pushNamed(context, '/backTaskDetails');
-        },
       ),
     );
   }

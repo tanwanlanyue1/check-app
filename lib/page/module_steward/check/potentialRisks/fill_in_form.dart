@@ -28,6 +28,7 @@ import 'package:uuid/uuid.dart';
 ///           'companyId': repertoire['company']['id'],//企业id
 ///           'industryId': repertoire['company']['industryId'],//行业ID
 ///           'problemList':problemList,//问题详情
+///           'inventoryStatus':repertoire['status'],//清单状态
 ///         };
 class FillInForm extends StatefulWidget {
   final Map? arguments;
@@ -37,9 +38,9 @@ class FillInForm extends StatefulWidget {
   _FillInFormState createState() => _FillInFormState();
 }
 
-class _FillInFormState extends State<FillInForm> with RouteAware {
+class _FillInFormState extends State<FillInForm> {
   List imgDetails = [];//问题图片列表
-  List lawImg = [];//法律法规截图
+  // List lawImg = [];//法律法规截图
   List typeList = [];//问题类型列表
   Map problemList = {};//问题详情列表
   bool declare = false; //申报
@@ -47,12 +48,10 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
   bool isImportant = false; //是否重点
   bool checkGist = true; //排查依据
   String checkPersonnel = '';//排查人员
+  String problemTitle = '';//问题标题
   String issueDetails = '';//问题详情
   String type = '';//问题类型
   String typeId = '';//问题ID
-  String law = '';//法规依据
-  String lawId = '';//法规依据ID
-  String districtId = '';//排查标准ID
   String inventoryId = '';//清单ID
   String companyId = '';//企业ID
   String industryId = '';//产业ID
@@ -65,13 +64,13 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
   String checkDay = '';//详情排查日期
   String solvedAt = '';//整改期限
   String otherType = '';//其他类型
+  String flowStatus = '';//流程状态
   bool other = false;//其他类型
   int remind = 0;//提醒次数
+  int inventoryStatus = 0;//清单状态
   late GlobalKey<ScaffoldState> _scaffoldKey; //时间选择key
   // DateTime checkTime = DateTime.now();//填报排查日期
   DateTime rectifyTime = DateTime.now().add(Duration(days: 7));//整改期限
-
-
 
   /// 获取问题类型
   void _getProblemType() async {
@@ -92,26 +91,17 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
       type = problemList['problemType']['name'];
       issueDetails = problemList['detail'] ?? '';
       imgDetails = problemList['images'];
-      lawImg = problemList['lawImages'] ?? [];
-      if(problemList['law'] == null){
-        law = problemList['basis']?['name'] ?? '';
-      }else{
-        law = problemList['law']['title'] ?? '';
-      }
+      problemTitle = problemList['name'];
       problemId = problemList['id'];
       inventoryId = problemList['inventoryId'];
       typeId = problemList['problemTypeId'];
       companyId = problemList['companyId'];
       industryId = problemList['industryId'];
       areaId = problemList['districtId'];
-      lawId = problemList['lawId'];
-      districtId = problemList['basisId'];
-      if(districtId.isNotEmpty){
-        checkGist = false;
-      }
       isImportant = problemList['isImportant'];
       solvedAt = problemList['solvedAt'] != null ? formatTime(problemList['solvedAt']) : '';
     }
+    flow();
     setState(() {});
   }
 
@@ -124,6 +114,7 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
     addProblem = widget.arguments?['addProblem'] ?? false;
     userName = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
     userId = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
+    inventoryStatus = widget.arguments?['inventoryStatus'] ?? 1;
     if(declare){
       inventoryId = widget.arguments?['uuid'];
       companyId = widget.arguments?['companyId'];
@@ -139,36 +130,6 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
     super.initState();
   }
 
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-    ///监听路由
-    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
-  }
-
-  @override
-  void didPopNext() {
-    ///监听路由是否返回进来
-    ///清空另一个标准的id
-    // TODO: implement didPopNext
-    if(StorageUtil().getJSON('law')!=null){
-      lawId = StorageUtil().getJSON('law')['id'];
-      law = StorageUtil().getJSON('law')['title'];
-      StorageUtil().setJSON('gist', null);
-      StorageUtil().setJSON('law', null);
-      districtId = '';
-      setState(() {});
-    }else if(StorageUtil().getJSON('gist') !=null ){
-      law = StorageUtil().getJSON('gist')['name'];
-      districtId = StorageUtil().getJSON('gist')['id'];
-      StorageUtil().setJSON('gist', null);
-      StorageUtil().setJSON('law', null);
-      lawId = '';
-      setState(() {});
-    }
-    super.didPopNext();
-  }
 
   /// 问题填报 填报post，/修改
   /// screeningPerson:填报人
@@ -194,15 +155,14 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
       ToastWidget.showToastMsg('请输入问题详情');
     }else if(imgDetails.isEmpty){
       ToastWidget.showToastMsg('请上传问题图片');
-    }else if(lawId.isEmpty && districtId.isEmpty){
-      ToastWidget.showToastMsg('请选择排查依据');
-    }else{
+    } else{
       Map _data = {
         'id': problemId.isEmpty ? _uuid : problemId,
         'screeningPerson': checkPersonnel,
         'detail': issueDetails,
+        'name': problemTitle,
         'images': imgDetails,
-        'lawImages': lawImg,
+        // 'lawImages': lawImg,
         'status': 1,
         'inventoryId':inventoryId,
         'problemTypeId': typeId,
@@ -211,8 +171,8 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
         'companyId': companyId,
         'industryId': widget.arguments?['industryId'],
         'districtId': widget.arguments?['districtId'],
-        'lawId': lawId,
-        'basisId': districtId,
+        // 'lawId': lawId,
+        // 'basisId': districtId,
         'solvedAt': rectifyTime.toString(),
       };
       var response = await Request().post(
@@ -221,7 +181,7 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
       if(response['statusCode'] == 200) {
         if(addProblem){
           Navigator.of(context).pushReplacementNamed('/rectificationProblem',
-              arguments: {'check':true,'problemId': problemId.isEmpty ? _uuid : problemId}
+              arguments: {'check':true,'problemId': problemId.isEmpty ? _uuid : problemId,'inventoryStatus': 6,}
           );
         }else{
           Navigator.pop(context,true);
@@ -231,13 +191,25 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
     }
   }
 
-  /// 提交问题类型
-  void _postProblemType() async {
-    var response = await  Request().post(Api.url['problemType'],data: {'id':_uuid,'name':otherType});
-    if(response['statusCode'] == 200) {
-      typeId = response['data']['id'];
-      _setProblem();
-      setState(() {});
+  ///判断流程
+  void flow(){
+    if(inventoryStatus == 1){
+      flowStatus = '审核通过';
+      if(problemList['status'] == 2){
+        flowStatus = '填报整改详情';
+      }else if(problemList['status'] == 3){
+        flowStatus = '整改完成';
+      }else if(problemList['status'] == 4){
+        flowStatus = '复查未整改';
+      }
+    }else if(inventoryStatus == 2){
+      flowStatus = '整改完成';
+    }else if(inventoryStatus == 3){
+      flowStatus = '审核中';
+    }else if(inventoryStatus == 5){
+      flowStatus = '审核不通过';
+    }else if(inventoryStatus == 6){
+      flowStatus = '新建排查流程';
     }
   }
 
@@ -250,13 +222,6 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
     super.didUpdateWidget(oldWidget);
   }
 
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    /// 取消路由订阅
-    routeObserver.unsubscribe(this);
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -296,24 +261,29 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
                   child: FormCheck.formTitle('问题详情'),
                 ),
                 declare == false ?
-                Container(
-                  width: px(110),
-                  height: px(48),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      color: RectifyComponents.Colorswitchs(problemList['status']),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(px(20)),
-                        bottomLeft: Radius.circular(px(20)),
-                      )
-                  ),//状态；1,未整改;2,已整改;3,整改已通过;4,整改未通过
-                  child: Text(
-                    RectifyComponents.switchs(problemList['status']),
-                    style: TextStyle(color: Colors.white,fontSize: sp(20)),),
+                InkWell(
+                  child: Container(
+                    height: px(48),
+                    padding: EdgeInsets.only(left: px(12),right: px(12)),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        color: RectifyComponents.Colorswitchs(problemList['status']),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(px(20)),
+                          bottomLeft: Radius.circular(px(20)),
+                        )
+                    ),
+                    child: Text(flowStatus,
+                      style: TextStyle(color: Colors.white,fontSize: sp(20)),),
+                  ),
+                  onTap: (){
+                    Navigator.pushNamed(context, '/problemSchedule',arguments: {"status":problemList['status'],'inventoryId':inventoryId});
+                  },
                 ) :
                 Container(),
               ],
             ),
+
             FormCheck.rowItem(
                 title: "排查时间",
                 child: Text(checkDay, style: TextStyle(
@@ -336,11 +306,6 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
                 callback: (val){
                   type = val['name'];
                   typeId = val['id'];
-                  if(type == '其它'){
-                    other = true;
-                  }else{
-                    other = false;
-                  }
                   setState(() {});
                 },
               ) :
@@ -349,21 +314,36 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
                   fontSize: sp(28),
                   fontFamily: 'Roboto-Condensed'),),
             ),
-            other ?
+            // other ?
+            // FormCheck.rowItem(
+            //   title: "其他类型",
+            //   child: Container(
+            //     color: Color(0xffF5F6FA),
+            //     child: FormCheck.inputWidget(
+            //         hintText: '其他类型',
+            //         onChanged: (val){
+            //           otherType = val;
+            //           setState(() {});
+            //         }
+            //     ),
+            //   ),
+            // ) :
+            // Container(),
+
             FormCheck.rowItem(
-              title: "其他类型",
-              child: Container(
-                color: Color(0xffF5F6FA),
-                child: FormCheck.inputWidget(
-                    hintText: '其他类型',
+                alignStart: true,
+                title: "问题概述",
+                child:  !declare ? Text(problemTitle, style: TextStyle(
+                    color: Color(0xff323233), fontSize: sp(28)),)
+                    : FormCheck.inputWidget(
+                    hintText: problemTitle.isEmpty ? '请输入问题概述':problemTitle,
+                    lines: 1,
                     onChanged: (val){
-                      otherType = val;
+                      problemTitle = val;
                       setState(() {});
                     }
-                ),
-              ),
-            ) :
-            Container(),
+                )),
+
             Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -393,7 +373,8 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
                             child: Image.asset('lib/assets/icons/my/query.png'),
                         ),
                         onTap: (){
-                          Navigator.pushNamed(context, '/screeningBased',arguments: {'law':checkGist,'search':true});
+                          Navigator.pushNamed(context, '/screeningBased',arguments: {'law':false,'search':true});
+                          // Navigator.pushNamed(context, '/screeningBased',arguments: {'law':checkGist,'search':true});
                         },
                       ) : Container(),
                     ],
@@ -431,56 +412,56 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
                 },
               )),
 
-            FormCheck.rowItem(
-              title: "排查依据",
-              child: declare ?
-              _radios():
-              Text(law, style: TextStyle(color: Color(0xff323233),
-                  fontSize: sp(28),
-                  fontFamily: 'Roboto-Condensed'),),
-            ),
-
-            declare ?
-            FormCheck.rowItem(
-              title: '',
-              child: InkWell(
-                child: Container(
-                  color: Color(0xffF5F6FA),
-                  height: px(87),
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    law.isEmpty ? (checkGist ? '请选择法律法规' : '请选择排查标准'): law,
-                    style: TextStyle(color: Color(0xff323233),
-                      fontSize: sp(28),
-                      fontFamily: 'Roboto-Condensed'),),
-                ),
-                onTap: () async{
-                  Navigator.pushNamed(context, '/screeningBased',arguments: {'law':checkGist});
-                },
-              ),
-            ) :
-            Container(),
-
-            checkGist ?
-            FormCheck.rowItem(
-                alignStart: true,
-                title: "法律法规截图",
-                child: (declare == false && lawImg.isEmpty) ?
-                Text('无',style: TextStyle(color: Color(0xff323233), fontSize: sp(28),),):
-                UploadImage(
-                  imgList: lawImg,
-                  uuid: _uuid,
-                  closeIcon: declare,
-                  url: Api.baseUrlApp + 'file/upload?savePath=问题/',
-                  callback: (List? data) {
-                    if (data != null) {
-                      lawImg = data;
-                    }
-                    setState(() {});
-                  },
-                ),
-            )
-            : Container(),
+            // FormCheck.rowItem(
+            //   title: "排查依据",
+            //   child: declare ?
+            //   _radios():
+            //   Text(law, style: TextStyle(color: Color(0xff323233),
+            //       fontSize: sp(28),
+            //       fontFamily: 'Roboto-Condensed'),),
+            // ),
+            //
+            // declare ?
+            // FormCheck.rowItem(
+            //   title: '',
+            //   child: InkWell(
+            //     child: Container(
+            //       color: Color(0xffF5F6FA),
+            //       height: px(87),
+            //       alignment: Alignment.centerLeft,
+            //       child: Text(
+            //         law.isEmpty ? (checkGist ? '请选择法律法规' : '请选择排查标准'): law,
+            //         style: TextStyle(color: Color(0xff323233),
+            //           fontSize: sp(28),
+            //           fontFamily: 'Roboto-Condensed'),),
+            //     ),
+            //     onTap: () async{
+            //       Navigator.pushNamed(context, '/screeningBased',arguments: {'law':checkGist});
+            //     },
+            //   ),
+            // ) :
+            // Container(),
+            //
+            // checkGist ?
+            // FormCheck.rowItem(
+            //     alignStart: true,
+            //     title: "法律法规截图",
+            //     child: (declare == false && lawImg.isEmpty) ?
+            //     Text('无',style: TextStyle(color: Color(0xff323233), fontSize: sp(28),),):
+            //     UploadImage(
+            //       imgList: lawImg,
+            //       uuid: _uuid,
+            //       closeIcon: declare,
+            //       url: Api.baseUrlApp + 'file/upload?savePath=问题/',
+            //       callback: (List? data) {
+            //         if (data != null) {
+            //           lawImg = data;
+            //         }
+            //         setState(() {});
+            //       },
+            //     ),
+            // )
+            // : Container(),
 
             FormCheck.rowItem(
               title: "整改期限",
@@ -551,12 +532,7 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
               visible: declare,
               child: FormCheck.submit(
                 submit: (){
-                  //other选中其他类型，且输入有其他类型,就新建其他类型
-                  if(other && otherType.isNotEmpty){
-                    _postProblemType();
-                  }else{
-                    _setProblem();
-                  }
+                  _setProblem();
                 },
                 cancel: (){
                   Navigator.pop(context);
@@ -580,9 +556,6 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
             onChanged: (bool? val) {
               setState(() {
                 checkGist = val!;
-                law = '';
-                lawId = '';
-                districtId = '';
               });
             },
           ),
@@ -594,9 +567,6 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
           ),
           onTap: (){
             checkGist = !checkGist;
-            law = '';
-            lawId = '';
-            districtId = '';
             setState(() {});
           },
         ),
@@ -608,9 +578,6 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
             onChanged: (bool? val) {
               setState(() {
                 checkGist = val!;
-                law = '';
-                lawId = '';
-                districtId = '';
               });
             },
           ),
@@ -622,9 +589,6 @@ class _FillInFormState extends State<FillInForm> with RouteAware {
           ),
           onTap: (){
             checkGist = !checkGist;
-            law = '';
-            lawId = '';
-            districtId = '';
             setState(() {});
           },
         )

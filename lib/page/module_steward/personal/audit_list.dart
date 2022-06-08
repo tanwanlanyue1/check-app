@@ -1,47 +1,31 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/no_data.dart';
-import 'package:scet_check/components/generalduty/search.dart';
 import 'package:scet_check/components/generalduty/sliver_app_bar.dart';
+import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
+import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/utils/easyRefresh/easy_refreshs.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
-import 'components/rectify_components.dart';
+import 'components/task_compon.dart';
 
-///排查清单页
-///hiddenInventory:隐患清单数据
-///firm 是否为企业端
-class InventoryPage extends StatefulWidget {
-  String companyId;
-  bool firm;
-  InventoryPage({Key? key,required this.companyId,required this.firm}) : super(key: key);
 
+///审核清单列表
+class AuditList extends StatefulWidget {
+  const AuditList({Key? key}) : super(key: key);
 
   @override
-  _InventoryPageState createState() => _InventoryPageState();
+  _AuditListState createState() => _AuditListState();
 }
 
-class _InventoryPageState extends State<InventoryPage> {
+class _AuditListState extends State<AuditList> {
   final EasyRefreshController _controller = EasyRefreshController(); // 上拉组件控制器
   int _pageNo = 1; // 当前页码
   int _total = 10; // 总条数
   bool _enableLoad = true; // 是否开启加载
-  bool firm = false; // 是否为企业
   List hiddenInventory = []; //隐患清单数据
-  List inventoryStatus = [
-    {'name':'未提交','id':6},
-    {'name':'未归档','id':[1,3,4,5]},
-    {'name':'已归档','id':2},
-  ]; //清单的状态
-  String companyId = '';//企业id
-  DateTime? startTime;//选择开始时间
-  DateTime? endTime;//选择结束时间
-  Map<String,dynamic> typeStatus = {'name':'请选择','id':0};//默认类型
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();//侧边栏key
 
   /// 获取企业下的问题/问题搜索筛选
   /// companyId:公司id
@@ -88,14 +72,14 @@ class _InventoryPageState extends State<InventoryPage> {
   /// 当前数据等于总数据，关闭上拉加载
   _onLoad({required List data, required int total}) {
     if(mounted){
-        _total = total;
-        if(hiddenInventory.length >= total){
-          _enableLoad = false;
-          _controller.finishLoad(noMore: true);
-        }else{
-          hiddenInventory.addAll(data);
-        }
-        setState(() {});
+      _total = total;
+      if(hiddenInventory.length >= total){
+        _enableLoad = false;
+        _controller.finishLoad(noMore: true);
+      }else{
+        hiddenInventory.addAll(data);
+      }
+      setState(() {});
     }
     _controller.finishLoadCallBack!();
   }
@@ -103,59 +87,38 @@ class _InventoryPageState extends State<InventoryPage> {
   @override
   void initState() {
     // TODO: implement initState
-    companyId = widget.companyId;
-    firm = widget.firm;
     _inventorySearch(
         type: typeStatusEnum.onRefresh,
         data: {
           'page': 1,
           'size': 10,
-          'companyId':companyId,
+          'status':3,
         }
     );
     super.initState();
   }
 
   @override
-  void didUpdateWidget(covariant InventoryPage oldWidget) {
+  void didUpdateWidget(covariant AuditList oldWidget) {
     // TODO: implement didUpdateWidget
-    _inventorySearch(
-        type: typeStatusEnum.onRefresh,
-        data: {
-          'page': 1,
-          'size': 10,
-          'companyId':companyId,
-        }
-    );
-    startTime = null;
+
     super.didUpdateWidget(oldWidget);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
       body: Column(
         children: [
-          Search(
-            bgColor: Color(0xffffffff),
-            textFieldColor: Color(0xFFF0F1F5),
-            search: (value) {
-              _inventorySearch(
-                  type: typeStatusEnum.onRefresh,
-                  data: {
-                    'regexp':true,//近似搜索
-                    'detail': value,
-                    'companyId':companyId,
-                  }
-              );
-            },
-            screen: (){
-              _scaffoldKey.currentState!.openEndDrawer();
-            },
+          TaskCompon.topTitle(
+              title: '审核问题',
+              left: true,
+              callBack: (){
+                Navigator.pop(context);
+              }
           ),
           Expanded(
-            child: EasyRefresh.custom(
+            child:  EasyRefresh.custom(
               enableControlFinishRefresh: true,
               enableControlFinishLoad: true,
               topBouncing: true,
@@ -171,7 +134,7 @@ class _InventoryPageState extends State<InventoryPage> {
                     data: {
                       'page': _pageNo,
                       'size': 10,
-                      'companyId':companyId,
+                      'status':3,
                     }
                 );
               } : null,
@@ -182,7 +145,7 @@ class _InventoryPageState extends State<InventoryPage> {
                     data: {
                       'page': 1,
                       'size': 10,
-                      'companyId':companyId,
+                      'status':3,
                     }
                 );
               },
@@ -199,22 +162,22 @@ class _InventoryPageState extends State<InventoryPage> {
                     return RectifyComponents.repertoireRow(
                         company: hiddenInventory[i],
                         i: i,
-                        callBack:()async{
-                          if(firm){
-                            //企业端跳转到企业清单详情
-                            Navigator.pushNamed(context, '/enterprisInventory',
-                                arguments: {'uuid':hiddenInventory[i]['id'],'company':false});
-                          }else{
-                            //管家端
-                            Navigator.pushNamed(context, '/stewardCheck',arguments: {
-                              'uuid':hiddenInventory[i]['id'],
-                              'company':false
-                            });
+                        callBack:() async {
+                          var res = await Navigator.pushNamed(context, '/auditProblem',arguments: {"id":hiddenInventory[i]['id']});
+                          if(res == true){
+                            _inventorySearch(
+                                type: typeStatusEnum.onRefresh,
+                                data: {
+                                  'page': 1,
+                                  'size': 10,
+                                  'status':3,
+                                }
+                            );
                           }
                         }
                     );
                   },
-                  childCount: hiddenInventory.length),
+                      childCount: hiddenInventory.length),
                 ),
                 SliverPersistentHeader(
                   floating: false,//floating 与pinned 不能同时为true
@@ -240,60 +203,8 @@ class _InventoryPageState extends State<InventoryPage> {
                 )
               ],
             ),
-          ),
+          )
         ],
-      ),
-      endDrawer: RectifyComponents.endDrawers(
-        context,
-        typeStatus: typeStatus,
-        status: inventoryStatus,
-        startTime: startTime ?? DateTime.now(),
-        endTime: endTime ?? DateTime.now(),
-        callPop: (){
-          _inventorySearch(
-              type: typeStatusEnum.onRefresh,
-              data: {
-                'page': 1,
-                'size': 10,
-                'companyId':companyId,
-              }
-          );
-        },
-        callBack: (val){
-          typeStatus['name'] = val['name'];
-          typeStatus['id'] = val['id'];
-          setState(() {});
-        },
-        timeBack: (val){
-          startTime = val[0];
-          endTime = val[1];
-          setState(() {});
-        },
-        trueBack: (){
-          if(startTime == null){
-            _inventorySearch(
-                type: typeStatusEnum.onRefresh,
-                data: {
-                  'status':typeStatus['id'],
-                  'companyId':companyId,
-                }
-            );
-          }
-          else{
-            _inventorySearch(
-                type: typeStatusEnum.onRefresh,
-                data: {
-                  'status':typeStatus['id'],
-                  'companyId':companyId,
-                  'timeSearch':'createdAt',
-                  'startTime':startTime,
-                  'endTime':endTime,
-                }
-            );
-          }
-          Navigator.pop(context);
-          setState(() {});
-        },
       ),
     );
   }

@@ -45,7 +45,8 @@ class _TargetClassifyPageState extends State<TargetClassifyPage> {
         children: [
           TaskCompon.topTitle(
               title: '分类分级',
-              left: true,
+              home: true,
+              colors: Colors.transparent,
               callBack: (){
                 Navigator.pop(context);
               }
@@ -54,7 +55,7 @@ class _TargetClassifyPageState extends State<TargetClassifyPage> {
             child: ClientListPage(
               companyList: companyList,
               sort: true,
-              callBack: (id,name){
+              callBack: (id,name,user){
                 Navigator.pushNamed(context, '/targetClassifyList',arguments: {'name':name,'id':id});
               },
             ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:scet_check/api/api.dart';
+import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/no_data.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/page/module_steward/law/components/law_components.dart';
@@ -19,27 +21,30 @@ class _TargetClassifyListState extends State<TargetClassifyList> with SingleTick
   List tabBar = ["原则性指标","差异性指标",'加分项指标','扣分项指标'];//tab列表
   late TabController _tabController; //TabBar控制器
   String companyName = '';
-  bool packs = false;
+
+  ///依据数据
+  List<dynamic> gistData = [];
 
   @override
   void initState() {
     // TODO: implement initState
     _tabController = TabController(vsync: this,length: tabBar.length);
     companyName = widget.arguments?['name'];
+    _getBasis();
     super.initState();
   }
 
-  ///计算高度
-  ///i:数量
-  double calculateHeight(int i){
-    if( i == 0){
-      return px(120);
-    }else if( i == 1){
-      return px(160);
-    }else if(i == 2){
-      return px(220);
-    }else{
-      return px(i * 75+60);
+  /// 获取排查依据
+  void _getBasis() async {
+    var response = await Request().get(Api.url['basisList'],data: {"level":1});
+    if(response['statusCode'] == 200 && response['data'] != null) {
+      gistData = response['data']['list'];
+      ///添加一个展开收起的属性
+      for(var i=0; i< gistData.length;i++){
+        gistData[i]['tidy'] = false;
+      }
+      gistData[0]['child'] = ['qwe'];
+      setState(() {});
     }
   }
 
@@ -81,17 +86,19 @@ class _TargetClassifyListState extends State<TargetClassifyList> with SingleTick
             child: TabBarView(
                 controller: _tabController,
                 children: <Widget>[
-                  Column(
-                    children: List.generate(2, (i) => gistDataCard(
+                  ListView(
+                    padding: EdgeInsets.only(top: 0),
+                    children: List.generate(gistData.length, (i) => gistDataCard(
                       index: i,
-                      packup: packs,
-                      title: '原则指标标题',
-                      onTaps: (){
-                        packs = !packs;
-                        setState(() {});
-                      }
+                      title: gistData[i]['name'],
+                      data: gistData[i]['children'],
+                      packup: gistData[i]['tidy'],
+                        onTaps: (){
+                          gistData[i]['tidy'] = !gistData[i]['tidy'];
+                          setState(() {});
+                        }
+                    )),
                     ),
-                  )),
                   Column(
                     children: [
                       NoData(timeType: true, state: '未获取到数据!')
@@ -121,82 +128,95 @@ class _TargetClassifyListState extends State<TargetClassifyList> with SingleTick
   /// title:标题
   /// packup:是否渲染
   /// onTaps:回调
-  Widget gistDataCard({int? index,List? data,String? title,bool packup = false,Function? onTaps,}){
-    return AnimatedCrossFade(
-      duration: Duration(milliseconds: 500),
-      crossFadeState:
-      packup ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-      firstChild: Container(
-        height: calculateHeight(4),
-        width: px(702),
-        margin: EdgeInsets.only(top: px(20),left: px(20),right: px(20)),
-        padding: EdgeInsets.all(px(24)),
-        color: Colors.white,
-        child: GestureDetector(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+  Widget gistDataCard({required int index,required List data,String? title,bool packup = false,Function? onTaps,}){
+    return Container(
+      padding: EdgeInsets.only(left: px(24),right: px(24),bottom: px(12),top: px(12)),
+      margin: EdgeInsets.only(top: px(24)),
+      color: Colors.white,
+      child: Visibility(
+        visible: packup,
+        child: FormCheck.dataCard(
+            padding: false,
             children: [
-              FormCheck.formTitle(
-                index! < 9 ?
-                "0${index + 1} $title":
-                "${index + 1} $title",
-                showUp: true,
-                tidy: packup,
-                onTaps: onTaps,
-              ),
-              Expanded(
+              GestureDetector(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: List.generate(2, (i){
-                    return Container(
-                      margin: EdgeInsets.only(left: px(32),top: px(24)),
-                      child: Column(
-                        children: [
-                          LawComponents.rowTwo(
-                              child: Image.asset('lib/assets/icons/other/examine.png'),
-                              textChild: Text('子标题名称',style: TextStyle(color: Color(0xff4D7FFF),fontSize: sp(26),fontFamily: 'R'),)
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(left: px(32),top: px(24)),
-                            child: LawComponents.rowTwo(
-                                child: Image.asset('lib/assets/icons/other/examine.png'),
-                                textChild: Text('子标题名称',style: TextStyle(color: Color(0xff4D7FFF),fontSize: sp(26),fontFamily: 'R'),)
-                            ),
-                          )
-                        ],
-                      ),
-                    );
-                  }
-                  ),
+                  children: [
+                    FormCheck.formTitle(
+                      '$title',
+                      showUp: true,
+                      tidy: packup,
+                      onTaps: onTaps,
+                    ),
+                    childTitle(),
+                  ],
                 ),
               ),
-            ],
-          ),
-          onTap: (){
-            Navigator.pushNamed(context, '/targetDetails');
-          },
+            ]
         ),
-      ),
-      secondChild: Container(
-        height: px(80),
-        width: px(702),
-        margin: EdgeInsets.only(top: px(20),left: px(20),right: px(20)),
-        padding: EdgeInsets.all(px(12)),
-        color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            FormCheck.formTitle(
-              index < 9 ?
-              "0${index + 1} $title":
-              "${index + 1} $title",
+        replacement: SizedBox(
+          height: px(64),
+          child: FormCheck.formTitle(
+              '$title',
               showUp: true,
               tidy: packup,
-              onTaps: onTaps,
-            ),
-          ],
+            onTaps: onTaps,
+          ),
         ),
       ),
+    );
+  }
+
+  ///子标题
+  Widget childTitle({List? childData}){
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: List.generate(gistData.length, (i){
+        return Container(
+          margin: EdgeInsets.only(left: px(32),top: px(24)),
+          child: Column(
+            children: [
+              GestureDetector(
+                child: LawComponents.rowTwo(
+                    child: Image.asset('lib/assets/icons/other/examine.png'),
+                    textChild: Text("${gistData[i]['name']}",style: TextStyle(color: Color(0xff4D7FFF),fontSize: sp(26),fontFamily: 'R'),)
+                ),
+                onTap: (){
+                  print('第二级目录');
+                  Navigator.pushNamed(context, '/targetDetails',arguments: {"three":false});
+                },
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: List.generate(gistData.length, (i){
+                  return Container(
+                    margin: EdgeInsets.only(left: px(32),top: px(24)),
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                          child: LawComponents.rowTwo(
+                              child: Image.asset('lib/assets/icons/other/examine.png'),
+                              textChild: Text("${gistData[i]['name']}",style: TextStyle(color: Color(0xff4D7FFF),fontSize: sp(26),fontFamily: 'R'),)
+                          ),
+                          onTap: (){
+                            print('第三级目录');
+                            Navigator.pushNamed(context, '/targetDetails',arguments: {"three":true});
+                          },
+                        ),
+                        // gistData[i]['child'] != null?
+                        //   childTitle():
+                        //   Container()
+                      ],
+                    ),
+                  );
+                }),
+              ),
+              // gistData[i]['child'] != null?
+              //   childTitle():
+              //   Container()
+            ],
+          ),
+        );
+      }),
     );
   }
 }

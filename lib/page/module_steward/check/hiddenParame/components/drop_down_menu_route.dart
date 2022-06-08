@@ -26,7 +26,7 @@ class DropDownMenuRoute extends PopupRoute {
   @override
   // TODO: implement barrierLabel
   String? get barrierLabel => null;
-  List inventory = ['隐患排查清单','隐患排查问题列表'];
+  List inventory = ['清单列表','问题列表'];
 
   @override
   Widget buildPage(BuildContext context, Animation<double> animation,

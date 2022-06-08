@@ -13,11 +13,11 @@ import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 
 ///整改问题表单 inventory
-///arguments{'id'：企业id}
+///audit:审查问题的详情
+///arguments{'id'：企业id,"audit":true,inventoryStatus,:清单状态}
 class AbarbeitungFrom extends StatefulWidget {
   final Map? arguments;
-  final Function? callBack;
-  const AbarbeitungFrom({Key? key,this.arguments,this.callBack}) : super(key: key);
+  const AbarbeitungFrom({Key? key,this.arguments,}) : super(key: key);
 
   @override
   _AbarbeitungFromState createState() => _AbarbeitungFromState();
@@ -25,11 +25,12 @@ class AbarbeitungFrom extends StatefulWidget {
 
 class _AbarbeitungFromState extends State<AbarbeitungFrom> {
   List imgDetails = [];//问题图片列表
-  Map problemList = {};//问题详情
+  Map<String,dynamic> problemList = {};//问题详情
   String problemId = '';//问题ID
   bool declare = false; //申报
   bool getLose = false; //请求失败
   bool abarbeitung = false; //是否可以修改
+  bool audit = false; //是否从审查页进入
   String userName = '';//用户名
   String userId = '';//用户id
   List solutionList = [];//整改详情
@@ -39,6 +40,7 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
   void initState() {
     // TODO: implement initState
     problemId = widget.arguments?['id'];
+    audit = widget.arguments?['audit'] ?? false;
     userName= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
     userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
     _getProblems();
@@ -113,14 +115,15 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
                 //问题详情
                 ProblemDetails(
                   problemList: problemList,
+                  inventoryStatus: widget.arguments?['inventoryStatus'],
                 ),
                 //企业整改详情
-                addAbarbeitung(),
+                !audit ? addAbarbeitung() : Container(),
                 solutionList.isNotEmpty?
                 EnterpriseReform(
                   problemId: problemId,
                   solutionList: solutionList,
-                ):Container(),
+                ) : Container(),
                 //现场复查情况
                 reviewList.isNotEmpty?
                 ReviewSituation(

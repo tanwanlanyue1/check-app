@@ -1,6 +1,13 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:scet_check/api/api.dart';
+import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/no_data.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/storage/data_storage_key.dart';
+import 'package:scet_check/utils/storage/storage.dart';
 
 import 'components/task_compon.dart';
 
@@ -17,63 +24,64 @@ class BacklogTask extends StatefulWidget {
 class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStateMixin{
   List tabBar = ["现场检查","表格填报",'其他专项'];//tab列表
   late TabController _tabController; //TabBar控制器
+  String userId = ''; //用户id
   String checkPeople = '';//排查人员
+  List taskList = [];//任务列表
+  int type = 1;//现场检查
 
   @override
   void initState() {
     // TODO: implement initState
     _tabController = TabController(vsync: this,length: tabBar.length);
+    userId = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
+    _tabController.addListener(() {
+      if(type != _tabController.index+1){
+        type = _tabController.index+1;
+        _getTaskList();
+      }
+    });
+    _getTaskList();
     super.initState();
   }
+  /// 查询任务列表
+  /// status 1：待办 2：已办
+  /// type 1:现场检查 2:表格填报
+  void _getTaskList() async {
+    var response = await Request().get(
+      Api.url['taskList'],
+      data: {
+        "checkUserList": {"id":userId},
+        "status":1,
+        "type":type
+    },
+    );
+    if(response['statusCode'] == 200) {
+      taskList = response['data']['list'];
+      setState(() {});
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant BacklogTask oldWidget) {
+    // TODO: implement didUpdateWidget
+    _getTaskList();
+    super.didUpdateWidget(oldWidget);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          Container(
-            width: px(750),
-            height: Adapt.padTopH(),
-            color: Color(0xff19191A),
+          TaskCompon.topTitle(
+              title: '待办任务',
+              home: true,
+              colors: Colors.transparent,
+              callBack: (){
+                Navigator.pop(context);
+              },
           ),
-          Container(
-            height: px(88),
-            child: Row(
-              children: [
-                InkWell(
-                  child: Container(
-                    height: px(88),
-                    width: px(55),
-                    color: Colors.transparent,
-                    padding: EdgeInsets.only(left: px(12)),
-                    margin: EdgeInsets.only(left: px(12)),
-                    child: Image.asset('lib/assets/icons/other/chevronLeft.png',),
-                  ),
-                  onTap: (){
-                    Navigator.pop(context);
-                  },
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.only(right: px(55)),
-                    child: Text('待办任务',style: TextStyle(color: Color(0xff323233),fontSize: sp(36),fontFamily: 'M'),),
-                  ),
-                ),
-                GestureDetector(
-                  child: Container(
-                      width: px(40),
-                      height: px(41),
-                      margin: EdgeInsets.only(right: px(20)),
-                      child: Image.asset('lib/assets/icons/form/add.png')),
-                  onTap: () async{
-                    Navigator.pushNamed(context, '/backTaskDetails');
-                  },
-                )
-              ],
-            ),
-          ),
-          Container(
+          SizedBox(
             height: px(96),
             child: DefaultTabController(
               length: tabBar.length,
@@ -102,28 +110,9 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
             child: TabBarView(
                 controller: _tabController,
                 children: <Widget>[
-                  ListView(
-                    padding: EdgeInsets.only(top: 0),
-                    children: List.generate(5, (i){
-                      return TaskCompon.taskList(
-                          i: i,
-                          company: {},
-                          callBack: (){
-                            Navigator.pushNamed(context, '/backTaskDetails');
-                          }
-                      );
-                    }),
-                  ),
-                  Column(
-                    children: [
-                      NoData(timeType: true, state: '未获取到数据!')
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      NoData(timeType: true, state: '未获取到数据!')
-                    ],
-                  ),
+                  itemTask(type: type),
+                  itemTask(type: type),
+                  itemTask(type: type),
                 ]
             ),
           ),
@@ -131,92 +120,25 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
       ),
     );
   }
-  ///任务列表
-  Widget taskList(int i){
-    return Container(
-      margin: EdgeInsets.only(top: px(24),left: px(20),right: px(24)),
-      padding: EdgeInsets.only(left: px(24),top: px(20),bottom: px(20)),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(px(8.0))),
-      ),
-      child: InkWell(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: px(40),
-                  height: px(40),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(//渐变位置
-                        begin: Alignment.topLeft,end: Alignment.bottomRight,
-                        stops: const [0.0, 1.0], //[渐变起始点, 渐变结束点]
-                        colors: const [Color(0xff9EB9FF), Color(0xff608DFF)]//渐变颜色[始点颜色, 结束颜色]
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(30)),
-                  ),
-                  child: Text('${i+1}',style: TextStyle(color: Colors.white,fontSize: sp(28)),),
-                ),
-                ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: Adapt.screenW()-px(250),
-                  ),
-                  child: Container(
-                    margin: EdgeInsets.only(left: px(16),right: px(12)),
-                    child: Text('标题名称/公司名称',style: TextStyle(color: Color(0xff323233),fontSize: sp(30),fontFamily: "M",overflow: TextOverflow.ellipsis),),
-                  ),
-                ),
-                Spacer(),
-                Container(
-                  width: px(110),
-                  height: px(48),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      color: TaskCompon.firmTaskColor(i),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(px(20)),
-                        bottomLeft: Radius.circular(px(20)),
-                      )
-                  ),//状态；1,未整改;2,已整改;3,整改已通过;4,整改未通过
-                  child: Text(TaskCompon.firmTask(i)
-                    ,style: TextStyle(color: Colors.white,fontSize: sp(20)),),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                SizedBox(
-                  height: px(32),
-                  child: Image.asset('lib/assets/icons/my/group.png'),
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: px(16),top: px(16)),
-                  child: Text(' 第三片区+排查人员',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),overflow: TextOverflow.ellipsis),),
-                ),
-              ],
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                SizedBox(
-                  height: px(32),
-                  width: px(32),
-                  child: Image.asset('lib/assets/icons/check/sandClock.png'),
-                ),
-                Text(' 2022-4-21 12:00',
-                  style: TextStyle(color: Color(0xff969799),fontSize: sp(26)),),
-              ],
-            ),
-          ],
-        ),
-        onTap: (){
-          Navigator.pushNamed(context, '/backTaskDetails');
-        },
-      ),
-    );
+
+  Widget itemTask({int? type}){
+    return taskList.isNotEmpty ?
+      ListView(
+        padding: EdgeInsets.only(top: 0),
+        children: List.generate(taskList.length, (i){
+          return TaskCompon.taskList(
+              i: i,
+              company: taskList[i],
+              callBack: (val){//任务详情id
+                Navigator.pushNamed(context, '/taskDetails',arguments: {'backlog':true,'id':val});
+              }
+          );
+        }),
+      ):Column(
+        children: [
+          NoData(timeType: true, state: '未获取到数据!')
+        ],
+      );
   }
 
 }

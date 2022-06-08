@@ -57,6 +57,7 @@ class _HomePageState extends State<HomePage> {
     _pageController = PageController(initialPage: widget.index ?? 0);//PageView控制器
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(

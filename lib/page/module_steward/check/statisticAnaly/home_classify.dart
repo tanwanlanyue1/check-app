@@ -27,15 +27,17 @@ class _HomeClassifyState extends State<HomeClassify> with RouteAware{
    var response = await Request().get(
        Api.url['problemStatistics'],
        data: {
-         'groupTable':'company'
+         'groupTable':'company',
+         "size":10,
+         "page":1,
        }
    );
    if(response['statusCode'] == 200 && mounted) {
      setState(() {
-       statisticsData = response['data'];
+       statisticsData = response['data']['list'];
        for(var i = 0; i < statisticsData.length; i++){
          issue.add(int.parse(statisticsData[i]['allCount']));
-         name.add(statisticsData[i]['companyName']);
+         name.add(statisticsData[i]['companyShortName']);
        }
         echartData = [
            {
@@ -59,7 +61,7 @@ class _HomeClassifyState extends State<HomeClassify> with RouteAware{
      }); break;
      case 1: Navigator.pushNamed(context, '/backlogTask'); break;
      case 2: Navigator.pushNamed(context, '/haveDoneTask'); break;
-     case 3: Navigator.pushNamed(context, '/enterprisePage',arguments: {"history":true}); break;
+     case 3: Navigator.pushNamed(context, '/enterprisePage',arguments: {"history":true,"name":"台账记录"}); break;
      case 4: Navigator.pushNamed(context, '/policyStand',arguments: true); break;
      case 5: Navigator.pushNamed(context, '/messagePage',arguments: {'company':false}); break;
      case 6: Navigator.pushNamed(context, '/targetClassifyPage'); break;

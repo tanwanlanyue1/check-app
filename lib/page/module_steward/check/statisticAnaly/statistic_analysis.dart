@@ -21,6 +21,7 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
 
   List tabBar = [];//表头
   List districtList = [];//片区统计数据
+  List problemType = [];//问题类型统计数据
   List districtId = [""];//片区id
   List _tableBody = [];//问题统计数据
   List number = [];//整改数
@@ -129,11 +130,23 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
     );
     if(response['statusCode'] == 200) {
       setState(() {
-        _tableBody = response['data'];
+        _tableBody = response['data']['list'];
       });
     }
   }
 
+  /// 问题类型统计数据
+  void _getProblemType({Map<String,dynamic>? data}) async {
+    var response = await Request().get(
+        Api.url['problemStatistics'],
+        data: data
+    );
+    if(response['statusCode'] == 200) {
+      setState(() {
+        problemType = response['data']['list'];
+      });
+    }
+  }
   ///处理数据
   ///判断是哪一个片区进来的，
   ///_pageIndex 0=统计片区
@@ -151,7 +164,13 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
     _getProblemStatis(
         data: groupTable
     );
+    Map<String,dynamic> typeData = _pageIndex == 0 ? {'groupTable':'problemType'} :
+    { 'districtId': districtId[_pageIndex],'groupTable':'problemType'};
+    _getProblemType(
+      data: typeData
+    );
   }
+
   ///判断表单的数据
   ///判断切换的类型和片区
   judge(){
@@ -163,7 +182,7 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
        {'groupTable':'company',} :
         {
           'districtId': districtId[_pageIndex],
-          'groupTable':'company',
+          'groupTable':'problemType',
         };
         _getProblemStatis(data: data);
         setState((){});
@@ -268,6 +287,7 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
             number:number,
             type:type,
             tableBody:_tableBody,
+            problemType:problemType,
             callBack:(val){
               _types = val;
               judge();

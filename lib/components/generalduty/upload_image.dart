@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -7,6 +9,7 @@ import 'package:scet_check/routers/router_animate/router_fade_route.dart';
 import 'package:scet_check/utils/photoView/cached_network.dart';
 import 'package:scet_check/utils/photoView/photo_view.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:uuid/uuid.dart';
 
 ///上传图片
 ///callback:回调
@@ -50,7 +53,7 @@ class _UploadImageState extends State<UploadImage> {
       var isUp = await FileSystem.upload(result, url);
       if(isUp?[0]!=false){
         for(var i = 0; i < (isUp?.length ?? 0);i++){
-          String? imgUrl = isUp![i]['msg']['data']['dir']+'/'+isUp[0]['msg']['data']['base'];
+          String? imgUrl = isUp![i]['msg']['data']['dir']+'/'+isUp[i]['msg']['data']['base'];
           _imagesList.add(
             imgUrl?.replaceAll('\\', '/'),
           );
@@ -65,8 +68,8 @@ class _UploadImageState extends State<UploadImage> {
   void initState() {
     // TODO: implement initState
     _imagesList = widget.imgList;
-    _uuid = widget.uuid ?? '';
     _url = widget.url ?? Api.url['uploadImg'];
+    _uuid = widget.uuid ?? '';
     super.initState();
   }
 
@@ -74,8 +77,8 @@ class _UploadImageState extends State<UploadImage> {
   void didUpdateWidget(covariant UploadImage oldWidget) {
     // TODO: implement didUpdateWidget
     _imagesList = widget.imgList;
-    _uuid = widget.uuid ?? '';
     _url = widget.url ?? Api.url['uploadImg'];
+    _uuid = widget.uuid ?? '';
     super.didUpdateWidget(oldWidget);
   }
 

@@ -27,8 +27,8 @@ class _EssentialGistState extends State<EssentialGist> {
     _getBasis();
     textEditingController = TextEditingController();
   }
+
   /// 获取排查依据
-  ///type 1,国家标准文件;2,地方标准文件;3,行业标准文件
   void _getBasis() async {
     var response = await Request().get(Api.url['basisList'],data: {"level":1});
     if(response['statusCode'] == 200 && response['data'] != null) {

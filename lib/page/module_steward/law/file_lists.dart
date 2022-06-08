@@ -73,8 +73,8 @@ class _FileListsState extends State<FileLists> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                height: px(34),
-                width: px(34),
+                height: px(40),
+                width: px(40),
                 margin: EdgeInsets.only(top: px(5)),
                 alignment: Alignment.center,
                 child: Text('${i+1}',style: TextStyle(color: Colors.white,fontSize: sp(22)),),
@@ -83,7 +83,7 @@ class _FileListsState extends State<FileLists> {
                   gradient: LinearGradient(      //渐变位置
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight, //左下
-                      stops: const [0.0, 1.0],         //[渐变起始点, 渐变结束点]
+                      stops: const [0.0, 1.0], //[渐变起始点, 渐变结束点]
                       //渐变颜色[始点颜色, 结束颜色]
                       colors: const [Color.fromRGBO(128, 163, 255, 0.7), Color.fromRGBO(77, 127, 255, 0.9)]
                   ),

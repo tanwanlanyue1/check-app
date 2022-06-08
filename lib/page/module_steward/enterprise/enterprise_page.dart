@@ -10,7 +10,7 @@ import 'package:scet_check/page/module_steward/personal/components/task_compon.d
 import 'package:scet_check/utils/screen/screen.dart';
 
 ///企业管理
-///arguments:{'history':true}历史台账进入
+///arguments:{'history':true,"task":任务，“name”:发布任务}历史台账进入
 class EnterprisePage extends StatefulWidget {
   final Map? arguments;
   const EnterprisePage({Key? key,this.arguments}) : super(key: key);
@@ -27,6 +27,7 @@ class _EnterprisePageState extends State<EnterprisePage> with RouteAware{
   List districtList = [];//片区统计数据
   Map<String,dynamic> data = {};//获取企业数据传递的参数
   ProviderDetaild? _roviderDetaild;//全局数据
+  String name = "一企一档";
 
   /// 获取企业统计
   /// district.id:片区id
@@ -75,6 +76,7 @@ class _EnterprisePageState extends State<EnterprisePage> with RouteAware{
   void initState() {
     super.initState();
     _getStatistics();// 获取片区
+    name = widget.arguments?['name'] ?? name;
   }
   @override
   void didChangeDependencies() {
@@ -98,9 +100,27 @@ class _EnterprisePageState extends State<EnterprisePage> with RouteAware{
       body: Column(
         children: [
           TaskCompon.topTitle(
-              title: '企业管理',
+              title: name,
+              left: widget.arguments?['task'] ?? false,
               home: widget.arguments?['history'] ?? false,
               colors: widget.arguments?['history'] ?? false ? Colors.transparent : Colors.white,
+              child: GestureDetector(
+                child: Container(
+                  height: px(56),
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.only(right: px(12)),
+                  child: Text(
+                    '提交',
+                    style: TextStyle(
+                        fontSize: sp(28),
+                        fontFamily: "R",
+                        color: Color(0xff323233)),
+                  ),
+                ),
+                onTap: (){
+                  Navigator.pop(context,true);
+                },
+              ),
               callBack: (){
                 Navigator.pop(context);
               }
@@ -118,9 +138,12 @@ class _EnterprisePageState extends State<EnterprisePage> with RouteAware{
                 child: ClientListPage(
                   companyList: companyList,
                   sort: true,
-                  callBack: (id,name){
+                  select: widget.arguments?['task'] ?? false,
+                  callBack: (id,name,user){
                     if(widget.arguments?['history'] ?? false){
                       Navigator.pushNamed(context, '/historyTask',arguments: {'name':name,"id":id});
+                    }else if(widget.arguments?['task'] ?? false){
+                      Navigator.pop(context,{'name':name,"id":id,"user":user});
                     }else{
                       Navigator.pushNamed(context, '/enterpriseDetails',arguments: {'name':name,"id":id});
                     }

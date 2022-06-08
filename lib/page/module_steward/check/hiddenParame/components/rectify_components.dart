@@ -43,7 +43,7 @@ class RectifyComponents{
                      ),
                      borderRadius: BorderRadius.all(Radius.circular(30)),
                    ),
-                   child: Text('${i+1}',style: TextStyle(color: Colors.white,fontSize: sp(28)),),
+                   child: Text('${i+1}',style: TextStyle(color: Colors.white,fontSize: sp(i > 99 ? 22 : 26)),),
                  ),
                ),
                ConstrainedBox(
@@ -52,7 +52,7 @@ class RectifyComponents{
                  ),
                  child: Container(
                    margin: EdgeInsets.only(left: px(16),right: px(12)),
-                   child: Text('${company["detail"]}',style: TextStyle(color: Color(0xff323233),fontSize: sp(30),overflow: TextOverflow.ellipsis),),
+                   child: Text('${company["name"]}',style: TextStyle(color: Color(0xff323233),fontSize: sp(30),overflow: TextOverflow.ellipsis),),
                  ),
                ),
                Container(
@@ -370,15 +370,20 @@ class RectifyComponents{
   ///trueBack 确认回调
   ///timeBack 日期选择回调
   ///callPop 清空已选择状态
+  ///problemType 问题类型
+  ///typeBack 问题类型回调
   static Widget endDrawers(context,{
     required Map typeStatus,
     required List status,
     required DateTime startTime,
     required DateTime endTime,
+    List? problemType,
+    Map? typeProblemStatu,
     Function? callPop,
     Function? callBack,
     Function? timeBack,
     Function? trueBack,
+    Function? typeBack,
   }){
     return Container(
       width: px(600),
@@ -426,6 +431,33 @@ class RectifyComponents{
               ),
             ],
           ),
+          problemType != null ?
+          Container(
+            margin: EdgeInsets.only(top: px(12)),
+            child: Row(
+              children: [
+                Container(
+                  height: px(72),
+                  width: px(140),
+                  alignment: Alignment.centerLeft,
+                  child: Text('类型：',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.only(left: px(20), right: px(20)),
+                    child: DownInput(
+                      value: typeProblemStatu?['name'],
+                      data: problemType,
+                      callback: (val){
+                        typeBack?.call(val);
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ) :
+          Container(),
           Row(
             children: [
               Container(

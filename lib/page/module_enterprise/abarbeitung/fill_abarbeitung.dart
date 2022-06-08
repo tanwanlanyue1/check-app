@@ -120,7 +120,9 @@ class _FillAbarbeitungState extends State<FillAbarbeitung> {
   /// userId:用户ID
   /// problemId:问题id
   void _postReview() async {
-    if(descript.isEmpty){
+    if(reviewPerson.isEmpty){
+      ToastWidget.showToastMsg('请输入复查人员');
+    }else if(descript.isEmpty){
       ToastWidget.showToastMsg('请输入复查详情');
     }else if(imgDetails.isEmpty){
       ToastWidget.showToastMsg('请上传复查图片');
@@ -203,7 +205,7 @@ class _FillAbarbeitungState extends State<FillAbarbeitung> {
           ),
           FormCheck.rowItem(
             alignStart: true,
-            title: "问题照片",
+            title: "整改照片",
             child: UploadImage(
               imgList: imgDetails,
               uuid: _uuid,
