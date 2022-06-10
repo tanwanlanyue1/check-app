@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
+import 'package:scet_check/components/generalduty/no_data.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 
@@ -60,7 +61,8 @@ class _HaveDoneTaskState extends State<HaveDoneTask> {
               }
           ),
           Expanded(
-            child: ListView(
+            child: haveDoneList.isNotEmpty ?
+            ListView(
               padding: EdgeInsets.only(top: 0),
               children: List.generate(haveDoneList.length, (i){
                 return TaskCompon.taskList(
@@ -71,7 +73,12 @@ class _HaveDoneTaskState extends State<HaveDoneTask> {
                     }
                 );
               }),
-            ),
+            ) :
+            Column(
+              children: [
+                  NoData(timeType: true, state: '未获取到数据!')
+                ],
+          ),
           )
         ],
       ),

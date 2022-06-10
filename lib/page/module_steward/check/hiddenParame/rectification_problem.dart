@@ -7,7 +7,6 @@ import 'package:scet_check/page/module_steward/check/potentialRisks/enterprise_r
 import 'package:scet_check/page/module_steward/check/potentialRisks/fill_in_form.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/review_situation.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
-import 'package:scet_check/routers/routes.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 ///企业台账详情
@@ -123,10 +122,12 @@ class _RectificationProblemState extends State<RectificationProblem> {
         }
       }
     }else{
-      var res = await Navigator.pushNamed(context, '/fillInForm', arguments: argumentMap);
-      if(res == true){
-        _getProblems();
-        _getReviewList();
+      if(argumentMap.isNotEmpty){
+        var res = await Navigator.pushNamed(context, '/fillInForm', arguments: argumentMap);
+        if(res == true){
+          _getProblems();
+          _getReviewList();
+        }
       }
     }
   }

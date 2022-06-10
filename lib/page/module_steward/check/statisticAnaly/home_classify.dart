@@ -15,7 +15,15 @@ class HomeClassify extends StatefulWidget {
 
 ///首页分类
 class _HomeClassifyState extends State<HomeClassify> with RouteAware{
-  List classify = ['统计分析','待办任务','已办任务','台账记录','法律规范','通知中心','分类分级','更多'];//分类
+  List classify = [
+    {"name":'统计分析',"icon":"lib/assets/icons/home/statistics.png"},
+    {"name":'待办任务',"icon":"lib/assets/icons/home/backlog.png"},
+    {"name":'已办任务',"icon":"lib/assets/icons/home/hoveDone.png"},
+    {"name":'台账记录',"icon":"lib/assets/icons/home/standingBook.png"},
+    {"name":'法律规范',"icon":"lib/assets/icons/home/law.png"},
+    {"name":'分类分级',"icon":"lib/assets/icons/home/classify.png"},
+    {"name":'通知中心',"icon":"lib/assets/icons/home/message.png"},
+    {"name":'更多',"icon":"lib/assets/icons/home/more.png"}];//分类
   List statisticsData = [];//统计数据
   List issue = [];//问题
   List name = [];//问题
@@ -39,13 +47,17 @@ class _HomeClassifyState extends State<HomeClassify> with RouteAware{
          issue.add(int.parse(statisticsData[i]['allCount']));
          name.add(statisticsData[i]['companyShortName']);
        }
-        echartData = [
-           {
-             'type': 'bar',
-             'data': issue,
-             'color':'#D68184'
-           },
-         ];
+       echartData = issue;
+        // echartData = [
+        //    {
+        //      'type': 'bar',
+        //      'data': issue,
+        //      'itemStyle':
+        //        {
+        //         'color': '#669AFF'
+        //        } ,
+        //    },
+        //  ];
      });
    }
  }
@@ -63,8 +75,8 @@ class _HomeClassifyState extends State<HomeClassify> with RouteAware{
      case 2: Navigator.pushNamed(context, '/haveDoneTask'); break;
      case 3: Navigator.pushNamed(context, '/enterprisePage',arguments: {"history":true,"name":"台账记录"}); break;
      case 4: Navigator.pushNamed(context, '/policyStand',arguments: true); break;
-     case 5: Navigator.pushNamed(context, '/messagePage',arguments: {'company':false}); break;
-     case 6: Navigator.pushNamed(context, '/targetClassifyPage'); break;
+     case 5: Navigator.pushNamed(context, '/targetClassifyPage'); break;
+     case 6: Navigator.pushNamed(context, '/messagePage',arguments: {'company':false}); break;
      default: ToastWidget.showToastMsg('暂无更多页面');
    }
  }
@@ -88,73 +100,119 @@ class _HomeClassifyState extends State<HomeClassify> with RouteAware{
  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          TaskCompon.topTitle(title: '首页'),
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.only(top: px(0)),
-              children: [
-                show ? Container(
-                  margin: EdgeInsets.only(bottom: px(24)),
-                  height: px(700),
-                  width: px(550),
-                  child: ColumnEcharts(
-                    erect: true,
-                    erectName: name,
-                    data: echartData,
-                    title:'园区企业问题数统计',
-                  ),
-                ):
-                Container(
-                  margin: EdgeInsets.only(bottom: px(24)),
-                  height: px(700),
-                  width: px(550),
-                ),//图表
-                Container(
-                  margin: EdgeInsets.only(left: px(24),right: px(24),bottom: px(24)),
-                  padding: EdgeInsets.only(top: px(12),left: px(12),right: px(12)),
-                  color: Colors.white,
-                  child: GridView.builder(
-                    shrinkWrap:true,
-                    physics: NeverScrollableScrollPhysics(),
-                    padding: EdgeInsets.all(0),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
+      body: Container(
+        child: Column(
+          children: [
+            top(),
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.only(top: px(0)),
+                children: [
+                  show ? Container(
+                    margin: EdgeInsets.only(bottom: px(24),left: px(24),right: px(24)),
+                    height: px(700),
+                    width: px(550),
+                    child: ColumnEcharts(
+                      erect: true,
+                      erectName: name,
+                      data: echartData,
+                      title:'园区企业问题数统计排名',
                     ),
-                    itemCount: classify.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return InkWell(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(width: px(2)),
-                            borderRadius: BorderRadius.all(Radius.circular(px(8))),
-                          ),
+                    decoration: BoxDecoration(
+                      border: Border.all(width: px(4),color: Colors.white),
+                      borderRadius: BorderRadius.all(Radius.circular(px(20))),
+                    ),
+                  ):
+                  Container(
+                    margin: EdgeInsets.only(bottom: px(24)),
+                    height: px(700),
+                    width: px(550),
+                  ),//图表
+                  Container(
+                    margin: EdgeInsets.only(left: px(24),right: px(24),bottom: px(24)),
+                    padding: EdgeInsets.only(top: px(12),left: px(12),right: px(12)),
+                    child: GridView.builder(
+                      shrinkWrap:true,
+                      physics: NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.all(0),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                      ),
+                      itemCount: classify.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return InkWell(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.margin),
-                              Container(
-                                child: Text('${classify[index]}'),
+                              SizedBox(
+                                width: px(96),
+                                height: px(96),
+                                child: Image.asset('${classify[index]['icon']}'),
                               ),
+                              Text('${classify[index]['name']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(26)),),
                             ],
                           ),
-                        ),
-                        onTap: () {
-                          selectClass(index);
-                        },
-                      );
-                    },
+                          onTap: () {
+                            selectClass(index);
+                          },
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+          ],
+        ),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(//渐变位置
+              begin: Alignment.topCenter,end: Alignment.bottomCenter,
+              stops: const [0.0, 1.0], //[渐变起始点, 渐变结束点]
+              colors: const [Color(0xffC0CCFE), Color(0xffF2F3FA)]//渐变颜色[始点颜色, 结束颜色]
           ),
-        ],
+        ),
       ),
     );
   }
 
+  Widget top(){
+   return Column(
+     children: [
+       Container(
+         width: px(750),
+         height: Adapt.padTopH(),
+         color: Color(0xff19191A),
+       ),
+       Container(
+         height: px(88),
+         decoration: BoxDecoration(
+           gradient: LinearGradient(//渐变位置
+               begin: Alignment.topCenter,end: Alignment.bottomCenter,
+               stops: const [0.0, 1.0], //[渐变起始点, 渐变结束点]
+               colors: const [Color(0xffC0CCFE), Color(0xffC5D0FE)]//渐变颜色[始点颜色, 结束颜色]
+           ),
+         ),
+         child: Row(
+           children: [
+             Container(
+               width: px(56),
+               height: px(56),
+               margin: EdgeInsets.only(left: px(26),right: px(24)),
+               child: Image.asset('lib/assets/icons/home/iconLogo.png',),
+             ),
+             Expanded(
+               flex: 1,
+               child: Container(
+                 alignment: Alignment.centerLeft,
+                 child: Text('隐患排查平台',style: TextStyle(color: Color(0xff323233),fontSize: sp(38),fontFamily: 'M'),),
+               ),
+             ),
+           ],
+         ),
+       ),
+     ],
+   );
+  }
 }

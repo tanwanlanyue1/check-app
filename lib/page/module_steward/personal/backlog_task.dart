@@ -27,7 +27,7 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
   String userId = ''; //用户id
   String checkPeople = '';//排查人员
   List taskList = [];//任务列表
-  int type = 1;//现场检查
+  int type = 3;//现场检查
 
   @override
   void initState() {
@@ -35,10 +35,14 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
     _tabController = TabController(vsync: this,length: tabBar.length);
     userId = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
     _tabController.addListener(() {
-      if(type != _tabController.index+1){
-        type = _tabController.index+1;
-        _getTaskList();
+      if(_tabController.index+1 == 1){
+        type = 3;
+      }else if(_tabController.index+1 == 2){
+        type = 4;
+      }else{
+        type = 2;
       }
+      _getTaskList();
     });
     _getTaskList();
     super.initState();
@@ -99,6 +103,16 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
                     unselectedLabelStyle: TextStyle(fontSize: sp(30.0),fontFamily: 'R'),
                     indicatorColor:Color(0xff4D7FFF),
                     indicatorWeight: px(4),
+                    onTap: (val){
+                      if(val == 1){
+                        type = 3;
+                      }else if(val == 2){
+                        type = 4;
+                      }else{
+                        type = 2;
+                      }
+                      _getTaskList();
+                    },
                     tabs: tabBar.map((item) {
                       return Tab(text: '$item');
                     }).toList()
@@ -129,8 +143,10 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
           return TaskCompon.taskList(
               i: i,
               company: taskList[i],
-              callBack: (val){//任务详情id
-                Navigator.pushNamed(context, '/taskDetails',arguments: {'backlog':true,'id':val});
+              callBack: (val) {//任务详情id
+                Navigator.pushNamed(context, '/taskDetails',arguments: {'backlog':true,'id':val}).then((value) => {
+                  _getTaskList(),
+                });
               }
           );
         }),

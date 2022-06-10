@@ -48,6 +48,7 @@ class _ProblemPageState extends State<ProblemPage> {
   String _uuid = ''; //uuid
   Position? position; //定位
   List problemStatus = [
+    {'name':'未审核','id':0},
     {'name':'未整改','id':1},
     {'name':'已整改','id':2},
     {'name':'整改已通过','id':3},
@@ -180,7 +181,7 @@ class _ProblemPageState extends State<ProblemPage> {
     if(firm){
       hiddenProblem = [];
       for(var i = 0; i < data.length; i++){
-        if(data[i]['isCompanyRead'] == true){
+        if(data[i]['status'] != 0){
           hiddenProblem.add(data[i]);
         }
       }
@@ -205,7 +206,7 @@ class _ProblemPageState extends State<ProblemPage> {
     firmTotal += data.length;
     if(firm){
       for(var i = 0; i < data.length; i++){
-        if(data[i]['isCompanyRead'] == true){
+        if(data[i]['status'] != 0){
           hiddenProblem.add(data[i]);
         }
       }
@@ -751,31 +752,57 @@ class _ProblemPageState extends State<ProblemPage> {
           trueBack: (){
             //判断搜索日期传递的参数
             if(startTime==null){
-              _problemSearch(
-                  type: typeStatusEnum.onRefresh,
-                  data: {
-                    'status':typeStatus['id'],
-                    'companyId':companyId,
-                    "problemTypeId":typeProblemStatu['id'],
-                    'sort':"status",
-                    "order":"ASC",
-                  }
-              );
-            }
-            else{
-              _problemSearch(
-                  type: typeStatusEnum.onRefresh,
-                  data: {
-                    'status':typeStatus['id'],
-                    "problemTypeId":typeProblemStatu['id'],
-                    'companyId':companyId,
-                    'timeSearch':'createdAt',
-                    'startTime':startTime,
-                    'endTime':endTime,
-                    'sort':"status",
-                    "order":"ASC",
-                  }
-              );
+              if(typeProblemStatu['id'].isNotEmpty){
+                _problemSearch(
+                    type: typeStatusEnum.onRefresh,
+                    data: {
+                      'status':typeStatus['id'],
+                      'companyId':companyId,
+                      "problemTypeId":typeProblemStatu['id'],
+                      'sort':"status",
+                      "order":"ASC",
+                    }
+                );
+              }else{
+                _problemSearch(
+                    type: typeStatusEnum.onRefresh,
+                    data: {
+                      'status':typeStatus['id'],
+                      'companyId':companyId,
+                      'sort':"status",
+                      "order":"ASC",
+                    }
+                );
+              }
+            } else {
+              if(typeProblemStatu['id'].isNotEmpty){
+                _problemSearch(
+                    type: typeStatusEnum.onRefresh,
+                    data: {
+                      'status':typeStatus['id'],
+                      "problemTypeId":typeProblemStatu['id'],
+                      'companyId':companyId,
+                      'timeSearch':'createdAt',
+                      'startTime':startTime,
+                      'endTime':endTime,
+                      'sort':"status",
+                      "order":"ASC",
+                    }
+                );
+              }else{
+                _problemSearch(
+                    type: typeStatusEnum.onRefresh,
+                    data: {
+                      'status':typeStatus['id'],
+                      'companyId':companyId,
+                      'timeSearch':'createdAt',
+                      'startTime':startTime,
+                      'endTime':endTime,
+                      'sort':"status",
+                      "order":"ASC",
+                    }
+                );
+              }
             }
             Navigator.pop(context);
             setState(() {});

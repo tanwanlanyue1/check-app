@@ -163,7 +163,7 @@ class _FillInFormState extends State<FillInForm> {
         'name': problemTitle,
         'images': imgDetails,
         // 'lawImages': lawImg,
-        'status': 1,
+        'status': 0,
         'inventoryId':inventoryId,
         'problemTypeId': typeId,
         'userId':userId,

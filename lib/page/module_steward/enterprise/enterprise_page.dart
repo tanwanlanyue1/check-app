@@ -104,7 +104,8 @@ class _EnterprisePageState extends State<EnterprisePage> with RouteAware{
               left: widget.arguments?['task'] ?? false,
               home: widget.arguments?['history'] ?? false,
               colors: widget.arguments?['history'] ?? false ? Colors.transparent : Colors.white,
-              child: GestureDetector(
+              child: (widget.arguments?['task'] ?? false) ?
+              GestureDetector(
                 child: Container(
                   height: px(56),
                   alignment: Alignment.center,
@@ -120,7 +121,7 @@ class _EnterprisePageState extends State<EnterprisePage> with RouteAware{
                 onTap: (){
                   Navigator.pop(context,true);
                 },
-              ),
+              ) : Container(),
               callBack: (){
                 Navigator.pop(context);
               }

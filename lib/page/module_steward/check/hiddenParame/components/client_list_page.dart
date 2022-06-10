@@ -6,6 +6,8 @@ import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:lpinyin/lpinyin.dart';
 import 'package:provider/provider.dart';
+import 'package:scet_check/api/api.dart';
+import 'package:scet_check/api/request.dart';
 import 'package:scet_check/model/provider/provider_home.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -40,6 +42,7 @@ class _ClientListPageState extends State<ClientListPage> {
   List<Languages> dataList = [];//数据列表
   HomeModel? _homeModel; //全局的焦点
   late TextEditingController textEditingController; //输入框控制器
+  List district = [];//片区
 
   @override
   void initState() {
@@ -57,7 +60,6 @@ class _ClientListPageState extends State<ClientListPage> {
     textEditingController = TextEditingController();
     sortNumber();
     // loadData();
-
     super.didUpdateWidget(oldWidget);
   }
   @override
@@ -87,9 +89,12 @@ class _ClientListPageState extends State<ClientListPage> {
   void sortNumber(){
     originList = LanguageHelper.getGithubLanguages()!.map((v) {
       Languages model = Languages.fromJson(v.toJson());
+      // String tag = model.number?.substring(0, 1) ?? "#";
+      // model.tagIndex = toChinese(int.parse(tag));
+      model.tagIndex = model.district?.name ?? "#";
       return model;
     }).toList();
-    dataList = originList;
+    // dataList = originList;
     // dataList.sort((a,b) {
     //   if(a.number.split('-')[0] == b.number.split('-')[0]){
     //     return int.parse(a.number.split('-')[1]).compareTo(int.parse(b.number.split('-')[1]));
@@ -98,7 +103,7 @@ class _ClientListPageState extends State<ClientListPage> {
     //     return int.parse(a.number.split('-')[0]).compareTo(int.parse(b.number.split('-')[0]));
     //   }
     // });
-    // _handleList(originList);
+    _handleList(originList);
   }
 
   ///处理列表
@@ -111,19 +116,21 @@ class _ClientListPageState extends State<ClientListPage> {
     }
     // 将中文也进行排序
     for (int i = 0, length = list.length; i < length; i++) {
-      String pinyin = PinyinHelper.getPinyinE(list[i].name ?? "#");
-      String tag = pinyin.substring(0, 1).toUpperCase();
-      // list[i].name = pinyin; //变成拼音
-      if (RegExp("[A-Z]").hasMatch(tag)) {
-        list[i].tagIndex = tag;
-      } else {
-        list[i].tagIndex = "#";
-      }
+      list[i].tagIndex = list[i].district?.name ?? "#";
+      // String tag = list[i].number?.substring(0, 1) ?? "#";
+      // String pinyin = PinyinHelper.getPinyinE(list[i].name ?? "#");
+      // String tag = pinyin.substring(0, 1).toUpperCase();
+      // // list[i].name = pinyin; //变成拼音
+      // if (RegExp("[A-Z]").hasMatch(tag)) {
+      //   list[i].tagIndex = tag;
+      // } else {
+      //   list[i].tagIndex = "#";
+      // }
     }
     dataList.addAll(list);
 
     // A-Z sort.
-    SuspensionUtil.sortListBySuspensionTag(dataList);
+    // SuspensionUtil.sortListBySuspensionTag(dataList);
 
     //显示sus标签。
     SuspensionUtil.setShowSuspensionStatus(dataList);
@@ -147,8 +154,8 @@ class _ClientListPageState extends State<ClientListPage> {
         '$tag',
         softWrap: false,
         style: TextStyle(
-          fontSize: sp(24),
-          color: Color(0xFF969799),
+          fontSize: sp(26),
+          color: Color(0xFF4D7FFF),
         ),
       ),
     );
@@ -190,41 +197,55 @@ class _ClientListPageState extends State<ClientListPage> {
   ///不根据首字母拼音排序
   Widget getItemSort(BuildContext context, Languages model,
       {double susHeight = 50}) {
-    return GestureDetector(
-      child: Container(
-        color: widget.select ? (_homeModel?.select.contains(model.id) ? Colors.blue : Colors.white) : Colors.white,
-        height: px(84),
-        margin: EdgeInsets.only(bottom: px(4),top: px(12)),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              margin: EdgeInsets.only(left: px(18),right: px(12)),
-              child: Text(model.number ?? '',style: TextStyle(color: Color(0xFF323233),fontSize: sp(28),)),
+    return  Column(
+      children: [
+        // (model.number == '1-1') ?
+        // Container(
+        //   margin: EdgeInsets.only(left: px(18),right: px(12)),
+        //   child: Text('第一片区',style: TextStyle(color: Color(0xFF323233),fontSize: sp(28),)),
+        // ) :
+        // (model.number == '2-1') ?
+        // Container(
+        //   margin: EdgeInsets.only(left: px(18),right: px(12)),
+        //   child: Text('第二片区',style: TextStyle(color: Color(0xFF323233),fontSize: sp(28),)),
+        // ):Container(),
+        GestureDetector(
+          child: Container(
+            color: widget.select ? (_homeModel?.select.contains(model.id) ? Colors.blue : Colors.white) : Colors.white,
+            height: px(84),
+            // margin: EdgeInsets.only(bottom: px(4),top: px(12)),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(left: px(18),right: px(12)),
+                  child: Text(model.number ?? '',style: TextStyle(color: Color(0xFF323233),fontSize: sp(28),)),
+                ),
+                Expanded(
+                  child: Text("${model.name} ",style: TextStyle(color: Color(0xFF323233),fontSize: sp(28),),),
+                )
+              ],
             ),
-            Expanded(
-              child: Text("${model.name} ",style: TextStyle(color: Color(0xFF323233),fontSize: sp(28),),),
-            )
-          ],
-        ),
-      ),
-      onTap: (){
-        if(widget.select){
-          if(_homeModel?.select.contains(model.id)){
-            _homeModel?.select.remove(model.id);
-            int index =  _homeModel?.selectCompany.indexWhere((item) =>  item['id'] == model.id);
-            if(index != -1) {
-              _homeModel?.selectCompany.removeAt(index);
+          ),
+          onTap: (){
+            if(widget.select){
+              if(_homeModel?.select.contains(model.id)){
+                _homeModel?.select.remove(model.id);
+                int index =  _homeModel?.selectCompany.indexWhere((item) =>  item['id'] == model.id);
+                if(index != -1) {
+                  _homeModel?.selectCompany.removeAt(index);
+                }
+              }else{
+                _homeModel?.select.add(model.id);
+                _homeModel?.selectCompany.add({'id':model.id!,"user":model.toJson()['user'],"name":model.name});
+              }
+            }else{
+              widget.callBack?.call(model.id,model.name,model.toJson()['user']);
             }
-          }else{
-            _homeModel?.select.add(model.id);
-            _homeModel?.selectCompany.add({'id':model.id!,"user":model.toJson()['user'],"name":model.name});
-          }
-        }else{
-          widget.callBack?.call(model.id,model.name,model.toJson()['user']);
-        }
-        setState(() {});
-      },
+            setState(() {});
+          },
+        ),
+      ],
     );
   }
 
@@ -341,7 +362,7 @@ class _ClientListPageState extends State<ClientListPage> {
               ),
               replacement: AzListView(
                 data: dataList,
-                physics: AlwaysScrollableScrollPhysics(),
+                // physics: AlwaysScrollableScrollPhysics(),
                 itemCount: dataList.length,
                 itemBuilder: (BuildContext context, int index) {
                   Languages model = dataList[index];
@@ -349,10 +370,10 @@ class _ClientListPageState extends State<ClientListPage> {
                   return getItemSort(context, model);
                 },
                 itemScrollController: itemScrollController,
-                // susItemBuilder: (BuildContext context, int index) {
-                //   Languages model = dataList[index];
-                //   return getSusItem(context, model.getSuspensionTag());
-                // },
+                susItemBuilder: (BuildContext context, int index) {
+                  Languages model = dataList[index];
+                  return getSusItem(context, model.getSuspensionTag());
+                },
                 indexBarData: [],
               ),
             ),

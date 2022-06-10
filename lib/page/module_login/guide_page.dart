@@ -25,7 +25,6 @@ class _GuidePageState extends State<GuidePage> {
     initData();
     PermissionManage.all();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(// 判断是否首次打开，不是首次打开使用启动页图片衔接安卓原生启动页
@@ -112,7 +111,7 @@ class _GuidePageState extends State<GuidePage> {
   /// packageInfo :包信息
   /// version :版本号
   void _upApp({required String packageInfo, required String version}) async {
-    Map<String, dynamic> params = Map();
+    Map<String, dynamic> params = {};
     params['type'] = packageInfo;
 
     var response = await Request().get(Api.url['versions'], data: params);
@@ -129,12 +128,14 @@ class _GuidePageState extends State<GuidePage> {
         );
         //ios相关代码
       } else if (Platform.isAndroid) {
-        _upAppPage(
-          version: response['data']['list'][0]?['number'],
-          msg: response['data']['list'][0]['remark'],
-          isForced: true,
-          path: Api.baseUrlApp + response['data']['list'][0]['file']
-        );
+        if(mounted){
+          _upAppPage(
+              version: response['data']['list'][0]?['number'],
+              msg: response['data']['list'][0]['remark'],
+              isForced: true,
+              path: Api.baseUrlApp + response['data']['list'][0]['file']
+          );
+        }
         //android相关代码
       }
     }

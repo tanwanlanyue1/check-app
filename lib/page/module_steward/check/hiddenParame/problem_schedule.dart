@@ -18,7 +18,7 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
   int status = 0;//状态 0:下发任务，1：新建排查流程 2：审核中 3：审核不通过 4：审核通过 5:填报整改详情 6:复查未整改 7:整改完成
   Color blues = Color(0xFF4D7FFF); //流程已完成
   Color blacks = Color(0xFF323232);//流程未经过
-  bool task = true;//是否为任务
+  bool task = false;//是否为任务
   String uuid = '';//清单id
   int inventoryStatus = 0;//清单的状态码
 
@@ -36,6 +36,7 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
     if(response['statusCode'] == 200 && response['data'] != null) {
       setState(() {
         inventoryStatus = response['data']['status'];
+        task = response['data']['latitude'] == null ? true : false; //判断是否从任务过来
         flow();
       });
     }
@@ -137,6 +138,7 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
     return ListView(
       padding: EdgeInsets.only(top: 0),
       children: [
+        //下发排查任务
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -155,6 +157,7 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
             ),
           ],
         ),
+        //新建排查流程
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -170,6 +173,7 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
             )
           ],
         ),
+        //填报并提交
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -187,6 +191,7 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
             )
           ],
         ),
+        //审核
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -204,6 +209,7 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
             ),
           ],
         ),
+        //填报整改详情
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -221,6 +227,7 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
             )
           ],
         ),
+        //现场复查
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -238,6 +245,7 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
             )
           ],
         ),
+        //再次整改并填报
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -255,6 +263,7 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
             )
           ],
         ),
+        //流程结束
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -304,7 +313,7 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
         task ?
         Positioned(
           left: px(275),
-          top: px(105),
+          top: px(102),
           child: Icon(Icons.arrow_right,color: switchColor(colorStatus:0),),
         ) : Container(),
 
@@ -319,8 +328,8 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
           ),
         ),
         Positioned(
-          left: px(370),
-          top: px(202),
+          left: px(368),
+          top: px(200),
           child: Icon(Icons.arrow_drop_down,color: switchColor(colorStatus:1),),
         ),
 
@@ -345,7 +354,7 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
         ),
         Positioned(
           left: px(175),
-          top: px(335),
+          top: px(333),
           child: Icon(Icons.arrow_left_outlined,color: switchColor(colorStatus:2,also: 3),),
         ),
 
@@ -404,8 +413,8 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
           child: Text("通过",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus: 4),),),
         ),
         Positioned(
-          left: px(532),
-          top: px(444),
+          left: px(530),
+          top: px(443),
           child: Icon(Icons.arrow_right,color: switchColor(colorStatus: 4),),
         ),
 
@@ -460,7 +469,7 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
         ),
         Positioned(
           left: px(530),
-          top: px(680),
+          top: px(678),
           child: Icon(Icons.arrow_right,color: switchColor(only: 6)),
         ),
 
@@ -480,7 +489,7 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
           child: Text("整改完成",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus: 7),),),
         ),
         Positioned(
-          left: px(360),
+          left: px(358),
           top: px(790),
           child: Icon(Icons.arrow_drop_down,color: switchColor(colorStatus: 7),),
         ),

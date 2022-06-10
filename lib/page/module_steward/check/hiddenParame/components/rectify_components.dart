@@ -259,6 +259,7 @@ class RectifyComponents{
 //问题颜色状态
  static Color Colorswitchs(status){
     switch(status){
+      case 0 : return Color(0xffFAAA5A);
       case 1 : return Color(0xffFAAA5A);
       case 2 : return Color(0xff7196F5);
       case 3 : return Color(0xff95C758);
@@ -274,6 +275,7 @@ class RectifyComponents{
       case 2 : return '整改中';
       case 3 : return '整改已通过';
       case 4 : return '整改未通过';
+      case 0 : return '未审核';
       default: return '未整改';
     }
   }
@@ -353,7 +355,7 @@ class RectifyComponents{
                   topLeft: Radius.circular(px(20)),
                   bottomLeft: Radius.circular(px(20)),
                 )
-            ),//状态；1,未整改;2,已整改;3,整改已通过;4,整改未通过
+            ),//状态；1,未整改;2,已整改;3,整改已通过;4,整改未通过 5.未提交
             child: Text(switchs(status)
               ,style: TextStyle(color: Colors.white,fontSize: sp(20)),),
           )

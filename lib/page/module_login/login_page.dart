@@ -5,6 +5,7 @@ import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/page/module_enterprise/enterprise_home.dart';
 import 'package:scet_check/page/module_login/components/login_components.dart';
+import 'package:scet_check/page/module_steward/home_page.dart';
 import 'package:scet_check/routers/router_animate/router_animate.dart';
 import 'package:scet_check/utils/logOut/log_out.dart';
 import 'package:scet_check/utils/screen/screen.dart';
@@ -45,12 +46,12 @@ class _LoginPageState extends State<LoginPage> {
               // WidgetsBinding.instance!.addPostFrameCallback((_) {
               //   Navigator.of(context).popAndPushNamed('/steward');});
               Future.delayed(Duration.zero, () {
-                Navigator.pushNamedAndRemoveUntil(context,'/steward', (Route route)=>false);
+                Navigator.of(context).pushAndRemoveUntil(CustomRoute(HomePage()), (router) => router == null);
               });
               // Navigator.pushNamedAndRemoveUntil(context,'/steward', (Route route)=>false);
               break;
             case '项目经理':
-              Navigator.pushNamedAndRemoveUntil(context,'/steward', (Route route)=>false);
+              Navigator.of(context).pushAndRemoveUntil(CustomRoute(HomePage()), (router) => router == null);
               break;
             case '企业' :
               Navigator.of(context).pushAndRemoveUntil(CustomRoute(EnterpriseHome()), (router) => router == null);

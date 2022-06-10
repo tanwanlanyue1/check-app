@@ -39,6 +39,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
   String sceneReviewDate = '';//现场复查日期
   String checkType = '隐患排查';//检查类型
   String companyId = '';//企业用户id
+  bool task = false;//是否任务
   bool uploading = true;//判断是否可以上传pdf
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -59,6 +60,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
         repertoire['checkType'] == 2 ? '专项检查' :
         repertoire['checkType'] == 3 ? '现场检查':
         repertoire['checkType'] == 4 ? '表格填报': '其他类型';
+        task = repertoire['latitude'] == null ? true : false; //判断是否从任务过来
         argumentMap = {
           'declare':true,//申报
           'uuid': uuid,//清单ID
@@ -119,7 +121,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
             child: ListView(
               padding: EdgeInsets.only(top: 0),
               children: [
-                repertoire.isNotEmpty ?
+                repertoire.isNotEmpty && !task?
                 singSurvey():
                 Container(),
                 repertoire.isNotEmpty ?

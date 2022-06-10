@@ -42,11 +42,11 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
   Uuid uuid = Uuid(); //uuid
   String _uuid = '';//清单id
   List typeList = [
-    {'name':'现场检查','id':1},
-    {'name':'表格填报','id':2},
-    {'name':'其他专项','id':3},
+    {'name':'现场检查','id':3},
+    {'name':'表格填报','id':4},
+    {'name':'其他专项','id':2},
   ];//问题类型列表
-  int taskType = 1;//任务类型
+  int taskType = 3;//任务类型
   HomeModel? _homeModel; //全局的选择企业
 
   /// 上传文件
@@ -73,7 +73,7 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
   }
 
   /// 发布任务
-  void _getTask({required String companyId,List? checkUser}) async {
+  _getTask({required String companyId,List? checkUser}) async {
     Map _data = {};
       if(taskDetail.isEmpty){
         ToastWidget.showToastMsg('请输入任务内容！');
@@ -95,7 +95,10 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
         );
         if(response['statusCode'] == 200) {
           ToastWidget.showToastMsg('发布成功！');
-          Navigator.pop(context);
+          return true;
+        }else{
+          ToastWidget.showToastMsg('发布失败！');
+          return false;
         }
       }
   }
@@ -263,9 +266,12 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
           border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
           borderRadius: BorderRadius.all(Radius.circular(px(12))),),
       ),
-      onTap: (){
+      onTap: () async {
         for(var i = 0; i < company.length; i++){
-          _getTask(companyId: company[i]['id'],checkUser: company[i]['user']);
+          var res = await _getTask(companyId: company[i]['id'],checkUser: company[i]['user']);
+          if(res == true && i == company.length-1){
+            Navigator.pop(context);
+          }
         }
       },
     );

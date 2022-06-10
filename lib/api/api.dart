@@ -1,9 +1,8 @@
 
 class Api {
 
-  // static const baseUrlApp = 'http://10.10.1.217:9750';
-  static const baseUrlApp = 'http://10.10.1.217:8687/';
-  // static const baseUrlApp = 'https://dev.scet.com.cn/yhpc/';
+  // static const baseUrlApp = 'http://10.10.1.217:8687/';
+  static const baseUrlApp = 'https://dev.scet.com.cn/yhpc/';
 
 
   static final Map url = {

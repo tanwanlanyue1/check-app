@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scet_check/api/Request.dart';
 import 'package:scet_check/model/provider/provider_app.dart';
+import 'package:scet_check/page/module_login/guide_page.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 import 'package:path_provider/path_provider.dart';
@@ -51,6 +52,7 @@ class Global {
 
     // 读取离线用户token
     var _token = StorageUtil().getString(StorageKey.Token);
+    GuidePage().createState().initData();
 
     if(isFirstOpen){
       if (_token != null && _token != 'null'  &&  _token != '') {
@@ -60,6 +62,9 @@ class Global {
         if (_personalData != null) {
           switch(_personalData['role']['name']){
             case '环保管家' :
+              router = '/steward';
+              break;
+            case '项目经理' :
               router = '/steward';
               break;
             case '企业' :

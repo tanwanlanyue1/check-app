@@ -92,7 +92,8 @@ class _TaskDetailsState extends State<TaskDetails> {
     if(response['statusCode'] == 200) {
       Navigator.pushNamed(context, '/stewardCheck',arguments: {
         'uuid': _uuid,
-        'company':false
+        'company':false,
+        'task':true
       });
     }
   }
@@ -291,6 +292,7 @@ class _TaskDetailsState extends State<TaskDetails> {
       }
     }
   }
+
   @override
   void didUpdateWidget(covariant TaskDetails oldWidget) {
     // TODO: implement didUpdateWidget
@@ -528,13 +530,14 @@ class _TaskDetailsState extends State<TaskDetails> {
           title: '检查情况:',
           child: Text(taskDetails['checkDetail'] ?? checkDetail,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
         ),
+        checkImages.isNotEmpty ?
         FormCheck.rowItem(
           title: '现场照片:',
           child: UploadImage(
             imgList: checkImages,
             closeIcon: false,
           ),
-        ),
+        ) : Container(),
         FormCheck.rowItem(
           title: '检查时间:',
           child: Text(TaskCompon.formatTime(taskDetails['updatedAt']),style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),

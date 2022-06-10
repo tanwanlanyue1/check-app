@@ -1,20 +1,20 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
-import 'package:scet_check/components/generalduty/down_input.dart';
 import 'package:scet_check/components/generalduty/time_select.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
-import 'package:scet_check/routers/routes.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/time/utc_tolocal.dart';
 
 import 'components/rectify_components.dart';
 
 ///管家排查
-///arguments:{companyId:公司id，companyName：公司名称,uuid:清单id}
+///arguments:{companyId:公司id，companyName：公司名称,uuid:清单id,'task':任务}
 class StewardCheck extends StatefulWidget {
   Map? arguments;
   StewardCheck({Key? key,this.arguments, }) : super(key: key);
@@ -39,8 +39,8 @@ class _StewardCheckState extends State<StewardCheck>{
   String checkType = '';//检查类型
   bool pigeon = false; //是否可以归档
   bool subStatus = false; //是否可以修改的状态
-  bool isCompanyRead = false;//是否企业查看
-  bool isEnvironmentRead = false;//是否环保局查看
+  bool task = false;//是否任务
+  bool firstTask = false;//是否第一次从任务进入
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Map<String, dynamic> subCompanies = {'companies':[],'environments':[]};//提交的数组
   List review = [];//复查列表
@@ -49,14 +49,14 @@ class _StewardCheckState extends State<StewardCheck>{
   /// id:清单id
   /// argumentMap 提交问题传递的参数
   void _getCompany() async {
-    var response = await Request().get(Api.url['inventory']+'/$uuid',);
+    var response = await Request().get(Api.url['inventory']+'/$uuid');
     if(response['statusCode'] == 200 && response['data'] != null) {
       setState(() {
         _getProblem();
         repertoire = response['data'];
         stewardCheck = repertoire['checkPersonnel'];
-        location = repertoire['company']['region']['name'];
-        area = repertoire['company']['district']['name'];
+        location = repertoire['company']?['region']['name'];
+        area = repertoire['company']?['district']['name'];
         checkDate = RectifyComponents.formatTime(repertoire['createdAt']);
         abarbeitungDates = repertoire['solvedAt'] != null ? RectifyComponents.formatTime(repertoire['solvedAt']) : '';
         sceneReviewDate = repertoire['reviewedAt'] != null ? RectifyComponents.formatTime(repertoire['reviewedAt']) : '';
@@ -65,6 +65,7 @@ class _StewardCheckState extends State<StewardCheck>{
         repertoire['checkType'] == 3 ? '现场检查':
         repertoire['checkType'] == 4 ? '表格填报': '其他类型';
         subStatus = repertoire['status'] == 6 ? true : false; //状态为6，可以提交问题、修改
+        task = repertoire['latitude'] == null ? true : false; //判断是否从任务过来
         _problemSearch(
             data: {
               'status':2,
@@ -81,6 +82,14 @@ class _StewardCheckState extends State<StewardCheck>{
           'industryId': repertoire['company']['industryId'],//行业ID
           'inventoryStatus': repertoire['status'],//清单状态
         };
+        if(firstTask) {
+          Navigator.pushNamed(context, '/fillInForm', arguments: argumentMap).then((value) => {
+              if(value == null){
+                  firstTask = false,
+                  _getProblem()
+              }
+          });
+        }
       });
     }
   }
@@ -111,7 +120,6 @@ class _StewardCheckState extends State<StewardCheck>{
     }
   }
 
-
   /// 签到清单
   /// id: uuid
   /// solvedAt: 整改期限
@@ -133,6 +141,7 @@ class _StewardCheckState extends State<StewardCheck>{
   void initState() {
     // TODO: implement initState
     uuid = widget.arguments?['uuid'].toString() ?? '';
+    firstTask = widget.arguments?['task'] ?? false;
     //查询清单下的问题
     _getCompany();
     super.initState();
@@ -170,7 +179,7 @@ class _StewardCheckState extends State<StewardCheck>{
             child: ListView(
               padding: EdgeInsets.only(top: 0),
               children: [
-                repertoire.isNotEmpty ?
+                repertoire.isNotEmpty && !task?
                 singSurvey():
                 Container(),
                 repertoire.isNotEmpty ?

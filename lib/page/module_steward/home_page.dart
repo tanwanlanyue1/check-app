@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:scet_check/model/provider/provider_details.dart';
 import 'package:scet_check/model/provider/provider_home.dart';
 import 'package:scet_check/page/module_steward/law/law_page.dart';
-import 'package:scet_check/page/module_steward/message/message_page.dart';
 import 'package:scet_check/page/module_steward/personal/personal_center.dart';
 import 'package:scet_check/utils/logOut/log_out.dart';
 import 'package:scet_check/utils/screen/adapter.dart';
@@ -43,11 +42,11 @@ class _HomePageState extends State<HomePage> {
   List tabTitles = ['首页', '一企一档', '隐患排查', '工具箱','个人中心'];   // 菜单文案
 
   List tabIcons = [
-    'lib/assets/icons/my/backHome.png',
+    'lib/assets/icons/home/home.png',
     'lib/assets/icons/bottom-bar/select_firm.png',
     'lib/assets/icons/bottom-bar/select_check.png',
-    'lib/assets/icons/my/setting.png',
-    'lib/assets/icons/bottom-bar/DD.png',
+    'lib/assets/icons/home/instrument.png',
+    'lib/assets/icons/home/personage.png',
   ];
 
   @override
