@@ -35,12 +35,15 @@ import 'package:scet_check/page/module_steward/message/message_details.dart';
 import 'package:scet_check/page/module_steward/message/message_page.dart';
 import 'package:scet_check/page/module_steward/personal/audit_list.dart';
 import 'package:scet_check/page/module_steward/personal/audit_problem.dart';
-import 'package:scet_check/page/module_steward/personal/back_task_details.dart';
-import 'package:scet_check/page/module_steward/personal/backlog_task.dart';
-import 'package:scet_check/page/module_steward/personal/check_task.dart';
-import 'package:scet_check/page/module_steward/personal/have_done_task.dart';
+import 'package:scet_check/page/module_steward/personal/task/abutment/abutment_from.dart';
+import 'package:scet_check/page/module_steward/personal/task/abutment/abutment_list.dart';
+import 'package:scet_check/page/module_steward/personal/task/abutment/abutment_task.dart';
+import 'package:scet_check/page/module_steward/personal/task/back_task_details.dart';
+import 'package:scet_check/page/module_steward/personal/task/backlog_task.dart';
+import 'package:scet_check/page/module_steward/personal/task/check_task.dart';
+import 'package:scet_check/page/module_steward/personal/task/have_done_task.dart';
 import 'package:scet_check/page/module_steward/personal/history_task.dart';
-import 'package:scet_check/page/module_steward/personal/task_details.dart';
+import 'package:scet_check/page/module_steward/personal/task/task_details.dart';
 
 
 /// 配置静态路由
@@ -83,6 +86,10 @@ final routes = {
   '/problemSchedule': (context,{arguments}) =>  ProblemSchedule(arguments:arguments), //问题进度
   '/auditList': (context,{arguments}) =>  AuditList(), //清单审核列表
   '/auditProblem': (context,{arguments}) =>  AuditProblem(arguments:arguments), //清单问题审核
+
+  '/abutmentList': (context,{arguments}) =>  AbutmentList(arguments:arguments), //对接任务列表页面
+  '/abutmentTask': (context,{arguments}) =>  AbutmentTask(arguments:arguments), //对接任务详情页面
+  '/abutmentFrom': (context,{arguments}) =>  AbutmentFrom(arguments:arguments), //对接任务动态表单详情
 
 ///企业端
   '/enterprisInventory': (context,{arguments}) =>  EnterprisInventory(arguments:arguments), //企业清单详情

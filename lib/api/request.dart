@@ -45,6 +45,7 @@ class Request {
           return StorageUtil().getString(StorageKey.Token) ?? '';
         }).then((value) {
           options.headers["Authorization"] = 'Bearer '+value;
+          options.headers["token"] = 'UUID_dd2a27c0-dd4c-40bb-a0b8-c3597f854625';
           return options;
         }).whenComplete(() => dio.unlock());
         return handler.next(options);

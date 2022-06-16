@@ -43,11 +43,7 @@ class _LoginPageState extends State<LoginPage> {
         saveInfo(response['data']['access_token'], _data['username']!, _data['password']!, response['data']);
           switch(response['data']['role']['name']){
             case '环保管家':
-              // WidgetsBinding.instance!.addPostFrameCallback((_) {
-              //   Navigator.of(context).popAndPushNamed('/steward');});
-              Future.delayed(Duration.zero, () {
                 Navigator.of(context).pushAndRemoveUntil(CustomRoute(HomePage()), (router) => router == null);
-              });
               // Navigator.pushNamedAndRemoveUntil(context,'/steward', (Route route)=>false);
               break;
             case '项目经理':
@@ -59,6 +55,8 @@ class _LoginPageState extends State<LoginPage> {
             case '环保局' :
               Navigator.pushNamedAndRemoveUntil(context,'/protectionAgencyHome', (Route route)=>false);
               break;
+            default: ToastWidget.showToastMsg('该账号无权限！');
+
           }
       } else if (response['statusCode'] == 500) {
         if (response['message'] == null) {

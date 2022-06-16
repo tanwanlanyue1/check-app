@@ -49,8 +49,8 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
   @override
   void didUpdateWidget(covariant StatisticAnalysis oldWidget) {
     // TODO: implement didUpdateWidget
-    _getStatistics();
-    dealWith();
+    // dealWith();
+    judge();
     super.didUpdateWidget(oldWidget);
   }
 
@@ -182,7 +182,7 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
        {'groupTable':'company',} :
         {
           'districtId': districtId[_pageIndex],
-          'groupTable':'problemType',
+          'groupTable':'company',
         };
         _getProblemStatis(data: data);
         setState((){});
@@ -271,8 +271,8 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
                         _pageIndex = i;
                         dealWith();
                         type = '企业';
+                        _types = 0;
                         _roviderDetaild!.setOffest(double.parse(_pageIndex.toString()));
-                        _roviderDetaild!.setPie(cutPie: false);
                         setState(() {});
                       }
                   ),

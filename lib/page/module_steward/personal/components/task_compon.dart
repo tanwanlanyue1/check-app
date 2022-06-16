@@ -26,15 +26,19 @@ class TaskCompon{
           child: Row(
             children: [
               InkWell(
-                child: Container(
-                  height: px(88),
-                  width: px(55),
-                  color: Colors.transparent,
-                  padding: EdgeInsets.only(left: px(12)),
-                  margin: EdgeInsets.only(left: px(12)),
-                  child: left ? Image.asset('lib/assets/icons/other/chevronLeft.png',):
-                  (home ? Image.asset('lib/assets/icons/my/backHome.png',):
-                  Text('')),
+                child: Visibility(
+                  visible: left == false && home== false,
+                  child: Container(),
+                  replacement: Container(
+                    height: px(88),
+                    width: px(55),
+                    color: Colors.transparent,
+                    padding: EdgeInsets.only(left: px(12)),
+                    margin: EdgeInsets.only(left: px(12)),
+                    child: left ? Image.asset('lib/assets/icons/other/chevronLeft.png',):
+                    (home ? Image.asset('lib/assets/icons/my/backHome.png',):
+                    Text('')),
+                  ),
                 ),
                 onTap: (){
                   if(left || home){

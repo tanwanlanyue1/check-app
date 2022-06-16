@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
-import 'components/task_compon.dart';
+import '../components/task_compon.dart';
 
 ///选择任务列表
 ///arguments:{'name':用户名,'id':用户id}

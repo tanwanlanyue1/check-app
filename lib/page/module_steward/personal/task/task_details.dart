@@ -19,7 +19,7 @@ import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 import 'package:uuid/uuid.dart';
 
-import 'components/task_compon.dart';
+import '../components/task_compon.dart';
 
 ///任务详情页面
 ///arguments：{"backlog":true,'id':任务详情}待办
@@ -52,6 +52,7 @@ class _TaskDetailsState extends State<TaskDetails> {
   String filePath = '';//上传附件路径
   DateTime solvedAt = DateTime.now().add(Duration(days: 7));//整改期限
   DateTime reviewedAt = DateTime.now().add(Duration(days: 14));//复查期限
+  int checkType = 2;
 
   @override
   void initState() {
@@ -66,10 +67,7 @@ class _TaskDetailsState extends State<TaskDetails> {
   /// 签到清单
   /// id: uuid
   /// checkPersonnel: 检查人员
-  /// checkType: 检查类型: 1,管家排查
-  /// images: [],上传的图片
-  /// longitude: 经度
-  /// latitude: 纬度度
+  /// checkType: 检查类型: 0,其他;1,管家排查;2,专项检查;3,现场检查;4,表格填报;
   /// userId: 用户id
   /// companyId: 公司id
   /// solvedAt: 整改期限
@@ -81,6 +79,7 @@ class _TaskDetailsState extends State<TaskDetails> {
       'id':_uuid,
       'checkPersonnel': stewardCheck,
       'userId': userId,
+      'checkType': checkType,
       'companyId': companyId,
       'solvedAt': solvedAt.toString(),
       'reviewedAt': reviewedAt.toString(),
@@ -247,10 +246,7 @@ class _TaskDetailsState extends State<TaskDetails> {
       },
     );
     if(res != null){
-      _getTask();
-      if(res == true){
-        _setInventory();
-      }
+      _getTask(inventory: res);
       setState(() {});
     }
   }
@@ -265,6 +261,7 @@ class _TaskDetailsState extends State<TaskDetails> {
         companyId = taskDetails['company']['id'];
         checkImages = taskDetails['checkImages'] ?? [];
         taskFiles = taskDetails['taskFiles'] ?? [];
+        checkType = taskDetails['type'] == 1 ? 3 : taskDetails['type'] == 2 ? 4 : 2;
         filePath = taskDetails['checkFiles'] != null ? taskDetails['checkFiles'][0] : "";
       }
       setState(() {});
@@ -272,7 +269,7 @@ class _TaskDetailsState extends State<TaskDetails> {
   }
 
   /// 发布任务
-  void _getTask() async {
+  void _getTask({bool inventory = false}) async {
     if(checkDetail.isEmpty){
       ToastWidget.showToastMsg('请输入检查情况！');
     }else{
@@ -288,6 +285,9 @@ class _TaskDetailsState extends State<TaskDetails> {
       );
       if(response['statusCode'] == 200) {
         backlog = false;
+        if(inventory){
+          _setInventory();
+        }
         setState(() {});
       }
     }

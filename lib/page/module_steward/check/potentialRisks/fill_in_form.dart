@@ -101,7 +101,7 @@ class _FillInFormState extends State<FillInForm> {
       isImportant = problemList['isImportant'];
       solvedAt = problemList['solvedAt'] != null ? formatTime(problemList['solvedAt']) : '';
     }
-    flow();
+    // flow();
     setState(() {});
   }
 
@@ -266,15 +266,21 @@ class _FillInFormState extends State<FillInForm> {
                     height: px(48),
                     padding: EdgeInsets.only(left: px(12),right: px(12)),
                     alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        color: RectifyComponents.Colorswitchs(problemList['status']),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(px(20)),
-                          bottomLeft: Radius.circular(px(20)),
-                        )
+                    // decoration: BoxDecoration(
+                    //     color: RectifyComponents.Colorswitchs(problemList['status']),
+                    //     borderRadius: BorderRadius.only(
+                    //       topLeft: Radius.circular(px(20)),
+                    //       bottomLeft: Radius.circular(px(20)),
+                    //     )
+                    // ),
+                    // child: Text(flowStatus,
+                    child: Row(
+                      children: [
+                        Text('流程状态',
+                          style: TextStyle(color: Color(0xff6699FF),fontSize: sp(26)),),
+                        Image.asset('lib/assets/icons/form/issue.png')
+                      ],
                     ),
-                    child: Text(flowStatus,
-                      style: TextStyle(color: Colors.white,fontSize: sp(20)),),
                   ),
                   onTap: (){
                     Navigator.pushNamed(context, '/problemSchedule',arguments: {"status":problemList['status'],'inventoryId':inventoryId});

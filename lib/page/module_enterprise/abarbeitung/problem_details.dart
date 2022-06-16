@@ -51,32 +51,9 @@ class _ProblemDetailsState extends State<ProblemDetails> {
     // TODO: implement initState
     problemList = widget.problemList ?? {};
     if(problemList.isNotEmpty && widget.inventoryStatus != null){
-      flow();
       _evaluation();
     }
     super.initState();
-  }
-  ///判断流程
-  void flow(){
-    if(widget.inventoryStatus == 1){
-      flowStatus = '审核通过';
-      if(problemList['status'] == 2){
-        flowStatus = '填报整改详情';
-      }else if(problemList['status'] == 3){
-        flowStatus = '整改完成';
-      }else if(problemList['status'] == 4){
-        flowStatus = '复查未整改';
-      }
-    }else if(widget.inventoryStatus == 2){
-      flowStatus = '整改完成';
-    }else if(widget.inventoryStatus == 3){
-      flowStatus = '审核中';
-    }else if(widget.inventoryStatus == 5){
-      flowStatus = '审核不通过';
-    }else if(widget.inventoryStatus == 6){
-      flowStatus = '新建排查流程';
-    }
-    setState(() {});
   }
 
   @override
@@ -93,7 +70,6 @@ class _ProblemDetailsState extends State<ProblemDetails> {
 
   @override
   Widget build(BuildContext context) {
-    flow();
     return rubyAgent();
   }
   ///排查问题 详情
@@ -110,15 +86,13 @@ class _ProblemDetailsState extends State<ProblemDetails> {
                   height: px(48),
                   padding: EdgeInsets.only(left: px(12),right: px(12)),
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      color: RectifyComponents.Colorswitchs(problemList['status']),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(px(20)),
-                        bottomLeft: Radius.circular(px(20)),
-                      )
+                  child: Row(
+                    children: [
+                      Text('流程状态',
+                        style: TextStyle(color: Color(0xff6699FF),fontSize: sp(26)),),
+                      Image.asset('lib/assets/icons/form/issue.png')
+                    ],
                   ),
-                  child: Text(flowStatus,
-                    style: TextStyle(color: Colors.white,fontSize: sp(20)),),
                 ),
                 onTap: (){
                   Navigator.pushNamed(context, '/problemSchedule',arguments: {"status":problemList['status'],'inventoryId':inventoryId});

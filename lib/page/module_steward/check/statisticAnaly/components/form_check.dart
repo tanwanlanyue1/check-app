@@ -126,7 +126,8 @@ class FormCheck {
   ///hintText:默认
   ///onChanged:回调
   ///unit:单位
-  static Widget inputWidget({bool? disabled, bool filled = true, String? hintText = '请输入', Function? onChanged,int lines = 1, String? unit}) {
+  ///TextInputType 键盘类型
+  static Widget inputWidget({bool? disabled, bool filled = true, String? hintText = '请输入', Function? onChanged,int lines = 1, String? unit,TextInputType? keyboardType}) {
     return Row(
       children: [
         Expanded(
@@ -148,6 +149,7 @@ class FormCheck {
               onChanged: (val){
                 onChanged?.call(val);
               },
+              keyboardType: keyboardType ?? TextInputType.text,
               style: TextStyle(
                 color: Color(0XFF2E2F33),
                 fontSize: sp(28.0),

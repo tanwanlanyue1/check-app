@@ -7,8 +7,8 @@ import 'package:scet_check/utils/screen/screen.dart';
 ///three 三级目录
 ///arguments:{"id",three:true}
 class TargetDetails extends StatefulWidget {
-  Map? arguments;
-  TargetDetails({Key? key,this.arguments}) : super(key: key);
+  final Map? arguments;
+  const TargetDetails({Key? key,this.arguments}) : super(key: key);
 
   @override
   _TargetDetailsState createState() => _TargetDetailsState();
@@ -49,7 +49,7 @@ class _TargetDetailsState extends State<TargetDetails> {
                 !three ?
                 _radio() :
                 Container(),
-                revocation(),
+                // revocation(),
               ],
             ),
           ),
@@ -91,6 +91,15 @@ class _TargetDetailsState extends State<TargetDetails> {
               child: Text('清洁生产开展及验收'*3,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
             ),
           ),
+          !three ?
+          Container(
+            margin: EdgeInsets.only(left: px(48)),
+            child: FormCheck.rowItem(
+              title: '四级指标',
+              child: Text('清洁生产开展及验收'*3,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+            ),
+          ) :
+          Container(),
         ],
       ),
     );
@@ -223,9 +232,9 @@ class _TargetDetailsState extends State<TargetDetails> {
               value: 0,
               groupValue: index,
               onChanged: (int? val) {
-                setState(() {
-                  index = val!;
-                });
+                // setState(() {
+                //   index = val!;
+                // });
               },
             ),
           ),
@@ -239,9 +248,9 @@ class _TargetDetailsState extends State<TargetDetails> {
               value: 1,
               groupValue: index,
               onChanged: (int? val) {
-                setState(() {
-                  index = val!;
-                });
+                // setState(() {
+                //   index = val!;
+                // });
               },
             ),
           ),
@@ -255,9 +264,9 @@ class _TargetDetailsState extends State<TargetDetails> {
               value: 2,
               groupValue: index,
               onChanged: (int? val) {
-                setState(() {
-                  index = val!;
-                });
+                // setState(() {
+                //   index = val!;
+                // });
               },
             ),
           ),

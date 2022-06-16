@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
+import 'package:scet_check/page/module_enterprise/abarbeitung/fill_abarbeitung.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/enterprise_reform.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/fill_in_form.dart';
@@ -218,10 +219,10 @@ class _RectificationProblemState extends State<RectificationProblem> {
             child: GestureDetector(
               child: Container(
                 margin: EdgeInsets.only(right: px(20)),
+                width: px(50),
+                height: px(51),
                 child: (widget.arguments['inventoryStatus'] != 5 && widget.arguments['inventoryStatus'] != 6) ? Image.asset(
-                  'lib/assets/icons/form/add.png',
-                  width: px(50),
-                  height: px(51),
+                  'lib/assets/icons/form/alter.png',
                 ):
                 Text('修改详情',style: TextStyle(color: Color(0xff323233),fontSize: sp(28))),
               ),

@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
@@ -9,7 +7,8 @@ import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 
-import 'components/task_compon.dart';
+import '../components/task_compon.dart';
+import 'abutment/abutment_list.dart';
 
 ///待办任务
 ///arguments:{'name':用户名,'id':用户id}
@@ -22,12 +21,12 @@ class BacklogTask extends StatefulWidget {
 }
 
 class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStateMixin{
-  List tabBar = ["现场检查","表格填报",'其他专项'];//tab列表
+  List tabBar = ["现场检查","表格填报",'其他专项','任务工单'];//tab列表
   late TabController _tabController; //TabBar控制器
   String userId = ''; //用户id
   String checkPeople = '';//排查人员
   List taskList = [];//任务列表
-  int type = 3;//现场检查
+  int type = 1;//现场检查
 
   @override
   void initState() {
@@ -35,14 +34,10 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
     _tabController = TabController(vsync: this,length: tabBar.length);
     userId = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
     _tabController.addListener(() {
-      if(_tabController.index+1 == 1){
-        type = 3;
-      }else if(_tabController.index+1 == 2){
-        type = 4;
-      }else{
-        type = 2;
+      type = _tabController.index+1;
+      if(type != 4){
+        _getTaskList();
       }
-      _getTaskList();
     });
     _getTaskList();
     super.initState();
@@ -63,13 +58,6 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
       taskList = response['data']['list'];
       setState(() {});
     }
-  }
-
-  @override
-  void didUpdateWidget(covariant BacklogTask oldWidget) {
-    // TODO: implement didUpdateWidget
-    _getTaskList();
-    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -96,7 +84,7 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
                     controller: _tabController,
                     indicatorSize: TabBarIndicatorSize.label,
                     indicatorPadding: EdgeInsets.only(bottom: px(16)),
-                    isScrollable: false,
+                    isScrollable: true,
                     labelColor: Color(0xff4D7FFF),
                     labelStyle: TextStyle(fontSize: sp(32.0),fontFamily: 'M'),
                     unselectedLabelColor: Color(0xff646566),
@@ -104,13 +92,7 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
                     indicatorColor:Color(0xff4D7FFF),
                     indicatorWeight: px(4),
                     onTap: (val){
-                      if(val == 1){
-                        type = 3;
-                      }else if(val == 2){
-                        type = 4;
-                      }else{
-                        type = 2;
-                      }
+                      type = val;
                       _getTaskList();
                     },
                     tabs: tabBar.map((item) {
@@ -124,9 +106,10 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
             child: TabBarView(
                 controller: _tabController,
                 children: <Widget>[
-                  itemTask(type: type),
-                  itemTask(type: type),
-                  itemTask(type: type),
+                  itemTask(),
+                  itemTask(),
+                  itemTask(),
+                  AbutmentList(),
                 ]
             ),
           ),
@@ -135,7 +118,7 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
     );
   }
 
-  Widget itemTask({int? type}){
+  Widget itemTask(){
     return taskList.isNotEmpty ?
       ListView(
         padding: EdgeInsets.only(top: 0),

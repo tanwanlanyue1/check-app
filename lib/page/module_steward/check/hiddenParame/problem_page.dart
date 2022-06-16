@@ -298,8 +298,10 @@ class _ProblemPageState extends State<ProblemPage> {
                 Padding(
                   padding: EdgeInsets.only(left: px(32)),
                   child: FormCheck.dataCard(
-                      title: '签到',
                       children: [
+                        FormCheck.formTitle(
+                            '签到',
+                        ),
                         FormCheck.rowItem(
                           title: '企业名称',
                           titleColor: Color(0xff323233),

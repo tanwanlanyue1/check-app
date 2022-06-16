@@ -1,9 +1,12 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:mime/mime.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:scet_check/api/api.dart';
+import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/pertinence/companyFile/components/file_system.dart';
 import 'package:scet_check/routers/router_animate/router_fade_route.dart';
 import 'package:scet_check/utils/photoView/cached_network.dart';
@@ -17,15 +20,18 @@ import 'package:uuid/uuid.dart';
 ///imgList:数据
 ///uuid:uuid
 ///url:上传图片路径
+///abutment:是否是对接接口上传
 class UploadImage extends StatefulWidget {
   final Function? callback;
   final bool closeIcon;
+  final bool abutment;
   final List imgList;
   final String? uuid;
   final String? url;
   const UploadImage({Key? key,
     this.callback,
     this.closeIcon = true,
+    this.abutment = false,
     this.uuid,
     this.url,
     required this.imgList,
@@ -39,6 +45,7 @@ class _UploadImageState extends State<UploadImage> {
   List<dynamic> _imagesList = []; // 图片数组
   String _uuid = '';//uuid
   String _url = Api.url['uploadImg'];//url
+  bool abutment = false;//是否是对接接口上传
 
   /// 上传文件
   /// result: 文件数组
@@ -64,12 +71,44 @@ class _UploadImageState extends State<UploadImage> {
     }
   }
 
+  /// 对接任务上传文件
+  /// result: 文件数组
+  /// 处理上传图片返回回来的格式，将\转化为/
+  void _uploadTwo() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.image,
+    );
+    if (result != null) {
+      List<File> files = result.paths.map((path) => File(path.toString())).toList();
+      for(int i = 0; i < files.length; i++){
+        String path = files[i].path;
+        String filename = files[i].path.split("/").last;
+
+        FormData formdata = FormData.fromMap({
+          "file": await MultipartFile.fromFile(
+            path, // 路径
+            filename: filename, // 名称
+          ),
+        });
+        var response = await Request().post(Api.url['addFile'],
+          data:formdata
+        );
+        if(response['success'] == true){
+          _imagesList.add(response['result']);
+        }
+      }
+        widget.callback?.call(_imagesList);
+      setState(() {});
+    }
+  }
   @override
   void initState() {
     // TODO: implement initState
     _imagesList = widget.imgList;
     _url = widget.url ?? Api.url['uploadImg'];
     _uuid = widget.uuid ?? '';
+    abutment = widget.abutment;
     super.initState();
   }
 
@@ -79,6 +118,7 @@ class _UploadImageState extends State<UploadImage> {
     _imagesList = widget.imgList;
     _url = widget.url ?? Api.url['uploadImg'];
     _uuid = widget.uuid ?? '';
+    abutment = widget.abutment;
     super.didUpdateWidget(oldWidget);
   }
 
@@ -100,7 +140,11 @@ class _UploadImageState extends State<UploadImage> {
             onTap: () async{
               if (await Permission.camera.request().isGranted) {
                 if (await Permission.photos.request().isGranted) {
-                  _upload();
+                  if(abutment){
+                    _uploadTwo();
+                  }else{
+                    _upload();
+                  }
                 }
               }
             },
@@ -117,7 +161,9 @@ class _UploadImageState extends State<UploadImage> {
             SizedBox(
               width: 300, height: 300,
               child: CachedNetwork(
-                url: Api.baseUrlApp + _imagesList[index],
+                url:abutment ?
+                Api.baseUrlAppImage + _imagesList[index] :
+                Api.baseUrlApp + _imagesList[index],
                   fits: BoxFit.cover,
               ),
             ),

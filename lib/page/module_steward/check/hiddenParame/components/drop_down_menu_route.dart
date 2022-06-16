@@ -5,6 +5,16 @@ import 'package:scet_check/components/generalduty/down_input.dart';
 ///筛选下拉组件
 ///position: 出現的位置
 ///callback: 回调
+//       GlobalKey? _globalKey = GlobalKey();
+//       RenderBox renderBox = _globalKey!.currentContext!.findRenderObject() as RenderBox;
+//         Rect box = renderBox.localToGlobal(Offset.zero) & renderBox.size;
+//         Navigator.push(
+//             context,
+//             DropDownMenuRoute(
+//                 position: box, //位置
+//                 callback:(val) { setList(val); },
+//             )
+//         );
 class DropDownMenuRoute extends PopupRoute {
   final Rect position;
   int selectIndex;

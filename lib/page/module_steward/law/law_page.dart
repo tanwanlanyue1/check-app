@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/page/module_steward/law/policy_stand.dart';
+import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 import 'essential_gist.dart';
@@ -30,12 +31,9 @@ class _LawPageState extends State<LawPage>  with SingleTickerProviderStateMixin{
     return Scaffold(
       body: Column(
         children: [
-          Container(
-            width: px(750),
-            height: appTopPadding(context),
-            color: Color(0xff19191A),
+          TaskCompon.topTitle(
+              title: '标准规范',
           ),
-          topBar(),
           Container(
             height: px(64.0),
             color: Colors.white,
@@ -72,41 +70,4 @@ class _LawPageState extends State<LawPage>  with SingleTickerProviderStateMixin{
     );
   }
 
-  ///头部
-  Widget topBar(){
-    return Container(
-      color: Colors.white,
-      height: px(88),
-      child: Row(
-        children: [
-          skip ?
-          GestureDetector(
-            child: Container(
-              height: px(88),
-              width: px(55),
-              color: Colors.transparent,
-              padding: EdgeInsets.only(left: px(12)),
-              margin: EdgeInsets.only(left: px(12)),
-              child: Image.asset('lib/assets/icons/other/chevronLeft.png',),
-            ),
-            onTap: (){
-              Navigator.pop(context);
-            },
-          ) :
-          Container(),
-          Expanded(
-            flex: 1,
-            child: Center(
-              child: Text("标准规范",style: TextStyle(color: Color(0xff323233),fontSize: sp(36),fontFamily: 'M'),),
-            ),
-          ),
-          Container(
-            width: px(40),
-            height: px(41),
-            margin: EdgeInsets.only(right: px(20)),
-          ),
-        ],
-      ),
-    );
-  }
 }

@@ -1,13 +1,8 @@
-import 'dart:convert';
-
 import 'package:azlistview/azlistview.dart';
-import 'package:bot_toast/bot_toast.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:lpinyin/lpinyin.dart';
 import 'package:provider/provider.dart';
-import 'package:scet_check/api/api.dart';
-import 'package:scet_check/api/request.dart';
 import 'package:scet_check/model/provider/provider_home.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -199,16 +194,6 @@ class _ClientListPageState extends State<ClientListPage> {
       {double susHeight = 50}) {
     return  Column(
       children: [
-        // (model.number == '1-1') ?
-        // Container(
-        //   margin: EdgeInsets.only(left: px(18),right: px(12)),
-        //   child: Text('第一片区',style: TextStyle(color: Color(0xFF323233),fontSize: sp(28),)),
-        // ) :
-        // (model.number == '2-1') ?
-        // Container(
-        //   margin: EdgeInsets.only(left: px(18),right: px(12)),
-        //   child: Text('第二片区',style: TextStyle(color: Color(0xFF323233),fontSize: sp(28),)),
-        // ):Container(),
         GestureDetector(
           child: Container(
             color: widget.select ? (_homeModel?.select.contains(model.id) ? Colors.blue : Colors.white) : Colors.white,

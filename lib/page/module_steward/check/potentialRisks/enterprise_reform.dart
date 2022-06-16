@@ -31,6 +31,15 @@ class _EnterpriseReformState extends State<EnterpriseReform> {
     }
   }
 
+//颜色状态
+  static Color colorSwitch(status){
+    switch(status){
+      case 1 : return Color(0xffFAAA5A);
+      case 2 : return Color(0xff7196F5);
+      default: return Color(0xffFAAA5A);
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -50,11 +59,7 @@ class _EnterpriseReformState extends State<EnterpriseReform> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
-        Column(
-          children: List.generate(solutionList.length, (i) => rectification(i)),
-        ),
-      ],
+      children: List.generate(solutionList.length, (i) => rectification(i)),
     );
   }
   ///整改详情
@@ -68,7 +73,7 @@ class _EnterpriseReformState extends State<EnterpriseReform> {
           ),
           FormCheck.rowItem(
             title: "当前状态",
-            child: Text(_status(solutionList[i]['status']),style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+            child: Text(_status(solutionList[i]['status']),style: TextStyle(color: colorSwitch(solutionList[i]['status']),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
             title: "整改措施",

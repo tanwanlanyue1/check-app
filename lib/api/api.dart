@@ -3,6 +3,8 @@ class Api {
 
   // static const baseUrlApp = 'http://10.10.1.217:8687/';
   static const baseUrlApp = 'https://dev.scet.com.cn/yhpc/';
+  static const baseUrlAppTwo = 'http://119.3.103.76:8119/';
+  static const baseUrlAppImage = 'http://119.3.103.76:8119/housekeeperPlatform/';
 
 
   static final Map url = {
@@ -67,6 +69,64 @@ class Api {
     'fileSearch': baseUrlApp + 'law/search',//法律文件搜索
 
     'versions':baseUrlApp + 'version/list',//检测App更新
+
+    ///对接的借口
+    'houseTask':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/findPageByApp',//任务工单管理
+
+    'housekeeper':baseUrlAppTwo + 'housekeeperPlatform/d-admin/dynamic-form/getDynamicFormById',//表单管理
+
+    'issueSave':baseUrlAppTwo + 'housekeeperPlatform/pm/issue/save',//表单问题提交
+
+    'houseTaskList':'https://mock.apifox.cn/m1/1125332-0-default/housekeeperPlatform/d-admin/task/findPageByApp',//对接任务列表
+
+    'houseTaskById':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/getTaskById',//对接任务id查询详情
+
+    'submitTask':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/commitTask',//对接任务提交
+
+    'findAcidityLiquidPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findAcidityLiquidPage',//涉酸性液体信息-分页查询
+
+    'findDetectDataPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findDetectDataPage',//LDAR检测数据-分页查询
+
+    'findEmergencyDrillPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findEmergencyDrillPage',//应急演练信息-分页查询
+
+    'findEmergencyExpertPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findEmergencyExpertPage',//应急专家信息-分页查询
+
+    'findEmergencyPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findEmergencyPage',//应急信息-分页查询
+
+    'findEmergencyPlanPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findEmergencyPlanPage',//应急预案信息-分页查询
+
+    'findEmergencyTrainingPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findEmergencyTrainingPage',//应急培训信息-分页查询
+
+    'findFacilityRunSafeSituationPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findFacilityRunSafeSituationPage',//设施的运行安全情况-分页查询
+
+    'findHazardousWastePage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findHazardousWastePage',//危险废物信息-分页查询
+
+    'findNoiseEmissionPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findNoiseEmissionPage',//噪声排放信息-分页查询
+
+    'findOffRoadMechanicalPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findOffRoadMechanicalPage',//非道路机械信息-分页查询
+
+    'findOnlineMonitorPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findOnlineMonitorPage',//在线监测信息-分页查询
+
+    'findPollutionSourcePage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findPollutionSourcePage',//污染源信息-分页查询
+
+    'findProblemPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findProblemPage',//问题信息-分页查询
+
+    'findProductCraftPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findProductCraftPage',//生产工艺信息-分页查询
+
+    'findProductFacilitiesPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findProductFacilitiesPage',//生产设施信息-分页查询
+
+    'findProductPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findProductPage',//产品信息-分页查询
+
+    'findProjectPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findProjectPage',//建设项目信息-分页查询
+
+    'findRadiationAccidentHandlePage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findRadiationAccidentHandlePage',//辐射事故应急响应和处理能力-分页查询
+
+    'findRadiationEmergencyPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findRadiationEmergencyPage',//辐射事故应急情况-分页查询
+
+    'findRadiationEmergencyPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findRadiationEmergencyPage',//辐射安全与防护设施运行和管理，高风险移动放射源在线-分页查询
+
+    'addFile':baseUrlAppTwo + 'housekeeperPlatform/d-admin/file/uploadFile',//上传文件
+
 
   };
 }

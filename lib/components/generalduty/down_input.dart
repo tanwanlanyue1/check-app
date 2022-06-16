@@ -6,6 +6,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 class DownInput extends StatefulWidget {
   final String? hitStr; //为空显示的文字
   final String? value;  //已选择内容后
+  final String? dataKey;  //数据的key
   final List? data;     // 列表数据[{'name':标题}]
   final Map? currentData;//默认选中项（单选参数 或有id即可）
   final List? currentDataList;//默认选中项（多选参数 每项有id即可）
@@ -16,7 +17,9 @@ class DownInput extends StatefulWidget {
 
   const DownInput({Key? key,
     this.hitStr = '请选择内容',
-    this.value, this.data,
+    this.value,
+    this.data,
+    this.dataKey,
     this.currentData,
     this.currentDataList,
     this.callback,
@@ -34,6 +37,7 @@ class _DownInputState extends State<DownInput> {
   GlobalKey? _globalKey;
   String? _hitStr;//标题背景
   String? _value;//选择后显示
+  String _dataKey = 'name';//数据的key
   List _data = []; //下拉数据
   bool _more = false;//true 多选 false 单选
   Map _currentData = {}; //单选时候的内容
@@ -47,6 +51,7 @@ class _DownInputState extends State<DownInput> {
     _hitStr= widget.hitStr;
     _value= widget.value;
     _data = widget.data ?? [];
+    _dataKey = widget.dataKey ?? _dataKey;
     _more = widget.more;
     _currentData = widget.currentData ?? _currentData;
     _currentDataList = widget.currentDataList ?? _currentDataList;
@@ -59,6 +64,7 @@ class _DownInputState extends State<DownInput> {
     _hitStr= widget.hitStr;
     _value= widget.value;
     _data = widget.data ?? _data;
+    _dataKey = widget.dataKey ?? _dataKey;
     _more = widget.more;
     _currentData = widget.currentData ?? _currentData;
     _currentDataList = widget.currentDataList ?? _currentDataList;
@@ -192,6 +198,7 @@ class _DownInputState extends State<DownInput> {
                 data: _data, // 下拉数据
                 more: _more, // 是否开启多选状态
                 currentData: _currentData,
+                dataKey: _dataKey,
                 currentDataList: _currentDataList
             )
         );
@@ -235,6 +242,7 @@ class DropDownMenuRoute extends PopupRoute {
   final Map? currentData;//单选内容
   final List? currentDataList;//多选内容
   final bool more;//多选状态
+  final String? dataKey;//数据key
   final callback;
   DropDownMenuRoute({
     required this.position,
@@ -242,6 +250,7 @@ class DropDownMenuRoute extends PopupRoute {
     required this.data,
     this.currentData,
     this.currentDataList,
+    this.dataKey,
     required this.more,
     this.callback
   });
@@ -275,6 +284,7 @@ class DropDownMenuRoute extends PopupRoute {
             callback:  callback,
             currentData: currentData,
             currentDataList: currentDataList,
+            dataKey: dataKey,
             more: more,
           )
       ),
@@ -292,10 +302,12 @@ class WindowsPop extends StatefulWidget {
   final Map? currentData;//单选内容
   final List? currentDataList;//多选内容
   final bool more;//多选状态
+  final String? dataKey;//数据key
   final callback;
   const WindowsPop({Key? key,
     required this.data,
     this.currentData,
+    this.dataKey,
     this.currentDataList,
     required this.more,
     this.callback
@@ -310,12 +322,14 @@ class _WindowsPopState extends State<WindowsPop> {
   Map _currentData = {};
   List _currentDataList = [];
   bool _more = false;
+  String _dataKey = 'name';
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _data = widget.data;
+    _dataKey = widget.dataKey ?? _dataKey;
     _currentData = widget.currentData ?? _currentData;
     _currentDataList = widget.currentDataList ?? _currentDataList;
     _more = widget.more;
@@ -327,6 +341,7 @@ class _WindowsPopState extends State<WindowsPop> {
     _currentData = widget.currentData ?? _currentData;
     _currentDataList = widget.currentDataList ?? _currentDataList;
     _more = widget.more;
+    _dataKey = widget.dataKey ?? _dataKey;
   }
 
   bool _bools(index) {
@@ -387,8 +402,8 @@ class _WindowsPopState extends State<WindowsPop> {
                               color: Colors.transparent,
                               alignment: Alignment.center,
                               // child:Text('${_data[index]['name']?.replaceAll("\n", " ")}',style: TextStyle(fontSize: sp(26.0),color: (_bools(index) ? Colors.white : Colors.black)),),
-                              child:Text(_data[index]['name'] !=null ?
-                                  '${_data[index]['name']?.replaceAll("\n", " ")}':
+                              child:Text(_data[index][_dataKey] !=null ?
+                                  '${_data[index][_dataKey]?.replaceAll("\n", " ")}':
                                   '${_data[index]['title']?.replaceAll("\n", " ")}',
                                 style: TextStyle(fontSize: sp(26.0),color: (_bools(index) ? Colors.white : Colors.black)),),
                             ),

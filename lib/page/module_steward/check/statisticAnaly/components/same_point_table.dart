@@ -56,12 +56,10 @@ class _SamePointTableState extends State<SamePointTable> {
     super.didUpdateWidget(oldWidget);
     tableBody = widget.tableBody ?? [];
     problemType = widget.problemType ?? [];
-    questionTotal = widget.questionTotal;
     judge();
     percents();
-    if(widget.problemType != oldWidget.problemType){
-      manage(problemType);
-    }
+    manage(problemType);
+    questionTotal = widget.questionTotal;
   }
 
   ///处理
@@ -151,7 +149,7 @@ class _SamePointTableState extends State<SamePointTable> {
 
   ///计算最后一位百分比
   percents(){
-    allPercent = 0;
+    double allPercent = 0.0;
     for(var i = 0; i < tableBody.length; i++){
       if(i < tableBody.length-1){
         allPercent += double.parse(((int.parse(tableBody[i]['allCount'])/questionTotal)*100).toStringAsFixed(2));
@@ -237,7 +235,7 @@ class _SamePointTableState extends State<SamePointTable> {
                         )
                     ):
                     Text(
-                        '$percent%',
+                        '${percent.toStringAsFixed(2)}%',
                         style: TextStyle(
                             color: Color(0XFF969799),
                             fontSize: sp(24.0)
@@ -295,6 +293,7 @@ class _SamePointTableState extends State<SamePointTable> {
     }
     return bodyRow;
   }
+
   ///全园区表单
   ///item:表单data
   List<Widget> allBody(item){
@@ -469,7 +468,7 @@ class _SamePointTableState extends State<SamePointTable> {
           margin: EdgeInsets.only(top: px(16)),
           color: Colors.white,
           width: double.maxFinite,
-          child: Text("${widget.tableTitle}问题统计分析",
+          child: Text("问题类型排名图",
             textAlign: TextAlign.left,
             style: TextStyle(fontSize: sp(30),color: Color(0xff323233),fontFamily: 'M'),),
         ),
@@ -499,32 +498,6 @@ class _SamePointTableState extends State<SamePointTable> {
                           style: TextStyle(color: Color(0xff323233),fontSize: sp(32)),),
                       ),
                     ),
-                    // GestureDetector(
-                    //   child: Container(
-                    //     width: px(40),
-                    //     height: px(40),
-                    //     margin: EdgeInsets.only(top: px(17),right: px(16),left: px(84)),
-                    //     child: echart == 0 ? Image.asset('lib/assets/images/home/pieCut.png') :
-                    //     echart == 1 ? Image.asset('lib/assets/images/home/colunmCut.png'):
-                    //     Image.asset('lib/assets/images/home/chartSwitch.png'),
-                    //   ),
-                    //   onTap: () async{
-                    //     //是否打开饼图
-                    //     if(cutPie){
-                    //       _providerDetaild.setPie(cutPie: cutPie);
-                    //       cutPie = false;
-                    //     }else{
-                    //       _providerDetaild.setPie(cutPie: cutPie);
-                    //       cutPie = true;
-                    //     }
-                    //     if(echart != 2){
-                    //       echart++;
-                    //     }else{
-                    //       echart = 0;
-                    //     }
-                    //     setState(() {});
-                    //   },
-                    // ),
                   ],
                 ),
 
@@ -550,13 +523,6 @@ class _SamePointTableState extends State<SamePointTable> {
                   children: [
                     InkWell(
                       onTap: (){
-                        // _providerDetaild.pieChart ?
-                        // _providerDetaild.setcloumn(echart) : '';
-                        // if(echart != 0){
-                        //   echart--;
-                        // }else{
-                        //   echart = 2;
-                        // }
                         widget.callPrevious?.call();
                       },
                       child: SizedBox(
@@ -573,13 +539,6 @@ class _SamePointTableState extends State<SamePointTable> {
                     ),
                     InkWell(
                       onTap: (){
-                        // _providerDetaild.pieChart ?
-                        // _providerDetaild.setcloumn(echart) : '';
-                        // if(echart != 2){
-                        //   echart++;
-                        // }else{
-                        //   echart = 0;
-                        // }
                         widget.callBack?.call();
                       },
                       child: SizedBox(

@@ -15,9 +15,8 @@ class ColumnEcharts extends StatefulWidget {
   final List? erectName;//标题
   final List? pieData;//饼图data
   final List? data;//竖状图data
-  final bool erect;//竖状图
   final String? title;//标题
-  const ColumnEcharts({Key? key, this.erectName,this.pieData,this.data,this.erect = false,this.title}) : super(key: key);
+  const ColumnEcharts({Key? key, this.erectName,this.pieData,this.data,this.title}) : super(key: key);
 
   @override
   _ColumnEchartsState createState() => _ColumnEchartsState();
@@ -34,8 +33,6 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
   String erectImage = ''' ''';//竖状图
   String pie =  ''' ''';//饼图
   Color backgroundColor = Colors.white;//背景色
-  ///全局变量  判断展示哪一个图表
-  late ProviderDetaild _providerDetaild;
 
   @override
   void initState() {
@@ -248,22 +245,21 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
 
   @override
   Widget build(BuildContext context) {
-    _providerDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     return Scaffold(
       body: SizedBox(
           height: px(720+((erectName.length/2)*20)),
-          child: _providerDetaild.cloumnChart == 0 && !widget.erect ?
+          child: datas.isNotEmpty ?
           Echarts(
             reloadAfterInit: true,
             option: pie,
           ):
-          _providerDetaild.cloumnChart == 1 || widget.erect?
           Echarts(
             option: erectImage,
-          ):Echarts(
-            reloadAfterInit: true,
-            option: columnImage,
           )
+          //   :Echarts(
+          //   reloadAfterInit: true,
+          //   option: columnImage,
+          // )
       ),
     );
   }

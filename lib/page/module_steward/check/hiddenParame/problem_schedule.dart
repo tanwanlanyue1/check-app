@@ -43,26 +43,26 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
   }
 
   ///判断流程
-    void flow(){
-      if(inventoryStatus == 1){
-        status = 4;
-        if(widget.arguments?['status'] == 2){
-          status = 5;
-        }else if(widget.arguments?['status'] == 3){
-          status = 7;
-        }else if(widget.arguments?['status'] == 4){
-          status = 6;
-        }
-      }else if(inventoryStatus == 2){
+  void flow(){
+    if(inventoryStatus == 1){
+      status = 4;
+      if(widget.arguments?['status'] == 2){
+        status = 5;
+      }else if(widget.arguments?['status'] == 3){
         status = 7;
-      }else if(inventoryStatus == 3){
-        status = 2;
-      }else if(inventoryStatus == 5){
-        status = 3;
-      }else if(inventoryStatus == 6){
-        status = 1;
+      }else if(widget.arguments?['status'] == 4){
+        status = 6;
       }
+    }else if(inventoryStatus == 2){
+      status = 7;
+    }else if(inventoryStatus == 3){
+      status = 2;
+    }else if(inventoryStatus == 5){
+      status = 3;
+    }else if(inventoryStatus == 6){
+      status = 1;
     }
+  }
   ///判断颜色
   ///colorStatus 状态大于当前颜色状态，就可以选中
   ///also 并且的状态
@@ -120,6 +120,7 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
           Expanded(
             child: Stack(
               children: [
+                // process(),
                 processBox(),
                 processLine(),
                 CustomPaint(
@@ -130,6 +131,173 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
           ),
         ],
       ),
+    );
+  }
+
+  ///测试流程盒子
+  Widget process(){
+    return ListView(
+      padding: EdgeInsets.only(top: 0),
+      children: [
+        //下发排查任务
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            task ?
+            Container(
+              margin: EdgeInsets.only(left: px(24),top: px(24)),
+              padding: EdgeInsets.only(left: px(12),right: px(12),top: px(6)),
+              height: px(52),
+              child: Text("下发排查任务",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus: 0)),),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(px(5))),
+                border: Border.all(width: px(4),color: switchColor(colorStatus: 0)),
+              ),
+            ) : Container(height: px(75)),
+          ],
+        ),
+        //新建排查流程
+        Row(
+          // mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: px(4),
+              height: px(52),
+              margin: EdgeInsets.only(left: px(95)),
+              color: Colors.blue,
+            ),
+            Stack(
+              children: [
+                Container(
+                  width: px(170),
+                  height: px(4),
+                  margin: EdgeInsets.only(top: px(50)),
+                  color: Colors.blue,
+                ),
+              ],
+            ),
+            Container(
+              margin: EdgeInsets.only(top: px(24)),
+              padding: EdgeInsets.only(left: px(12),right: px(12),top: px(6)),
+              height: px(52),
+              child: Text("新建排查流程",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus:1)),),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(px(5))),
+                border: Border.all(width: px(4),color: switchColor(colorStatus:1)),
+              ),
+            ),
+          ],
+        ),
+        //填报并提交
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              margin: EdgeInsets.only(left: px(24),top: px(80)),
+              padding: EdgeInsets.only(left: px(12),right: px(12)),
+              height: px(52),
+              width: px(165),
+              alignment: Alignment.center,
+              child: Text("填报并提交",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus:2)),),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(px(5))),
+                border: Border.all(width: px(4),color: switchColor(colorStatus:2)),
+              ),
+            )
+          ],
+        ),
+        //审核
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              margin: EdgeInsets.only(left: px(24),top: px(50)),
+              padding: EdgeInsets.only(left: px(12),right: px(12)),
+              height: px(52),
+              width: px(165),
+              alignment: Alignment.center,
+              child: Text("审核",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus:3)),),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(px(5))),
+                border: Border.all(width: px(4),color: switchColor(colorStatus:3)),
+              ),
+            ),
+          ],
+        ),
+        //填报整改详情
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              margin: EdgeInsets.only(right: px(24),top: px(50)),
+              padding: EdgeInsets.only(left: px(12),right: px(12)),
+              height: px(52),
+              width: px(165),
+              alignment: Alignment.center,
+              child: Text("填报整改详情",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus:5)),),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(px(5))),
+                border: Border.all(width: px(4),color: switchColor(colorStatus:5)),
+              ),
+            )
+          ],
+        ),
+        //现场复查
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              margin: EdgeInsets.only(left: px(24),top: px(80)),
+              padding: EdgeInsets.only(left: px(12),right: px(12)),
+              height: px(52),
+              width: px(165),
+              alignment: Alignment.center,
+              child: Text("现场复查",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus:5)),),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(px(5))),
+                border: Border.all(width: px(4),color: switchColor(colorStatus:5)),
+              ),
+            )
+          ],
+        ),
+        //再次整改并填报
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              margin: EdgeInsets.only(right: px(24),top: px(50)),
+              padding: EdgeInsets.only(left: px(24),right: px(24)),
+              height: px(72),
+              width: px(165),
+              alignment: Alignment.center,
+              child: Text("再次整改并填报",style: TextStyle(fontSize: sp(22),color: switchColor(only:6)),),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(px(5))),
+                border: Border.all(width: px(4),color: switchColor(only:6)),
+              ),
+            )
+          ],
+        ),
+        //流程结束
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              margin: EdgeInsets.only(left: px(24),top: px(80)),
+              padding: EdgeInsets.only(left: px(12),right: px(12)),
+              height: px(52),
+              width: px(165),
+              alignment: Alignment.center,
+              child: Text("流程结束",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus:7)),),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(px(5))),
+                border: Border.all(width: px(4),color: switchColor(colorStatus:7)),
+              ),
+            )
+          ],
+        ),
+      ],
     );
   }
 
@@ -313,7 +481,7 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
         task ?
         Positioned(
           left: px(275),
-          top: px(102),
+          top: px(104),
           child: Icon(Icons.arrow_right,color: switchColor(colorStatus:0),),
         ) : Container(),
 
@@ -561,7 +729,7 @@ class MyPainter extends CustomPainter {
     //       paint
     //   );
 
-     ///虚线
+    ///虚线
     canvas.drawLine(
         Offset(x  + px(240), y,),
         Offset(x + px(240), y + Adapt.screenH()-px(300),),

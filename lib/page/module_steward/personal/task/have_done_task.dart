@@ -7,7 +7,7 @@ import 'package:scet_check/components/generalduty/no_data.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 
-import 'components/task_compon.dart';
+import '../components/task_compon.dart';
 
 ///任务详情
 class HaveDoneTask extends StatefulWidget {

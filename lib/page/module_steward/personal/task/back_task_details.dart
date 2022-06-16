@@ -16,7 +16,7 @@ import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 import 'package:uuid/uuid.dart';
 
-import 'components/task_compon.dart';
+import '../components/task_compon.dart';
 
 
 ///发布任务详情
@@ -42,11 +42,11 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
   Uuid uuid = Uuid(); //uuid
   String _uuid = '';//清单id
   List typeList = [
-    {'name':'现场检查','id':3},
-    {'name':'表格填报','id':4},
-    {'name':'其他专项','id':2},
+    {'name':'现场检查','id':1},
+    {'name':'表格填报','id':2},
+    {'name':'其他专项','id':3},
   ];//问题类型列表
-  int taskType = 3;//任务类型
+  int taskType = 1;//任务类型
   HomeModel? _homeModel; //全局的选择企业
 
   /// 上传文件
@@ -73,6 +73,7 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
   }
 
   /// 发布任务
+  /// type: 1,现场检查;2,表格填报;3,专项检查
   _getTask({required String companyId,List? checkUser}) async {
     Map _data = {};
       if(taskDetail.isEmpty){
