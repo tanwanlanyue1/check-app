@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
+import 'package:scet_check/page/module_steward/enterprise/components/other_type.dart';
 import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
@@ -21,7 +22,7 @@ class EnterpriseDetails extends StatefulWidget {
 }
 
 class _EnterpriseDetailsState extends State<EnterpriseDetails> {
-  List tabBar = ["企业基本信息","建设项目情况",'排污许可情况','危险废物','应急预案']; //tab标题
+  List tabBar = ["企业基本信息",'其他信息',"建设项目情况",'排污许可情况','危险废物','应急预案']; //tab标题
   PageController pagesController = PageController(); //page控制器
   final ScrollController _tabScrController = ScrollController(); //tab控制器
   int pageIndex = 0; //下标
@@ -68,6 +69,7 @@ class _EnterpriseDetailsState extends State<EnterpriseDetails> {
                 BasicInformation(
                   companyList: companyList,
                 ),///基本信息
+                OtherType(),/// 其他信息
                 BuildingProject(),///建设项目情况
                 PollutionDischarge(),///排污许可
                 HazardousWastes(),///危险废物
