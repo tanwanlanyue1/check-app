@@ -20,6 +20,7 @@ import 'package:scet_check/page/module_steward/check/statisticAnaly/home_classif
 import 'package:scet_check/page/module_steward/check/targetClassify/target_classify.dart';
 import 'package:scet_check/page/module_steward/check/targetClassify/target_classify_list.dart';
 import 'package:scet_check/page/module_steward/check/targetClassify/target_details.dart';
+import 'package:scet_check/page/module_steward/enterprise/abutment_enterprise/abutment_enterprise_details.dart';
 import 'package:scet_check/page/module_steward/enterprise/enterprise_details.dart';
 import 'package:scet_check/page/module_steward/enterprise/enterprise_page.dart';
 import 'package:scet_check/page/module_steward/home_page.dart';
@@ -40,7 +41,7 @@ import 'package:scet_check/page/module_steward/personal/task/abutment/abutment_l
 import 'package:scet_check/page/module_steward/personal/task/abutment/abutment_task.dart';
 import 'package:scet_check/page/module_steward/personal/task/back_task_details.dart';
 import 'package:scet_check/page/module_steward/personal/task/backlog_task.dart';
-import 'package:scet_check/page/module_steward/personal/task/check_task.dart';
+import 'package:scet_check/page/module_steward/personal/task/abutment/check_task.dart';
 import 'package:scet_check/page/module_steward/personal/task/have_done_task.dart';
 import 'package:scet_check/page/module_steward/personal/history_task.dart';
 import 'package:scet_check/page/module_steward/personal/task/task_details.dart';
@@ -90,6 +91,7 @@ final routes = {
   '/abutmentList': (context,{arguments}) =>  AbutmentList(arguments:arguments), //对接任务列表页面
   '/abutmentTask': (context,{arguments}) =>  AbutmentTask(arguments:arguments), //对接任务详情页面
   '/abutmentFrom': (context,{arguments}) =>  AbutmentFrom(arguments:arguments), //对接任务动态表单详情
+  '/abutmentEnterpriseDetails': (context,{arguments}) =>  AbutmentEnterpriseDetails(arguments:arguments), //对接一企一档信息
 
 ///企业端
   '/enterprisInventory': (context,{arguments}) =>  EnterprisInventory(arguments:arguments), //企业清单详情

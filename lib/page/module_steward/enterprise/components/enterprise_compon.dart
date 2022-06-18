@@ -78,7 +78,7 @@ class EnterPriseCompon{
   /// data：右边标题
   /// color： true 蓝色  false 白色
   /// color：判断字体
-  static Widget surveyItem(String? title,String? data,{color = false}){
+  static Widget surveyItem(String? title,String? data,{bool color = false,bool top = true}){
     return Container(
       height: px(96),
       child: FormCheck.rowItem(
@@ -87,7 +87,7 @@ class EnterPriseCompon{
         child: Text((data == 'null' || data == null) ? "" : data,style: TextStyle(color: Color(color ? 0xff6089F0 : 0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,),
       ),
       decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: Color(0xffE8E8E8),width: px(2)))
+          border: Border(top: BorderSide(color: Color(0xffE8E8E8),width: px(top ? 2 : 0)))
       ),
     );
   }

@@ -149,7 +149,7 @@ class _FillAbarbeitungState extends State<FillAbarbeitung> {
     // TODO: implement initState
     _uuid = uuid.v4();
     userName= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
-    userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
+    userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'].toString();
     review = widget.arguments?['review'] ?? false;
     if(!review){
       _setSolution();

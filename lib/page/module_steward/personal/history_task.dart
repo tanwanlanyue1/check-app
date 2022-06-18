@@ -25,7 +25,7 @@ class _HistoryTaskState extends State<HistoryTask> {
   @override
   void initState() {
     // TODO: implement initState
-    userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
+    userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'].toString();
     if(widget.arguments != null){
       companyId = widget.arguments!['id'];
     }

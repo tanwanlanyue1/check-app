@@ -108,7 +108,7 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
   void initState() {
     // TODO: implement initState
     _uuid = uuid.v4();
-    userId = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
+    userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'].toString();
     super.initState();
   }
   @override

@@ -115,7 +115,7 @@ class _HistoryInventoryState extends State<HistoryInventory> {
   void initState() {
     // TODO: implement initState
     companyId = widget.companyId ?? "";
-    userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
+    userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'].toString();
     data = {
       'page': _pageNo,
       'size': 10,

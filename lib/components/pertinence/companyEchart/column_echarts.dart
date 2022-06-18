@@ -1,9 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_echarts/flutter_echarts.dart';
-import 'package:provider/provider.dart';
-import 'package:scet_check/model/provider/provider_details.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 ///echarts 图表
@@ -114,7 +111,7 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
             trigger: 'item',
          },
           legend: {
-            bottom: '0',
+            bottom: '10',
             left: 'center',
              icon: "circle",
               formatter:(name)=>{

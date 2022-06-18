@@ -40,8 +40,8 @@ class _LoginPageState extends State<LoginPage> {
       };
       var response = await Request().post(Api.url['login'], data: _data);
       if (response['statusCode'] == 200) {
-        saveInfo(response['data']['access_token'], _data['username']!, _data['password']!, response['data']);
-          switch(response['data']['role']['name']){
+        saveInfo(response['data']['token'], _data['username']!, _data['password']!, response['data']);
+          switch(response['data']['roles'][1]['name']){
             case '环保管家':
                 Navigator.of(context).pushAndRemoveUntil(CustomRoute(HomePage()), (router) => router == null);
               // Navigator.pushNamedAndRemoveUntil(context,'/steward', (Route route)=>false);

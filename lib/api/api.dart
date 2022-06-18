@@ -1,8 +1,8 @@
 
 class Api {
 
-  // static const baseUrlApp = 'http://10.10.1.217:8687/';
-  static const baseUrlApp = 'https://dev.scet.com.cn/yhpc/';
+  static const baseUrlApp = 'http://10.10.1.217:8687/';
+  // static const baseUrlApp = 'https://dev.scet.com.cn/yhpc/';
   static const baseUrlAppTwo = 'http://119.3.103.76:8119/';
   static const baseUrlAppImage = 'http://119.3.103.76:8119/housekeeperPlatform/';
 
@@ -77,11 +77,13 @@ class Api {
 
     'issueSave':baseUrlAppTwo + 'housekeeperPlatform/pm/issue/save',//表单问题提交
 
-    'houseTaskList':'https://mock.apifox.cn/m1/1125332-0-default/housekeeperPlatform/d-admin/task/findPageByApp',//对接任务列表
+    'houseTaskList':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/findPageByApp',//对接任务列表
 
     'houseTaskById':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/getTaskById',//对接任务id查询详情
 
     'submitTask':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/commitTask',//对接任务提交
+
+    'findEnvironProtectDetail':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findEnvironProtectDetail',//环保扩展信息-根据企业id查看详情
 
     'findAcidityLiquidPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findAcidityLiquidPage',//涉酸性液体信息-分页查询
 
@@ -100,6 +102,8 @@ class Api {
     'findFacilityRunSafeSituationPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findFacilityRunSafeSituationPage',//设施的运行安全情况-分页查询
 
     'findHazardousWastePage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findHazardousWastePage',//危险废物信息-分页查询
+
+    'findEmergencyMaterialsPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findEmergencyMaterialsPage',//应急物资信息-分页查询
 
     'findNoiseEmissionPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findNoiseEmissionPage',//噪声排放信息-分页查询
 
@@ -123,7 +127,33 @@ class Api {
 
     'findRadiationEmergencyPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findRadiationEmergencyPage',//辐射事故应急情况-分页查询
 
-    'findRadiationEmergencyPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findRadiationEmergencyPage',//辐射安全与防护设施运行和管理，高风险移动放射源在线-分页查询
+    'findRadiationSafeManagementPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findRadiationSafeManagementPage',//辐射安全与防护设施运行和管理，高风险移动放射源在线-分页查询
+
+    'findRawMaterialPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findRawMaterialPage',//原辅材料信息-分页查询
+
+    'findRiskDevicePage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findRiskDevicePage',//风险装置信息-分页查询
+
+    'findRiskSubstancePage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findRiskSubstancePage',//风险物质信息-分页查询
+
+    'findSewageLicensePage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findSewageLicensePage',//排污许可信息-分页查询
+
+    'findSolidWastePage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findSolidWastePage',//一般固废信息-分页查询
+
+    'findThreeWasteManagementPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findThreeWasteManagementPage',//辐射防护、辐射流出物和三废管理-分页查询
+
+    'findViceProductPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findViceProductPage',//副产品信息-分页查询
+
+    'findWasteGasEmissionPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findWasteGasEmissionPage',//废气排放信息-分页查询
+
+    'findWasteGasTreatmentFacilitiesPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findWasteGasTreatmentFacilitiesPage',//废气治理设施信息-分页查询
+
+    'findWasteOrganicSolventPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findWasteOrganicSolventPage',//废有机溶剂信息-分页查询
+
+    'findWasteWaterEmissionPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findWasteWaterEmissionPage',//废水排放信息-分页查询
+
+    'findWasteWaterHandlePage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findWasteWaterHandlePage',//废水处理设施运行及排放情况-分页查询
+
+    'findWasteWaterTreatmentFacilitiesPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findWasteWaterTreatmentFacilitiesPage',//废水治理设施信息-分页查询
 
     'addFile':baseUrlAppTwo + 'housekeeperPlatform/d-admin/file/uploadFile',//上传文件
 

@@ -1,15 +1,19 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mime/mime.dart';
 import 'package:open_file/open_file.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
+import 'package:scet_check/components/generalduty/loading.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
 
 /// 文件系统
@@ -54,9 +58,9 @@ class FileSystem{
             path,
             formDatas: formdata,
             onSendProgress:(val){ToastWidget.showToastMsg(val);});
-        if(response['statusCode'] == 200) {
+        if(response['statusCode'] == 200 || response['errCode'] == '10000') {
           ToastWidget.showToastMsg('上传成功!');
-          _isUp.add({"state":true,'msg':response});
+          _isUp.add({"state":true,'msg':response,'filename':filename});
         }else{
           ToastWidget.showToastMsg('上传出错了!');
           _isUp.add(false);
@@ -143,6 +147,35 @@ class FileSystem{
     }else{
       ToastWidget.showToastMsg('您还没有授权！将无法进行操作');
     }
+  }
+
+  ///下载文件
+  static Future<String?> createFileOfPdfUrl(url) async {
+    BotToast.showCustomLoading(
+        ignoreContentClick: true,
+        toastBuilder: (cancelFunc) {
+          return Loading();
+        }
+    );
+    url = (Api.baseUrlApp + url).replaceAll('\\', '/');
+    final filename = url.substring(url.lastIndexOf("/") + 1);
+    return HttpClient().getUrl(Uri.parse(url)).then((value) async {
+      var response = await value.close();
+      var bytes = await consolidateHttpClientResponseBytes(response);
+      String? dir;
+      if(Platform.isAndroid)  {
+        dir = (await getExternalStorageDirectory())?.path.toString();
+      }else if(Platform.isIOS) {
+        dir =  (await getApplicationSupportDirectory ()).path;
+      }
+      // String dir = (await getApplicationDocumentsDirectory()).path;
+      File file = File('$dir/$filename');
+      await file.writeAsBytes(bytes);
+      BotToast.closeAllLoading();
+      return file.path;
+    }).catchError((err){
+      return '';
+    });
   }
 
   /// 判断 文件或者文件夹 是否存在

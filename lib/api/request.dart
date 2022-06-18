@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print
 
+import 'dart:convert';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -44,14 +46,14 @@ class Request {
          Future(() async {
           return StorageUtil().getString(StorageKey.Token) ?? '';
         }).then((value) {
-          options.headers["Authorization"] = 'Bearer '+value;
-          options.headers["token"] = 'UUID_dd2a27c0-dd4c-40bb-a0b8-c3597f854625';
+          // options.headers["Authorization"] = 'Bearer '+value;
+          options.headers["token"] = value;
           return options;
         }).whenComplete(() => dio.unlock());
         return handler.next(options);
       },
         onResponse: (Response response,ResponseInterceptorHandler handler) {
-        if (response.data is Map && response.data['statusCode'] == 401) {
+        if ((response.data is Map && response.data['statusCode'] == 401) || (response.data is String && jsonDecode(response.data)['errCode'] == '30002')) {
           ToastWidget.showToastMsg('用户信息过时，请重新登录！');
           BuildContext context = navigatorKey.currentState!.overlay!.context;
           Future.delayed(const Duration(seconds: 0)).then((onValue) {

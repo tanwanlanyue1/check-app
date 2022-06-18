@@ -79,7 +79,7 @@ class _ProblemPageState extends State<ProblemPage> {
     // TODO: implement initState
     companyId = widget.companyId;
     firm = widget.firm;
-    userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
+    userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'].toString();
     userName= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
     checkNameList.add({'name':userName});
     _problemSearch(

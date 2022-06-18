@@ -21,7 +21,7 @@ class BacklogTask extends StatefulWidget {
 }
 
 class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStateMixin{
-  List tabBar = ["现场检查","表格填报",'其他专项','任务工单'];//tab列表
+  List tabBar = ["现场检查","表格填报",'其他专项','管家平台'];//tab列表
   late TabController _tabController; //TabBar控制器
   String userId = ''; //用户id
   String checkPeople = '';//排查人员
@@ -32,7 +32,7 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
   void initState() {
     // TODO: implement initState
     _tabController = TabController(vsync: this,length: tabBar.length);
-    userId = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
+    userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'].toString();
     _tabController.addListener(() {
       type = _tabController.index+1;
       if(type != 4){

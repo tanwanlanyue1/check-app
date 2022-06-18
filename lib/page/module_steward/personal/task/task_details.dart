@@ -60,7 +60,7 @@ class _TaskDetailsState extends State<TaskDetails> {
     super.initState();
     backlog = widget.arguments?['backlog'] ?? false;
     taskId = widget.arguments?['id'] ?? '';
-    userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
+    userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'].toString();
     _getTasks();
   }
 

@@ -102,6 +102,7 @@ class _UploadImageState extends State<UploadImage> {
       setState(() {});
     }
   }
+
   @override
   void initState() {
     // TODO: implement initState

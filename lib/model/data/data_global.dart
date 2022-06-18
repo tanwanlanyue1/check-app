@@ -60,7 +60,7 @@ class Global {
         isOfflineLogin = true;
         Map? _personalData = StorageUtil().getJSON(StorageKey.PersonalData);
         if (_personalData != null) {
-          switch(_personalData['role']['name']){
+          switch(_personalData['roles'][1]['name']){
             case '环保管家' :
               router = '/steward';
               break;

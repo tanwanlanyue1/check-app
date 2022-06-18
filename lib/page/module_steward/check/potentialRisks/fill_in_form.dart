@@ -113,7 +113,7 @@ class _FillInFormState extends State<FillInForm> {
     _scaffoldKey = widget.arguments?['key'] ?? GlobalKey<ScaffoldState>();
     addProblem = widget.arguments?['addProblem'] ?? false;
     userName = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
-    userId = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
+    userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'].toString();
     inventoryStatus = widget.arguments?['inventoryStatus'] ?? 1;
     if(declare){
       inventoryId = widget.arguments?['uuid'];

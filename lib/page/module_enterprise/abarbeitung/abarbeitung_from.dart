@@ -42,7 +42,7 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
     problemId = widget.arguments?['id'];
     audit = widget.arguments?['audit'] ?? false;
     userName= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
-    userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'];
+    userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'].toString();
     _getProblems();
     _setSolution();
     _getReviewList();

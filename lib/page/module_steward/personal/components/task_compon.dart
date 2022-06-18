@@ -112,7 +112,7 @@ class TaskCompon{
                         topLeft: Radius.circular(px(20)),
                         bottomLeft: Radius.circular(px(20)),
                       )
-                  ),//状态；1,未整改;2,已整改;3,整改已通过;4,整改未通过
+                  ),
                   child: Text(TaskCompon.firmTask(company['status'])
                     ,style: TextStyle(color: Colors.white,fontSize: sp(22)),),
                 ),
