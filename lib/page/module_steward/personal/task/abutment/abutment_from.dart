@@ -31,6 +31,7 @@ class _AbutmentFromState extends State<AbutmentFrom> {
   DateTime startTime = DateTime.now();//开始期限
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(); //时间选择key
   List getform = [];//缓存的动态表单
+  Map content = {};//动态表单是否有数据
   String taskId = '';//任务id
   bool empty = true;
 
@@ -169,7 +170,6 @@ class _AbutmentFromState extends State<AbutmentFrom> {
         }
       }
     }
-    print("data=======$data");
     if(empty){
       var response = await Request().post(
         Api.url['issueSave'],
@@ -201,11 +201,16 @@ class _AbutmentFromState extends State<AbutmentFrom> {
     // TODO: implement initState
     super.initState();
     taskId = widget.arguments?['taskId'] ?? '';
+    content = widget.arguments?['content'] ?? [];
     getform = StorageUtil().getJSON('taskFrom') ?? [];
     _getKeeper(id: widget.arguments?['allfield']['id']);
-    int index = getform.indexWhere((item) => item['taskId'] == taskId && item['fromId'] == widget.arguments?['allfield']['id']);
-    if(index != -1){
-      data = getform[index]['data'];
+    if(content.isEmpty){
+      int index = getform.indexWhere((item) => item['taskId'] == taskId && item['fromId'] == widget.arguments?['allfield']['id']);
+      if(index != -1){
+        data = getform[index]['data'];
+      }
+    }else{
+      content = data;
     }
   }
 

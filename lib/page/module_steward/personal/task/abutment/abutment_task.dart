@@ -255,7 +255,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
         ),
       ),
       onTap: (){
-        Navigator.pushNamed(context, '/abutmentFrom',arguments: {'allfield':formDynamic[i],'taskId':taskId,});
+        Navigator.pushNamed(context, '/abutmentFrom',arguments: {'allfield':formDynamic[i],'taskId':taskId,'content':formDynamic[i]['content']});
       },
     );
   }
