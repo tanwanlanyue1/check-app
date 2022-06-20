@@ -31,9 +31,9 @@ class _AbutmentFromState extends State<AbutmentFrom> {
   DateTime startTime = DateTime.now();//开始期限
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(); //时间选择key
   List getform = [];//缓存的动态表单
-  Map content = {};//动态表单是否有数据
   String taskId = '';//任务id
   bool empty = true;
+  bool backlog = true;//待办，已办
 
   ///动态表单
   dynamicForm({required int i,int type = 0}){
@@ -43,7 +43,7 @@ class _AbutmentFromState extends State<AbutmentFrom> {
             title: "${fieldList[i]['fieldName']}:",
             titleColor: Color(0XFF323232),
             child: FormCheck.inputWidget(
-                hintText: data.isEmpty ? '请输入文本' : data[fieldList[i]['fieldValue']],
+                hintText: data.isEmpty ? '请输入${fieldList[i]['fieldName']}' : data[fieldList[i]['fieldValue']],
                 lines: 1,
                 onChanged: (val){
                   if(data.isEmpty){
@@ -60,7 +60,7 @@ class _AbutmentFromState extends State<AbutmentFrom> {
             title: "${fieldList[i]['fieldName']}:",
             titleColor: Color(0XFF323232),
             child: FormCheck.inputWidget(
-                hintText: data.isEmpty ? '请输入文本' : data[fieldList[i]['fieldValue']],
+                hintText: data.isEmpty ? '请输入${fieldList[i]['fieldName']}' : data[fieldList[i]['fieldValue']],
                 lines: 4,
                 onChanged: (val){
                   if(data.isEmpty){
@@ -76,7 +76,7 @@ class _AbutmentFromState extends State<AbutmentFrom> {
             title: "${fieldList[i]['fieldName']}:",
             titleColor: Color(0XFF323232),
             child: FormCheck.inputWidget(
-                hintText: data.isEmpty ? '请输入数字' : data[fieldList[i]['fieldValue']],
+                hintText: data.isEmpty ? '请输入${fieldList[i]['fieldName']}' : data[fieldList[i]['fieldValue']],
                 keyboardType: TextInputType.number,
                 onChanged: (val){
                   if(data.isEmpty){
@@ -130,8 +130,8 @@ class _AbutmentFromState extends State<AbutmentFrom> {
             color: Colors.white,
             child: TimeSelect(
               scaffoldKey: _scaffoldKey,
-              hintText: "请选择整改期限",
-              time: data.isEmpty ? startTime : DateTime.parse(data[fieldList[i]['fieldValue']]),
+              hintText: "请选择${fieldList[i]['fieldName']}",
+              time: data.isEmpty || data[fieldList[i]['fieldValue']] == null ? startTime : DateTime.parse(data[fieldList[i]['fieldValue']]),
               callBack: (time) {
                 startTime = time;
                 if(data.isEmpty){
@@ -201,16 +201,16 @@ class _AbutmentFromState extends State<AbutmentFrom> {
     // TODO: implement initState
     super.initState();
     taskId = widget.arguments?['taskId'] ?? '';
-    content = widget.arguments?['content'] ?? [];
-    getform = StorageUtil().getJSON('taskFrom') ?? [];
+    backlog = widget.arguments?['backlog'] ?? false;
     _getKeeper(id: widget.arguments?['allfield']['id']);
-    if(content.isEmpty){
+    if(widget.arguments?['content'] != null){
+      data = jsonDecode(widget.arguments?['content']);
+    }else{
+      getform = StorageUtil().getJSON('taskFrom') ?? [];
       int index = getform.indexWhere((item) => item['taskId'] == taskId && item['fromId'] == widget.arguments?['allfield']['id']);
       if(index != -1){
         data = getform[index]['data'];
       }
-    }else{
-      content = data;
     }
   }
 
@@ -254,7 +254,9 @@ class _AbutmentFromState extends State<AbutmentFrom> {
               ),
             ),
           ),
-          revocation(),
+          backlog == false && widget.arguments?['content'] == null?
+          revocation() :
+          Container(),
         ],
       ),
     );
@@ -274,10 +276,16 @@ class _AbutmentFromState extends State<AbutmentFrom> {
                 onChanged: (bool? onTops){
                   if(checkList.contains(contentList[index]['id']) == false){
                     checkList.add(contentList[index]['id']);
+                    checkData.add(contentList[index]);
                   }else{
                     checkList.remove(contentList[index]['id']);
+                    checkData.remove(contentList[index]);
                   }
-                  data.addAll({"${fieldList[i]['fieldValue']}":checkList});
+                  if(data.isEmpty){
+                    data.addAll({"${fieldList[i]['fieldValue']}":checkData});
+                  }else{
+                    data[fieldList[i]['fieldValue']] = checkData;
+                  }
                   setState(() {});
                 })
         ),

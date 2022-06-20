@@ -23,7 +23,7 @@ class _EnterprisePageState extends State<EnterprisePage> with RouteAware{
   List tabBar = [""];//tab
   int pageIndex = 0;//页面下标
   List companyList = [];//公司列表
-  List districtId = [""];//片区id
+  List districtId = [];//片区id
   List districtList = [];//片区统计数据
   Map<String,dynamic> data = {};//获取企业数据传递的参数
   ProviderDetaild? _roviderDetaild;//全局数据
@@ -34,14 +34,14 @@ class _EnterprisePageState extends State<EnterprisePage> with RouteAware{
   void _getCompany() async {
     if(pageIndex != 0){
       data = {
-        'districtId': districtId[pageIndex],
-        "sort":["CAST(substring_index(number,'-',1) AS SIGNED)","CAST(substring_index(number,'-',-1) AS SIGNED)"],
-        "order":["ASC","ASC"],
+        "districtId": districtId[pageIndex],
+        // "sort":["CAST(substring_index(number,'-',1) AS SIGNED)","CAST(substring_index(number,'-',-1) AS SIGNED)"],
+        // "order":["ASC","ASC"],
       };
     }else{
       data = {
-        "sort":["CAST(substring_index(number,'-',1) AS SIGNED)","CAST(substring_index(number,'-',-1) AS SIGNED)"],
-        "order":["ASC","ASC"],
+        // "sort":["CAST(substring_index(number,'-',1) AS SIGNED)","CAST(substring_index(number,'-',-1) AS SIGNED)"],
+        // "order":["ASC","ASC"],
       };
     }
     var response = await Request().get(

@@ -75,7 +75,7 @@ class Api {
 
     'housekeeper':baseUrlAppTwo + 'housekeeperPlatform/d-admin/dynamic-form/getDynamicFormById',//表单管理
 
-    'issueSave':baseUrlAppTwo + 'housekeeperPlatform/pm/issue/save',//表单问题提交
+    'issueSave':baseUrlAppTwo + 'housekeeperPlatform/d-admin/issue/save',//表单问题提交
 
     'houseTaskList':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/findPageByApp',//对接任务列表
 

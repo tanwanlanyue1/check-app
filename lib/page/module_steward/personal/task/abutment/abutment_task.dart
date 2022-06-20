@@ -64,7 +64,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
       for(var i = 0; i < imgList.length; i++){
         checkImages.add(imgList[i]['filePath']);
       }
-      fileName = fileList.isNotEmpty ? fileList[0]['fileName'] : '';
+      fileName = fileList.isNotEmpty ? (fileList[0]['fileName'] ?? fileList[0]['filePath']) : '';
       filePath = fileList.isNotEmpty ? fileList[0]['filePath'] : '';
       formDynamic = taskDetails['formList'];
       setState(() {});
@@ -117,17 +117,10 @@ class _AbutmentTaskState extends State<AbutmentTask> {
       );
       if(response['errCode'] == '10000') {
         ToastWidget.showToastMsg('提交成功');
-        Navigator.pop(context);
+        Navigator.pop(context,true);
         setState(() {});
       }
     }
-  }
-
-  /// 缓存事件
-  void saveInfo({required int taskId,required int fromId}) {
-    getform.add({'taskId':taskId,'fromId':fromId,'data':{}});
-    StorageUtil().setJSON('taskFrom', getform);
-    setState(() {});
   }
 
   @override
@@ -217,7 +210,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
               onTap: () async {
                 if(backlog) {
                   if(fileName.isNotEmpty){
-                    String? path = await FileSystem.createFileOfPdfUrl(Api.baseUrlAppImage+filePath);
+                    String? path = await FileSystem.createFileOfPdfUrl(Api.baseUrlAppImage+filePath.replaceRange(0, 1, ''));
                     if (path != '' && path != null) {
                       OpenFile.open(path);
                     }
@@ -255,7 +248,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
         ),
       ),
       onTap: (){
-        Navigator.pushNamed(context, '/abutmentFrom',arguments: {'allfield':formDynamic[i],'taskId':taskId,'content':formDynamic[i]['content']});
+        Navigator.pushNamed(context, '/abutmentFrom',arguments: {'allfield':formDynamic[i],'taskId':taskId,'content':formDynamic[i]['content'],'backlog':backlog});
       },
     );
   }

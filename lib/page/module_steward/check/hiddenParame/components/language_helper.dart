@@ -197,7 +197,7 @@ class District {
     id = json['id'];
     name = json['name'];
   }
-  String? id;
+  int? id;
   String? name;
 
   Map<String, dynamic> toJson() {
@@ -220,7 +220,7 @@ class User {
     id = json['id'];
     nickname = json['nickname'];
   }
-  String? id;
+  int? id;
   String? nickname;
 
   Map<String, dynamic> toJson() {

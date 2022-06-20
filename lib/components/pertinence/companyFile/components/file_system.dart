@@ -157,7 +157,7 @@ class FileSystem{
           return Loading();
         }
     );
-    url = (Api.baseUrlApp + url).replaceAll('\\', '/');
+    url = url.replaceAll('\\', '/');
     final filename = url.substring(url.lastIndexOf("/") + 1);
     return HttpClient().getUrl(Uri.parse(url)).then((value) async {
       var response = await value.close();

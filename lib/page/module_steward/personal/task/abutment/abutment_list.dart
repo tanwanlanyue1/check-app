@@ -157,8 +157,11 @@ class _AbutmentListState extends State<AbutmentList> {
                 ),
               ],
             ),
-            onTap: (){
-              Navigator.pushNamed(context, '/abutmentTask',arguments: {'id':taskList[i]['id']});
+            onTap: () async {
+              var res = await Navigator.pushNamed(context, '/abutmentTask',arguments: {'id':taskList[i]['id']});
+              if(res != null){
+                _getTaskList();
+              }
             },
           ),
         );
