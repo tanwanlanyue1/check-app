@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
@@ -7,6 +8,7 @@ import 'package:scet_check/components/generalduty/date_range.dart';
 import 'package:scet_check/components/generalduty/down_input.dart';
 import 'package:scet_check/components/generalduty/time_select.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
+import 'package:scet_check/components/generalduty/upload_image.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
@@ -26,6 +28,7 @@ class _AbutmentFromState extends State<AbutmentFrom> {
   List fieldList = [];//动态表单
   List checkList = [];//多选数组
   List checkData = [];//多选数组数据
+  List imgDetails = [];//图片数据
   Map data = {}; //动态表单请求
   Map fieldMap = {}; //单选选中
   DateTime startTime = DateTime.now();//开始期限
@@ -36,13 +39,19 @@ class _AbutmentFromState extends State<AbutmentFrom> {
   bool backlog = true;//待办，已办
 
   ///动态表单
+  ///1:文本框,2:文本域, 3:数字4:单选框 5复选框 6:时间选择7:图片
   dynamicForm({required int i,int type = 0}){
     switch(type){
       case 1:
         return FormCheck.rowItem(
             title: "${fieldList[i]['fieldName']}:",
-            titleColor: Color(0XFF323232),
-            child: FormCheck.inputWidget(
+            child: (backlog && data.isNotEmpty) ?
+                Text('${data[fieldList[i]['fieldValue']]}',style: TextStyle(
+                    color: Color(0XFF323232),
+                    fontSize: sp(28.0),
+                    fontWeight: FontWeight.w500
+                )):
+            FormCheck.inputWidget(
                 hintText: data.isEmpty ? '请输入${fieldList[i]['fieldName']}' : data[fieldList[i]['fieldValue']],
                 lines: 1,
                 onChanged: (val){
@@ -58,8 +67,12 @@ class _AbutmentFromState extends State<AbutmentFrom> {
         return FormCheck.rowItem(
             alignStart: true,
             title: "${fieldList[i]['fieldName']}:",
-            titleColor: Color(0XFF323232),
-            child: FormCheck.inputWidget(
+            child: (backlog && data.isNotEmpty)?
+            Text('${data[fieldList[i]['fieldValue']]}',style: TextStyle(
+                color: Color(0XFF323232),
+                fontSize: sp(28.0),
+                fontWeight: FontWeight.w500
+            )): FormCheck.inputWidget(
                 hintText: data.isEmpty ? '请输入${fieldList[i]['fieldName']}' : data[fieldList[i]['fieldValue']],
                 lines: 4,
                 onChanged: (val){
@@ -74,8 +87,12 @@ class _AbutmentFromState extends State<AbutmentFrom> {
       case 3:
         return FormCheck.rowItem(
             title: "${fieldList[i]['fieldName']}:",
-            titleColor: Color(0XFF323232),
-            child: FormCheck.inputWidget(
+            child: (backlog && data.isNotEmpty)?
+            Text('${data[fieldList[i]['fieldValue']]}',style: TextStyle(
+                color: Color(0XFF323232),
+                fontSize: sp(28.0),
+                fontWeight: FontWeight.w500
+            )): FormCheck.inputWidget(
                 hintText: data.isEmpty ? '请输入${fieldList[i]['fieldName']}' : data[fieldList[i]['fieldValue']],
                 keyboardType: TextInputType.number,
                 onChanged: (val){
@@ -90,8 +107,12 @@ class _AbutmentFromState extends State<AbutmentFrom> {
       case 4:
         return FormCheck.rowItem(
           title: "${fieldList[i]['fieldName']}:",
-          titleColor: Color(0XFF323232),
-          child: DownInput(
+          child: (backlog && data.isNotEmpty)?
+          Text('${data[fieldList[i]['fieldValue']]}',style: TextStyle(
+              color: Color(0XFF323232),
+              fontSize: sp(28.0),
+              fontWeight: FontWeight.w500
+          )): DownInput(
             data: fieldList[i]['contentList'],
             value: data.isEmpty ? fieldMap['fieldContent'] : data[fieldList[i]['fieldValue']]?['fieldContent'],
             dataKey: 'fieldContent',
@@ -111,7 +132,6 @@ class _AbutmentFromState extends State<AbutmentFrom> {
         return FormCheck.rowItem(
             title: "${fieldList[i]['fieldName']}:",
             alignStart: true,
-            titleColor: Color(0XFF323232),
             child: Wrap(
               children: List.generate(fieldList[i]['contentList'].length, (j) =>
                   _checkBox(
@@ -123,7 +143,6 @@ class _AbutmentFromState extends State<AbutmentFrom> {
       case 6:
         return FormCheck.rowItem(
           title: "${fieldList[i]['fieldName']}:",
-          titleColor: Color(0XFF323232),
           child: Container(
             height: px(72),
             width: px(580),
@@ -143,6 +162,27 @@ class _AbutmentFromState extends State<AbutmentFrom> {
               },
             ),
           ),);
+      case 7:
+        return FormCheck.rowItem(
+          title: "${fieldList[i]['fieldName']}:",
+          child: UploadImage(
+            imgList: data.isNotEmpty ?
+            (data[fieldList[i]['fieldValue']] ?? []) :
+            imgDetails,
+            closeIcon: (!backlog && data.isEmpty) ? true : false,
+            abutment: true,
+            callback: (List? img) {
+              imgDetails = img ?? [];
+              if(data.isEmpty){
+                data.addAll({"${fieldList[i]['fieldValue']}":img});
+              }else{
+                data[fieldList[i]['fieldValue']] = img;
+              }
+              setState(() {});
+            },
+          ),
+        );
+
       default:
         return Text('暂无该类型',style: TextStyle(color: Color(0xff323233),fontSize: sp(30)),);
     }
@@ -254,7 +294,7 @@ class _AbutmentFromState extends State<AbutmentFrom> {
               ),
             ),
           ),
-          backlog == false && widget.arguments?['content'] == null?
+          backlog == false ?
           revocation() :
           Container(),
         ],
@@ -313,36 +353,39 @@ class _AbutmentFromState extends State<AbutmentFrom> {
       ],
     );
   }
-  ///按钮
+  ///按钮 widget.arguments?['content'] == null
   Widget revocation(){
-    return Container(
-      height: px(88),
-      margin: EdgeInsets.only(top: px(24)),
-      color: Colors.transparent,
-      alignment: Alignment.center,
-      child: GestureDetector(
-        child: Container(
-          width: px(240),
-          height: px(56),
-          alignment: Alignment.center,
-          margin: EdgeInsets.only(left: px(40)),
-          child: Text(
-            '保存',
-            style: TextStyle(
-                fontSize: sp(24),
-                fontFamily: "M",
-                color: Color(0xff4D7FFF)),
+    return Visibility(
+      visible: widget.arguments?['content'] == null,
+      child: Container(
+        height: px(88),
+        margin: EdgeInsets.only(top: px(24)),
+        color: Colors.transparent,
+        alignment: Alignment.center,
+        child: GestureDetector(
+          child: Container(
+            width: px(240),
+            height: px(56),
+            alignment: Alignment.center,
+            margin: EdgeInsets.only(left: px(40)),
+            child: Text(
+              '保存',
+              style: TextStyle(
+                  fontSize: sp(24),
+                  fontFamily: "M",
+                  color: Color(0xff4D7FFF)),
+            ),
+            decoration: BoxDecoration(
+              border: Border.all(width: px(2),color: Color(0xff4D7FFF)),
+              borderRadius: BorderRadius.all(Radius.circular(px(28))),
+            ),
           ),
-          decoration: BoxDecoration(
-            border: Border.all(width: px(2),color: Color(0xff4D7FFF)),
-            borderRadius: BorderRadius.all(Radius.circular(px(28))),
-          ),
+          onTap: () {
+            empty = true;
+            _getTask();
+            setState(() {});
+          },
         ),
-        onTap: () {
-          empty = true;
-          _getTask();
-          setState(() {});
-        },
       ),
     );
   }

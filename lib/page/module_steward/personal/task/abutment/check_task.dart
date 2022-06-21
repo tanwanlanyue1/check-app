@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/no_data.dart';
+import 'package:scet_check/utils/easyRefresh/easy_refreshs.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 import '../../components/task_compon.dart';
@@ -19,35 +21,109 @@ class CheckTask extends StatefulWidget {
 class _CheckTaskState extends State<CheckTask> {
   String checkPeople = '';//排查人员
   List taskList = [];//任务列表
+  final EasyRefreshController _controller = EasyRefreshController(); // 上拉组件控制器
+  bool _enableLoad = true; // 是否开启加载
+  int _pageNo = 1; // 当前页码
+  int _total = 10; // 总条数
 
   /// 查询任务列表
+  ///page:第几页
+  ///size:每页多大
   /// status 1：待办 2：已办
-  void _getTaskList() async {
-    var response = await Request().post(
-      Api.url['houseTaskList'],
-        data: {
-          'finishStatus':2
+  _getTaskList({typeStatusEnum? type,Map<String,dynamic>? data}) async {
+    var response = await Request().post(Api.url['houseTaskList'],data: data);
+    if(response['errCode'] == '10000'){
+      Map _data = response['result'];
+      _pageNo++;
+      if (mounted) {
+        if(type == typeStatusEnum.onRefresh) {
+          // 下拉刷新
+          _onRefresh(data: _data['list'], total: _data['total']);
+        }else if(type == typeStatusEnum.onLoad) {
+          // 上拉加载
+          _onLoad(data: _data['list'], total: _data['total']);
         }
-    );
-    if(response['errCode'] == '10000') {
-      taskList = response['result']['list'];
-      setState(() {});
+      }
     }
   }
 
+  /// 下拉刷新
+  /// 判断是否是企业端,剔除掉非企业端看的问题
+  _onRefresh({required List data,required int total}) {
+    _total = total;
+    _enableLoad = true;
+    _pageNo = 2;
+    taskList = data;
+    _controller.resetLoadState();
+    _controller.finishRefresh();
+    if(data.length >= total){
+      _controller.finishLoad(noMore: true);
+      _enableLoad = false;
+    }
+    setState(() {});
+  }
+
+  /// 上拉加载
+  /// 当前数据等于总数据，关闭上拉加载
+  _onLoad({required List data,required int total}) {
+    _total = total;
+    taskList.add(data);
+    if(data.length >= total){
+      _controller.finishLoad(noMore: true);
+      _enableLoad = false;
+    }
+    _controller.finishLoadCallBack!();
+    setState(() {});
+  }
   @override
   void initState() {
     // TODO: implement initState
-    _getTaskList();
+    _getTaskList(
+        type: typeStatusEnum.onRefresh,
+        data: {
+          'page': 1,
+          'size': 10,
+          'finishStatus':2
+        }
+    );
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: itemTask(),
+    return EasyRefresh(
+      enableControlFinishRefresh: true,
+      enableControlFinishLoad: true,
+      topBouncing: true,
+      controller: _controller,
+      taskIndependence: false,
+      footer: footers(),
+      header: headers(),
+      onLoad: _enableLoad ? () async{
+        _getTaskList(
+            type: typeStatusEnum.onLoad,
+            data: {
+              'page': _pageNo,
+              'size': 10,
+              'finishStatus':2
+            }
+        );
+      }: null,
+      onRefresh: () async {
+        _pageNo = 1;
+        _getTaskList(
+            type: typeStatusEnum.onRefresh,
+            data: {
+              'page': 1,
+              'size': 10,
+              'finishStatus':2
+            }
+        );
+      },
+      child: itemTask(),
     );
   }
+
 
   ///任务列表
   Widget itemTask(){

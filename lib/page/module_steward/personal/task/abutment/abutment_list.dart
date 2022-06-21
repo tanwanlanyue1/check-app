@@ -21,34 +21,84 @@ class _AbutmentListState extends State<AbutmentList> {
   List taskList = [];//任务列表
   final EasyRefreshController _controller = EasyRefreshController(); // 上拉组件控制器
   bool _enableLoad = true; // 是否开启加载
+  int _pageNo = 1; // 当前页码
+  int _total = 10; // 总条数
 
   @override
   void initState() {
     // TODO: implement initState
-    _getTaskList();
+    _getTaskList(
+        type: typeStatusEnum.onRefresh,
+        data: {
+          'page': 1,
+          'size': 10,
+          'finishStatus':1
+        }
+    );
     super.initState();
   }
 
+
   /// 查询任务列表
+  ///page:第几页
+  ///size:每页多大
   /// status 1：待办 2：已办
-  void _getTaskList() async {
-    var response = await Request().post(
-      Api.url['houseTaskList'],
-      data: {
-        'finishStatus':1
+  _getTaskList({typeStatusEnum? type,Map<String,dynamic>? data}) async {
+    var response = await Request().post(Api.url['houseTaskList'],data: data);
+    if(response['errCode'] == '10000'){
+      Map _data = response['result'];
+      _pageNo++;
+      if (mounted) {
+        if(type == typeStatusEnum.onRefresh) {
+          // 下拉刷新
+          _onRefresh(data: _data['list'], total: _data['total']);
+        }else if(type == typeStatusEnum.onLoad) {
+          // 上拉加载
+          _onLoad(data: _data['list'], total: _data['total']);
+        }
       }
-    );
-    if(response['errCode'] == '10000') {
-      taskList = response['result']['list'];
-      _controller.finishLoad(noMore: true);
-      setState(() {});
     }
+  }
+  /// 下拉刷新
+  /// 判断是否是企业端,剔除掉非企业端看的问题
+  _onRefresh({required List data,required int total}) {
+    _total = total;
+    _enableLoad = true;
+    _pageNo = 2;
+    taskList = data;
+    _controller.resetLoadState();
+    _controller.finishRefresh();
+    if(data.length >= total){
+      _controller.finishLoad(noMore: true);
+      _enableLoad = false;
+    }
+    setState(() {});
+  }
+
+  /// 上拉加载
+  /// 当前数据等于总数据，关闭上拉加载
+  _onLoad({required List data,required int total}) {
+    _total = total;
+    taskList.add(data);
+    if(data.length >= total){
+      _controller.finishLoad(noMore: true);
+      _enableLoad = false;
+    }
+    _controller.finishLoadCallBack!();
+    setState(() {});
   }
 
   @override
   void didUpdateWidget(covariant AbutmentList oldWidget) {
     // TODO: implement didUpdateWidget
-    _getTaskList();
+    _getTaskList(
+        type: typeStatusEnum.onRefresh,
+        data: {
+          'page': 1,
+          'size': 10,
+          'finishStatus':1
+        }
+    );
     super.didUpdateWidget(oldWidget);
   }
 
@@ -63,10 +113,25 @@ class _AbutmentListState extends State<AbutmentList> {
       footer: footers(),
       header: headers(),
       onLoad: _enableLoad ? () async{
-        _getTaskList();
+        _getTaskList(
+            type: typeStatusEnum.onLoad,
+            data: {
+              'page': _pageNo,
+              'size': 10,
+              'finishStatus':1
+            }
+        );
       }: null,
       onRefresh: () async {
-        _getTaskList();
+        _pageNo = 1;
+        _getTaskList(
+            type: typeStatusEnum.onRefresh,
+            data: {
+              'page': 1,
+              'size': 10,
+              'finishStatus':1
+            }
+        );
       },
       child: itemTask(),
     );

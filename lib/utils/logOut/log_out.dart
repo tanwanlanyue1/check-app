@@ -8,7 +8,7 @@ class LogOut {
   static Future<bool> onWillPop() {
     // print(popTrue);
     popTrue = popTrue + 1;
-    ToastWidget.showToastMsg('再按一次退出园区预警');
+    ToastWidget.showToastMsg('再按一次退出排查管家');
 
     if (popTrue == 3) {
       pop();

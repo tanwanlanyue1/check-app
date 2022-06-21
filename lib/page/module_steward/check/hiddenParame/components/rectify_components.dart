@@ -79,23 +79,21 @@ class RectifyComponents{
                ),
              ],
            ),
-           Visibility(
-             visible: history,
-             child: Container(
-               margin: EdgeInsets.only(bottom: px(16),top: px(24)),
-               child: Row(
-                 children: [
-                   SizedBox(
-                     height: px(32),
-                     child: Image.asset('lib/assets/icons/my/otherArea.png'),
-                   ),
-                   Expanded(
-                     child: Text(' ${company['district']['name']} ${company['screeningPerson']}',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),fontFamily: 'R',overflow: TextOverflow.ellipsis),),
-                   ),
-                 ],
-               ),
+           history ?
+           Container(
+             margin: EdgeInsets.only(bottom: px(16),top: px(24)),
+             child: Row(
+               children: [
+                 SizedBox(
+                   height: px(32),
+                   child: Image.asset('lib/assets/icons/my/otherArea.png'),
+                 ),
+                 Expanded(
+                   child: Text(' ${company['district']['name']} ${company['screeningPerson']}',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),fontFamily: 'R',overflow: TextOverflow.ellipsis),),
+                 ),
+               ],
              ),
-           ),
+           ): Container(),
            Container(
              margin: EdgeInsets.only(top: px(20)),
              child: Row(

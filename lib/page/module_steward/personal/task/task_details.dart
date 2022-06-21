@@ -258,7 +258,7 @@ class _TaskDetailsState extends State<TaskDetails> {
       taskDetails = response['data'];
       if(taskDetails.isNotEmpty){
         imgDetails = taskDetails['taskImages'] ?? [];
-        companyId = taskDetails['company']['id'];
+        companyId = taskDetails['company']?['id'];
         checkImages = taskDetails['checkImages'] ?? [];
         taskFiles = taskDetails['taskFiles'] ?? [];
         checkType = taskDetails['type'] == 1 ? 3 : taskDetails['type'] == 2 ? 4 : 2;
@@ -586,7 +586,6 @@ class _TaskDetailsState extends State<TaskDetails> {
         ),
         onTap: () {
           submission();
-          // Navigator.pop(context);
         },
       ),
     );

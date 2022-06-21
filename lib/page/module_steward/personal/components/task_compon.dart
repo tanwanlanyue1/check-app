@@ -98,7 +98,7 @@ class TaskCompon{
                   ),
                   child: Container(
                     margin: EdgeInsets.only(left: px(16),right: px(12)),
-                    child: Text('${company['company']['name']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(30),fontFamily: "M",overflow: TextOverflow.ellipsis),),
+                    child: Text('${company['company']?['name'] ?? ''}',style: TextStyle(color: Color(0xff323233),fontSize: sp(30),fontFamily: "M",overflow: TextOverflow.ellipsis),),
                   ),
                 ),
                 Spacer(),
@@ -126,7 +126,9 @@ class TaskCompon{
                     height: px(32),
                     child: Image.asset('lib/assets/icons/my/otherArea.png'),
                   ),
-                  Text(' ${company['district'][0]['name']}',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),fontFamily: 'R'),),
+                  Text(
+                    company['district'].length > 0 ?
+                    ' ${company['district'][0]?['name']}' : '',style: TextStyle(color: Color(0xff969799),fontSize: sp(26),fontFamily: 'R'),),
                 ],
               ),
             ),

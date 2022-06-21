@@ -38,7 +38,7 @@ class _ProblemDetailsState extends State<ProblemDetails> {
     imgDetails = problemList['images'];
     isImportant = problemList['isImportant'];
     checkPersonnel = problemList['inventory']['checkPersonnel'];
-    fillPerson = problemList['user']['nickname'];
+    fillPerson = problemList['user'] != null ? (problemList['user']?['nickname']) : '';
     problemType = problemList['problemType']['name'];
     rectifyPlan = problemList['detail'] ?? '';
     problemTitle = problemList['name'];

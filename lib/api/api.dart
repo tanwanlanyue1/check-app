@@ -1,8 +1,8 @@
 
 class Api {
 
-  static const baseUrlApp = 'http://10.10.1.217:8687/';
-  // static const baseUrlApp = 'https://dev.scet.com.cn/yhpc/';
+  // static const baseUrlApp = 'http://10.10.1.217:8687/';
+  static const baseUrlApp = 'https://dev.scet.com.cn/yhpc/';
   static const baseUrlAppTwo = 'http://119.3.103.76:8119/';
   static const baseUrlAppImage = 'http://119.3.103.76:8119/housekeeperPlatform/';
 

@@ -88,7 +88,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
         taskFiles.add(
           {
             'filePath':filePath,
-            'filename':fileName
+            'fileName':fileName
           }
         );
       }
@@ -117,6 +117,12 @@ class _AbutmentTaskState extends State<AbutmentTask> {
       );
       if(response['errCode'] == '10000') {
         ToastWidget.showToastMsg('提交成功');
+        getform = StorageUtil().getJSON('taskFrom') ?? [];
+        int index = getform.indexWhere((item) => item['taskId'] == taskId);
+        if(index != -1){
+          getform.remove(index);
+          StorageUtil().setJSON('taskFrom', getform);
+        }
         Navigator.pop(context,true);
         setState(() {});
       }
@@ -206,7 +212,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
           FormCheck.rowItem(
             title: '任务附件:',
             child: GestureDetector(
-              child: Text((fileName.isEmpty && !backlog) ? '添加附件' : fileName,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+              child: Text((fileName.isEmpty && !backlog) ? '添加附件' : fileName,style: TextStyle(color: Color(0xff4D7FFF),fontSize: sp(28)),),
               onTap: () async {
                 if(backlog) {
                   if(fileName.isNotEmpty){

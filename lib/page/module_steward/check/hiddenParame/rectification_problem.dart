@@ -221,10 +221,9 @@ class _RectificationProblemState extends State<RectificationProblem> {
                 margin: EdgeInsets.only(right: px(20)),
                 width: px(50),
                 height: px(51),
-                child: (widget.arguments['inventoryStatus'] != 5 && widget.arguments['inventoryStatus'] != 6) ? Image.asset(
+                child: Image.asset(
                   'lib/assets/icons/form/alter.png',
-                ):
-                Text('修改详情',style: TextStyle(color: Color(0xff323233),fontSize: sp(28))),
+                ),
               ),
               onTap: (){
                 checkEnd();

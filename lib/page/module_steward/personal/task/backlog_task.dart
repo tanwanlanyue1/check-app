@@ -49,7 +49,7 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
     var response = await Request().get(
       Api.url['taskList'],
       data: {
-        "checkUserList": {"id":userId},
+        "check_user_list": {"id":userId},
         "status":1,
         "type":type
     },

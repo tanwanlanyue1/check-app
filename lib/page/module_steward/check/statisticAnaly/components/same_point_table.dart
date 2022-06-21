@@ -478,6 +478,7 @@ class _SamePointTableState extends State<SamePointTable> {
             erectName: name,
             data: echartData,
             pieData: pieData,
+            erect: true,
           ),),
         Container(
             margin: EdgeInsets.only(top: px(24),bottom: px(24)),

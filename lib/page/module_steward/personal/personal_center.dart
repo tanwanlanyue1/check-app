@@ -28,7 +28,6 @@ class _PersonalCenterState extends State<PersonalCenter> {
   @override
   void initState() {
     // TODO: implement initState
-    // userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'].toString();
     userName = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
     manager = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'][1]['name'] == '项目经理' ? true : false;
     super.initState();

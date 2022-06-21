@@ -153,7 +153,6 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
   ///如果是统计片区，则不传片区id，只需要传递查询的类型
   ///默认第一次查询企业类型-company
   void dealWith (){
-    print("groupTable===$groupTable");
     _data = _pageIndex == 0 ? {} :
     { 'districtId': districtId[_pageIndex] };
     groupTable = _pageIndex == 0 ? {'groupTable':'company'} :
@@ -175,7 +174,6 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
   ///判断表单的数据
   ///判断切换的类型和片区
   judge(){
-    print("groupTable===$groupTable");
     Map<String, dynamic> data = {};
     switch (_types){
       case 0: {
@@ -191,15 +189,15 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
         return;
       }
       case 1: {
-        type = '行业';
-        data =  _pageIndex == 0 ?
-        {'groupTable':'industry',} :
-        {
-          'districtId': districtId[_pageIndex],
-          'groupTable':'industry',
-        };
-        _getProblemStatis(data: data);
-        setState((){});
+        // type = '行业';
+        // data =  _pageIndex == 0 ?
+        // {'groupTable':'industry',} :
+        // {
+        //   'districtId': districtId[_pageIndex],
+        //   'groupTable':'industry',
+        // };
+        // _getProblemStatis(data: data);
+        // setState((){});
         return;
       }
       case 2: {

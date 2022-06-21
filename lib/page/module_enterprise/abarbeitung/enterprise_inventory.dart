@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
@@ -50,25 +52,27 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
     if(response['statusCode'] == 200 && response['data'] != null) {
       setState(() {
         repertoire = response['data'];
-        stewardCheck = repertoire['checkPersonnel'];
-        location = repertoire['company']['region']['name'];
-        area = repertoire['company']['district']['name'];
-        checkDate = RectifyComponents.formatTime(repertoire['createdAt']);
-        abarbeitungDate = repertoire['solvedAt'] != null ? RectifyComponents.formatTime(repertoire['solvedAt']) : '';
-        sceneReviewDate = repertoire['reviewedAt'] != null ? RectifyComponents.formatTime(repertoire['reviewedAt']) : '';
-        checkType = repertoire['checkType'] == 1 ? '隐患排查':
-        repertoire['checkType'] == 2 ? '专项检查' :
-        repertoire['checkType'] == 3 ? '现场检查':
-        repertoire['checkType'] == 4 ? '表格填报': '其他类型';
-        task = repertoire['latitude'] == null ? true : false; //判断是否从任务过来
-        argumentMap = {
-          'declare':true,//申报
-          'uuid': uuid,//清单ID
-          'districtId': repertoire['company']['districtId'],//片区id
-          'companyId': repertoire['company']['id'],//企业id
-          'industryId': repertoire['company']['industryId'],//行业ID
-        };
-        pdfList = repertoire['inventoryReports'];
+        if(repertoire.isNotEmpty){
+          stewardCheck = repertoire['checkPersonnel'];
+          location = repertoire['company']['regionName'];
+          area = repertoire['company']['district']['name'];
+          checkDate = RectifyComponents.formatTime(repertoire['createdAt']);
+          abarbeitungDate = repertoire['solvedAt'] != null ? RectifyComponents.formatTime(repertoire['solvedAt']) : '';
+          sceneReviewDate = repertoire['reviewedAt'] != null ? RectifyComponents.formatTime(repertoire['reviewedAt']) : '';
+          checkType = repertoire['checkType'] == 1 ? '隐患排查':
+          repertoire['checkType'] == 2 ? '专项检查' :
+          repertoire['checkType'] == 3 ? '现场检查':
+          repertoire['checkType'] == 4 ? '表格填报': '其他类型';
+          task = repertoire['latitude'] == null ? true : false; //判断是否从任务过来
+          argumentMap = {
+            'declare':true,//申报
+            'uuid': uuid,//清单ID
+            'districtId': repertoire['company']['districtId'],//片区id
+            'companyId': repertoire['company']['id'],//企业id
+            'industryId': repertoire['company']['industryId'],//行业ID
+          };
+          pdfList = repertoire['inventoryReports'];
+        }
       });
     }
   }

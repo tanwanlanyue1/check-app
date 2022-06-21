@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
@@ -55,7 +56,7 @@ class _FillInFormState extends State<FillInForm> {
   String inventoryId = '';//清单ID
   String companyId = '';//企业ID
   String industryId = '';//产业ID
-  String areaId = '';//区域ID
+  int areaId = 1;//区域ID
   String problemId = '';//问题id
   String _uuid = '';//uuid
   Uuid uuid = Uuid();//uuid
@@ -96,7 +97,7 @@ class _FillInFormState extends State<FillInForm> {
       inventoryId = problemList['inventoryId'];
       typeId = problemList['problemTypeId'];
       companyId = problemList['companyId'];
-      industryId = problemList['industryId'];
+      industryId = problemList['industryId'] ?? '';
       areaId = problemList['districtId'];
       isImportant = problemList['isImportant'];
       solvedAt = problemList['solvedAt'] != null ? formatTime(problemList['solvedAt']) : '';
@@ -118,8 +119,8 @@ class _FillInFormState extends State<FillInForm> {
     if(declare){
       inventoryId = widget.arguments?['uuid'];
       companyId = widget.arguments?['companyId'];
-      industryId = widget.arguments?['industryId'];
-      areaId = widget.arguments?['districtId'];
+      industryId = widget.arguments?['industryId'] ?? '';
+      areaId = widget.arguments?['districtId'] ?? 1;
       checkPersonnel = widget.arguments?['stewardCheck'] ?? '';
       checkDay = DateTime.now().toString().substring(0,16);
       _getProblemType();

@@ -190,6 +190,8 @@ class _UploadImageState extends State<UploadImage> {
                 onTap: (){
                   List _img = [];
                   for (var item in _imagesList) {
+                    abutment ?
+                    _img.add(Api.baseUrlAppImage + item):
                     _img.add(Api.baseUrlApp + item);
                   }
                   Navigator.of(context).push(FadeRoute(page: PhotoViewGalleryScreen(

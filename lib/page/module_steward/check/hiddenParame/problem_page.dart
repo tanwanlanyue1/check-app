@@ -136,7 +136,7 @@ class _ProblemPageState extends State<ProblemPage> {
     if(response['statusCode'] == 200) {
       companyName = response['data']['name'];
       district = response['data']['district']['name'];
-      region = response['data']['region']['name'];
+      region = response['data']['regionName'];
       setState(() {});
     }
   }

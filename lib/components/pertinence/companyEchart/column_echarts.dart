@@ -13,7 +13,8 @@ class ColumnEcharts extends StatefulWidget {
   final List? pieData;//饼图data
   final List? data;//竖状图data
   final String? title;//标题
-  const ColumnEcharts({Key? key, this.erectName,this.pieData,this.data,this.title}) : super(key: key);
+  final bool erect;//是否展示竖状图
+  const ColumnEcharts({Key? key, this.erectName,this.pieData,this.data,this.title,this.erect = false}) : super(key: key);
 
   @override
   _ColumnEchartsState createState() => _ColumnEchartsState();
@@ -245,7 +246,7 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
     return Scaffold(
       body: SizedBox(
           height: px(720+((erectName.length/2)*20)),
-          child: datas.isNotEmpty ?
+          child: widget.erect ?
           Echarts(
             reloadAfterInit: true,
             option: pie,
