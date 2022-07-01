@@ -30,8 +30,6 @@ class _AbutmentListState extends State<AbutmentList> {
     _getTaskList(
         type: typeStatusEnum.onRefresh,
         data: {
-          'page': 1,
-          'size': 10,
           'finishStatus':1
         }
     );
@@ -44,7 +42,7 @@ class _AbutmentListState extends State<AbutmentList> {
   ///size:每页多大
   /// status 1：待办 2：已办
   _getTaskList({typeStatusEnum? type,Map<String,dynamic>? data}) async {
-    var response = await Request().post(Api.url['houseTaskList'],data: data);
+    var response = await Request().post(Api.url['houseTaskList']+'?page$_pageNo&size=10',data: data);
     if(response['errCode'] == '10000'){
       Map _data = response['result'];
       _pageNo++;
@@ -59,6 +57,7 @@ class _AbutmentListState extends State<AbutmentList> {
       }
     }
   }
+
   /// 下拉刷新
   /// 判断是否是企业端,剔除掉非企业端看的问题
   _onRefresh({required List data,required int total}) {
@@ -68,7 +67,7 @@ class _AbutmentListState extends State<AbutmentList> {
     taskList = data;
     _controller.resetLoadState();
     _controller.finishRefresh();
-    if(data.length >= total){
+    if(taskList.length >= total){
       _controller.finishLoad(noMore: true);
       _enableLoad = false;
     }
@@ -79,27 +78,13 @@ class _AbutmentListState extends State<AbutmentList> {
   /// 当前数据等于总数据，关闭上拉加载
   _onLoad({required List data,required int total}) {
     _total = total;
-    taskList.add(data);
-    if(data.length >= total){
+    taskList.addAll(data);
+    if(taskList.length >= total){
       _controller.finishLoad(noMore: true);
       _enableLoad = false;
     }
     _controller.finishLoadCallBack!();
     setState(() {});
-  }
-
-  @override
-  void didUpdateWidget(covariant AbutmentList oldWidget) {
-    // TODO: implement didUpdateWidget
-    _getTaskList(
-        type: typeStatusEnum.onRefresh,
-        data: {
-          'page': 1,
-          'size': 10,
-          'finishStatus':1
-        }
-    );
-    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -116,8 +101,6 @@ class _AbutmentListState extends State<AbutmentList> {
         _getTaskList(
             type: typeStatusEnum.onLoad,
             data: {
-              'page': _pageNo,
-              'size': 10,
               'finishStatus':1
             }
         );
@@ -127,8 +110,6 @@ class _AbutmentListState extends State<AbutmentList> {
         _getTaskList(
             type: typeStatusEnum.onRefresh,
             data: {
-              'page': 1,
-              'size': 10,
               'finishStatus':1
             }
         );
@@ -179,7 +160,6 @@ class _AbutmentListState extends State<AbutmentList> {
                       ),
                     ),
                     Spacer(),
-                    Spacer(),
                     Container(
                       width: px(110),
                       height: px(48),
@@ -191,7 +171,7 @@ class _AbutmentListState extends State<AbutmentList> {
                             bottomLeft: Radius.circular(px(20)),
                           )
                       ),
-                      child: Text(TaskCompon.firmTask(1)
+                      child: Text(TaskCompon.firmTask(taskList[i]['taskStatus'])
                         ,style: TextStyle(color: Colors.white,fontSize: sp(22)),),
                     ),
                   ],
@@ -225,7 +205,13 @@ class _AbutmentListState extends State<AbutmentList> {
             onTap: () async {
               var res = await Navigator.pushNamed(context, '/abutmentTask',arguments: {'id':taskList[i]['id']});
               if(res != null){
-                _getTaskList();
+                _pageNo = 1;
+                _getTaskList(
+                    type: typeStatusEnum.onRefresh,
+                    data: {
+                      'finishStatus':1
+                    }
+                );
               }
             },
           ),

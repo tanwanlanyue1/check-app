@@ -23,9 +23,14 @@ class FileSystem{
   /// result: 文件数组[file,file] file_picker插件的文件选择回调
   /// url :上传地址
   /// 异步上传 上传操作完成后返回回调值[true]
-  static Future<List<dynamic>?> upload(FilePickerResult result,String url) async {
-
-    List<File> files = result.paths.map((path) => File(path.toString())).toList();
+  /// date：是否需要在url中加时间
+  static Future<List<dynamic>?> upload(FilePickerResult? result,String url,{List<File>? filePath}) async {
+    late List<File> files;
+    if(result != null){
+      files = result.paths.map((path) => File(path.toString())).toList();
+    }else{
+      files = filePath!;
+    }
 
     List<dynamic> _isUp = [];// 上传成功或者失败保存的数组
 
@@ -162,13 +167,7 @@ class FileSystem{
     return HttpClient().getUrl(Uri.parse(url)).then((value) async {
       var response = await value.close();
       var bytes = await consolidateHttpClientResponseBytes(response);
-      String? dir;
-      if(Platform.isAndroid)  {
-        dir = (await getExternalStorageDirectory())?.path.toString();
-      }else if(Platform.isIOS) {
-        dir =  (await getApplicationSupportDirectory ()).path;
-      }
-      // String dir = (await getApplicationDocumentsDirectory()).path;
+      String dir = (await getApplicationDocumentsDirectory()).path;
       File file = File('$dir/$filename');
       await file.writeAsBytes(bytes);
       BotToast.closeAllLoading();

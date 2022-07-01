@@ -12,3 +12,9 @@ String utcToLocal(time) {
   }
   return formatDate(DateTime.parse(time).toLocal() ,[yyyy,'-',mm,'-',dd, ' ',HH,':',nn,':',ss]);
 }
+
+///时间转换 年，月，日
+String utcTransition() {
+  String now = formatDate(DateTime.parse(DateTime.now().toString()).toLocal() ,[yyyy,'',mm,'',dd,])+'/';
+  return now;
+}

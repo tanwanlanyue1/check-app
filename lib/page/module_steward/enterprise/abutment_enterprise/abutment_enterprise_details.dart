@@ -105,7 +105,7 @@ class _AbutmentEnterpriseDetailsState extends State<AbutmentEnterpriseDetails> {
   /// color：判断字体
   Widget surveyItem(String? title,String? data){
     return SizedBox(
-      height: px(96),
+      // height: px(96),
       child: FormCheck.rowItem(
         title: title,
         expandedLeft: true,

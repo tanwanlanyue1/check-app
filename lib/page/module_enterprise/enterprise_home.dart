@@ -31,8 +31,8 @@ class _EnterpriseHomeState extends State<EnterpriseHome> {
   @override
   void initState() {
     // TODO: implement initState companyName
-    companyId = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['companyId'];
-    companyName = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['company']['name'];
+    companyId = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['companyId'] ?? '';
+    companyName = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['company']['name'] ?? '';
     _pageList = [
       EnterpriseTaskDetails(),//企业任务详情
       EnterpriseDetails(

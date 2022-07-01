@@ -118,14 +118,8 @@ class _StatisticsState extends State<Statistics> {
                 }else {
                   tabIndex = 0;
                 }
-              }else{
-                if(tabIndex < 1 ){
-                  tabIndex++;
-                }else {
-                  tabIndex = 0;
-                }
+                widget.callBack?.call(tabIndex);
               }
-              widget.callBack?.call(tabIndex);
             },
             callPrevious: (){
               //全部分区需要请求片区的接口，其他片区不需要,右箭头回调时间
@@ -135,14 +129,8 @@ class _StatisticsState extends State<Statistics> {
                 }else{
                   tabIndex = 2;
                 }
-              }else{
-                if(tabIndex > 0){
-                  tabIndex--;
-                }else{
-                  tabIndex = 1;
-                }
+                widget.callBack?.call(tabIndex);
               }
-              widget.callBack?.call(tabIndex);
             },
           ),
         ],

@@ -32,7 +32,7 @@ class Api {
 
     'inventoryList': baseUrlApp + 'inventory/list',//清单分页列表
 
-    "uploadImg": baseUrlApp + 'file/upload?savePath=清单/',// 上传图片
+    "uploadImg": baseUrlApp + 'file/upload?savePath=',// 上传图片/文件
 
     'problem': baseUrlApp + 'problem',//获取问题
 
@@ -76,6 +76,18 @@ class Api {
     'housekeeper':baseUrlAppTwo + 'housekeeperPlatform/d-admin/dynamic-form/getDynamicFormById',//表单管理
 
     'issueSave':baseUrlAppTwo + 'housekeeperPlatform/d-admin/issue/save',//表单问题提交
+
+    'saveForm':baseUrlAppTwo + 'housekeeperPlatform/d-admin/issue/saveForm',//动态表单单条提交
+
+    'findList':baseUrlAppTwo + 'housekeeperPlatform/d-admin/dynamic-form/findList',//条件查询所有动态表单
+
+    'addTaskForm':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/addTaskForm',//条件查询所有动态表单
+
+    'mainType':baseUrlAppTwo + 'housekeeperPlatform/d-admin/issue-type/mainType',//动态表单问题大类列表
+
+    'subType':baseUrlAppTwo + 'housekeeperPlatform/d-admin/issue-type/',//动态表单问题小类列表
+
+    'modelAnalyzeById':baseUrlAppTwo + 'housekeeperPlatform/d-admin/model-analyze/getModelAnalyzeById',//根据id获取核查操作
 
     'houseTaskList':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/findPageByApp',//对接任务列表
 

@@ -27,7 +27,8 @@ class FormCheck {
   ///showUp : 是否展示
   ///onTaps : 回调
   ///tidy : 图标样式
-  ///showUp ：是否显示图标，tidy：显示上图标/下图标
+  ///showUp ：是否显示图标
+  ///tidy：显示上图标/下图标
   static Widget formTitle(String title,{bool showUp = false,Function? onTaps,bool tidy = true}){
     return Row(
       children: [
@@ -53,7 +54,7 @@ class FormCheck {
           child: GestureDetector(
             child: SizedBox(
               height: px(50),
-              width: px(50),
+              width: px(80),
               child: Icon(tidy?
               Icons.keyboard_arrow_up:
               Icons.keyboard_arrow_down,

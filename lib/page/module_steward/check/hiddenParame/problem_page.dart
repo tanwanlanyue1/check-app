@@ -4,6 +4,8 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:open_file/open_file.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/down_input.dart';
@@ -38,21 +40,22 @@ class _ProblemPageState extends State<ProblemPage> {
   final EasyRefreshController _controller = EasyRefreshController(); // 上拉组件控制器
   int _pageNo = 1; // 当前页码
   int _total = 10; // 总条数
-  int firmTotal = 10; // 企业请求的总条数
+  // int firmTotal = 10; // 企业请求的总条数
   int inventoryStatus = 1; // 清单id
   bool _enableLoad = true; // 是否开启加载
   bool firm = false; // 是否为企业
+  bool tidy = false; // 隐患问题收起展示
   List hiddenProblem = []; //隐患问题数组
   List imgDetails = []; //签到图片
   Uuid uuid = Uuid(); //uuid
   String _uuid = ''; //uuid
   Position? position; //定位
   List problemStatus = [
-    {'name':'未审核','id':0},
-    {'name':'未整改','id':1},
-    {'name':'已整改','id':2},
-    {'name':'整改已通过','id':3},
+    {'name':'未提交','id':0},
+    {'name':'整改未提交','id':1},
+    {'name':'整改已提交','id':2},
     {'name':'整改未通过','id':4},
+    {'name':'已归档','id':3},
   ]; //问题的状态
   List checkNameList = [];//排查人员数组
   List typeList = [];//问题类型列表
@@ -63,15 +66,17 @@ class _ProblemPageState extends State<ProblemPage> {
   String companyId = '';//企业id
   String companyName = '';//企业名称
   String district = '';//企业归属片区
-  String region = '';//企业归属区域
+  String region = '';//企业归属区域 东区，西区
   String userName = ''; //用户名
   String userId = ''; //用户id
   String typeProblem = ''; //问题类型
+  String status = '请选择';//默认状态
+  String typeStatus = '请选择';//问题类型默认状态
+  List selectStatus = [];//选中的状态
+  List defaultData = [];//问题类型选中的状态
   final DateTime _dateTime = DateTime.now();
   DateTime solvedAt = DateTime.now().add(Duration(days: 7));//整改期限
   DateTime reviewedAt = DateTime.now().add(Duration(days: 14));//复查期限
-  Map<String,dynamic> typeStatus = {'name':'请选择','id':0};//默认类型
-  Map<String,dynamic> typeProblemStatu = {'name':'请选择','id':''};//问题的默认类型
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();//侧边栏key
 
   @override
@@ -143,31 +148,23 @@ class _ProblemPageState extends State<ProblemPage> {
   /// 获取清单详情
   /// id:清单id
   /// argumentMap 提交问题传递的参数
-  void _getCompany({String? problemId,String? inventoryId,bool revem = false}) async {
-    var response = await Request().get(Api.url['inventory']+'/$inventoryId',);
+  void _getCompany({String? problemId,String? inventoryId}) async {
+    var response = await Request().get(Api.url['inventory']+'/$inventoryId');
     if(response['statusCode'] == 200 && response['data'] != null) {
       setState(() {
-        if(revem){
-          if(firm){
-            Navigator.pushNamed(context, '/abarbeitungFrom',arguments: {'id':problemId,'inventoryStatus': response['data']['status']});
-          }else{
-            Navigator.pushNamed(context, '/fillAbarbeitung',arguments: {'id':problemId,'review':true});
-          }
-        }else {
-          if (firm) {
-            Navigator.pushNamed(context, '/abarbeitungFrom', arguments: {
-              'id': problemId,
-              'inventoryStatus': response['data']['status']
-            });
-          } else {
-            Navigator.pushNamed(context, '/rectificationProblem',
-                arguments: {
-                  'check': true,
-                  'problemId': problemId,
-                  'inventoryStatus': response['data']['status']
-                }
-            );
-          }
+        if (firm) {
+          Navigator.pushNamed(context, '/abarbeitungFrom', arguments: {
+            'id': problemId,
+            'inventoryStatus': response['data']['status']
+          });
+        } else {
+          Navigator.pushNamed(context, '/rectificationProblem',
+              arguments: {
+                'check': true,
+                'problemId': problemId,
+                'inventoryStatus': response['data']['status']
+              }
+          );
         }
       });
     }
@@ -177,7 +174,6 @@ class _ProblemPageState extends State<ProblemPage> {
   /// 判断是否是企业端,剔除掉非企业端看的问题
   _onRefresh({required List data,required int total}) {
     _total = total;
-    firmTotal = data.length;
     if(firm){
       hiddenProblem = [];
       for(var i = 0; i < data.length; i++){
@@ -192,7 +188,7 @@ class _ProblemPageState extends State<ProblemPage> {
     _pageNo = 2;
     _controller.resetLoadState();
     _controller.finishRefresh();
-    if(firmTotal >= total){
+    if(hiddenProblem.length >= total){
       _controller.finishLoad(noMore: true);
       _enableLoad = false;
     }
@@ -203,7 +199,6 @@ class _ProblemPageState extends State<ProblemPage> {
   /// 当前数据等于总数据，关闭上拉加载
   _onLoad({required List data,required int total}) {
     _total = total;
-    firmTotal += data.length;
     if(firm){
       for(var i = 0; i < data.length; i++){
         if(data[i]['status'] != 0){
@@ -213,7 +208,7 @@ class _ProblemPageState extends State<ProblemPage> {
     }else{
       hiddenProblem.addAll(data);
     }
-    if(firmTotal >= total){
+    if(hiddenProblem.length >= total){
       _controller.finishLoad(noMore: true);
       _enableLoad = false;
     }
@@ -347,9 +342,16 @@ class _ProblemPageState extends State<ProblemPage> {
                                           return Loading(cancelFunc: cancelFunc);
                                         }
                                     );
-                                    position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-                                    if(position != null){
+                                    bool isLocationServiceEnabled  = await Geolocator.isLocationServiceEnabled();
+                                    if(isLocationServiceEnabled){
+                                      position = await Geolocator.getCurrentPosition(forceAndroidLocationManager: true,desiredAccuracy: LocationAccuracy.medium);
+                                      // position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium);
+                                      if(position != null){
+                                        BotToast.cleanAll();
+                                      }
+                                    }else{
                                       BotToast.cleanAll();
+                                      ToastWidget.showToastMsg('请打开定位服务！');
                                     }
                                     state(() {});},
                                   child: Text(
@@ -582,9 +584,15 @@ class _ProblemPageState extends State<ProblemPage> {
                         margin: EdgeInsets.only(top: px(20),left: px(24),right: px(24)),
                         padding: EdgeInsets.only(left: px(12)),
                         height: px(55),width: double.maxFinite,
-                        color: Colors.white,
+                        color: Color(0xffC5D0FE),
                         child: FormCheck.formTitle(
                           '隐患问题',
+                          showUp: true,
+                          tidy: tidy,
+                          onTaps: (){
+                            tidy = !tidy;
+                            setState(() {});
+                          }
                         ),
                       );
                     },
@@ -606,7 +614,7 @@ class _ProblemPageState extends State<ProblemPage> {
                 SliverList(
                   delegate: SliverChildBuilderDelegate((context, i) {
                     return Visibility(
-                      visible: hiddenProblem[i]['status'] != 2,
+                      visible: !tidy && hiddenProblem[i]['status'] != 3,
                       child: RectifyComponents.rectifyRow(
                           company: hiddenProblem[i],
                           i: i,
@@ -619,43 +627,49 @@ class _ProblemPageState extends State<ProblemPage> {
                   },
                       childCount: hiddenProblem.length),
                 ),
-                hiddenProblem.isNotEmpty ?
-                SliverList(
-                  delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
-                    return Container(
-                      margin: EdgeInsets.only(top: px(20),left: px(24),right: px(24)),
-                      padding: EdgeInsets.only(left: px(12)),
-                      height: px(55),width: double.maxFinite,
-                      color: Colors.white,
-                      child: FormCheck.formTitle(
-                        '复查问题',
-                      ),
-                    );
-                  },
-                    childCount: 1,),
-                ) :
-                SliverList(
-                  delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
-                    return Container();
-                  },
-                    childCount: 1,),
-                ),
                 SliverList(
                   delegate: SliverChildBuilderDelegate((context, i) {
                     return Visibility(
-                      visible: hiddenProblem[i]['status'] == 2,
+                      visible: !tidy && hiddenProblem[i]['status'] == 3,
                       child: RectifyComponents.rectifyRow(
                           company: hiddenProblem[i],
                           i: i,
                           detail: true,
                           callBack:() async {
-                            _getCompany(problemId:hiddenProblem[i]['id'],inventoryId: hiddenProblem[i]['inventory']['id'],revem: true);
+                            _getCompany(problemId:hiddenProblem[i]['id'],inventoryId: hiddenProblem[i]['inventory']['id']);
                           }
                       ),
                     );
                   },
                       childCount: hiddenProblem.length),
                 ),
+                // hiddenProblem.isNotEmpty ?
+                // SliverList(
+                //   delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+                //     return Container(
+                //       margin: EdgeInsets.only(top: px(20),left: px(24),right: px(24)),
+                //       padding: EdgeInsets.only(left: px(12)),
+                //       height: px(55),width: double.maxFinite,
+                //       color: Color(0xffC5D0FE),
+                //       child: FormCheck.formTitle(
+                //         '复查问题',
+                //         showUp: true,
+                //         tidy: reviewTidy,
+                //         onTaps: (){
+                //           reviewTidy = !reviewTidy;
+                //           setState(() {});
+                //         }
+                //       ),
+                //     );
+                //   },
+                //     childCount: 1,),
+                // ) :
+                // SliverList(
+                //   delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+                //     return Container();
+                //   },
+                //     childCount: 1,),
+                // ),
                 SliverPersistentHeader(
                   floating: false,//floating 与pinned 不能同时为true
                   pinned: true,
@@ -694,7 +708,7 @@ class _ProblemPageState extends State<ProblemPage> {
                     color: Colors.white,
                 ),),
                 decoration: BoxDecoration(
-                  color: Color(0xff4D7FFF),
+                  color: Color(0xff608DFF),
                   borderRadius: BorderRadius.all(Radius.circular(px(10))),
                 ),
               ),
@@ -707,14 +721,35 @@ class _ProblemPageState extends State<ProblemPage> {
       ),
       endDrawer: RectifyComponents.endDrawers(
           context,
-          typeStatus: typeStatus,
+          typeStatus: status,
           status: problemStatus,
-          typeProblemStatu: typeProblemStatu,
+          currentDataList: selectStatus,
+          typeProblem: typeStatus,
           problemType: typeList,
+          defaultData: defaultData,
           startTime: startTime ?? DateTime.now(),
           endTime: endTime ?? DateTime.now(),
-          typeBack: (val){
-            typeProblemStatu = val;
+          typeBack: (val){ //问题类型
+            defaultData = val;
+            if(val.length == 0){
+              typeStatus = '请选择';
+            }else{
+              for(var i = 0; i < val.length;i++){
+                if(i > 0){
+                  typeStatus = typeStatus + ',' + val[i]['name'];
+                }else{
+                  typeStatus = val[i]['name'];
+                }
+              }
+            }
+            setState(() {});
+          },
+          callPop: (){ //重置
+            status = '请选择';
+            selectStatus = [];
+            defaultData = [];
+            startTime = DateTime.now();
+            endTime = DateTime.now();
             _problemSearch(
                 type: typeStatusEnum.onRefresh,
                 data: {
@@ -723,27 +758,22 @@ class _ProblemPageState extends State<ProblemPage> {
                   'sort':"status",
                   "order":"ASC",
                   'companyId':companyId,
-                  "problemTypeId":val['id']
                 }
             );
           },
-          callPop: (){
-            typeStatus = {'name':'请选择','id':0};
-            typeProblemStatu = {'name':'请选择','id':''};
-            _problemSearch(
-                type: typeStatusEnum.onRefresh,
-                data: {
-                  'page': 1,
-                  'size': 10,
-                  'sort':"status",
-                  "order":"ASC",
-                  'companyId':companyId,
+          callBack: (val){ //问题状态选择
+            selectStatus = val;
+            if(val.length == 0){
+              status = '请选择';
+            }else{
+              for(var i = 0; i < val.length;i++){
+                if(i > 0){
+                  status = status + ',' + val[i]['name'];
+                }else{
+                  status = val[i]['name'];
                 }
-            );
-          },
-          callBack: (val){
-            typeStatus['name'] = val['name'];
-            typeStatus['id'] = val['id'];
+              }
+            }
             setState(() {});
           },
           timeBack: (val){
@@ -752,59 +782,40 @@ class _ProblemPageState extends State<ProblemPage> {
             setState(() {});
           },
           trueBack: (){
+            List searchStatus = [];//问题状态数组
+            List typeId = [];//问题类型数组
+            for(var i = 0; i < selectStatus.length; i++){
+              searchStatus.add(selectStatus[i]['id']);
+            }
+            for(var i = 0; i < defaultData.length; i++){
+              typeId.add(defaultData[i]['id']);
+            }
             //判断搜索日期传递的参数
             if(startTime==null){
-              if(typeProblemStatu['id'].isNotEmpty){
-                _problemSearch(
-                    type: typeStatusEnum.onRefresh,
-                    data: {
-                      'status':typeStatus['id'],
-                      'companyId':companyId,
-                      "problemTypeId":typeProblemStatu['id'],
-                      'sort':"status",
-                      "order":"ASC",
-                    }
-                );
-              }else{
-                _problemSearch(
-                    type: typeStatusEnum.onRefresh,
-                    data: {
-                      'status':typeStatus['id'],
-                      'companyId':companyId,
-                      'sort':"status",
-                      "order":"ASC",
-                    }
-                );
-              }
+              _problemSearch(
+                  type: typeStatusEnum.onRefresh,
+                  data: {
+                    'status': searchStatus,
+                    'companyId':companyId,
+                    "problemTypeId":typeId,
+                    'sort':"status",
+                    "order":"ASC",
+                  }
+              );
             } else {
-              if(typeProblemStatu['id'].isNotEmpty){
-                _problemSearch(
-                    type: typeStatusEnum.onRefresh,
-                    data: {
-                      'status':typeStatus['id'],
-                      "problemTypeId":typeProblemStatu['id'],
-                      'companyId':companyId,
-                      'timeSearch':'createdAt',
-                      'startTime':startTime,
-                      'endTime':endTime,
-                      'sort':"status",
-                      "order":"ASC",
-                    }
-                );
-              }else{
-                _problemSearch(
-                    type: typeStatusEnum.onRefresh,
-                    data: {
-                      'status':typeStatus['id'],
-                      'companyId':companyId,
-                      'timeSearch':'createdAt',
-                      'startTime':startTime,
-                      'endTime':endTime,
-                      'sort':"status",
-                      "order":"ASC",
-                    }
-                );
-              }
+              _problemSearch(
+                  type: typeStatusEnum.onRefresh,
+                  data: {
+                    'status': searchStatus,
+                    'companyId':companyId,
+                    "problemTypeId":typeId,
+                    'timeSearch':'createdAt',
+                    'startTime':startTime,
+                    'endTime':endTime,
+                    'sort':"status",
+                    "order":"ASC",
+                  }
+              );
             }
             Navigator.pop(context);
             setState(() {});

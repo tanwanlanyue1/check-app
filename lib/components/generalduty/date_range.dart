@@ -28,6 +28,16 @@ class _DateRangeState extends State<DateRange> {
   }
 
   @override
+  void didUpdateWidget(covariant DateRange oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+    if(widget.start != oldWidget.start || widget.end != oldWidget.end){
+      startTime = widget.showTime? formatTime(widget.start) : formatTime2(widget.start);
+      endTime = widget.showTime? formatTime(widget.end): formatTime2(widget.end);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       height: ScreenUtil().setHeight(60.0),

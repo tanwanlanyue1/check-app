@@ -31,7 +31,7 @@ class _CheckTaskState extends State<CheckTask> {
   ///size:每页多大
   /// status 1：待办 2：已办
   _getTaskList({typeStatusEnum? type,Map<String,dynamic>? data}) async {
-    var response = await Request().post(Api.url['houseTaskList'],data: data);
+    var response = await Request().post(Api.url['houseTaskList']+'?page$_pageNo&size=10',data: data);
     if(response['errCode'] == '10000'){
       Map _data = response['result'];
       _pageNo++;
@@ -81,8 +81,6 @@ class _CheckTaskState extends State<CheckTask> {
     _getTaskList(
         type: typeStatusEnum.onRefresh,
         data: {
-          'page': 1,
-          'size': 10,
           'finishStatus':2
         }
     );
@@ -103,8 +101,6 @@ class _CheckTaskState extends State<CheckTask> {
         _getTaskList(
             type: typeStatusEnum.onLoad,
             data: {
-              'page': _pageNo,
-              'size': 10,
               'finishStatus':2
             }
         );
@@ -114,8 +110,6 @@ class _CheckTaskState extends State<CheckTask> {
         _getTaskList(
             type: typeStatusEnum.onRefresh,
             data: {
-              'page': 1,
-              'size': 10,
               'finishStatus':2
             }
         );
@@ -174,13 +168,13 @@ class _CheckTaskState extends State<CheckTask> {
                       height: px(48),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                          color: TaskCompon.firmTaskColor(2),
+                          color: TaskCompon.firmTaskColor(taskList[i]['taskStatus']),
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(px(20)),
                             bottomLeft: Radius.circular(px(20)),
                           )
                       ),
-                      child: Text(TaskCompon.firmTask(2)
+                      child: Text(TaskCompon.firmTask(taskList[i]['taskStatus'])
                         ,style: TextStyle(color: Colors.white,fontSize: sp(22)),),
                     ),
                   ],

@@ -8,7 +8,7 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 ///保存图片
 class SaveUtil {
   // isAsset本地图片   默认网络图片
-  static Future<void> saveImage(String? imageUrl, {bool isAsset = false}) async {
+  static Future<String?> saveImage(String? imageUrl, {bool isAsset = false}) async {
     try {
       if (imageUrl == null) {
         ToastWidget.showToastMsg('保存失败，图片地址不存在！');
@@ -37,6 +37,7 @@ class SaveUtil {
       final result = await ImageGallerySaver.saveImage(imageBytes);
       if (result['isSuccess']) {
         ToastWidget.showToastMsg('保存图片成功！');
+        return result['filePath'];
       } else {
         ToastWidget.showToastMsg('保存图片失败！');
       }

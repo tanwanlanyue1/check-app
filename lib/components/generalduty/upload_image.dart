@@ -12,6 +12,7 @@ import 'package:scet_check/routers/router_animate/router_fade_route.dart';
 import 'package:scet_check/utils/photoView/cached_network.dart';
 import 'package:scet_check/utils/photoView/photo_view.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/time/utc_tolocal.dart';
 import 'package:uuid/uuid.dart';
 
 ///上传图片
@@ -44,14 +45,14 @@ class _UploadImageState extends State<UploadImage> {
 
   List<dynamic> _imagesList = []; // 图片数组
   String _uuid = '';//uuid
-  String _url = Api.url['uploadImg'];//url
+  String _url = Api.url['uploadImg']+'清单/';//url
   bool abutment = false;//是否是对接接口上传
 
-  /// 上传文件
+  /// 上传图片文件
   /// result: 文件数组
   /// 处理上传图片返回回来的格式，将\转化为/
   void _upload() async {
-    String url = _url + _uuid;
+    String url = _url + utcTransition() +_uuid;
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
       type: FileType.image,
@@ -107,7 +108,7 @@ class _UploadImageState extends State<UploadImage> {
   void initState() {
     // TODO: implement initState
     _imagesList = widget.imgList;
-    _url = widget.url ?? Api.url['uploadImg'];
+    _url = widget.url ?? _url;
     _uuid = widget.uuid ?? '';
     abutment = widget.abutment;
     super.initState();
@@ -117,7 +118,7 @@ class _UploadImageState extends State<UploadImage> {
   void didUpdateWidget(covariant UploadImage oldWidget) {
     // TODO: implement didUpdateWidget
     _imagesList = widget.imgList;
-    _url = widget.url ?? Api.url['uploadImg'];
+    _url = widget.url ?? _url;
     _uuid = widget.uuid ?? '';
     abutment = widget.abutment;
     super.didUpdateWidget(oldWidget);
@@ -187,18 +188,24 @@ class _UploadImageState extends State<UploadImage> {
             children: [
               InkWell(
                 child: child,
-                onTap: (){
+                onTap: () async {
                   List _img = [];
                   for (var item in _imagesList) {
                     abutment ?
                     _img.add(Api.baseUrlAppImage + item):
                     _img.add(Api.baseUrlApp + item);
                   }
-                  Navigator.of(context).push(FadeRoute(page: PhotoViewGalleryScreen(
+                  var res = await Navigator.of(context).push(FadeRoute(page: PhotoViewGalleryScreen(
                     images:_img,//传入图片list
                     index: index,//传入当前点击的图片的index
                     heroTag: _img[index],//传入当前点击的图片的hero tag （可选）
+                    alter:widget.closeIcon,
                   )));
+                  if(res != null){
+                    _imagesList.add(res);
+                    widget.callback?.call(_imagesList);
+                    setState(() {});
+                  }
                 },
               ),
               if(widget.closeIcon)Positioned(

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
@@ -5,6 +7,8 @@ import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/components/pertinence/companyEchart/column_echarts.dart';
 import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/storage/data_storage_key.dart';
+import 'package:scet_check/utils/storage/storage.dart';
 
 class HomeClassify extends StatefulWidget {
   const HomeClassify({Key? key}) : super(key: key);
@@ -29,6 +33,8 @@ class _HomeClassifyState extends State<HomeClassify> with RouteAware{
   List name = [];//问题
   List echartData = [];//问题
   bool show = true;//展示echarts
+  int total = 0;//待办任务总数
+  String userId = ''; //用户id
 
  /// 问题统计数据
  void _getProblemStatis() async {
@@ -81,11 +87,30 @@ class _HomeClassifyState extends State<HomeClassify> with RouteAware{
      default: ToastWidget.showToastMsg('暂无更多页面');
    }
  }
-
+  /// 查询任务列表
+  /// status 1：待办 2：已办
+  /// 主要查询total，获取到总数
+  void _getTaskList() async {
+    var response = await Request().get(
+      Api.url['taskList'],
+      data: {
+        "check_user_list": {"id":userId},
+        "status":1,
+        "page":1,
+        "size":1,
+      },
+    );
+    if(response['statusCode'] == 200) {
+      total = response['data']['total'];
+      setState(() {});
+    }
+  }
  @override
   void initState() {
     // TODO: implement initState
+   userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'].toString();
    _getProblemStatis();
+   _getTaskList();
     super.initState();
   }
 
@@ -146,10 +171,29 @@ class _HomeClassifyState extends State<HomeClassify> with RouteAware{
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              SizedBox(
-                                width: px(96),
-                                height: px(96),
-                                child: Image.asset('${classify[index]['icon']}'),
+                              Stack(
+                                alignment: AlignmentDirectional.center,
+                                children: [
+                                  SizedBox(
+                                    width: px(96),
+                                    height: px(96),
+                                    child: Image.asset('${classify[index]['icon']}'),
+                                  ),
+                                  index == 1 && total != 0?
+                                  Positioned(
+                                    right: 0,
+                                    top: 0,
+                                    child: Container(
+                                      padding: EdgeInsets.only(left: px(8),right: px(8)),
+                                      child: Text("$total",style: TextStyle(fontSize: sp(26),color: Colors.white),),
+                                      decoration: BoxDecoration(
+                                        color: Colors.red,
+                                        borderRadius: BorderRadius.all(Radius.circular(px(20))),
+                                      ),
+                                    ),
+                                  ) :
+                                  Container()
+                                ],
                               ),
                               Text('${classify[index]['name']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(26)),),
                             ],

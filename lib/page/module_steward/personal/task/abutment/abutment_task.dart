@@ -1,21 +1,16 @@
 import 'dart:convert';
-import 'dart:io';
-import 'package:dio/dio.dart';
-import 'package:file_picker/file_picker.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:open_file/open_file.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
+import 'package:scet_check/components/generalduty/down_input.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
+import 'package:scet_check/components/generalduty/upload_file.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
-import 'package:scet_check/components/pertinence/companyFile/components/file_system.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
-import 'package:scet_check/utils/storage/data_storage_key.dart';
-import 'package:scet_check/utils/storage/storage.dart';
-import 'package:uuid/uuid.dart';
 
 
 ///对接任务详情页面
@@ -34,13 +29,12 @@ class _AbutmentTaskState extends State<AbutmentTask> {
   bool backlog = true;//完成
   String userId = ''; //用户id
   List taskFiles = [];//任务附件名称
-  String fileName = '';//上传附件名称
-  String filePath = '';//上传附件路径
-
+  Map companyList = {};//任务企业列表
   List imgDetails = [];//任务图片列表
   String taskId = ''; //任务id
   List formDynamic = [];//动态表单id数组
   List getform = [];//缓存的动态表单
+  int taskSource = 0;//任务来源（1：临时任务，2：在线监理，3：问题汇总，4：计划主题）
 
   @override
   void initState() {
@@ -52,52 +46,43 @@ class _AbutmentTaskState extends State<AbutmentTask> {
   }
 
   /// 获取任务详情
-  void _getTasks() async {
+  _getTasks() async {
     var response = await Request().get(Api.url['houseTaskById'],
       data: {
         'taskId':taskId,
       });
     if(response?['errCode'] == '10000') {
       taskDetails = response['result'];
+      taskSource = taskDetails['taskSource'];
       List imgList = taskDetails['imgList'] ?? [];
       List fileList = taskDetails['fileList'] ?? [];
       for(var i = 0; i < imgList.length; i++){
         checkImages.add(imgList[i]['filePath']);
       }
-      fileName = fileList.isNotEmpty ? (fileList[0]['fileName'] ?? fileList[0]['filePath']) : '';
-      filePath = fileList.isNotEmpty ? fileList[0]['filePath'] : '';
+      taskFiles = fileList.isNotEmpty ? fileList : [];
       formDynamic = taskDetails['formList'];
       setState(() {});
+    }else if(response?['errCode'] == '500') {
+      Navigator.pop(context);
+      ToastWidget.showToastMsg('查看详情失败，请重试！');
     }
   }
 
-  /// 对接任务上传文件
-  /// result: 文件数组
-  void _uploadTwo() async {
-    String url = Api.url['addFile'];
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: false,
-      type: FileType.any,
-    );
-    if (result != null) {
-      var isUp = await FileSystem.upload(result, url);
-      if(isUp?[0]!=false){
-        taskFiles = [];
-        fileName = isUp?[0]['filename'];
-        filePath = (isUp![0]['msg']['result']).replaceAll('\\', '/');
-        taskFiles.add(
-          {
-            'filePath':filePath,
-            'fileName':fileName
-          }
-        );
+  ///处理排查人员
+  String checkPeople({required List company}){
+    String checkList = '';
+    for(var i = 0; i < company.length; i++){
+      if(i > 0){
+        checkList = checkList + ',' + company[i]['name'];
+      }else{
+        checkList = company[i]['name'];
       }
-      setState(() {});
     }
+    return checkList;
   }
 
   /// 提交对接任务
-  void _getTask() async {
+  void _submiTask() async {
     List imgList = [];
     for(var i = 0; i < checkImages.length; i++){
       imgList.add({'filePath':checkImages[i]});
@@ -117,12 +102,6 @@ class _AbutmentTaskState extends State<AbutmentTask> {
       );
       if(response['errCode'] == '10000') {
         ToastWidget.showToastMsg('提交成功');
-        getform = StorageUtil().getJSON('taskFrom') ?? [];
-        int index = getform.indexWhere((item) => item['taskId'] == taskId);
-        if(index != -1){
-          getform.remove(index);
-          StorageUtil().setJSON('taskFrom', getform);
-        }
         Navigator.pop(context,true);
         setState(() {});
       }
@@ -148,9 +127,10 @@ class _AbutmentTaskState extends State<AbutmentTask> {
                 taskDetails.isNotEmpty ?
                 backLog() :
                 Container(),
-                Column(
-                  children: List.generate(formDynamic.length, (index) => taskDynamicForm(i: index)),
-                ),
+                relevanceFrom(),
+                taskSource == 2 ?
+                dataSource() :
+                Container(),
                 !backlog ?
                 revocation() :
                 Container(),
@@ -185,7 +165,16 @@ class _AbutmentTaskState extends State<AbutmentTask> {
           ),
           FormCheck.rowItem(
             title: '开始时间:',
-            child: Text(DateTime.fromMillisecondsSinceEpoch(taskDetails['startDate']).toString().substring(0,19),
+            child: Text(
+                taskDetails['startDate'] == null ? '/' :
+              DateTime.fromMillisecondsSinceEpoch(taskDetails['startDate']).toString().substring(0,19),
+              style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+          ),
+          FormCheck.rowItem(
+            title: '结束时间:',
+            child: Text(
+              taskDetails['startDate'] == null ? '/' :
+              DateTime.fromMillisecondsSinceEpoch(taskDetails['endDate']).toString().substring(0,19),
               style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
@@ -194,7 +183,14 @@ class _AbutmentTaskState extends State<AbutmentTask> {
           ),
           FormCheck.rowItem(
             title: '协助人员:',
-            child: Text('${taskDetails['assistOpNames'] ?? '李四'}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+            child: Text('${taskDetails['assistOpNames']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+          ),
+          FormCheck.rowItem(
+            title: '优先级:',
+            child: Text(
+              taskDetails['priority'] == 1 ? '高':
+              taskDetails['priority'] == 2 ? '中' :'低',
+              style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
             alignStart: true,
@@ -211,19 +207,13 @@ class _AbutmentTaskState extends State<AbutmentTask> {
           ),
           FormCheck.rowItem(
             title: '任务附件:',
-            child: GestureDetector(
-              child: Text((fileName.isEmpty && !backlog) ? '添加附件' : fileName,style: TextStyle(color: Color(0xff4D7FFF),fontSize: sp(28)),),
-              onTap: () async {
-                if(backlog) {
-                  if(fileName.isNotEmpty){
-                    String? path = await FileSystem.createFileOfPdfUrl(Api.baseUrlAppImage+filePath.replaceRange(0, 1, ''));
-                    if (path != '' && path != null) {
-                      OpenFile.open(path);
-                    }
-                  }
-                }else{
-                  _uploadTwo();
-                }
+            child: UploadFile(
+              url: '/',
+              abutment: true,
+              fileList: backlog ? taskFiles : [],
+              callback: (val){
+                taskFiles = val;
+                setState(() {});
               },
             ),
           ),
@@ -232,29 +222,183 @@ class _AbutmentTaskState extends State<AbutmentTask> {
     );
   }
 
+  ///管理表单卡片
+  Widget relevanceFrom(){
+    return  Container(
+      margin: EdgeInsets.only(left: px(24),right: px(24),top: px(24)),
+      padding: EdgeInsets.all(px(24)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(px(8.0))),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: FormCheck.formTitle(
+                  '表单列表',
+                ),
+              ),
+              Visibility(
+                visible: !backlog,
+                child: GestureDetector(
+                  child: SizedBox(
+                      width: px(40),
+                      height: px(41),
+                      child: Image.asset('lib/assets/icons/form/add.png')),
+                  onTap: () async {
+                    var res = await Navigator.pushNamed(context, '/fromSelect',arguments: {'taskId':taskId,'formList':formDynamic});
+                    if(res != null){
+                      _getTasks();
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+          FormCheck.rowItem(
+            title: '企业名称:',
+            child: !backlog ?
+            DownInput(
+              data: taskDetails['companyList'],
+              value: companyList['name'],
+              hitStr: '请选择企业',
+              callback: (val){
+                companyList = val;
+                setState(() {});
+              },
+            ) :
+            Text(checkPeople(company: taskDetails['companyList'] ?? []),style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+          ),
+          Column(
+            children: List.generate(formDynamic.length, (i) => taskDynamicForm(
+              i: i,
+              cycleList: formDynamic[i],
+            )),
+          ),
+        ],
+      ),
+    );
+  }
+
+  ///数据来源卡片
+  Widget dataSource(){
+    return  Container(
+      margin: EdgeInsets.only(left: px(24),right: px(24),top: px(24)),
+      padding: EdgeInsets.all(px(24)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(px(8.0))),
+      ),
+      child: Column(
+        children: [
+          FormCheck.formTitle(
+            '数据来源',
+          ),
+          Column(
+            children: List.generate(formDynamic.length, (index) => taskSoureForm(
+                  i: index,
+                  cycleList:taskDetails['dataList'][index],
+              )),
+          ),
+        ],
+      ),
+    );
+  }
+
   ///任务动态表单
-  Widget taskDynamicForm({required int i}){
+  Widget taskDynamicForm({required int i,Map? cycleList}){
     return InkWell(
       child: Container(
-        margin: EdgeInsets.only(left: px(24),right: px(24),top: px(24)),
-        padding: EdgeInsets.only(left: px(12),right: px(12),bottom: px(12)),
+        padding: EdgeInsets.only(bottom: px(12)),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(px(8.0))),
+            color: Colors.white,
+            border: Border(bottom: BorderSide(width: px(2),color: Color(0xffF6F6F6)),)
         ),
         child: FormCheck.rowItem(
           title: '关联表单:',
           child: Row(
             children: [
-              Text('${formDynamic[i]['formName']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
-              Spacer(),
+              Expanded(
+                child: Text('${cycleList?['formName']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28),overflow: TextOverflow.ellipsis),),
+              ),
               Icon(Icons.keyboard_arrow_right)
             ],
           ),
         ),
       ),
-      onTap: (){
-        Navigator.pushNamed(context, '/abutmentFrom',arguments: {'allfield':formDynamic[i],'taskId':taskId,'content':formDynamic[i]['content'],'backlog':backlog});
+      onTap: () async {
+        if(!backlog){
+          if(companyList.isNotEmpty){
+            List formContentList = taskDetails['formContentList'] ?? [];
+            Map content = {};
+            for(var j =0; j < formContentList.length; j++){
+              if(formContentList[j]['companyId'] == companyList['id'] && formContentList[j]['formId'] == formDynamic[i]['id']){
+                content = jsonDecode(formContentList[j]['content']) ?? {};
+                content = formContentList[j] ?? {};
+              }
+            }
+            var res = await Navigator.pushNamed(context, '/abutmentFrom',arguments: {
+              'formId':formDynamic[i]['id'],
+              'taskId':taskId,
+              'content':content,
+              'backlog':backlog,
+              'companyList':companyList,
+            });
+            if(res != null){
+              _getTasks();
+            }
+          }else{
+            ToastWidget.showToastMsg('请先选择企业！');
+          }
+        }else{
+          //查找选择的id企业
+          List formContentList = taskDetails['formContentList'] ?? [];
+          List company = taskDetails['companyList'] ?? [];
+          Map content = {};
+          for (var item in company) {
+            for (var ele in formContentList) {
+              if(ele['companyId'] ==item['id'] && ele['formId'] == formDynamic[i]['id']){
+                content = jsonDecode(ele['content']) ?? {};
+                content = ele ?? {};
+              }
+            }
+          }
+          Navigator.pushNamed(context, '/abutmentFrom',arguments: {
+            'formId':formDynamic[i]['id'],
+            'taskId':taskId,
+            'content':content,
+            'backlog':backlog,
+            'companyList':companyList,
+          });
+        }
+      },
+    );
+  }
+  ///任务数据来源列表
+  Widget taskSoureForm({required int i,Map? cycleList}){
+    return InkWell(
+      child: Container(
+        padding: EdgeInsets.only(bottom: px(12)),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border(bottom: BorderSide(width: px(2),color: Color(0xffF6F6F6)),)
+        ),
+        child: FormCheck.rowItem(
+          title: '企业名称:',
+          child: Row(
+            children: [
+              Expanded(
+                child: Text('${cycleList?['companyName']}-${cycleList?['name']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28),overflow: TextOverflow.ellipsis),),
+              ),
+              Icon(Icons.keyboard_arrow_right)
+            ],
+          ),
+        ),
+      ),
+      onTap: () async {
+        Navigator.pushNamed(context, '/taskGuide',arguments: {'analyzeId':cycleList?['analyzeId']});
       },
     );
   }
@@ -285,7 +429,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
           ),
         ),
         onTap: () {
-          _getTask();
+          _submiTask();
         },
       ),
     );

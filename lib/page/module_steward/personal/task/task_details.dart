@@ -2,17 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/loading.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
+import 'package:scet_check/components/generalduty/upload_file.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
-import 'package:scet_check/components/pertinence/companyFile/components/file_system.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
@@ -48,8 +46,8 @@ class _TaskDetailsState extends State<TaskDetails> {
   String checkDetail = ''; //检查详情
   String userId = ''; //用户id
   List taskFiles = [];//任务附件名称
+  List filePath = [];//上传附件路径
   String fileName = '';//上传附件名称
-  String filePath = '';//上传附件路径
   DateTime solvedAt = DateTime.now().add(Duration(days: 7));//整改期限
   DateTime reviewedAt = DateTime.now().add(Duration(days: 14));//复查期限
   int checkType = 2;
@@ -97,24 +95,6 @@ class _TaskDetailsState extends State<TaskDetails> {
     }
   }
 
-  /// 上传文件
-  /// result: 文件数组
-  void _upload() async {
-    String url = Api.baseUrlApp + 'file/upload?savePath=任务/';
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: true,
-      type: FileType.any,
-    );
-    if (result != null) {
-      var isUp = await FileSystem.upload(result, url);
-      if(isUp?[0]!=false){
-        fileName = isUp?[0]['msg']['data']['name'];
-        filePath = (isUp![0]['msg']['data']['dir']+'/'+isUp[0]['msg']['data']['base']).replaceAll('\\', '/');
-      }
-      setState(() {});
-    }
-  }
-
   ///下载文件
   Future<String?> createFileOfPdfUrl(url) async {
     BotToast.showCustomLoading(
@@ -134,7 +114,6 @@ class _TaskDetailsState extends State<TaskDetails> {
       }else if(Platform.isIOS) {
         dir =  (await getApplicationSupportDirectory ()).path;
       }
-      // String dir = (await getApplicationDocumentsDirectory()).path;
       File file = File('$dir/$filename');
       await file.writeAsBytes(bytes);
       BotToast.closeAllLoading();
@@ -262,13 +241,13 @@ class _TaskDetailsState extends State<TaskDetails> {
         checkImages = taskDetails['checkImages'] ?? [];
         taskFiles = taskDetails['taskFiles'] ?? [];
         checkType = taskDetails['type'] == 1 ? 3 : taskDetails['type'] == 2 ? 4 : 2;
-        filePath = taskDetails['checkFiles'] != null ? taskDetails['checkFiles'][0] : "";
+        filePath = taskDetails['checkFiles'] ?? [];
       }
       setState(() {});
     }
   }
 
-  /// 发布任务
+  /// 任务详情
   void _getTask({bool inventory = false}) async {
     if(checkDetail.isEmpty){
       ToastWidget.showToastMsg('请输入检查情况！');
@@ -278,7 +257,7 @@ class _TaskDetailsState extends State<TaskDetails> {
         'status': 2,
         'checkDetail':checkDetail,
         'checkImages':checkImages,
-        'checkFiles':[filePath],
+        'checkFiles': filePath,
       };
       var response = await Request().post(
         Api.url['addTask'],data: _data,
@@ -322,7 +301,13 @@ class _TaskDetailsState extends State<TaskDetails> {
                 checkAgenda() :
                 Container(),
                 backlog ?
-                revocation():
+                TaskCompon.revocation(
+                  title: '提交',
+                  color: Colors.white,
+                  onTops:(){
+                    submission();
+                  }
+                ):
                 Container(),
               ],
             ),
@@ -414,14 +399,9 @@ class _TaskDetailsState extends State<TaskDetails> {
           taskFiles.isNotEmpty ?
           FormCheck.rowItem(
             title: '任务附件:',
-            child: GestureDetector(
-              child: Text("${taskFiles[0]}",style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
-              onTap: () async {
-                String? path = await createFileOfPdfUrl(taskFiles[0]);
-                if (path != '' && path != null) {
-                  OpenFile.open(path);
-                }
-              },
+            child: UploadFile(
+              url: '任务/',
+              fileList: taskFiles,
             ),
           ) : Container(),
           !backlog ? examine() : Container(),
@@ -500,7 +480,7 @@ class _TaskDetailsState extends State<TaskDetails> {
               imgList: checkImages,
               closeIcon: true,
               uuid: uuid.v4(),
-              url: Api.baseUrlApp + 'file/upload?savePath=任务/',
+              url: Api.url['uploadImg'] + '任务/',
               callback: (List? data) {
                 checkImages = data ?? [];
                 setState(() {});
@@ -510,10 +490,10 @@ class _TaskDetailsState extends State<TaskDetails> {
           FormCheck.rowItem(
             title: '检查附件:',
             titleColor: Color(0XFF323232),
-            child: GestureDetector(
-              child: Text(fileName.isEmpty ? '添加附件' : fileName,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
-              onTap: (){
-                _upload();
+            child: UploadFile(
+              url: '任务/',
+              callback: (val){
+                filePath = val;
               },
             ),
           ),
@@ -545,49 +525,16 @@ class _TaskDetailsState extends State<TaskDetails> {
         filePath.isNotEmpty ?
         FormCheck.rowItem(
           title: '附件:',
-          child: GestureDetector(
-            child: Text(filePath,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
-            onTap: () async{
-              String? path = await createFileOfPdfUrl(filePath);
-              if (path != '' && path != null) {
-                OpenFile.open(path);
-              }
-            },
+          child: UploadFile(
+            url: '/',
+            fileList: filePath,
           ),
+          // child: Column(
+          //   children: List.generate(filePath.length, (i) => report(i,data: filePath)),
+          // ),
         ) : Container(),
       ],
     );
   }
 
-  ///按钮
-  Widget revocation(){
-    return Container(
-      height: px(88),
-      margin: EdgeInsets.only(top: px(24)),
-      color: Colors.white,
-      alignment: Alignment.center,
-      child: GestureDetector(
-        child: Container(
-          width: px(240),
-          height: px(56),
-          alignment: Alignment.center,
-          margin: EdgeInsets.only(left: px(40)),
-          child: Text(
-            '提交',
-            style: TextStyle(
-                fontSize: sp(24),
-                fontFamily: "M",
-                color: Color(0xff4D7FFF)),
-          ),
-          decoration: BoxDecoration(
-            border: Border.all(width: px(2),color: Color(0xff4D7FFF)),
-            borderRadius: BorderRadius.all(Radius.circular(px(28))),
-          ),
-        ),
-        onTap: () {
-          submission();
-        },
-      ),
-    );
-  }
 }

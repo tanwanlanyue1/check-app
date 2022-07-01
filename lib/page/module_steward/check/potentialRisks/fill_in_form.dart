@@ -52,7 +52,7 @@ class _FillInFormState extends State<FillInForm> {
   String problemTitle = '';//问题标题
   String issueDetails = '';//问题详情
   String type = '';//问题类型
-  String typeId = '';//问题ID
+  String typeId = '';//问题类型ID
   String inventoryId = '';//清单ID
   String companyId = '';//企业ID
   String industryId = '';//产业ID
@@ -67,8 +67,8 @@ class _FillInFormState extends State<FillInForm> {
   String otherType = '';//其他类型
   String flowStatus = '';//流程状态
   bool other = false;//其他类型
+  bool delete = false;//是否可以删除问题
   int remind = 0;//提醒次数
-  int inventoryStatus = 0;//清单状态
   late GlobalKey<ScaffoldState> _scaffoldKey; //时间选择key
   // DateTime checkTime = DateTime.now();//填报排查日期
   DateTime rectifyTime = DateTime.now().add(Duration(days: 7));//整改期限
@@ -101,8 +101,8 @@ class _FillInFormState extends State<FillInForm> {
       areaId = problemList['districtId'];
       isImportant = problemList['isImportant'];
       solvedAt = problemList['solvedAt'] != null ? formatTime(problemList['solvedAt']) : '';
+      delete = (problemList['status'] == 0) ? true : false;
     }
-    // flow();
     setState(() {});
   }
 
@@ -115,7 +115,6 @@ class _FillInFormState extends State<FillInForm> {
     addProblem = widget.arguments?['addProblem'] ?? false;
     userName = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
     userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'].toString();
-    inventoryStatus = widget.arguments?['inventoryStatus'] ?? 1;
     if(declare){
       inventoryId = widget.arguments?['uuid'];
       companyId = widget.arguments?['companyId'];
@@ -130,7 +129,6 @@ class _FillInFormState extends State<FillInForm> {
     }
     super.initState();
   }
-
 
   /// 问题填报 填报post，/修改
   /// screeningPerson:填报人
@@ -192,25 +190,14 @@ class _FillInFormState extends State<FillInForm> {
     }
   }
 
-  ///判断流程
-  void flow(){
-    if(inventoryStatus == 1){
-      flowStatus = '审核通过';
-      if(problemList['status'] == 2){
-        flowStatus = '填报整改详情';
-      }else if(problemList['status'] == 3){
-        flowStatus = '整改完成';
-      }else if(problemList['status'] == 4){
-        flowStatus = '复查未整改';
-      }
-    }else if(inventoryStatus == 2){
-      flowStatus = '整改完成';
-    }else if(inventoryStatus == 3){
-      flowStatus = '审核中';
-    }else if(inventoryStatus == 5){
-      flowStatus = '审核不通过';
-    }else if(inventoryStatus == 6){
-      flowStatus = '新建排查流程';
+  /// 删除问题
+  void _deleteProblem() async {
+    var response = await Request().delete(Api.url['problem']+'/$problemId',);
+    if(response['statusCode'] == 200) {
+      ToastWidget.showToastMsg('删除成功');
+      Navigator.pop(context);
+      Navigator.pop(context);
+      setState(() {});
     }
   }
 
@@ -234,6 +221,18 @@ class _FillInFormState extends State<FillInForm> {
           TaskCompon.topTitle(
               title: '隐患排查问题填报',
               left: true,
+              child: delete ?
+              InkWell(
+                child: Text('删除问题'),
+                onTap: (){
+                  ToastWidget.showDialog(
+                      msg: '是否确定删除当前问题',
+                      ok: (){
+                        _deleteProblem();
+                      }
+                  );
+                },
+              ) : Container(),
               callBack: (){
                 Navigator.pop(context);
               }
@@ -410,7 +409,7 @@ class _FillInFormState extends State<FillInForm> {
                 imgList: imgDetails,
                 uuid: _uuid,
                 closeIcon: declare,
-                url: Api.baseUrlApp + 'file/upload?savePath=问题/',
+                url: Api.url['uploadImg'] + '问题/',
                 callback: (List? data) {
                   if (data != null) {
                     imgDetails = data;

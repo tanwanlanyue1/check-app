@@ -20,7 +20,6 @@ class PersonalCenter extends StatefulWidget {
 
 class _PersonalCenterState extends State<PersonalCenter> {
   String userName = ''; //用户名
-  String userId = ''; //用户id
   List classify = ['历史台账','发布任务','待办任务','已办任务','审核问题'];//分类
   List commonClassify = ['历史台账','待办任务','已办任务'];//普通用户分类分类
   bool manager = false;//当前账号是否为项目经理
@@ -68,7 +67,7 @@ class _PersonalCenterState extends State<PersonalCenter> {
               classify: manager ? classify : commonClassify
             );
           }),
-        )
+        ),
       ],
     );
   }

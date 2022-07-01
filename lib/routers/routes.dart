@@ -39,6 +39,8 @@ import 'package:scet_check/page/module_steward/personal/audit_problem.dart';
 import 'package:scet_check/page/module_steward/personal/task/abutment/abutment_from.dart';
 import 'package:scet_check/page/module_steward/personal/task/abutment/abutment_list.dart';
 import 'package:scet_check/page/module_steward/personal/task/abutment/abutment_task.dart';
+import 'package:scet_check/page/module_steward/personal/task/abutment/from_select.dart';
+import 'package:scet_check/page/module_steward/personal/task/abutment/task_guide.dart';
 import 'package:scet_check/page/module_steward/personal/task/back_task_details.dart';
 import 'package:scet_check/page/module_steward/personal/task/backlog_task.dart';
 import 'package:scet_check/page/module_steward/personal/task/abutment/check_task.dart';
@@ -89,8 +91,10 @@ final routes = {
   '/auditProblem': (context,{arguments}) =>  AuditProblem(arguments:arguments), //清单问题审核
 
   '/abutmentList': (context,{arguments}) =>  AbutmentList(arguments:arguments), //对接任务列表页面
+  '/fromSelect': (context,{arguments}) =>  FromSelect(arguments:arguments), //对接任务关联表单选择页面
   '/abutmentTask': (context,{arguments}) =>  AbutmentTask(arguments:arguments), //对接任务详情页面
   '/abutmentFrom': (context,{arguments}) =>  AbutmentFrom(arguments:arguments), //对接任务动态表单详情
+  '/taskGuide': (context,{arguments}) =>  TaskGuide(arguments:arguments), //对接任务指引页面
   '/abutmentEnterpriseDetails': (context,{arguments}) =>  AbutmentEnterpriseDetails(arguments:arguments), //对接一企一档信息
 
 ///企业端

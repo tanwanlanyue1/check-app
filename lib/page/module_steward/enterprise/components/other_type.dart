@@ -3,7 +3,8 @@ import 'package:scet_check/utils/screen/screen.dart';
 
 /// 其他信息
 class OtherType extends StatefulWidget {
-  const OtherType({Key? key}) : super(key: key);
+  final String companyId;
+  const OtherType({Key? key,required this.companyId}) : super(key: key);
 
   @override
   _OtherTypeState createState() => _OtherTypeState();
@@ -792,6 +793,12 @@ class _OtherTypeState extends State<OtherType> {
     },
   ];
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    companyId = widget.companyId;
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return GridView.builder(

@@ -1,14 +1,13 @@
 import 'dart:convert';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/down_input.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
+import 'package:scet_check/components/generalduty/upload_file.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
-import 'package:scet_check/components/pertinence/companyFile/components/file_system.dart';
 import 'package:scet_check/model/provider/provider_home.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/utils/screen/screen.dart';
@@ -32,7 +31,6 @@ class BackTaskDetails extends StatefulWidget {
 class _BackTaskDetailsState extends State<BackTaskDetails> {
   List company = []; //选中的企业
   String companyName = ''; //企业名
-  String fileName = ''; //企业id
   List imgDetails = []; //现场照片
   List taskFiles = []; //附件文件
   String checkName = ''; //检查人员
@@ -40,7 +38,6 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
   String taskDetail = ''; //任务详情
   String userId = ''; //用户id
   Uuid uuid = Uuid(); //uuid
-  String _uuid = '';//清单id
   List typeList = [
     {'name':'现场检查','id':1},
     {'name':'表格填报','id':2},
@@ -48,29 +45,6 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
   ];//问题类型列表
   int taskType = 1;//任务类型
   HomeModel? _homeModel; //全局的选择企业
-
-  /// 上传文件
-  /// result: 文件数组
-  /// 处理上传图片返回回来的格式，将\转化为/
-  void _upload() async {
-    _uuid = uuid.v4();
-    String url = Api.baseUrlApp + 'file/upload?savePath=任务/'+ _uuid;
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: true,
-      type: FileType.any,
-    );
-    if (result != null) {
-      var isUp = await FileSystem.upload(result, url);
-      if(isUp?[0]!=false){
-        for(var i = 0; i < (isUp?.length ?? 0);i++){
-          fileName = isUp?[0]['msg']['data']['name'];
-          String? fileUrl = (isUp![i]['msg']['data']['dir']+'/'+isUp[i]['msg']['data']['base']).replaceAll('\\', '/');
-          taskFiles.add(fileUrl);
-        }
-      }
-      setState(() {});
-    }
-  }
 
   /// 发布任务
   /// type: 1,现场检查;2,表格填报;3,专项检查
@@ -107,7 +81,6 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
   @override
   void initState() {
     // TODO: implement initState
-    _uuid = uuid.v4();
     userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'].toString();
     super.initState();
   }
@@ -170,18 +143,6 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
               },
             ),
           ),
-          // FormCheck.rowItem(
-          //   title: '任务主题:',
-          //   titleColor: Color(0XFF323232),
-          //   alignStart: true,
-          //   child: FormCheck.inputWidget(
-          //       hintText: '请输入任务主题',
-          //       lines: 1,
-          //       onChanged: (val){
-          //         setState(() {});
-          //       }
-          //   ),
-          // ),
           FormCheck.rowItem(
             title: '任务内容:',
             titleColor: Color(0XFF323232),
@@ -228,7 +189,7 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
               imgList: imgDetails,
               closeIcon: true,
               uuid: uuid.v4(),
-              url: Api.baseUrlApp + 'file/upload?savePath=任务/',
+              url: Api.url['uploadImg'] + '任务/',
               callback: (List? data) {
                 imgDetails = data ?? [];
                 setState(() {});
@@ -238,13 +199,25 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
           FormCheck.rowItem(
             title: '附件:',
             titleColor: Color(0XFF323232),
-            child: GestureDetector(
-              child: Text(fileName.isEmpty ? "添加附件" : fileName,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
-              onTap: (){
-                _upload();
+            child: UploadFile(
+              url: '任务/',
+              fileList: taskFiles,
+              callback: (val){
+                taskFiles = val;
+                setState(() {});
               },
             ),
           ),
+          // FormCheck.rowItem(
+          //   title: '附件:',
+          //   titleColor: Color(0XFF323232),
+          //   child: GestureDetector(
+          //     child: Text(fileName.isEmpty ? "添加附件" : fileName,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+          //     onTap: (){
+          //       _upload();
+          //     },
+          //   ),
+          // ),
         ],
       ),
     );
@@ -273,6 +246,9 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
           if(res == true && i == company.length-1){
             Navigator.pop(context);
           }
+        }
+        if(company.isEmpty){
+          ToastWidget.showToastMsg('请选择要发布的企业');
         }
       },
     );

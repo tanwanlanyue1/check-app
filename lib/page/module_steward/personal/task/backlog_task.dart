@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/no_data.dart';
+import 'package:scet_check/utils/easyRefresh/easy_refreshs.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
@@ -21,12 +23,16 @@ class BacklogTask extends StatefulWidget {
 }
 
 class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStateMixin{
+  final EasyRefreshController _controller = EasyRefreshController(); // 上拉组件控制器
   List tabBar = ["现场检查","表格填报",'其他专项','管家平台'];//tab列表
   late TabController _tabController; //TabBar控制器
   String userId = ''; //用户id
   String checkPeople = '';//排查人员
   List taskList = [];//任务列表
   int type = 1;//现场检查
+  bool _enableLoad = true; // 是否开启加载
+  int _pageNo = 1; // 当前页码
+  int _total = 10; // 总条数
 
   @override
   void initState() {
@@ -36,28 +42,98 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
     _tabController.addListener(() {
       type = _tabController.index+1;
       if(type != 4){
-        _getTaskList();
+        _getTaskList(
+            type: typeStatusEnum.onRefresh,
+            data: {
+              'page': 1,
+              'size': 10,
+              "check_user_list": {"id":userId},
+              "status":1,
+              "type":type
+            }
+        );
       }
     });
-    _getTaskList();
+    _getTaskList(
+        type: typeStatusEnum.onRefresh,
+        data: {
+          'page': 1,
+          'size': 10,
+          "check_user_list": {"id":userId},
+          "status":1,
+          "type":type
+        }
+    );
     super.initState();
   }
+
   /// 查询任务列表
+  ///page:第几页
+  ///size:每页多大
   /// status 1：待办 2：已办
   /// type 1:现场检查 2:表格填报
-  void _getTaskList() async {
-    var response = await Request().get(
-      Api.url['taskList'],
-      data: {
-        "check_user_list": {"id":userId},
-        "status":1,
-        "type":type
-    },
-    );
+  _getTaskList({typeStatusEnum? type,Map<String,dynamic>? data}) async {
+    var response = await Request().get(Api.url['taskList'],data: data);
     if(response['statusCode'] == 200) {
-      taskList = response['data']['list'];
-      setState(() {});
+      Map _data = response['data'];
+      _pageNo++;
+      if (mounted) {
+        if(type == typeStatusEnum.onRefresh) {
+          // 下拉刷新
+          _onRefresh(data: _data['list'], total: _data['total']);
+        }else if(type == typeStatusEnum.onLoad) {
+          // 上拉加载
+          _onLoad(data: _data['list'], total: _data['total']);
+        }
+      }
     }
+  }
+
+  /// 下拉刷新
+  /// 判断是否是企业端,剔除掉非企业端看的问题
+  _onRefresh({required List data,required int total}) {
+    _total = total;
+    taskList = data;
+    _pageNo = 2;
+    _enableLoad = true;
+    _controller.resetLoadState();
+    _controller.finishRefresh();
+    if(taskList.length >= total){
+      _enableLoad = false;
+      // _controller.finishLoad(noMore: true);
+    }
+    setState(() {});
+  }
+
+  /// 上拉加载
+  /// 当前数据等于总数据，关闭上拉加载
+  _onLoad({required List data,required int total}) {
+    _total = total;
+    taskList.addAll(data);
+    _controller.finishLoadCallBack!();
+    if(taskList.length >= total){
+      _enableLoad = false;
+      _controller.finishLoad(noMore: true);
+    }
+    setState(() {});
+  }
+
+  @override
+  void didUpdateWidget(covariant BacklogTask oldWidget) {
+    // TODO: implement didUpdateWidget
+    if(type != 4){
+      _getTaskList(
+          type: typeStatusEnum.onRefresh,
+          data: {
+            'page': 1,
+            'size': 10,
+            "check_user_list": {"id":userId},
+            "status":1,
+            "type":type
+          }
+      );
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -93,7 +169,16 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
                     indicatorWeight: px(4),
                     onTap: (val){
                       type = val;
-                      _getTaskList();
+                      _getTaskList(
+                          type: typeStatusEnum.onRefresh,
+                          data: {
+                            'page': 1,
+                            'size': 10,
+                            "check_user_list": {"id":userId},
+                            "status":1,
+                            "type":type
+                          }
+                      );
                     },
                     tabs: tabBar.map((item) {
                       return Tab(text: '$item');
@@ -118,8 +203,42 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
     );
   }
 
+  ///任务列表
   Widget itemTask(){
-    return taskList.isNotEmpty ?
+    return EasyRefresh(
+      enableControlFinishRefresh: true,
+      enableControlFinishLoad: true,
+      topBouncing: true,
+      controller: _controller,
+      taskIndependence: false,
+      footer: footers(),
+      header: headers(),
+      onLoad: _enableLoad ? () async{
+        _getTaskList(
+            type: typeStatusEnum.onLoad,
+            data: {
+              'page': _pageNo,
+              'size': 10,
+              "check_user_list": {"id":userId},
+              "status":1,
+              "type":type
+            }
+        );
+      }: null,
+      onRefresh: () async {
+        _pageNo = 1;
+        _getTaskList(
+            type: typeStatusEnum.onRefresh,
+            data: {
+              'page': 1,
+              'size': 10,
+              "check_user_list": {"id":userId},
+              "status":1,
+              "type":type
+            }
+        );
+      },
+      child: taskList.isNotEmpty ?
       ListView(
         padding: EdgeInsets.only(top: 0),
         children: List.generate(taskList.length, (i){
@@ -133,11 +252,13 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
               }
           );
         }),
-      ):Column(
+      ):
+      Column(
         children: [
           NoData(timeType: true, state: '未获取到数据!')
         ],
-      );
+      ),
+    );
   }
 
 }

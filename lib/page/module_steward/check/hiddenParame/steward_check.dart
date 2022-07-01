@@ -26,6 +26,7 @@ class StewardCheck extends StatefulWidget {
 class _StewardCheckState extends State<StewardCheck>{
   bool tidy = true; //展开/收起
   bool sing = false; //展开/收起
+  bool reviewTidy = false; // 复查问题收起展示
   Map repertoire = {};//清单
   Map argumentMap = {};//传递的参数
   List problemList = [];//企业下的问题
@@ -64,7 +65,7 @@ class _StewardCheckState extends State<StewardCheck>{
         repertoire['checkType'] == 2 ? '专项检查' :
         repertoire['checkType'] == 3 ? '现场检查':
         repertoire['checkType'] == 4 ? '表格填报': '其他类型';
-        subStatus = repertoire['status'] == 6 ? true : false; //状态为6，可以提交问题、修改
+        subStatus = (repertoire['status'] == 6 || repertoire['status'] == 5) ? true : false; //状态为6，可以提交问题、修改,5-审核未通过
         task = repertoire['latitude'] == null ? true : false; //判断是否从任务过来
         _problemSearch(
             data: {
@@ -109,7 +110,7 @@ class _StewardCheckState extends State<StewardCheck>{
     if(response['statusCode'] == 200 && response['data'] != null) {
       setState(() {
         problemList = response['data']['list'];
-        for(var i=0; i<problemList.length; i++){
+        for(var i = 0; i < problemList.length; i++){
           if(problemList[i]['status'] != 3){
             pigeon = false;
           }else{
@@ -162,6 +163,16 @@ class _StewardCheckState extends State<StewardCheck>{
     }
   }
 
+  /// 删除清单
+  void _deleteInventory() async {
+    var response = await Request().delete(Api.url['inventory']+'/$uuid',);
+    if(response['statusCode'] == 200) {
+      ToastWidget.showToastMsg('删除成功');
+      Navigator.pop(context);
+      setState(() {});
+    }
+  }
+
     @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -171,6 +182,18 @@ class _StewardCheckState extends State<StewardCheck>{
           TaskCompon.topTitle(
               title: '隐患排查',
               left: true,
+              child: subStatus ?
+              InkWell(
+                child: Text('删除清单'),
+                onTap: (){
+                  ToastWidget.showDialog(
+                    msg: '是否确定删除当前清单',
+                    ok: (){
+                      _deleteInventory();
+                    }
+                  );
+                },
+              ) : Container(),
               callBack: (){
                 Navigator.pop(context);
               }
@@ -405,7 +428,7 @@ class _StewardCheckState extends State<StewardCheck>{
                       arguments: {'check':true,'problemId':problemList[i]['id'],'inventoryStatus': repertoire['status'],}
                   );
                   if(res == null){
-                    _getProblem();
+                    _getCompany();
                   }
                 }
             )),
@@ -426,21 +449,33 @@ class _StewardCheckState extends State<StewardCheck>{
             margin: EdgeInsets.only(top: px(20),left: px(32),),
             height: px(55),
             child: FormCheck.formTitle(
-              '复查问题',
+                '复查问题',
+                showUp: true,
+                tidy: reviewTidy,
+                onTaps: (){
+                  reviewTidy = !reviewTidy;
+                  setState(() {});
+                }
             ),
           ),
-          Column(
-            children: List.generate(review.length, (i) => RectifyComponents.rectifyRow(
-                company: review[i],
-                i: i,
-                callBack:() async {
-                  var res =  await Navigator.pushNamed(context, '/fillAbarbeitung',arguments: {'id':review[i]['id'],'review':true});
-                  if(res == true){
-                    _getCompany();
+          Visibility(
+            visible: !reviewTidy,
+            child: Column(
+              children: List.generate(review.length, (i) => RectifyComponents.rectifyRow(
+                  company: review[i],
+                  i: i,
+                  callBack:() async {
+                    var res = await Navigator.pushNamed(context, '/rectificationProblem',
+                        arguments: {'check':true,'problemId':problemList[i]['id'],'inventoryStatus': repertoire['status'],}
+                    );
+                    if(res == null){
+                      _getCompany();
+                    }
                   }
-                }
-            )),
+              )),
+            ),
           ),
+
         ],
       ),
     );
@@ -514,15 +549,19 @@ class _StewardCheckState extends State<StewardCheck>{
               ),
             ),
             onTap: (){
-              if(repertoire['status'] == 6 || repertoire['status'] == 5){
-                _setInventory(
-                    {
-                      'id':uuid,
-                      'status': 3,
-                    }
-                );
+              if(problemList.isNotEmpty){
+                if(repertoire['status'] == 6 || repertoire['status'] == 5){
+                  _setInventory(
+                      {
+                        'id':uuid,
+                        'status': 3,
+                      }
+                  );
+                }else{
+                  ToastWidget.showToastMsg('当前状态不可提交');
+                }
               }else{
-                ToastWidget.showToastMsg('当前状态不可提交');
+                ToastWidget.showToastMsg('暂无问题可以提交');
               }
               setState(() {});
             },

@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'dart:developer';
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
-import 'package:scet_check/components/generalduty/date_range.dart';
 import 'package:scet_check/components/generalduty/down_input.dart';
+import 'package:scet_check/components/generalduty/loading.dart';
 import 'package:scet_check/components/generalduty/time_select.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
@@ -24,11 +24,10 @@ class AbutmentFrom extends StatefulWidget {
 }
 
 class _AbutmentFromState extends State<AbutmentFrom> {
-  Map allfield = {};//动态表单
+  Map allField = {};//动态表单
   List fieldList = [];//动态表单
   List checkList = [];//多选数组
   List checkData = [];//多选数组数据
-  List imgDetails = [];//图片数据
   Map data = {}; //动态表单请求
   Map fieldMap = {}; //单选选中
   DateTime startTime = DateTime.now();//开始期限
@@ -37,6 +36,11 @@ class _AbutmentFromState extends State<AbutmentFrom> {
   String taskId = '';//任务id
   bool empty = true;
   bool backlog = true;//待办，已办
+  bool problem = false;//问题分析类型
+  List problemBig = [];//问题大类类型
+  List problemSmall = [];//问题小类类型
+  Map companyList = {};//企业列表
+  int? uuid;//修改列表用的id
 
   ///动态表单
   ///1:文本框,2:文本域, 3:数字4:单选框 5复选框 6:时间选择7:图片
@@ -45,14 +49,16 @@ class _AbutmentFromState extends State<AbutmentFrom> {
       case 1:
         return FormCheck.rowItem(
             title: "${fieldList[i]['fieldName']}:",
-            child: (backlog && data.isNotEmpty) ?
-                Text('${data[fieldList[i]['fieldValue']]}',style: TextStyle(
+            child: backlog ?
+                Text('${data[fieldList[i]['fieldValue']] ?? '/'}',style: TextStyle(
                     color: Color(0XFF323232),
                     fontSize: sp(28.0),
                     fontWeight: FontWeight.w500
                 )):
             FormCheck.inputWidget(
-                hintText: data.isEmpty ? '请输入${fieldList[i]['fieldName']}' : data[fieldList[i]['fieldValue']],
+                hintText: data.isEmpty ?
+                '请输入${fieldList[i]['fieldName']}' :
+                (data[fieldList[i]['fieldValue']] ?? '请输入${fieldList[i]['fieldName']}'),
                 lines: 1,
                 onChanged: (val){
                   if(data.isEmpty){
@@ -67,13 +73,15 @@ class _AbutmentFromState extends State<AbutmentFrom> {
         return FormCheck.rowItem(
             alignStart: true,
             title: "${fieldList[i]['fieldName']}:",
-            child: (backlog && data.isNotEmpty)?
-            Text('${data[fieldList[i]['fieldValue']]}',style: TextStyle(
+            child: backlog ?
+            Text('${data[fieldList[i]['fieldValue']] ?? '/'}',style: TextStyle(
                 color: Color(0XFF323232),
                 fontSize: sp(28.0),
                 fontWeight: FontWeight.w500
             )): FormCheck.inputWidget(
-                hintText: data.isEmpty ? '请输入${fieldList[i]['fieldName']}' : data[fieldList[i]['fieldValue']],
+                hintText: data.isEmpty ?
+                '请输入${fieldList[i]['fieldName']}' :
+                (data[fieldList[i]['fieldValue']] ?? '请输入${fieldList[i]['fieldName']}'),
                 lines: 4,
                 onChanged: (val){
                   if(data.isEmpty){
@@ -87,13 +95,15 @@ class _AbutmentFromState extends State<AbutmentFrom> {
       case 3:
         return FormCheck.rowItem(
             title: "${fieldList[i]['fieldName']}:",
-            child: (backlog && data.isNotEmpty)?
-            Text('${data[fieldList[i]['fieldValue']]}',style: TextStyle(
+            child: backlog ?
+            Text('${data[fieldList[i]['fieldValue']] ?? '/'}',style: TextStyle(
                 color: Color(0XFF323232),
                 fontSize: sp(28.0),
                 fontWeight: FontWeight.w500
             )): FormCheck.inputWidget(
-                hintText: data.isEmpty ? '请输入${fieldList[i]['fieldName']}' : data[fieldList[i]['fieldValue']],
+                hintText: data.isEmpty ?
+                '请输入${fieldList[i]['fieldName']}' :
+                (data[fieldList[i]['fieldValue']] ?? '请输入${fieldList[i]['fieldName']}'),
                 keyboardType: TextInputType.number,
                 onChanged: (val){
                   if(data.isEmpty){
@@ -105,23 +115,44 @@ class _AbutmentFromState extends State<AbutmentFrom> {
                 }
             ));
       case 4:
+        //backlog 表示已经提交，直接展示数据就好
+        // issueMainType 代表问题大类的类型，数据需要查询
+        //issueSubType 问题小类字段，根据问题大类的id查询
         return FormCheck.rowItem(
           title: "${fieldList[i]['fieldName']}:",
-          child: (backlog && data.isNotEmpty)?
-          Text('${data[fieldList[i]['fieldValue']]}',style: TextStyle(
+          child: backlog ?
+          Text(radioVal(i),style: TextStyle(
               color: Color(0XFF323232),
               fontSize: sp(28.0),
               fontWeight: FontWeight.w500
-          )): DownInput(
-            data: fieldList[i]['contentList'],
-            value: data.isEmpty ? fieldMap['fieldContent'] : data[fieldList[i]['fieldValue']]?['fieldContent'],
-            dataKey: 'fieldContent',
+          )):
+          DownInput(
+            data: fieldList[i]['fieldValue'] == 'issueMainType' ? problemBig :
+            fieldList[i]['fieldValue'] == 'issueSubType' ? problemSmall :
+            fieldList[i]['contentList'],
+            value: radioVal(i),
+            //contentList 单选所需的数组字段
+            dataKey: (fieldList[i]['contentList']?.length ?? 0) > 0 ? 'fieldContent' : 'typeName',
             callback: (val){
               fieldMap = val;
-              if(data.isEmpty){
-                data.addAll({"${fieldList[i]['fieldValue']}":fieldMap});
+              //大类小类需要typeCode,typeName
+              if(fieldList[i]['fieldValue'] == 'issueMainType' || fieldList[i]['fieldValue'] == 'issueSubType'){
+                if(data.isEmpty){
+                  data.addAll({"${fieldList[i]['fieldValue']}":{'typeCode':fieldMap['typeCode'],'typeName':fieldMap['typeName']}});
+                }else{
+                  data[fieldList[i]['fieldValue']] = {'typeCode':fieldMap['typeCode'],'typeName':fieldMap['typeName']};
+                }
               }else{
-                data[fieldList[i]['fieldValue']] = val;
+                if(data.isEmpty){
+                  data.addAll({"${fieldList[i]['fieldValue']}":fieldMap});
+                }else{
+                  data[fieldList[i]['fieldValue']] = val;
+                }
+              }
+              //请求问题小类列表 并清空之前的小类选项
+              if(fieldList[i]['fieldValue'] == 'issueMainType'){
+                data.remove('issueSubType');
+                _getSubType(val['id']);
               }
               setState(() {});
             },
@@ -143,7 +174,12 @@ class _AbutmentFromState extends State<AbutmentFrom> {
       case 6:
         return FormCheck.rowItem(
           title: "${fieldList[i]['fieldName']}:",
-          child: Container(
+          child: backlog ?
+          Text('${data[fieldList[i]['fieldValue']] ?? '/'}',style: TextStyle(
+              color: Color(0XFF323232),
+              fontSize: sp(28.0),
+              fontWeight: FontWeight.w500
+          )):  Container(
             height: px(72),
             width: px(580),
             color: Colors.white,
@@ -166,17 +202,16 @@ class _AbutmentFromState extends State<AbutmentFrom> {
         return FormCheck.rowItem(
           title: "${fieldList[i]['fieldName']}:",
           child: UploadImage(
-            imgList: data.isNotEmpty ?
-            (data[fieldList[i]['fieldValue']] ?? []) :
-            imgDetails,
-            closeIcon: (!backlog && data.isEmpty) ? true : false,
+            imgList: data.isEmpty || data[fieldList[i]['fieldValue']] == null ?
+            [] :
+            data[fieldList[i]['fieldValue']],
+            closeIcon: backlog ? false : true,
             abutment: true,
             callback: (List? img) {
-              imgDetails = img ?? [];
               if(data.isEmpty){
-                data.addAll({"${fieldList[i]['fieldValue']}":img});
+                data.addAll({"${fieldList[i]['fieldValue']}":img ?? []});
               }else{
-                data[fieldList[i]['fieldValue']] = img;
+                data[fieldList[i]['fieldValue']] = img ?? [];
               }
               setState(() {});
             },
@@ -188,19 +223,61 @@ class _AbutmentFromState extends State<AbutmentFrom> {
     }
   }
 
+  ///单选值
+  ///backlog 表示已经提交，直接展示数据就好
+  /// issueMainType 代表问题大类的类型，数据需要查询
+  ///issueSubType 问题小类字段，根据问题大类的id查询
+  String radioVal(int i){
+    if(data.isEmpty){
+      return backlog ? '/':'请选择${fieldList[i]['fieldName']}';
+    }else{
+      if(data[fieldList[i]['fieldValue']] != null){
+        return fieldList[i]['fieldValue'] == 'issueMainType' || fieldList[i]['fieldValue'] == 'issueSubType'?
+        (data[fieldList[i]['fieldValue']]?['typeName'] ?? ''):
+        data[fieldList[i]['fieldValue']]?['fieldContent'];
+      }else{
+        return '请选择${fieldList[i]['fieldName']}';
+      }
+    }
+  }
   ///复选框id
+  ///存放已被选中的每一项
   void fieldData(List fieldDatas){
     for(var i = 0; i < fieldDatas.length; i++){
       checkList.add(fieldDatas[i]['id']);
     }
   }
-  /// 缓存事件
-  void saveInfo({required String taskId,required int fromId,Map? datas}) {
-    getform.add({'taskId':taskId,'fromId':fromId,'data':datas});
-    StorageUtil().setJSON('taskFrom', getform);
-    setState(() {});
+  /// 获取表单问题大类列表
+  void _getMainType() async {
+    var response = await Request().get(Api.url['mainType']);
+    if(response?['errCode'] == '10000') {
+      problemBig = response['result'];
+      setState(() {});
+    }else if(response?['errCode'] == '500') {
+      Navigator.pop(context);
+      ToastWidget.showToastMsg('查看详情失败，请重试！');
+    }
   }
-  /// 提交对接任务
+
+  /// 获取表单问题小类列表
+  void _getSubType(int id) async {
+    var response = await Request().get(Api.url['subType']+'$id/subType');
+    if(response?['errCode'] == '10000') {
+      problemSmall = response['result'][0]['children'];
+      setState(() {});
+    }else if(response?['errCode'] == '500') {
+      Navigator.pop(context);
+      ToastWidget.showToastMsg('查看详情失败，请重试！');
+    }
+  }
+
+  /// 提交动态表单
+  /// formId 表单id
+  /// taskId 任务id
+  /// companyId 企业id
+  /// companyName 企业名称
+  /// issueFormJsonStr 表单填报数据
+  /// requiredFlag 是否是必填字段
   void _getTask() async {
     for(var i = 0; i < fieldList.length; i++){
       if(fieldList[i]['requiredFlag']){
@@ -211,27 +288,36 @@ class _AbutmentFromState extends State<AbutmentFrom> {
       }
     }
     if(empty){
-      var response = await Request().post(
-        Api.url['issueSave'],
-        data: [
-          {
-            'formId':allfield['id'],
-            'taskId':taskId,
-            'issueFormJsonStr': jsonEncode(data),
+      BotToast.showCustomLoading(
+          ignoreContentClick: true,
+          toastBuilder: (cancelFunc) {
+            return Loading(cancelFunc: cancelFunc);
           }
-        ],
+      );
+      var dataForm = uuid == null ? {
+        'formId':allField['id'],
+        'taskId':taskId,
+        'companyId':companyList['id'],
+        'companyName':companyList['name'],
+        'issueFormJsonStr': jsonEncode(data),
+      }:{
+        'id':uuid,
+        'formId':allField['id'],
+        'taskId':taskId,
+        'companyId':companyList['id'],
+        'companyName':companyList['name'],
+        'issueFormJsonStr': jsonEncode(data),
+      };
+      var response = await Request().post(
+        Api.url['saveForm'],
+        data:dataForm,
       );
       if(response['errCode'] == '10000') {
         ToastWidget.showToastMsg('提交成功');
-        getform = StorageUtil().getJSON('taskFrom') ?? [];
-        int index = getform.indexWhere((item) => item['taskId'] == taskId && item['fromId'] == allfield['id']);
-        if(index == -1){
-          saveInfo(taskId: taskId,fromId: allfield['id'],datas: data);
-        }else{
-          getform[index]['data'] = data;
-          StorageUtil().setJSON('taskFrom', getform);
-        }
-        Navigator.pop(context);
+        Navigator.pop(context,true);
+        BotToast.cleanAll();
+      }else{
+        BotToast.cleanAll();
       }
     }
   }
@@ -242,15 +328,11 @@ class _AbutmentFromState extends State<AbutmentFrom> {
     super.initState();
     taskId = widget.arguments?['taskId'] ?? '';
     backlog = widget.arguments?['backlog'] ?? false;
-    _getKeeper(id: widget.arguments?['allfield']['id']);
-    if(widget.arguments?['content'] != null){
-      data = jsonDecode(widget.arguments?['content']);
-    }else{
-      getform = StorageUtil().getJSON('taskFrom') ?? [];
-      int index = getform.indexWhere((item) => item['taskId'] == taskId && item['fromId'] == widget.arguments?['allfield']['id']);
-      if(index != -1){
-        data = getform[index]['data'];
-      }
+    companyList = widget.arguments?['companyList'] ?? {};
+    _getKeeper(id: widget.arguments?['formId']);
+    if(widget.arguments?['content'] != null && widget.arguments?['content'].length > 0){
+      data = jsonDecode(widget.arguments?['content']['content']);
+      uuid = widget.arguments?['content']['id'];
     }
   }
 
@@ -258,8 +340,12 @@ class _AbutmentFromState extends State<AbutmentFrom> {
   void _getKeeper({required int id}) async {
     var response = await Request().get(Api.url['housekeeper']+'?id=$id',);
     if(response['errCode'] == '10000') {
-      allfield = response['result'];
-      fieldList = allfield['fieldList'] ?? [];
+      allField = response['result'];
+      fieldList = allField['fieldList'] ?? [];
+      problem = allField['formType'] == '3' ? true : false;
+      if(problem){
+        _getMainType();
+      }
       setState(() {});
     }
   }
@@ -271,7 +357,7 @@ class _AbutmentFromState extends State<AbutmentFrom> {
       body: Column(
         children: [
           TaskCompon.topTitle(
-              title: '表单详情',
+              title: '${allField['formTypeStr'] ?? '表单详情'}',
               left: true,
               callBack: (){
                 Navigator.pop(context);
@@ -279,7 +365,7 @@ class _AbutmentFromState extends State<AbutmentFrom> {
           ),
           Expanded(
             child: Container(
-              margin: EdgeInsets.only(left: px(24),right: px(24),top: px(24)),
+              margin: EdgeInsets.only(left: px(24),right: px(24)),
               padding: EdgeInsets.only(left: px(12),right: px(12),bottom: px(24)),
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -314,17 +400,19 @@ class _AbutmentFromState extends State<AbutmentFrom> {
             child: Checkbox(
                 value: checkList.contains(contentList[index]['id']),
                 onChanged: (bool? onTops){
-                  if(checkList.contains(contentList[index]['id']) == false){
-                    checkList.add(contentList[index]['id']);
-                    checkData.add(contentList[index]);
-                  }else{
-                    checkList.remove(contentList[index]['id']);
-                    checkData.remove(contentList[index]);
-                  }
-                  if(data.isEmpty){
-                    data.addAll({"${fieldList[i]['fieldValue']}":checkData});
-                  }else{
-                    data[fieldList[i]['fieldValue']] = checkData;
+                  if(!backlog){ // 判断是否允许点击更改
+                    if(checkList.contains(contentList[index]['id']) == false){
+                      checkList.add(contentList[index]['id']);// 选中这一项id，用来判断是否选中
+                      checkData.add(contentList[index]);// 存放这一项数据，用来上传
+                    }else{
+                      checkList.remove(contentList[index]['id']);
+                      checkData.remove(contentList[index]);
+                    }
+                    if(data.isEmpty){
+                      data.addAll({"${fieldList[i]['fieldValue']}":checkData});
+                    }else{
+                      data[fieldList[i]['fieldValue']] = checkData;
+                    }
                   }
                   setState(() {});
                 })
@@ -335,17 +423,19 @@ class _AbutmentFromState extends State<AbutmentFrom> {
             style: TextStyle(fontSize: sp(28)),
           ),
           onTap: (){
-            if(checkList.contains(contentList[index]['id']) == false){
-              checkList.add(contentList[index]['id']);
-              checkData.add(contentList[index]);
-            }else{
-              checkList.remove(contentList[index]['id']);
-              checkData.remove(contentList[index]);
-            }
-            if(data.isEmpty){
-              data.addAll({"${fieldList[i]['fieldValue']}":checkData});
-            }else{
-              data[fieldList[i]['fieldValue']] = checkData;
+            if(!backlog){
+              if(checkList.contains(contentList[index]['id']) == false){
+                checkList.add(contentList[index]['id']);
+                checkData.add(contentList[index]);
+              }else{
+                checkList.remove(contentList[index]['id']);
+                checkData.remove(contentList[index]);
+              }
+              if(data.isEmpty){
+                data.addAll({"${fieldList[i]['fieldValue']}":checkData});
+              }else{
+                data[fieldList[i]['fieldValue']] = checkData;
+              }
             }
             setState(() {});
           },
@@ -353,39 +443,37 @@ class _AbutmentFromState extends State<AbutmentFrom> {
       ],
     );
   }
-  ///按钮 widget.arguments?['content'] == null
+
+  ///按钮
   Widget revocation(){
-    return Visibility(
-      visible: widget.arguments?['content'] == null,
-      child: Container(
-        height: px(88),
-        margin: EdgeInsets.only(top: px(24)),
-        color: Colors.transparent,
-        alignment: Alignment.center,
-        child: GestureDetector(
-          child: Container(
-            width: px(240),
-            height: px(56),
-            alignment: Alignment.center,
-            margin: EdgeInsets.only(left: px(40)),
-            child: Text(
-              '保存',
-              style: TextStyle(
-                  fontSize: sp(24),
-                  fontFamily: "M",
-                  color: Color(0xff4D7FFF)),
-            ),
-            decoration: BoxDecoration(
-              border: Border.all(width: px(2),color: Color(0xff4D7FFF)),
-              borderRadius: BorderRadius.all(Radius.circular(px(28))),
-            ),
+    return Container(
+      height: px(88),
+      margin: EdgeInsets.only(top: px(24)),
+      color: Colors.transparent,
+      alignment: Alignment.center,
+      child: GestureDetector(
+        child: Container(
+          width: px(240),
+          height: px(56),
+          alignment: Alignment.center,
+          margin: EdgeInsets.only(left: px(40)),
+          child: Text(
+            '保存',
+            style: TextStyle(
+                fontSize: sp(24),
+                fontFamily: "M",
+                color: Color(0xff4D7FFF)),
           ),
-          onTap: () {
-            empty = true;
-            _getTask();
-            setState(() {});
-          },
+          decoration: BoxDecoration(
+            border: Border.all(width: px(2),color: Color(0xff4D7FFF)),
+            borderRadius: BorderRadius.all(Radius.circular(px(28))),
+          ),
         ),
+        onTap: () {
+          empty = true;
+          _getTask();
+          setState(() {});
+        },
       ),
     );
   }

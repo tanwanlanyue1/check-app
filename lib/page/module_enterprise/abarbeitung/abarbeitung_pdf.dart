@@ -5,6 +5,7 @@ import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/components/pertinence/companyFile/components/file_system.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/time/utc_tolocal.dart';
 import 'package:uuid/uuid.dart';
 
 ///上传整改报告
@@ -38,7 +39,7 @@ class AbarbeitungPdf extends StatefulWidget {
 class _AbarbeitungPdfState extends State<AbarbeitungPdf> {
 
   final List<dynamic> _imagesList = []; // 图片数组
-  String _url = Api.url['uploadImg'];//url
+  String _url = Api.url['uploadImg']+'清单/';//url
   String _uuid = '';//uuid
   String inventoryId = '';//uuid
   String nameReports = '';//报告名称
@@ -48,7 +49,7 @@ class _AbarbeitungPdfState extends State<AbarbeitungPdf> {
   /// result: 文件数组
   /// 处理上传图片返回回来的格式，将\转化为/
   void _upload() async {
-    String url = _url + _uuid;
+    String url = _url + utcTransition() + _uuid;
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
       type: FileType.custom,
@@ -95,7 +96,7 @@ class _AbarbeitungPdfState extends State<AbarbeitungPdf> {
   void initState() {
     // TODO: implement initState
     inventoryId = widget.inventoryId ?? '';
-    _url = widget.url ?? Api.url['uploadImg'];
+    _url = widget.url ?? _url;
     _uuid = uuid.v4();
     super.initState();
   }
@@ -104,7 +105,7 @@ class _AbarbeitungPdfState extends State<AbarbeitungPdf> {
   void didUpdateWidget(covariant AbarbeitungPdf oldWidget) {
     // TODO: implement didUpdateWidget
     inventoryId = widget.inventoryId ?? '';
-    _url = widget.url ?? Api.url['uploadImg'];
+    _url = widget.url ?? _url;
     super.didUpdateWidget(oldWidget);
   }
 

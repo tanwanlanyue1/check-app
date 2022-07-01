@@ -70,7 +70,9 @@ class _EnterpriseDetailsState extends State<EnterpriseDetails> {
                 BasicInformation(
                   companyList: companyList,
                 ),///基本信息
-                OtherType(),/// 其他信息
+                OtherType(
+                  companyId: companyId,
+                ),/// 其他信息
                 // BuildingProject(),///建设项目情况
                 // PollutionDischarge(),///排污许可
                 // HazardousWastes(),///危险废物

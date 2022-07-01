@@ -124,9 +124,11 @@ class RectifyComponents{
                    width: px(32),
                    child: Image.asset('lib/assets/icons/check/sandClockEnd.png'),
                  ),
-                 Container(
-                   margin: EdgeInsets.only(left: px(12)),
-                   child: Text(formatTime(company['updatedAt']),style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),),
+                 Expanded(
+                   child: Container(
+                     margin: EdgeInsets.only(left: px(12)),
+                     child: Text(formatTime(company['updatedAt']),style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),overflow: TextOverflow.ellipsis,),
+                   ),
                  ),
                ],
              ),
@@ -258,23 +260,23 @@ class RectifyComponents{
  static Color Colorswitchs(status){
     switch(status){
       case 0 : return Color(0xffFAAA5A);
-      case 1 : return Color(0xffFAAA5A);
+      case 1 : return Color(0xff7196F5);
       case 2 : return Color(0xff7196F5);
       case 3 : return Color(0xff95C758);
-      case 4 : return Color(0xffFAAA5A);
+      case 4 : return Color(0xff7196F5);
       default: return Color(0xffFAAA5A);
     }
   }
 
-  //问题状态
+  //问题状态 状态:1,未整改;2,已整改;3,整改已通过;4,整改未通过;0,未审核;
   static String switchs(status){
     switch(status){
-      case 1 : return '未整改';
-      case 2 : return '整改中';
-      case 3 : return '整改已通过';
+      case 1 : return '整改未提交';
+      case 2 : return '整改已提交';
+      case 3 : return '已归档';
       case 4 : return '整改未通过';
-      case 0 : return '未审核';
-      default: return '未整改';
+      case 0 : return '未提交';
+      default: return '未审核';
     }
   }
 
@@ -284,10 +286,9 @@ class RectifyComponents{
       case 1 : return '整改中';
       case 2 : return '已归档';
       case 3 : return '待审核';
-      case 4 : return '审核已通过';
-      case 5 : return '审核未通过';
+      case 5 : return '未提交';
       case 6 : return '未提交';
-      default: return '未整改';
+      default: return '整改中';
     }
   }
 
@@ -297,10 +298,9 @@ class RectifyComponents{
       case 1 : return Color(0xff7196F5);
       case 2 : return Color(0xff95C758);
       case 3 : return Color(0xffFAAA5A);
-      case 4 : return Color(0xff95C758);
       case 5 : return Color(0xffFAAA5A);
       case 6 : return Color(0xffFAAA5A);
-      default: return Color(0xffFAAA5A);
+      default: return Color(0xff7196F5);
     }
   }
   ///状态
@@ -370,15 +370,20 @@ class RectifyComponents{
   ///trueBack 确认回调
   ///timeBack 日期选择回调
   ///callPop 清空已选择状态
-  ///problemType 问题类型
+  ///typeProblem 问题选择项
+  ///problemType 问题类型数据
+  ///defaultData 问题类型默认数据
   ///typeBack 问题类型回调
+  ///currentDataList 默认选中项
   static Widget endDrawers(context,{
-    required Map typeStatus,
+    required String typeStatus,
     required List status,
+    required List currentDataList,
     required DateTime startTime,
     required DateTime endTime,
     List? problemType,
-    Map? typeProblemStatu,
+    List? defaultData,
+    String? typeProblem,
     Function? callPop,
     Function? callBack,
     Function? timeBack,
@@ -391,23 +396,20 @@ class RectifyComponents{
       padding: EdgeInsets.only(left: px(20), right: px(20),bottom: px(50)),
       child: Column(
         children: [
-          Container(
-            margin: EdgeInsets.only(top: Adapt.padTopH()),
-            child: Row(
-              mainAxisAlignment:MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '问题搜索',
-                  style: TextStyle(fontSize: sp(30),color: Color(0xFF2E2F33),fontFamily:"M"),
-                ),
-                IconButton(
-                  icon: Icon(Icons.clear,color: Colors.red,size: px(39),),
-                  onPressed: (){
-                    callPop?.call();
-                  },
-                )
-              ],
-            ),
+          Row(
+            mainAxisAlignment:MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '问题搜索',
+                style: TextStyle(fontSize: sp(30),color: Color(0xFF2E2F33),fontFamily:"M"),
+              ),
+              IconButton(
+                icon: Icon(Icons.clear,color: Colors.red,size: px(39),),
+                onPressed: (){
+                  Navigator.pop(context);
+                },
+              )
+            ],
           ),
           Row(
             children: [
@@ -421,8 +423,10 @@ class RectifyComponents{
                 child: Container(
                   margin: EdgeInsets.only(left: px(20), right: px(20)),
                   child: DownInput(
-                    value: typeStatus['name'],
+                    value: typeStatus,
                     data: status,
+                    more: true,
+                    currentDataList: currentDataList,
                     callback: (val){
                       callBack?.call(val);
                     },
@@ -446,8 +450,10 @@ class RectifyComponents{
                   child: Container(
                     margin: EdgeInsets.only(left: px(20), right: px(20)),
                     child: DownInput(
-                      value: typeProblemStatu?['name'],
+                      value: typeProblem,
                       data: problemType,
+                      currentDataList: defaultData,
+                      more: true,
                       callback: (val){
                         typeBack?.call(val);
                       },
@@ -494,10 +500,10 @@ class RectifyComponents{
                     color: Color(0xffE6EAF5),
                     height: px(56),
                     padding: EdgeInsets.only(left: px(49),right: px(49)),
-                    child: Text('取消',style: TextStyle(color: Color(0xff4D7FFF),fontSize: sp(24)),),
+                    child: Text('重置',style: TextStyle(color: Colors.black,fontSize: sp(24)),),
                   ),
                   onTap: (){
-                    Navigator.pop(context);
+                    callPop?.call();
                   },
                 ),
               ),

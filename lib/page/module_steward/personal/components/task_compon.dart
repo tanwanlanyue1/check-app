@@ -47,9 +47,9 @@ class TaskCompon{
                 },
               ),
               Expanded(
-                flex: 1,
                 child: Container(
                   alignment: Alignment.center,
+                  margin: EdgeInsets.only(left: child !=null ? px(56) : 0),
                   child: Text(title,style: TextStyle(color: Color(0xff323233),fontSize: sp(font ?? 36),fontFamily: 'M'),),
                 ),
               ),
@@ -107,13 +107,13 @@ class TaskCompon{
                   height: px(48),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                      color: TaskCompon.firmTaskColor(company['status']),
+                      color: TaskCompon.fromStatusColor(company['status']),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(px(20)),
                         bottomLeft: Radius.circular(px(20)),
                       )
                   ),
-                  child: Text(TaskCompon.firmTask(company['status'])
+                  child: Text(TaskCompon.fromStatus(company['status'])
                     ,style: TextStyle(color: Colors.white,fontSize: sp(22)),),
                 ),
               ],
@@ -140,7 +140,9 @@ class TaskCompon{
                     height: px(32),
                     child: Image.asset('lib/assets/icons/my/group.png'),
                   ),
-                  Text(checkPeople(people: company['checkUserList']),style: TextStyle(color: Color(0xff969799),fontSize: sp(26),overflow: TextOverflow.ellipsis),),
+                  Expanded(
+                    child: Text(checkPeople(people: company['checkUserList']),style: TextStyle(color: Color(0xff969799),fontSize: sp(26),overflow: TextOverflow.ellipsis),),
+                  ),
                 ],
               ),
             ),
@@ -178,23 +180,78 @@ class TaskCompon{
     return checkList;
   }
 
-  //任务状态 1,整改中;2,已归档;3,待审核;4,审核已通过;5,审核未通过;6,未提交;
+  //对接的任务状态 	任务状态（0：未处理，1：处理中，2：已完成 3: 驳回 4：审核完结）
   static String firmTask(status){
     switch(status){
-      case 1 : return '待处理';
-      case 2 : return '已处理';
+      case 0 : return '待处理';
+      case 1 : return '处理中';
+      case 2 : return '已完成';
+      case 3 : return '驳回';
+      case 4 : return '审核完结';
       default: return '待处理';
     }
   }
 
-//任务颜色状态
+  //对接的任务颜色状态
   static Color firmTaskColor(status){
+    switch(status){
+      case 0 : return Color(0xffFAAA5A);
+      case 1 : return Color(0xff7196F5);
+      case 2 : return Color(0xff7196F5);
+      case 3 : return Color(0xffFAAA5A);
+      case 4 : return Color(0xff95C758);
+      default: return Color(0xffFAAA5A);
+    }
+  }
+
+  //任务状态 	任务状态（1：未处理，2：处理中）
+  static String fromStatus(status){
+    switch(status){
+      case 1 : return '待处理';
+      case 2 : return '处理中';
+      default: return '待处理';
+    }
+  }
+  //任务颜色
+  static Color fromStatusColor(status){
     switch(status){
       case 1 : return Color(0xffFAAA5A);
       case 2 : return Color(0xff7196F5);
       default: return Color(0xffFAAA5A);
     }
   }
+  ///按钮
+  static Widget revocation({String? title,Color? color,Function? onTops}){
+    return Container(
+      height: px(88),
+      margin: EdgeInsets.only(top: px(24)),
+      color: color ?? Colors.transparent,
+      alignment: Alignment.center,
+      child: GestureDetector(
+        child: Container(
+          width: px(240),
+          height: px(56),
+          alignment: Alignment.center,
+          margin: EdgeInsets.only(left: px(40)),
+          child: Text(
+            title ?? '提交',
+            style: TextStyle(
+                fontSize: sp(24),
+                fontFamily: "M",
+                color: Color(0xff4D7FFF)),
+          ),
+          decoration: BoxDecoration(
+            border: Border.all(width: px(2),color: Color(0xff4D7FFF)),
+            borderRadius: BorderRadius.all(Radius.circular(px(28))),
+          ),
+        ),
+        onTap: () {
+          onTops?.call();
+        },
+      ),
+    );
+  }
+
   ///时间格式
   ///time:时间
   static String formatTime(time) {

@@ -34,13 +34,15 @@ class _InventoryPageState extends State<InventoryPage> {
   List hiddenInventory = []; //隐患清单数据
   List inventoryStatus = [
     {'name':'未提交','id':6},
-    {'name':'未归档','id':[1,3,4,5]},
+    {'name':'待审核','id':3},
+    {'name':'整改中','id':0},
     {'name':'已归档','id':2},
   ]; //清单的状态
   String companyId = '';//企业id
+  String status = '请选择';//默认状态
+  List selectStatus = [];//选中的状态
   DateTime? startTime;//选择开始时间
   DateTime? endTime;//选择结束时间
-  Map<String,dynamic> typeStatus = {'name':'请选择','id':0};//默认类型
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();//侧边栏key
 
   /// 获取企业下的问题/问题搜索筛选
@@ -53,7 +55,6 @@ class _InventoryPageState extends State<InventoryPage> {
   ///添加一个状态 check-提交到企业,environment-提交到环保局
   _inventorySearch({typeStatusEnum? type,Map<String,dynamic>? data}) async {
     var response = await Request().get(Api.url['inventoryList'],data: data,);
-
     if(response['statusCode'] == 200 && response['data'] != null){
       Map _data = response['data'];
       _pageNo++;
@@ -245,11 +246,16 @@ class _InventoryPageState extends State<InventoryPage> {
       ),
       endDrawer: RectifyComponents.endDrawers(
         context,
-        typeStatus: typeStatus,
+        typeStatus: status,
         status: inventoryStatus,
+        currentDataList: selectStatus,
         startTime: startTime ?? DateTime.now(),
         endTime: endTime ?? DateTime.now(),
         callPop: (){
+          status = '请选择';
+          selectStatus = [];
+          startTime = DateTime.now();
+          endTime = DateTime.now();
           _inventorySearch(
               type: typeStatusEnum.onRefresh,
               data: {
@@ -259,22 +265,40 @@ class _InventoryPageState extends State<InventoryPage> {
               }
           );
         },
-        callBack: (val){
-          typeStatus['name'] = val['name'];
-          typeStatus['id'] = val['id'];
+        callBack: (val){ //状态选择
+          selectStatus = val;
+          if(val.length == 0){
+            status = '请选择';
+          }else{
+            for(var i = 0; i < val.length;i++){
+              if(i > 0){
+                status = status + ',' + val[i]['name'];
+              }else{
+                status = val[i]['name'];
+              }
+            }
+          }
           setState(() {});
         },
-        timeBack: (val){
+        timeBack: (val){ //选择时间
           startTime = val[0];
           endTime = val[1];
           setState(() {});
         },
         trueBack: (){
+          List searchStatus = [];
+          for(var i = 0; i < selectStatus.length; i++){
+            if(selectStatus[i]['id'] == 0){
+              searchStatus.addAll({1, 4, 5});
+            }else{
+              searchStatus.add(selectStatus[i]['id']);
+            }
+          }
           if(startTime == null){
             _inventorySearch(
                 type: typeStatusEnum.onRefresh,
                 data: {
-                  'status':typeStatus['id'],
+                  'status': searchStatus,
                   'companyId':companyId,
                 }
             );
@@ -283,7 +307,7 @@ class _InventoryPageState extends State<InventoryPage> {
             _inventorySearch(
                 type: typeStatusEnum.onRefresh,
                 data: {
-                  'status':typeStatus['id'],
+                  'status': searchStatus,
                   'companyId':companyId,
                   'timeSearch':'createdAt',
                   'startTime':startTime,

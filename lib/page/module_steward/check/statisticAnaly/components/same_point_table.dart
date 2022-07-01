@@ -30,7 +30,6 @@ class _SamePointTableState extends State<SamePointTable> {
   List industryHeader = ['序号','行业','百分比','问题','已整改','未整改'];//行业表头
   List areaHeader = ['序号','片区','隐患问题','已整改','未整改'];//片区表头
   List companyHeader = ['序号','片区','企业名称','隐患问题','已整改','未整改'];//企业表头
-  int echart = 0;//echart 种类下标 0-饼图 1-竖状图 2-横状图
   List name =[]; //名称
   List echartData =[]; //图表数据
   List pieData =[]; //饼图数据

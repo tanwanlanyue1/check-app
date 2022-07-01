@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
+import 'package:scet_check/components/generalduty/down_input.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
@@ -40,6 +41,8 @@ class _FillAbarbeitungState extends State<FillAbarbeitung> {
   bool review = false;//复查填报
   bool isImportant = false; //是否完成整改
   List solutionList = [];//整改详情
+  List checkNameList = [];//复查人员数组
+  String inputCheckName = ''; //输入的复查人员
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final DateTime _dateTime = DateTime.now();
 
@@ -151,6 +154,7 @@ class _FillAbarbeitungState extends State<FillAbarbeitung> {
     userName= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
     userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'].toString();
     review = widget.arguments?['review'] ?? false;
+    checkNameList.add({'name':userName});
     if(!review){
       _setSolution();
     }
@@ -207,7 +211,7 @@ class _FillAbarbeitungState extends State<FillAbarbeitung> {
               imgList: imgDetails,
               uuid: _uuid,
               closeIcon: true,
-              url: Api.baseUrlApp + 'file/upload?savePath=整改/',
+              url: Api.url['uploadImg'] + '整改/',
               callback: (List? data) {
                 if (data != null) {
                   imgDetails = data;
@@ -291,7 +295,7 @@ class _FillAbarbeitungState extends State<FillAbarbeitung> {
                   },
                 ),
                 AbarbeitungPdf(
-                  url: Api.baseUrlApp + 'file/upload?savePath=整改/',
+                  url: Api.url['uploadImg'] + '整改/',
                   inventoryId: _uuid,
                   uploading: true,
                   title: '上传整改报告',
@@ -319,12 +323,106 @@ class _FillAbarbeitungState extends State<FillAbarbeitung> {
             FormCheck.formTitle('现场复查情况'),
             FormCheck.rowItem(
               title: "复查人员",
-              child: FormCheck.inputWidget(
-                  hintText: '请输入复查人员',
-                  onChanged: (val){
-                    reviewPerson = val;
-                    setState(() {});
-                  }
+              child:  Row(
+                children: [
+                  Expanded(
+                    child: DownInput(
+                      value: reviewPerson,
+                      data: checkNameList,
+                      more: true,
+                      hitStr: '请选择排查人员',
+                      callback: (val){
+                        reviewPerson = '';
+                        for(var i = 0; i < val.length;i++){
+                          if(i > 0){
+                            reviewPerson = reviewPerson + ',' + val[i]['name'];
+                          }else{
+                            reviewPerson = val[i]['name'];
+                          }
+                        }
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                  GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    child: Container(
+                      margin: EdgeInsets.only(left: px(24),right: px(24),bottom: px(4)),
+                      padding: EdgeInsets.only(left: px(12),right: px(12),bottom: px(4),top: px(4)),
+                      child: Text('添加人员',style: TextStyle(
+                          fontSize: sp(26),
+                          color: Colors.white
+                      )),
+                      decoration: BoxDecoration(
+                        color: Color(0xff4D7FFF),
+                        border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
+                        borderRadius: BorderRadius.all(Radius.circular(px(12))),
+                      ),
+                    ),
+                    onTap: () async{
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pop(); //退出弹出框
+                              },
+                              child: Material(
+                                color: Color.fromRGBO(0, 0, 0, 0.5),
+                                child: Center(
+                                  child: Container(
+                                      width: px(540),
+                                      height: px(140),
+                                      padding: EdgeInsets.only(left: px(24),top: px(12)),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.all(Radius.circular(px(15)))
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: FormCheck.inputWidget(
+                                                hintText: '请输入排查人员',
+                                                onChanged: (val){
+                                                  inputCheckName = val;
+                                                  setState(() {});
+                                                }
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            child: Container(
+                                              margin: EdgeInsets.only(left: px(24),right: px(24),bottom: px(4)),
+                                              padding: EdgeInsets.only(left: px(12),right: px(12),bottom: px(4),top: px(4)),
+                                              child: Text('添加',style: TextStyle(
+                                                  fontSize: sp(26),
+                                                  color: Colors.white
+                                              )),
+                                              decoration: BoxDecoration(
+                                                color: Color(0xff4D7FFF),
+                                                border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
+                                                borderRadius: BorderRadius.all(Radius.circular(px(12))),
+                                              ),
+                                            ),
+                                            onTap: (){
+                                              setState(() {
+                                                checkNameList.add({'name':inputCheckName});
+                                                inputCheckName = '';
+                                                Navigator.pop(context);
+                                              });
+                                            },
+                                          )
+                                        ],
+                                      )
+                                  ),
+                                ),
+                              )
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
             FormCheck.rowItem(
@@ -355,7 +453,7 @@ class _FillAbarbeitungState extends State<FillAbarbeitung> {
                   imgList: imgDetails,
                   uuid: _uuid,
                   closeIcon: true,
-                  url: Api.baseUrlApp + 'file/upload?savePath=复查/',
+                  url: Api.url['uploadImg'] + '复查/',
                   callback: (List? data) {
                     if (data != null) {
                       imgDetails = data;

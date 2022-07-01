@@ -377,7 +377,7 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       AbarbeitungPdf(
-                        url: Api.baseUrlApp + 'file/upload?savePath=清单报告/',
+                        url: Api.url['uploadImg'] + '清单报告/',
                         inventoryId: uuid,
                         uploading: problemList.isEmpty ? false : uploading,
                         callback: (val){
