@@ -6,7 +6,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 class DownInput extends StatefulWidget {
   final String? hitStr; //为空显示的文字
   final String? value;  //已选择内容后
-  final String? dataKey;  //数据的key
+  final String? dataKey;  //数据的key,默认为name
   final List? data;     // 列表数据[{'name':标题}]
   final Map? currentData;//默认选中项（单选参数 或有id即可）
   final List? currentDataList;//默认选中项（多选参数 每项有id即可）

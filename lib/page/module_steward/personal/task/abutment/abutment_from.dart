@@ -40,7 +40,7 @@ class _AbutmentFromState extends State<AbutmentFrom> {
   List problemBig = [];//问题大类类型
   List problemSmall = [];//问题小类类型
   Map companyList = {};//企业列表
-  int? uuid;//修改列表用的id
+  String? uuid;//修改列表用的id
 
   ///动态表单
   ///1:文本框,2:文本域, 3:数字4:单选框 5复选框 6:时间选择7:图片
@@ -332,7 +332,7 @@ class _AbutmentFromState extends State<AbutmentFrom> {
     _getKeeper(id: widget.arguments?['formId']);
     if(widget.arguments?['content'] != null && widget.arguments?['content'].length > 0){
       data = jsonDecode(widget.arguments?['content']['content']);
-      uuid = widget.arguments?['content']['id'];
+      uuid = widget.arguments?['content']['id'].toString();
     }
   }
 

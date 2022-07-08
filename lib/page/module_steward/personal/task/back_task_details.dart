@@ -198,9 +198,11 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
           ),
           FormCheck.rowItem(
             title: '附件:',
+            alignStart: true,
             titleColor: Color(0XFF323232),
             child: UploadFile(
               url: '任务/',
+              amend: true,
               fileList: taskFiles,
               callback: (val){
                 taskFiles = val;

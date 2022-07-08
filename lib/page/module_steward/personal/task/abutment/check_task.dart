@@ -118,7 +118,6 @@ class _CheckTaskState extends State<CheckTask> {
     );
   }
 
-
   ///任务列表
   Widget itemTask(){
     return taskList.isNotEmpty ?
@@ -161,7 +160,6 @@ class _CheckTaskState extends State<CheckTask> {
                         child: Text('${taskList[i]['taskItem']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(30),fontFamily: "M",overflow: TextOverflow.ellipsis),),
                       ),
                     ),
-                    Spacer(),
                     Spacer(),
                     Container(
                       width: px(110),

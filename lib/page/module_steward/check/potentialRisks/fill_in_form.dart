@@ -51,7 +51,8 @@ class _FillInFormState extends State<FillInForm> {
   String checkPersonnel = '';//排查人员
   String problemTitle = '';//问题标题
   String issueDetails = '';//问题详情
-  String type = '';//问题类型
+  String type = '';//问题类型 一级
+  String secondType = '';//问题类型 二级
   String typeId = '';//问题类型ID
   String inventoryId = '';//清单ID
   String companyId = '';//企业ID
@@ -72,12 +73,13 @@ class _FillInFormState extends State<FillInForm> {
   late GlobalKey<ScaffoldState> _scaffoldKey; //时间选择key
   // DateTime checkTime = DateTime.now();//填报排查日期
   DateTime rectifyTime = DateTime.now().add(Duration(days: 7));//整改期限
+  List problemType = [];//二级问题类型数组
 
   /// 获取问题类型
   void _getProblemType() async {
-    var response = await Request().get(Api.url['problemType']);
+    var response = await Request().get(Api.url['problemTypeList'],data: {"level":1});
     if(response['statusCode'] == 200) {
-      typeList = response['data'];
+      typeList = response['data']['list'];
       setState(() {});
     }
   }
@@ -89,7 +91,12 @@ class _FillInFormState extends State<FillInForm> {
     if(problemList.isNotEmpty){
       checkPersonnel = problemList['screeningPerson'] ?? '';
       checkDay = formatTime(problemList['createdAt']);
-      type = problemList['problemType']['name'];
+      if(problemList['problemType']['parent'] == null){
+        type = problemList['problemType']['name'];
+      }else{
+        type = problemList['problemType']['parent']['name'];
+        secondType = problemList['problemType']['name'];
+      }
       issueDetails = problemList['detail'] ?? '';
       imgDetails = problemList['images'];
       problemTitle = problemList['name'];
@@ -148,7 +155,7 @@ class _FillInFormState extends State<FillInForm> {
   void _setProblem() async {
     if(checkPersonnel.isEmpty){
       ToastWidget.showToastMsg('请输入排查人员');
-    }else if(type.isEmpty){
+    }else if(typeId.isEmpty){
       ToastWidget.showToastMsg('请选择问题类型');
     }else if(issueDetails.isEmpty){
       ToastWidget.showToastMsg('请输入问题详情');
@@ -266,14 +273,6 @@ class _FillInFormState extends State<FillInForm> {
                     height: px(48),
                     padding: EdgeInsets.only(left: px(12),right: px(12)),
                     alignment: Alignment.center,
-                    // decoration: BoxDecoration(
-                    //     color: RectifyComponents.Colorswitchs(problemList['status']),
-                    //     borderRadius: BorderRadius.only(
-                    //       topLeft: Radius.circular(px(20)),
-                    //       bottomLeft: Radius.circular(px(20)),
-                    //     )
-                    // ),
-                    // child: Text(flowStatus,
                     child: Row(
                       children: [
                         Text('流程状态',
@@ -304,14 +303,22 @@ class _FillInFormState extends State<FillInForm> {
                   fontFamily: 'Roboto-Condensed'),)
             ),
             FormCheck.rowItem(
-              title: "问题类型",
+              title: declare ? "问题类型" : "一级类型",
               child: declare ?
               DownInput(
                 value: type,
                 data: typeList,
+                hitStr: '请选择一级类型',
                 callback: (val){
                   type = val['name'];
-                  typeId = val['id'];
+                  problemType = val['children'];
+                  if(type == '无'){
+                    secondType = '无';
+                    typeId = val['children'][0]['id'];
+                  }else{
+                    secondType = '';
+                    typeId = '';
+                  }
                   setState(() {});
                 },
               ) :
@@ -320,21 +327,23 @@ class _FillInFormState extends State<FillInForm> {
                   fontSize: sp(28),
                   fontFamily: 'Roboto-Condensed'),),
             ),
-            // other ?
-            // FormCheck.rowItem(
-            //   title: "其他类型",
-            //   child: Container(
-            //     color: Color(0xffF5F6FA),
-            //     child: FormCheck.inputWidget(
-            //         hintText: '其他类型',
-            //         onChanged: (val){
-            //           otherType = val;
-            //           setState(() {});
-            //         }
-            //     ),
-            //   ),
-            // ) :
-            // Container(),
+            FormCheck.rowItem(
+              title: declare ? '' : "二级类型",
+              child: declare ?
+                DownInput(
+                value: secondType,
+                data: problemType,
+                hitStr: '请选择二级类型',
+                callback: (val){
+                  secondType = val['name'];
+                  typeId = val['id'];
+                  setState(() {});
+                 },) :
+              Text(secondType, style: TextStyle(
+                  color: Color(0xff323233),
+                  fontSize: sp(28),
+                  fontFamily: 'Roboto-Condensed'),),
+            ),
 
             FormCheck.rowItem(
                 alignStart: true,
@@ -601,6 +610,7 @@ class _FillInFormState extends State<FillInForm> {
       ],
     );
   }
+
   ///单选
   Widget _radio() {
     return Row(

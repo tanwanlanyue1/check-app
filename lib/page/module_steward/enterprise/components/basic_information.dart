@@ -58,7 +58,7 @@ class _BasicInformationState extends State<BasicInformation > {
         padding: EdgeInsets.only(top: 0),
         children: [
           info(),
-          production(),
+          // production(),
         ],
       ),
     );

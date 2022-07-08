@@ -419,8 +419,8 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
           children: [
             Container(
               margin: EdgeInsets.only(right: px(24),top: px(50)),
-              padding: EdgeInsets.only(left: px(24),right: px(24)),
-              height: px(72),
+              // padding: EdgeInsets.only(left: px(24),right: px(24)),
+              height: px(52),
               width: px(165),
               alignment: Alignment.center,
               child: Text("再次整改并填报",style: TextStyle(fontSize: sp(22),color: switchColor(only:6)),),
@@ -647,7 +647,7 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
           top: px(700),
           child: Container(
             width: px(4),
-            height: px(110),
+            height: px(90),
             color: switchColor(colorStatus: 7),
           ),
         ),
@@ -658,7 +658,7 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
         ),
         Positioned(
           left: px(358),
-          top: px(790),
+          top: px(770),
           child: Icon(Icons.arrow_drop_down,color: switchColor(colorStatus: 7),),
         ),
 

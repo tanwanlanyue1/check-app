@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
-import 'package:scet_check/page/module_steward/enterprise/components/enterprise_compon.dart';
 import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
-import 'package:scet_check/utils/time/utc_tolocal.dart';
 
 
 ///对接的企业信息详情
@@ -32,9 +30,9 @@ class _AbutmentEnterpriseDetailsState extends State<AbutmentEnterpriseDetails> {
     );
     if(response['success'] == true) {
       if(response['result'] is Map){
-        companyData.add(response['result']);
+        companyData.addAll(response['result']['list']);
       }else{
-        companyData = response['result'];
+        companyData = response['result']['list'];
       }
       setState(() {});
     }
@@ -69,7 +67,7 @@ class _AbutmentEnterpriseDetailsState extends State<AbutmentEnterpriseDetails> {
           Expanded(
             child: ListView(
               padding: EdgeInsets.only(top: 0),
-              children: List.generate(companyData.length, (i) => info(companyList: companyData[i])),
+              children: List.generate(companyData.length, (i) => info(companyLists: companyData[i])),
             ),
           ) :
           Container(),
@@ -79,7 +77,7 @@ class _AbutmentEnterpriseDetailsState extends State<AbutmentEnterpriseDetails> {
   }
   ///基本信息
   ///[{'title':废水排放口数}]
-  Widget info({required Map companyList,}){
+  Widget info({required Map companyLists,}){
     return Container(
       padding: EdgeInsets.only(left: px(24),right: px(24)),
       margin: EdgeInsets.only(top: px(20)),
@@ -90,7 +88,7 @@ class _AbutmentEnterpriseDetailsState extends State<AbutmentEnterpriseDetails> {
             Column(
               children: List.generate(details.length, (i){
                 return surveyItem(
-                    '${details[i]['title']}:','${companyList[details[i]['valuer']]}'
+                    '${details[i]['title']}:','${companyLists[details[i]['valuer']]}'
                 );
               }),
             ),

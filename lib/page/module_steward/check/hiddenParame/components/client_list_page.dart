@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:scet_check/model/provider/provider_home.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-
 import 'language_helper.dart';
 import 'models.dart';
 
@@ -57,6 +56,7 @@ class _ClientListPageState extends State<ClientListPage> {
     // loadData();
     super.didUpdateWidget(oldWidget);
   }
+
   @override
   void dispose() {
     textEditingController.dispose();
@@ -106,7 +106,6 @@ class _ClientListPageState extends State<ClientListPage> {
     dataList.clear();
     if (ObjectUtil.isEmpty(list)) {
       setState(() {});
-      dataList.addAll(list);
       return ;
     }
     // 将中文也进行排序
@@ -123,129 +122,22 @@ class _ClientListPageState extends State<ClientListPage> {
       // }
     }
     dataList.addAll(list);
-
     // A-Z sort.
     // SuspensionUtil.sortListBySuspensionTag(dataList);
 
     //显示sus标签。
     SuspensionUtil.setShowSuspensionStatus(dataList);
-
     setState(() {});
 
     if (itemScrollController.isAttached) {
       itemScrollController.jumpTo(index: 0);
     }
   }
-
-///标签组件
-  Widget getSusItem(BuildContext context, String? tag, {double susHeight = 40}) {
-    return Container(
-      height: px(52),
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.only(left: 16.0),
-      color: Colors.white,
-      alignment: Alignment.centerLeft,
-      child: Text(
-        '$tag',
-        softWrap: false,
-        style: TextStyle(
-          fontSize: sp(26),
-          color: Color(0xFF4D7FFF),
-        ),
-      ),
-    );
-  }
-
-  ///渲染每一项
-  Widget getListItem(BuildContext context, Languages model,
-      {double susHeight = 50}) {
-    return GestureDetector(
-      child: Container(
-        color: Colors.white,
-        height: px(84),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: px(40),
-              height: px(40),
-              margin: EdgeInsets.only(left: px(16),right: px(12)),
-              decoration: BoxDecoration(
-                color: Color(0xff72B1ED),
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-              ),
-              alignment: Alignment.center,
-              child: Text('${model.name?.substring(0,1)}',style: TextStyle(color: Colors.white,fontSize: sp(22),)),
-            ),
-            Expanded(
-              child: Text("${model.name} ",style: TextStyle(color: Color(0xFF323233),fontSize: sp(24),),),
-            )
-          ],
-        ),
-      ),
-      onTap: (){
-          widget.callBack?.call(model.id,model.name,model.user);
-      },
-    );
-  }
-
-  ///不根据首字母拼音排序
-  Widget getItemSort(BuildContext context, Languages model,
-      {double susHeight = 50}) {
-    return  Column(
-      children: [
-        GestureDetector(
-          child: Container(
-            color: widget.select ? (_homeModel?.select.contains(model.id) ? Colors.blue : Colors.white) : Colors.white,
-            height: px(84),
-            // margin: EdgeInsets.only(bottom: px(4),top: px(12)),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(left: px(18),right: px(12)),
-                  child: Text(model.number ?? '',style: TextStyle(color: Color(0xFF323233),fontSize: sp(28),)),
-                ),
-                Expanded(
-                  child: Text("${model.name} ",style: TextStyle(color: Color(0xFF323233),fontSize: sp(28),),),
-                )
-              ],
-            ),
-          ),
-          onTap: (){
-            if(widget.select){
-              if(_homeModel?.select.contains(model.id)){
-                _homeModel?.select.remove(model.id);
-                int index =  _homeModel?.selectCompany.indexWhere((item) =>  item['id'] == model.id);
-                if(index != -1) {
-                  _homeModel?.selectCompany.removeAt(index);
-                }
-              }else{
-                _homeModel?.select.add(model.id);
-                _homeModel?.selectCompany.add({'id':model.id!,"user":model.toJson()['user'],"name":model.name});
-              }
-            }else{
-              widget.callBack?.call(model.id,model.name,model.toJson()['user']);
-            }
-            setState(() {});
-          },
-        ),
-      ],
-    );
-  }
-
   ///搜索方法
   void _search(String text) {
     if (ObjectUtil.isEmpty(text)) {
-      setState(() {
-        originList = LanguageHelper.getGithubLanguages()!.map((v) {
-          Languages model = Languages.fromJson(v.toJson());
-          return model;
-        }).toList();
-        dataList.clear();
-        dataList = originList;
-      });
-      return ;
+      setState(() {});
+      _handleList(originList);
     } else {
       List<Languages> list = originList.where((v) {
         return v.name!.toLowerCase().contains(text.toLowerCase());
@@ -254,7 +146,6 @@ class _ClientListPageState extends State<ClientListPage> {
       _handleList(list);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -367,4 +258,102 @@ class _ClientListPageState extends State<ClientListPage> {
       )
     );
   }
+
+  ///标签组件
+  Widget getSusItem(BuildContext context, String? tag, {double susHeight = 40}) {
+    return Container(
+      height: px(52),
+      width: MediaQuery.of(context).size.width,
+      padding: EdgeInsets.only(left: 16.0),
+      color: Colors.white,
+      alignment: Alignment.centerLeft,
+      child: Text(
+        '$tag',
+        softWrap: false,
+        style: TextStyle(
+          fontSize: sp(26),
+          color: Color(0xFF4D7FFF),
+        ),
+      ),
+    );
+  }
+
+  ///渲染每一项
+  Widget getListItem(BuildContext context, Languages model,
+      {double susHeight = 50}) {
+    return GestureDetector(
+      child: Container(
+        color: Colors.white,
+        height: px(84),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: px(40),
+              height: px(40),
+              margin: EdgeInsets.only(left: px(16),right: px(12)),
+              decoration: BoxDecoration(
+                color: Color(0xff72B1ED),
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              ),
+              alignment: Alignment.center,
+              child: Text('${model.name?.substring(0,1)}',style: TextStyle(color: Colors.white,fontSize: sp(22),)),
+            ),
+            Expanded(
+              child: Text("${model.name} ",style: TextStyle(color: Color(0xFF323233),fontSize: sp(24),),),
+            )
+          ],
+        ),
+      ),
+      onTap: (){
+        widget.callBack?.call(model.id,model.name,model.user);
+      },
+    );
+  }
+
+  ///不根据首字母拼音排序
+  Widget getItemSort(BuildContext context, Languages model,
+      {double susHeight = 50}) {
+    return  Column(
+      children: [
+        GestureDetector(
+          child: Container(
+            color: widget.select ? (_homeModel?.select.contains(model.id) ? Colors.blue : Colors.white) : Colors.white,
+            height: px(84),
+            // margin: EdgeInsets.only(bottom: px(4),top: px(12)),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(left: px(18),right: px(12)),
+                  child: Text(model.number ?? '',style: TextStyle(color: Color(0xFF323233),fontSize: sp(28),)),
+                ),
+                Expanded(
+                  child: Text("${model.name} ",style: TextStyle(color: Color(0xFF323233),fontSize: sp(28),),),
+                )
+              ],
+            ),
+          ),
+          onTap: (){
+            if(widget.select){
+              if(_homeModel?.select.contains(model.id)){
+                _homeModel?.select.remove(model.id);
+                int index =  _homeModel?.selectCompany.indexWhere((item) =>  item['id'] == model.id);
+                if(index != -1) {
+                  _homeModel?.selectCompany.removeAt(index);
+                }
+              }else{
+                _homeModel?.select.add(model.id);
+                _homeModel?.selectCompany.add({'id':model.id!,"user":model.toJson()['user'],"name":model.name});
+              }
+            }else{
+              widget.callBack?.call(model.id,model.name,model.toJson()['user']);
+            }
+            setState(() {});
+          },
+        ),
+      ],
+    );
+  }
+
 }

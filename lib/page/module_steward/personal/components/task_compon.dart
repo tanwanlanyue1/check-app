@@ -185,9 +185,9 @@ class TaskCompon{
     switch(status){
       case 0 : return '待处理';
       case 1 : return '处理中';
-      case 2 : return '已完成';
+      case 2 : return '待审核';
       case 3 : return '驳回';
-      case 4 : return '审核完结';
+      case 4 : return '已审核';
       default: return '待处理';
     }
   }
@@ -195,10 +195,10 @@ class TaskCompon{
   //对接的任务颜色状态
   static Color firmTaskColor(status){
     switch(status){
-      case 0 : return Color(0xffFAAA5A);
+      case 0 : return Color(0xfffaaa5a);
       case 1 : return Color(0xff7196F5);
-      case 2 : return Color(0xff7196F5);
-      case 3 : return Color(0xffFAAA5A);
+      case 2 : return Color(0xfffaaa5a);
+      case 3 : return Colors.red;
       case 4 : return Color(0xff95C758);
       default: return Color(0xffFAAA5A);
     }

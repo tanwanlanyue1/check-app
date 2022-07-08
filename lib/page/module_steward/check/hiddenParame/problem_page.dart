@@ -4,8 +4,6 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:open_file/open_file.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/down_input.dart';
@@ -40,7 +38,6 @@ class _ProblemPageState extends State<ProblemPage> {
   final EasyRefreshController _controller = EasyRefreshController(); // 上拉组件控制器
   int _pageNo = 1; // 当前页码
   int _total = 10; // 总条数
-  // int firmTotal = 10; // 企业请求的总条数
   int inventoryStatus = 1; // 清单id
   bool _enableLoad = true; // 是否开启加载
   bool firm = false; // 是否为企业
@@ -141,7 +138,7 @@ class _ProblemPageState extends State<ProblemPage> {
     if(response['statusCode'] == 200) {
       companyName = response['data']['name'];
       district = response['data']['district']['name'];
-      region = response['data']['regionName'];
+      region = response['data']['regionName'] ?? '';
       setState(() {});
     }
   }

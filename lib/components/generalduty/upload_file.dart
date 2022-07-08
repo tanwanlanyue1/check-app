@@ -12,14 +12,16 @@ import 'package:uuid/uuid.dart';
 ///       color: Colors.white,
 ///       child: UploadFile(),
 ///     ),
-///url:上传地址
-///icon:文件图标
-///fileChild:传递样式
-///callback:回调函数
-///abutment:是否是对接接口上传
+///  url:上传地址
+///  icon:文件图标
+///  amend:是否开启修改
+///  fileChild:传递样式
+///  callback:回调函数
+///  abutment:是否是对接接口上传
 class UploadFile extends StatefulWidget {
   final bool icon;
   final bool abutment;
+  final bool amend;
   final String url;
   final List? fileList;
   final Widget? fileChild;
@@ -27,6 +29,7 @@ class UploadFile extends StatefulWidget {
   const UploadFile({Key? key,
     this.callback,
     this.abutment = false,
+    this.amend = true,
     required this.url,
     this.icon = false,
     this.fileList,
@@ -46,6 +49,7 @@ class _UploadFileState extends State<UploadFile> {
   List showFileList = [];//展示文件数组
   bool icon = false;//图标
   bool abutment = false;//是否对接的
+  bool amend = false;//是否开启修改
 
   /// 上传文件
   /// result: 文件数组
@@ -98,34 +102,16 @@ class _UploadFileState extends State<UploadFile> {
     _uuid = uuid.v4();
     _url = widget.url;
     abutment = widget.abutment;
+    amend = widget.amend;
     if(abutment){
       showFileList = widget.fileList ?? [];
       for(var i = 0; i < showFileList.length; i++){
         fileList.add(showFileList[i]['filePath']);
       }
-      showFileList = [];
     }else{
       fileList = widget.fileList ?? [];
     }
     super.initState();
-  }
-
-  @override
-  void didUpdateWidget(covariant UploadFile oldWidget) {
-    // TODO: implement didUpdateWidget
-    if(widget.url != oldWidget.url || widget.fileList != oldWidget.fileList){
-      _url = widget.url;
-      if(abutment){
-        showFileList = widget.fileList ?? [];
-        for(var i = 0; i < showFileList.length; i++){
-          fileList.add(showFileList[i]['filePath']);
-        }
-        showFileList = [];
-      }else{
-        fileList = widget.fileList ?? [];
-      }
-    }
-    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -156,16 +142,17 @@ class _UploadFileState extends State<UploadFile> {
                   ),
                 ),
                 Expanded(
-                  child: fileList.isEmpty ?
+                  child: amend && showFileList.isEmpty ?
                   Text('添加附件',style: TextStyle(color: Color(0xff323233),fontSize: sp(26)),):
                   Text(showFileList.isNotEmpty ?
                   '${showFileList[i]['fileName']}' :
-                  '${fileList[i]}',style: TextStyle(color: Color(0xff323233),fontSize: sp(26),overflow: TextOverflow.ellipsis),),
+                  (fileList.isNotEmpty ? fileList[i] : '/'),style: TextStyle(color: Color(0xff323233),fontSize: sp(26),overflow: TextOverflow.ellipsis),),
                 ),
               ],
             ),
           ),
           onTap: () async {
+            //判断是否开启修改，fileList判断是否有数据，abutment调用对接的文件上传还是app的文件上传
             if(fileList.isNotEmpty){
               String? path;
               if(abutment){
@@ -176,7 +163,7 @@ class _UploadFileState extends State<UploadFile> {
               if (path != '' && path != null) {
                 OpenFile.open(path);
               }
-            }else{
+            }else if(amend){
               if(abutment){
                 _uploadTwo();
               }else{
@@ -186,7 +173,7 @@ class _UploadFileState extends State<UploadFile> {
           },
         ),
         Visibility(
-          visible: showFileList.isNotEmpty,
+          visible: amend && showFileList.isNotEmpty,
           child: Positioned(
               top: 0,
               right: 0,

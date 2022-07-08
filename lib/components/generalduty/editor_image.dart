@@ -190,6 +190,7 @@ class ImageEditorExtendState extends State<ImageEditor>
     });
   }
 
+  ///图片编码
   Future<ui.Image?> decodeImg() async {
     return await decodeImageFromList(widget.originImage.readAsBytesSync());
   }

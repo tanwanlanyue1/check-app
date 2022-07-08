@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scet_check/components/generalduty/from_html_core.dart';
 import 'package:scet_check/components/generalduty/pdf_view.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/components/pertinence/companyEchart/column_echarts.dart';
@@ -89,6 +90,7 @@ final routes = {
   '/problemSchedule': (context,{arguments}) =>  ProblemSchedule(arguments:arguments), //问题进度
   '/auditList': (context,{arguments}) =>  AuditList(), //清单审核列表
   '/auditProblem': (context,{arguments}) =>  AuditProblem(arguments:arguments), //清单问题审核
+  '/fromHtmlCore': (context,{arguments}) =>  FromHtmlCore(arguments:arguments), //富文本页面
 
   '/abutmentList': (context,{arguments}) =>  AbutmentList(arguments:arguments), //对接任务列表页面
   '/fromSelect': (context,{arguments}) =>  FromSelect(arguments:arguments), //对接任务关联表单选择页面

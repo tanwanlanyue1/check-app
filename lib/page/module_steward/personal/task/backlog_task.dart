@@ -96,11 +96,10 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
     taskList = data;
     _pageNo = 2;
     _enableLoad = true;
-    _controller.resetLoadState();
     _controller.finishRefresh();
+    _controller.resetLoadState();
     if(taskList.length >= total){
       _enableLoad = false;
-      // _controller.finishLoad(noMore: true);
     }
     setState(() {});
   }

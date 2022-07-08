@@ -25,6 +25,16 @@ class _TimeSelectState extends State<TimeSelect> {
     super.initState();
     currentTime = widget.time != null ?  formatTime(widget.time!) : '';
   }
+
+  @override
+  void didUpdateWidget(covariant TimeSelect oldWidget) {
+    // TODO: implement didUpdateWidget
+    if(widget.time != oldWidget.time){
+      currentTime = widget.time != null ?  formatTime(widget.time!) : '';
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(

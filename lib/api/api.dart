@@ -6,7 +6,6 @@ class Api {
   static const baseUrlAppTwo = 'http://119.3.103.76:8119/';
   static const baseUrlAppImage = 'http://119.3.103.76:8119/housekeeperPlatform/';
 
-
   static final Map url = {
     'version': baseUrlApp + '/manualInsert/platFromXiaZai',//版本更新
 
@@ -47,6 +46,8 @@ class Api {
     'problemCount': baseUrlApp + 'problem/count',//获取数据总数
 
     'problemType': baseUrlApp + 'problem_type',//问题类型
+
+    'problemTypeList': baseUrlApp + 'problem_type/list',//问题类型list
 
     'solution': baseUrlApp + 'solution',//整改
 
@@ -94,6 +95,8 @@ class Api {
     'houseTaskById':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/getTaskById',//对接任务id查询详情
 
     'submitTask':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/commitTask',//对接任务提交
+
+    'approvalTask':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/approvalTask',//审批任务工单
 
     'findEnvironProtectDetail':baseUrlAppTwo + 'housekeeperPlatform/d-admin/company/findEnvironProtectDetail',//环保扩展信息-根据企业id查看详情
 

@@ -86,7 +86,7 @@ class PermissionManage{
     if (storageStatus != PermissionStatus.granted) {
       storageStatus = await Permission.location.request();
       if (storageStatus != PermissionStatus.granted) {
-        ToastWidget.showToastMsg('无法调用坐标，请先授权！');
+        ToastWidget.showToastMsg('无法获取位置，请先授权！');
       }
     }
   }

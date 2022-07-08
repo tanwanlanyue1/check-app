@@ -181,7 +181,6 @@ class _TargetClassifyListState extends State<TargetClassifyList> with SingleTick
                     textChild: Text("${gistData[i]['name']}",style: TextStyle(color: Color(0xff4D7FFF),fontSize: sp(26),fontFamily: 'R'),)
                 ),
                 onTap: (){
-                  print('第二级目录');
                   Navigator.pushNamed(context, '/targetDetails',arguments: {"three":false});
                 },
               ),

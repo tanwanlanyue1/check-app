@@ -242,7 +242,7 @@ class _StewardCheckState extends State<StewardCheck>{
               surveyItem('签到坐标','${(double.parse(repertoire['longitude'])).toStringAsFixed(2)}, '
                   '${((double.parse(repertoire['latitude'])).toStringAsFixed(2))}',),
               surveyItem('排查人员',stewardCheck),
-              surveyItem('企业名',repertoire['company']['name']),
+              // surveyItem('企业名',repertoire['company']['name']),
               surveyItem('排查日期',checkDate.substring(0,10)),
               FormCheck.rowItem(
                 alignStart: true,
@@ -540,10 +540,10 @@ class _StewardCheckState extends State<StewardCheck>{
                 style: TextStyle(
                     fontSize: sp(24),
                     fontFamily: "R",
-                    color: Colors.white),
+                    color: (repertoire['status'] == 6 || repertoire['status'] == 5) ? Colors.white : Color(0xffa8a8a8)),
               ),
               decoration: BoxDecoration(
-                color: Color(0xff4D7FFF),
+                color: (repertoire['status'] == 6 || repertoire['status'] == 5) ? Color(0xff4D7FFF) : Color(0XFFe8e8e8),
                 border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
                 borderRadius: BorderRadius.all(Radius.circular(px(28))),
               ),

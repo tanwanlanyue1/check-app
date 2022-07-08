@@ -399,8 +399,10 @@ class _TaskDetailsState extends State<TaskDetails> {
           taskFiles.isNotEmpty ?
           FormCheck.rowItem(
             title: '任务附件:',
+            alignStart: true,
             child: UploadFile(
               url: '任务/',
+              amend: false,
               fileList: taskFiles,
             ),
           ) : Container(),
@@ -490,6 +492,7 @@ class _TaskDetailsState extends State<TaskDetails> {
           FormCheck.rowItem(
             title: '检查附件:',
             titleColor: Color(0XFF323232),
+            alignStart: true,
             child: UploadFile(
               url: '任务/',
               callback: (val){
@@ -513,6 +516,7 @@ class _TaskDetailsState extends State<TaskDetails> {
         checkImages.isNotEmpty ?
         FormCheck.rowItem(
           title: '现场照片:',
+          alignStart: true,
           child: UploadImage(
             imgList: checkImages,
             closeIcon: false,
@@ -525,13 +529,12 @@ class _TaskDetailsState extends State<TaskDetails> {
         filePath.isNotEmpty ?
         FormCheck.rowItem(
           title: '附件:',
+          alignStart: true,
           child: UploadFile(
             url: '/',
+            amend: false,
             fileList: filePath,
           ),
-          // child: Column(
-          //   children: List.generate(filePath.length, (i) => report(i,data: filePath)),
-          // ),
         ) : Container(),
       ],
     );

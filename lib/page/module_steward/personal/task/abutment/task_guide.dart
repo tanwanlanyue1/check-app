@@ -101,6 +101,7 @@ class _TaskGuideState extends State<TaskGuide> {
             child: UploadFile(
               url: '/',
               abutment: true,
+              amend: false,
               fileList: taskGuide['fileList'],
             ),
           ),
@@ -108,14 +109,14 @@ class _TaskGuideState extends State<TaskGuide> {
             title: '法律文件:',
             alignStart: true,
             child: htmlCore(
-                htmlUrl: taskGuide['law']
+                htmlUrl: taskGuide['law'] ?? ''
             ),
           ),
           FormCheck.rowItem(
             title: '填写核查步骤:',
             alignStart: true,
             child: htmlCore(
-              htmlUrl: taskGuide['checkStep']
+              htmlUrl: taskGuide['checkStep'] ?? ''
             ),
           ),
         ],
@@ -124,6 +125,11 @@ class _TaskGuideState extends State<TaskGuide> {
   }
   ///富文本
  Widget htmlCore({required String htmlUrl}){
-    return HtmlWidget(htmlUrl);
+    return InkWell(
+      child: HtmlWidget(htmlUrl),
+      onTap: (){
+        Navigator.pushNamed(context, '/fromHtmlCore',arguments: {'htmlUrl':htmlUrl});
+      },
+    );
  }
 }

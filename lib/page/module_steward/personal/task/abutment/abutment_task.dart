@@ -28,6 +28,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
   List checkImages = [];//检查图片列表
   bool backlog = true;//完成
   String userId = ''; //用户id
+  String review = ''; //审批意见
   List taskFiles = [];//任务附件名称
   Map companyList = {};//任务企业列表
   List imgDetails = [];//任务图片列表
@@ -35,6 +36,8 @@ class _AbutmentTaskState extends State<AbutmentTask> {
   List formDynamic = [];//动态表单id数组
   List getform = [];//缓存的动态表单
   int taskSource = 0;//任务来源（1：临时任务，2：在线监理，3：问题汇总，4：计划主题）
+  int taskStatus = 0;//任务状态 0 未执行，1 执行中，2 已提交 3 驳回 4 审核完结
+  bool isImportant = false; //是否审批通过
 
   @override
   void initState() {
@@ -44,7 +47,6 @@ class _AbutmentTaskState extends State<AbutmentTask> {
     taskId = widget.arguments?['id'] ?? '';
     _getTasks();
   }
-
   /// 获取任务详情
   _getTasks() async {
     var response = await Request().get(Api.url['houseTaskById'],
@@ -54,6 +56,8 @@ class _AbutmentTaskState extends State<AbutmentTask> {
     if(response?['errCode'] == '10000') {
       taskDetails = response['result'];
       taskSource = taskDetails['taskSource'];
+      taskStatus = taskDetails['taskStatus'];
+      review = taskDetails['approvalOpinion'] ?? '';
       List imgList = taskDetails['imgList'] ?? [];
       List fileList = taskDetails['fileList'] ?? [];
       for(var i = 0; i < imgList.length; i++){
@@ -108,6 +112,29 @@ class _AbutmentTaskState extends State<AbutmentTask> {
     }
   }
 
+  /// 审核任务
+  /// taskStatus 4:通过 3：驳回
+  /// approvalOpinion：审核意见
+  void _auditTask() async {
+    if(review.isEmpty){
+      ToastWidget.showToastMsg('审核意见不能为空');
+    }else{
+      var response = await Request().post(
+        Api.url['approvalTask'],
+        data: {
+          'id':taskId,
+          'approvalOpinion':review,
+          'taskStatus': isImportant ? 4 : 3
+        },
+      );
+      if(response['errCode'] == '10000') {
+        ToastWidget.showToastMsg('审核完成');
+        Navigator.pop(context,true);
+        setState(() {});
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -131,9 +158,12 @@ class _AbutmentTaskState extends State<AbutmentTask> {
                 taskSource == 2 ?
                 dataSource() :
                 Container(),
-                !backlog ?
-                revocation() :
+                taskStatus == 2 ?
+                reviewDeclared() :
                 Container(),
+                backlog && taskStatus != 2 ?
+                Container() :
+                revocation(),
               ],
             ),
           ),
@@ -192,6 +222,12 @@ class _AbutmentTaskState extends State<AbutmentTask> {
               taskDetails['priority'] == 2 ? '中' :'低',
               style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
+          (taskStatus == 3 || taskStatus == 4) ?
+          FormCheck.rowItem(
+            title: '审批意见:',
+            alignStart: true,
+            child: Text(review,style: TextStyle(color: taskStatus == 3 ? Color(0xff7196F5) : Color(0xff323233),fontSize: sp(28)),),
+          ) : Container(),
           FormCheck.rowItem(
             alignStart: true,
             title: "现场照片:",
@@ -207,10 +243,12 @@ class _AbutmentTaskState extends State<AbutmentTask> {
           ),
           FormCheck.rowItem(
             title: '任务附件:',
+            alignStart: true,
             child: UploadFile(
               url: '/',
               abutment: true,
-              fileList: backlog ? taskFiles : [],
+              amend: !backlog,
+              fileList: taskFiles,
               callback: (val){
                 taskFiles = val;
                 setState(() {});
@@ -225,7 +263,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
   ///管理表单卡片
   Widget relevanceFrom(){
     return  Container(
-      margin: EdgeInsets.only(left: px(24),right: px(24),top: px(24)),
+      margin: EdgeInsets.only(left: px(24),right: px(24),top: px(24),bottom: px(24)),
       padding: EdgeInsets.all(px(24)),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -329,6 +367,8 @@ class _AbutmentTaskState extends State<AbutmentTask> {
         ),
       ),
       onTap: () async {
+        //判断是已办还是待办进入的
+        //根据企业id和任务id查询表单详情
         if(!backlog){
           if(companyList.isNotEmpty){
             List formContentList = taskDetails['formContentList'] ?? [];
@@ -403,6 +443,95 @@ class _AbutmentTaskState extends State<AbutmentTask> {
     );
   }
 
+  ///审核填报卡片
+  Widget reviewDeclared(){
+    return Container(
+      margin: EdgeInsets.only(left: px(24),right: px(24),top: px(24)),
+      padding: EdgeInsets.all(px(24)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(px(8.0))),
+      ),
+      child: Column(
+        children: [
+          FormCheck.formTitle(
+            '审核填报',
+          ),
+          FormCheck.rowItem(
+            title: '审批意见:',
+            alignStart: true,
+            child: FormCheck.inputWidget(
+                hintText:  '请输入审批意见',
+                lines: 3,
+                onChanged: (val){
+                  review = val;
+                  setState(() {});
+                }
+            ),
+          ),
+          FormCheck.rowItem(
+            title: "审批通过:",
+            child: _radio(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  ///单选
+  Widget _radio() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: px(70),
+          child: Radio(
+            value: true,
+            groupValue: isImportant,
+            onChanged: (bool? val) {
+              setState(() {
+                isImportant = val!;
+              });
+            },
+          ),
+        ),
+        InkWell(
+          child: Text(
+            "是",
+            style: TextStyle(fontSize: sp(28)),
+          ),
+          onTap: (){
+            setState(() {
+              isImportant = true;
+            });
+          },
+        ),
+        SizedBox(
+          width: px(70),
+          child: Radio(
+            value: false,
+            groupValue: isImportant,
+            onChanged: (bool? val) {
+              setState(() {
+                isImportant = val!;
+              });
+            },
+          ),
+        ),
+        InkWell(
+          child: Text(
+            "否",
+            style: TextStyle(fontSize: sp(28)),
+          ),
+          onTap: (){
+            setState(() {
+              isImportant = false;
+            });
+          },
+        )
+      ],
+    );
+  }
   ///按钮
   Widget revocation(){
     return Container(
@@ -417,7 +546,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
           alignment: Alignment.center,
           margin: EdgeInsets.only(left: px(40)),
           child: Text(
-            '提交',
+            taskStatus != 2 ? '提交' : '审核',
             style: TextStyle(
                 fontSize: sp(24),
                 fontFamily: "M",
@@ -429,7 +558,11 @@ class _AbutmentTaskState extends State<AbutmentTask> {
           ),
         ),
         onTap: () {
-          _submiTask();
+          if(taskStatus == 2){
+            _auditTask();
+          }else{
+            _submiTask();
+          }
         },
       ),
     );

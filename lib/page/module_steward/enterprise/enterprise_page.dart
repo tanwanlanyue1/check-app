@@ -34,7 +34,7 @@ class _EnterprisePageState extends State<EnterprisePage> with RouteAware{
   void _getCompany() async {
     if(pageIndex != 0){
       data = {
-        "districtId": districtId[pageIndex],
+        "districtId": districtId[pageIndex-1],
         // "sort":["CAST(substring_index(number,'-',1) AS SIGNED)","CAST(substring_index(number,'-',-1) AS SIGNED)"],
         // "order":["ASC","ASC"],
       };

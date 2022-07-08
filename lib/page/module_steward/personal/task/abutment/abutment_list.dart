@@ -165,7 +165,7 @@ class _AbutmentListState extends State<AbutmentList> {
                       height: px(48),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                          color: TaskCompon.firmTaskColor(1),
+                          color: TaskCompon.firmTaskColor(taskList[i]['taskStatus']),
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(px(20)),
                             bottomLeft: Radius.circular(px(20)),
