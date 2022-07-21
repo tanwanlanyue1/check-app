@@ -40,18 +40,7 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
   void initState() {
     _getStatistics();
     dealWith();
-    controller.addListener(() {
-      controllerTow.jumpTo(controller.offset);
-    });
     super.initState();
-  }
-
-  @override
-  void didUpdateWidget(covariant StatisticAnalysis oldWidget) {
-    // TODO: implement didUpdateWidget
-    // dealWith();
-    judge();
-    super.didUpdateWidget(oldWidget);
   }
 
   /// 获取片区统计
@@ -72,7 +61,7 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
     }
   }
 
-  /// 获取问题数据总数
+  /// 获取问题数据总数,查询全部问题的数量，不分状态
   void _getProblem() async {
     var response = await Request().get(
       Api.url['problemCount'],
@@ -97,7 +86,7 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
   }
 
   /// 获取整改数据总数
-  /// status:写死的状态
+  /// status:写死的状态 2,3 已整改，整改已通过
   void _getAbarbeitung() async {
     Map<String,dynamic> _data =  _pageIndex == 0 ?
     {
@@ -153,8 +142,10 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
   ///如果是统计片区，则不传片区id，只需要传递查询的类型
   ///默认第一次查询企业类型-company
   void dealWith (){
+    // 获取问题数据总数,查询全部问题的数量，不分状态
     _data = _pageIndex == 0 ? {} :
     { 'districtId': districtId[_pageIndex] };
+    //查询全部片区下的企业问题信息统计
     groupTable = _pageIndex == 0 ? {'groupTable':'company'} :
     {
       'districtId': districtId[_pageIndex],
@@ -164,8 +155,9 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
     _getProblemStatis(
         data: groupTable
     );
-    Map<String,dynamic> typeData = _pageIndex == 0 ? {'groupTable':'problemType'} :
-    { 'districtId': districtId[_pageIndex],'groupTable':'problemType'};
+    //问题类型，根据片区进行分开统计———扇形图表数据来源
+    Map<String,dynamic> typeData = _pageIndex == 0 ? {'groupTable':'problemTypeParentId'} :
+    { 'districtId': districtId[_pageIndex],'groupTable':'problemTypeParentId'};
     _getProblemType(
       data: typeData
     );
@@ -180,24 +172,24 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
         type = '企业';
         data =  _pageIndex == 0 ?
        {'groupTable':'company',} :
-        {
+       {
           'districtId': districtId[_pageIndex],
           'groupTable':'company',
-        };
+       };
         _getProblemStatis(data: data);
         setState((){});
         return;
       }
       case 1: {
-        // type = '行业';
-        // data =  _pageIndex == 0 ?
-        // {'groupTable':'industry',} :
-        // {
-        //   'districtId': districtId[_pageIndex],
-        //   'groupTable':'industry',
-        // };
-        // _getProblemStatis(data: data);
-        // setState((){});
+        type = '行业';
+        data =  _pageIndex == 0 ?
+        {'groupTable':'industry',} :
+        {
+          'districtId': districtId[_pageIndex],
+          'groupTable':'industry',
+        };
+        _getProblemStatis(data: data);
+        setState((){});
         return;
       }
       case 2: {

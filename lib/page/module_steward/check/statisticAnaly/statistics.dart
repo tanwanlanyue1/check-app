@@ -104,7 +104,8 @@ class _StatisticsState extends State<Statistics> {
         padding: EdgeInsets.only(top: 0),
         children: [
           widget.pageIndex == 0?
-          abarbeitung():Container(),
+          abarbeitung() :
+          Container(),
           SamePointTable(
             tableTitle: type,
             tableBody: _tableBody,
@@ -201,6 +202,7 @@ class _StatisticsState extends State<Statistics> {
             ),
           ): Container(),
           numberRectification(),
+          //该页面一共调用了俩次这个页面
           SamePointTable(
             tableTitle: '全园区',
             tableBody: allStatist,

@@ -36,7 +36,7 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
     if(response['statusCode'] == 200 && response['data'] != null) {
       setState(() {
         inventoryStatus = response['data']['status'];
-        task = response['data']['latitude'] == null ? true : false; //判断是否从任务过来
+        task = response['data']['latitude'] == null ? true : false; //判断是否从任务过来,任务生成的清单没有坐标
         flow();
       });
     }
@@ -120,9 +120,8 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
           Expanded(
             child: Stack(
               children: [
-                // process(),
                 processBox(),
-                processLine(),
+                procesStauts(),
                 CustomPaint(
                   painter: MyPainter(),
                 )
@@ -131,173 +130,6 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
           ),
         ],
       ),
-    );
-  }
-
-  ///测试流程盒子
-  Widget process(){
-    return ListView(
-      padding: EdgeInsets.only(top: 0),
-      children: [
-        //下发排查任务
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            task ?
-            Container(
-              margin: EdgeInsets.only(left: px(24),top: px(24)),
-              padding: EdgeInsets.only(left: px(12),right: px(12),top: px(6)),
-              height: px(52),
-              child: Text("下发排查任务",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus: 0)),),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(px(5))),
-                border: Border.all(width: px(4),color: switchColor(colorStatus: 0)),
-              ),
-            ) : Container(height: px(75)),
-          ],
-        ),
-        //新建排查流程
-        Row(
-          // mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: px(4),
-              height: px(52),
-              margin: EdgeInsets.only(left: px(95)),
-              color: Colors.blue,
-            ),
-            Stack(
-              children: [
-                Container(
-                  width: px(170),
-                  height: px(4),
-                  margin: EdgeInsets.only(top: px(50)),
-                  color: Colors.blue,
-                ),
-              ],
-            ),
-            Container(
-              margin: EdgeInsets.only(top: px(24)),
-              padding: EdgeInsets.only(left: px(12),right: px(12),top: px(6)),
-              height: px(52),
-              child: Text("新建排查流程",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus:1)),),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(px(5))),
-                border: Border.all(width: px(4),color: switchColor(colorStatus:1)),
-              ),
-            ),
-          ],
-        ),
-        //填报并提交
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              margin: EdgeInsets.only(left: px(24),top: px(80)),
-              padding: EdgeInsets.only(left: px(12),right: px(12)),
-              height: px(52),
-              width: px(165),
-              alignment: Alignment.center,
-              child: Text("填报并提交",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus:2)),),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(px(5))),
-                border: Border.all(width: px(4),color: switchColor(colorStatus:2)),
-              ),
-            )
-          ],
-        ),
-        //审核
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-              margin: EdgeInsets.only(left: px(24),top: px(50)),
-              padding: EdgeInsets.only(left: px(12),right: px(12)),
-              height: px(52),
-              width: px(165),
-              alignment: Alignment.center,
-              child: Text("审核",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus:3)),),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(px(5))),
-                border: Border.all(width: px(4),color: switchColor(colorStatus:3)),
-              ),
-            ),
-          ],
-        ),
-        //填报整改详情
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Container(
-              margin: EdgeInsets.only(right: px(24),top: px(50)),
-              padding: EdgeInsets.only(left: px(12),right: px(12)),
-              height: px(52),
-              width: px(165),
-              alignment: Alignment.center,
-              child: Text("填报整改详情",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus:5)),),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(px(5))),
-                border: Border.all(width: px(4),color: switchColor(colorStatus:5)),
-              ),
-            )
-          ],
-        ),
-        //现场复查
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              margin: EdgeInsets.only(left: px(24),top: px(80)),
-              padding: EdgeInsets.only(left: px(12),right: px(12)),
-              height: px(52),
-              width: px(165),
-              alignment: Alignment.center,
-              child: Text("现场复查",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus:5)),),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(px(5))),
-                border: Border.all(width: px(4),color: switchColor(colorStatus:5)),
-              ),
-            )
-          ],
-        ),
-        //再次整改并填报
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Container(
-              margin: EdgeInsets.only(right: px(24),top: px(50)),
-              padding: EdgeInsets.only(left: px(24),right: px(24)),
-              height: px(72),
-              width: px(165),
-              alignment: Alignment.center,
-              child: Text("再次整改并填报",style: TextStyle(fontSize: sp(22),color: switchColor(only:6)),),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(px(5))),
-                border: Border.all(width: px(4),color: switchColor(only:6)),
-              ),
-            )
-          ],
-        ),
-        //流程结束
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              margin: EdgeInsets.only(left: px(24),top: px(80)),
-              padding: EdgeInsets.only(left: px(12),right: px(12)),
-              height: px(52),
-              width: px(165),
-              alignment: Alignment.center,
-              child: Text("流程结束",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus:7)),),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(px(5))),
-                border: Border.all(width: px(4),color: switchColor(colorStatus:7)),
-              ),
-            )
-          ],
-        ),
-      ],
     );
   }
 
@@ -311,34 +143,46 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             task ?
-            Container(
-              margin: EdgeInsets.only(left: px(24),top: px(24)),
-              padding: EdgeInsets.only(left: px(12),right: px(12),top: px(6)),
-              height: px(52),
-              child: Text("下发排查任务",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus: 0)),),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(px(5))),
-                border: Border.all(width: px(4),color: switchColor(colorStatus: 0)),
+                Container(
+                  margin: EdgeInsets.only(left: px(24),top: px(36)),
+                  child: procesBox(
+                      text: '下发排查任务',
+                      colorStatus: 0
+                  ),
+                )
+                : Container(
+                  margin: EdgeInsets.only(left: px(24),top: px(36)),
+                  height: px(52),
+                  width: px(166)
               ),
-            ) : Container(
-              height: px(75),
-            ),
           ],
         ),
         //新建排查流程
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.only(left: px(24),top: px(24)),
-              padding: EdgeInsets.only(left: px(12),right: px(12),top: px(6)),
-              height: px(52),
-              child: Text("新建排查流程",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus:1)),),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(px(5))),
-                border: Border.all(width: px(4),color: switchColor(colorStatus:1)),
+              width: px(4),
+              height: px(80),
+              margin: EdgeInsets.only(left: px(107)),
+              color: task  ? Color(0xFF4D7FFF) : Colors.transparent,
+            ),
+            Container(
+              width: px(180),
+              height: px(4),
+              margin: EdgeInsets.only(top: px(76)),
+              color: task ? Color(0xFF4D7FFF) : Colors.transparent,
+            ),
+            Container(
+              margin: EdgeInsets.only(top: px(26)),
+              child: procesBox(
+                  text: '新建排查流程',
+                  colorStatus: 1,
+                  right: task ? true : false,
+                  onlyTop: 25,
+                  rightColor: task ? true : false,
               ),
-            )
+            ),
           ],
         ),
         //填报并提交
@@ -346,89 +190,169 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              margin: EdgeInsets.only(left: px(24),top: px(80)),
-              padding: EdgeInsets.only(left: px(12),right: px(12)),
-              height: px(52),
-              width: px(165),
-              alignment: Alignment.center,
-              child: Text("填报并提交",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus:2)),),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(px(5))),
-                border: Border.all(width: px(4),color: switchColor(colorStatus:2)),
+              width: px(4),
+              height: px(80),
+              margin: EdgeInsets.only(left: px(24)),
+              color: switchColor(colorStatus:1),
+            ),
+          ],
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: px(196),
+                  height: px(4),
+                  margin: EdgeInsets.only(top: px(36),left: px(99)),
+                  color: switchColor(only: 3),
+                ),
+                Container(
+                  width: px(4),
+                  height: px(26),
+                  margin: EdgeInsets.only(left: px(99)),
+                  color: switchColor(only: 3),
+                ),
+              ],
+            ),
+            Container(
+              child: procesBox(
+                  text: '填报并提交',
+                  colorStatus: 2,
+                  down: true,
+                  downColor: status >= 1 ? true : false,
+                  right: true,
+                  rightColor: status == 3 ? true : false
               ),
-            )
+            ),
           ],
         ),
         //审核
         Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Column(
+              children: [
+                Container(
+                  width: px(4),
+                  height: px(50),
+                  color: switchColor(only: 3),
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: px(24)),
+                  child: procesBox(
+                      text: '审核',
+                      colorStatus: 3,
+                      left: true,
+                      leftColor: status >= 2 ? true : false,
+                  ),
+                ),
+              ],
+            ),
             Container(
-              margin: EdgeInsets.only(left: px(24),top: px(50)),
-              padding: EdgeInsets.only(left: px(12),right: px(12)),
-              height: px(52),
-              width: px(165),
-              alignment: Alignment.center,
-              child: Text("审核",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus:3)),),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(px(5))),
-                border: Border.all(width: px(4),color: switchColor(colorStatus:3)),
-              ),
+              width: px(180),
+              height: px(4),
+              margin: EdgeInsets.only(top: px(74)),
+              color: switchColor(colorStatus:2,also: 3),
+            ),
+            Container(
+              width: px(4),
+              height: px(78),
+              color: switchColor(colorStatus:2,also: 3),
             ),
           ],
         ),
         //填报整改详情
         Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.only(right: px(24),top: px(50)),
-              padding: EdgeInsets.only(left: px(12),right: px(12)),
-              height: px(52),
-              width: px(165),
-              alignment: Alignment.center,
-              child: Text("填报整改详情",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus:5)),),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(px(5))),
-                border: Border.all(width: px(4),color: switchColor(colorStatus:5)),
+              width: px(4),
+              height: px(86),
+              margin: EdgeInsets.only(left: px(99)),
+              color: switchColor(colorStatus:4),
+            ),
+            Container(
+              width: Adapt.screenW()-px(310),
+              height: px(4),
+              margin: EdgeInsets.only(top: px(82)),
+              color: switchColor(colorStatus:4),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: px(58)),
+              child: procesBox(
+                  text: '填报整改详情',
+                  colorStatus: 5,
+                  right: true,
+                  rightColor: status >= 4 ? true : false
               ),
-            )
+            ),
           ],
         ),
         //现场复查
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.only(left: px(24),top: px(80)),
-              padding: EdgeInsets.only(left: px(12),right: px(12)),
-              height: px(52),
-              width: px(165),
-              alignment: Alignment.center,
-              child: Text("现场复查",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus:5)),),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(px(5))),
-                border: Border.all(width: px(4),color: switchColor(colorStatus:5)),
+              margin: EdgeInsets.only(top: px(58)),
+              child: procesBox(
+                  text: '现场复查',
+                  colorStatus: 6,
+                  left: true,
+                  leftColor: status >= 5 ? true : false
               ),
-            )
+            ),
+            Container(
+              width: px(160),
+              height: px(4),
+              margin: EdgeInsets.only(top: px(82)),
+              color: switchColor(colorStatus:5),
+            ),
+            Container(
+              width: px(4),
+              height: px(86),
+              margin: EdgeInsets.only(right: px(99)),
+              color: switchColor(colorStatus:5),
+            ),
           ],
         ),
         //再次整改并填报
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Column(
+              children: [
+                Container(
+                  width: px(4),
+                  height: px(84),
+                  color: switchColor(colorStatus:6),
+                ),
+                Container(
+                  width: px(4),
+                  height: px(24),
+                  color: switchColor(colorStatus:7),
+                ),
+              ],
+            ),
             Container(
-              margin: EdgeInsets.only(right: px(24),top: px(50)),
-              // padding: EdgeInsets.only(left: px(24),right: px(24)),
-              height: px(52),
-              width: px(165),
-              alignment: Alignment.center,
-              child: Text("再次整改并填报",style: TextStyle(fontSize: sp(22),color: switchColor(only:6)),),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(px(5))),
-                border: Border.all(width: px(4),color: switchColor(only:6)),
+              width: px(160),
+              height: px(4),
+              margin: EdgeInsets.only(top: px(80)),
+              color: switchColor(only:6),
+            ),
+            Container(
+              margin: EdgeInsets.only(right: px(24),top: px(56)),
+              child: procesBox(
+                  text: '再次整改并填报',
+                  only: 9,//走不到这个变色的流程,暂无可以判断的状态
+                  right: true,
+                  rightColor: status == 6 ? true : false
               ),
-            )
+            ),
           ],
         ),
         //流程结束
@@ -436,235 +360,129 @@ class _ProblemScheduleState extends State<ProblemSchedule> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              margin: EdgeInsets.only(left: px(24),top: px(80)),
-              padding: EdgeInsets.only(left: px(12),right: px(12)),
-              height: px(52),
-              width: px(165),
-              alignment: Alignment.center,
-              child: Text("流程结束",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus:7)),),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(px(5))),
-                border: Border.all(width: px(4),color: switchColor(colorStatus:7)),
-              ),
+              width: px(4),
+              height: px(92),
+              margin: EdgeInsets.only(left: px(16)),
+              color: switchColor(colorStatus:7),
             )
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              margin: EdgeInsets.only(left: px(16)),
+              child: procesBox(
+                  text: '流程结束',
+                  colorStatus: 7,
+                  down: true,
+                  downColor: status >= 7 ? true : false
+              ),
+            ),
           ],
         ),
       ],
     );
   }
 
-  ///流程线条
-  Widget processLine(){
+  ///流程状态
+  Widget procesStauts(){
     return Stack(
       children: [
-        //下发排查任务
-        task ?
         Positioned(
-          left: px(100),
-          top: px(75),
-          child: Container(
-            width: px(4),
-            height: px(50),
-            color: switchColor(colorStatus:0),
-          ),
-        ) : Container(),
-        task ?
-        Positioned(
-          left: px(100),
-          top: px(125),
-          child: Container(
-            width: px(195),
-            height: px(4),
-            color: switchColor(colorStatus:0),
-          ),
-        ) : Container(),
-        task ?
-        Positioned(
-          left: px(275),
-          top: px(104),
-          child: Icon(Icons.arrow_right,color: switchColor(colorStatus:0),),
-        ) : Container(),
-
-        //新建排查流程
-        Positioned(
-          left: px(390),
-          top: px(153),
-          child: Container(
-            width: px(4),
-            height: px(68),
-            color: switchColor(colorStatus:1),
-          ),
-        ),
-        Positioned(
-          left: px(368),
-          top: px(200),
-          child: Icon(Icons.arrow_drop_down,color: switchColor(colorStatus:1),),
-        ),
-
-        //审核中
-        Positioned(
-          left: px(390),
-          top: px(285),
-          child: Container(
-            width: px(4),
-            height: px(70),
-            color: switchColor(colorStatus:2,also: 3),
-          ),
-        ),
-        Positioned(
-          left: px(200),
-          top: px(355),
-          child: Container(
-            width: px(195),
-            height: px(4),
-            color: switchColor(colorStatus:2,also: 3),
-          ),
-        ),
-        Positioned(
-          left: px(175),
-          top: px(333),
-          child: Icon(Icons.arrow_left_outlined,color: switchColor(colorStatus:2,also: 3),),
-        ),
-
-        //审核不通过
-        Positioned(
-          left: px(100),
-          top: px(256),
-          child: Container(
-            width: px(4),
-            height: px(80),
-            color: switchColor(only: 3),
-          ),
-        ),
-        Positioned(
-          left: px(100),
-          top: px(256),
-          child: Container(
-            width: px(200),
-            height: px(4),
-            color: switchColor(only:3),
-          ),
-        ),
-        Positioned(
-          left: px(150),
-          top: px(220),
+          left: px(120),
+          top: px(260),
           child: Text("不通过",style: TextStyle(fontSize: sp(22),color: switchColor(only:3)),),
         ),
-        Positioned(
-          left: px(275),
-          top: px(236),
-          child: Icon(Icons.arrow_right,color: switchColor(only:3),),
-        ),
-
         //审核通过
         Positioned(
-          left: px(100),
-          top: px(384),
-          child: Container(
-            width: px(4),
-            height: px(80),
-            color: switchColor(colorStatus: 4),
-          ),
-        ),
-        Positioned(
-          left: px(100),
-          top: px(464),
-          child: Container(
-            width: px(450),
-            height: px(4),
-            color: switchColor(colorStatus: 4),
-          ),
-        ),
-        Positioned(
           left: px(270),
-          top: px(430),
+          top: px(480),
           child: Text("通过",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus: 4),),),
         ),
-        Positioned(
-          left: px(530),
-          top: px(443),
-          child: Icon(Icons.arrow_right,color: switchColor(colorStatus: 4),),
-        ),
-
-        //复查中
-        Positioned(
-          left: px(640),
-          top: px(484),
-          child: Container(
-            width: px(4),
-            height: px(110),
-            color: switchColor(colorStatus: 5),
-          ),
-        ),
-        Positioned(
-          left: px(480),
-          top: px(590),
-          child: Container(
-            width: px(160),
-            height: px(4),
-            color: switchColor(colorStatus: 5),
-          ),
-        ),
-        Positioned(
-          left: px(452),
-          top: px(570),
-          child: Icon(Icons.arrow_left,color: switchColor(colorStatus: 5)),
-        ),
-
         //复查未整改
         Positioned(
-          left: px(380),
-          top: px(620),
-          child: Container(
-            width: px(4),
-            height: px(80),
-            color: switchColor(colorStatus: 6),
-          ),
-        ),
-        Positioned(
-          left: px(380),
-          top: px(700),
-          child: Container(
-            width: px(170),
-            height: px(4),
-            color: switchColor(only: 6),
-          ),
-        ),
-        Positioned(
           left: px(440),
-          top: px(650),
+          top: px(700),
           child: Text("未整改",style: TextStyle(fontSize: sp(22),color: switchColor(only: 6)),),
         ),
-        Positioned(
-          left: px(530),
-          top: px(678),
-          child: Icon(Icons.arrow_right,color: switchColor(only: 6)),
-        ),
-
         //整改完成
         Positioned(
-          left: px(380),
-          top: px(700),
-          child: Container(
-            width: px(4),
-            height: px(90),
-            color: switchColor(colorStatus: 7),
-          ),
-        ),
-        Positioned(
           left: px(280),
-          top: px(700),
+          top: px(780),
           child: Text("整改完成",style: TextStyle(fontSize: sp(22),color: switchColor(colorStatus: 7),),),
         ),
-        Positioned(
-          left: px(358),
-          top: px(770),
-          child: Icon(Icons.arrow_drop_down,color: switchColor(colorStatus: 7),),
-        ),
-
       ],
     );
   }
+
+  ///封装的盒子
+  ///text:文字
+  ///colorStatus,also,only：是否变色
+  ///onlyTop：盒子居上距离
+  Widget procesBox({required String text,int? onlyTop,
+    int? colorStatus,int? also,int? only,
+    bool down = false,bool right = false,bool left = false,
+    bool downColor = false,bool rightColor = false,bool leftColor = false,
+  }){
+    return Column(
+      children: [
+        Visibility(
+          visible: down,
+          child: SizedBox(
+            width: px(24),
+            child: downColor ?
+            Image.asset('lib/assets/icons/check/arrows-down.png'):
+            Image.asset('lib/assets/icons/check/arrows-down2.png'),
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Visibility(
+              visible: right,
+              child: Container(
+                height: px(24),
+                margin: EdgeInsets.only(top: px(onlyTop ?? 0)),
+                child: rightColor ?
+                Image.asset('lib/assets/icons/check/arrows-right.png') :
+                Image.asset('lib/assets/icons/check/arrows-right2.png'),
+              ),
+            ),
+            Container(
+              height: px(52),
+              width: px(166),
+              margin: EdgeInsets.only(top: px(onlyTop ?? 0)),
+              alignment: Alignment.center,
+              child: Text(text,style: TextStyle(fontSize: sp(22),color: switchColor(
+                  only:only,
+                  colorStatus:colorStatus,
+                  also:also
+              )),),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(px(5))),
+                border: Border.all(width: px(4),color: switchColor(
+                    only:only,
+                    colorStatus:colorStatus,
+                    also:also
+                )),
+              ),
+            ),
+            Visibility(
+              visible: left,
+              child: SizedBox(
+                height: px(24),
+                child: leftColor ?
+                Image.asset('lib/assets/icons/check/arrows-left.png') :
+                Image.asset('lib/assets/icons/check/arrows-left2.png'),
+              ),
+            ),
+          ],
+        )
+      ],
+    );
+  }
+
 }
 
 class MyPainter extends CustomPainter {

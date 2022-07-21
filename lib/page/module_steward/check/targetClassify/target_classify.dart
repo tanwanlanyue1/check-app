@@ -21,10 +21,10 @@ class _TargetClassifyPageState extends State<TargetClassifyPage> {
   void _getCompany() async {
     var response = await Request().get(
         Api.url['companyList'],
-        // data: {
-          // "sort":["CAST(substring_index(number,'-',1) AS SIGNED)","CAST(substring_index(number,'-',-1) AS SIGNED)"],
-          // "order":["ASC","ASC"],
-        // }
+        data: {
+          "sort":["CAST(substring_index(p.number,'-',1) AS SIGNED)","CAST(substring_index(p.number,'-',-1) AS SIGNED)"],
+          "order":["ASC","ASC"],
+        }
     );
     if(response['statusCode'] == 200) {
       companyList = response["data"]['list'];

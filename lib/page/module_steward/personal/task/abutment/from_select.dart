@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
-import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 

@@ -137,7 +137,6 @@ class _StewardCheckState extends State<StewardCheck>{
       }
   }
 
-
   @override
   void initState() {
     // TODO: implement initState
@@ -459,7 +458,7 @@ class _StewardCheckState extends State<StewardCheck>{
             ),
           ),
           Visibility(
-            visible: !reviewTidy,
+            visible: reviewTidy,
             child: Column(
               children: List.generate(review.length, (i) => RectifyComponents.rectifyRow(
                   company: review[i],

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
-import 'package:scet_check/components/generalduty/upload_file.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
@@ -17,20 +16,31 @@ class TaskGuide extends StatefulWidget {
 }
 
 class _TaskGuideState extends State<TaskGuide> {
-  Map taskGuide = {};//指引
-
+  Map taskGuide = {};//检查的基本西南西
+  Map analyze = {};//核查数据
+  List gist = [
+    {'name':'检查要点','url':'checkStep','tidy':false},
+    {'name':'取证要点','url':'forensicsPoint','tidy':false},
+    {'name':'法律依据','url':'law','tidy':false},
+  ];//要点
   @override
   void initState() {
     // TODO: implement initState
-    // _getGuide(id: widget.arguments?['analyzeId']);
-    _getGuide(id: 1);
+    taskGuide = widget.arguments?['cycleList'];
+    _getCycle();
     super.initState();
   }
-  /// 获取任务指引详情
-  void _getGuide({required int id}) async {
-    var response = await Request().get(Api.url['modelAnalyzeById']+'?id=$id',);
+  /// 获取核查详情
+  /// id:核查id，name，标题 url：获取的字段
+  void _getCycle() async {
+    var response = await Request().get(
+      Api.url['modelAnalyzeById'],
+      data: {
+        'id':widget.arguments?['id'],
+      },
+    );
     if(response['errCode'] == '10000') {
-      taskGuide = response['result'];
+      analyze = response['result'];
       setState(() {});
     }
   }
@@ -41,7 +51,7 @@ class _TaskGuideState extends State<TaskGuide> {
       body: Column(
         children: [
           TaskCompon.topTitle(
-              title: '任务指引',
+              title: '详细检查信息',
               left: true,
               callBack: (){
                 Navigator.pop(context);
@@ -52,6 +62,9 @@ class _TaskGuideState extends State<TaskGuide> {
               padding: EdgeInsets.only(top: 0),
               children: [
                 basicInfo(),
+                Column(
+                  children: List.generate(gist.length, (i) => mainPoint(i: i)),
+                ),
               ],
             ),
           ),
@@ -78,58 +91,69 @@ class _TaskGuideState extends State<TaskGuide> {
             child: FormCheck.formTitle('基本信息'),
           ),
           FormCheck.rowItem(
+            title: '企业名称:',
+            child: Text('${taskGuide['companyName'] ?? '/'}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+          ),
+          FormCheck.rowItem(
+            title: '排放口名称:',
+            child: Text('${taskGuide['name'] ?? '/'}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+          ),
+          FormCheck.rowItem(
             title: '判研结果:',
             alignStart: true,
-            child: Text('${taskGuide['analyzeResult'] ?? '/'}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+            child: Text('${taskGuide['analyzeResult'].replaceAll('\n','') ?? '/'}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
-            title: '报警代码:',
+            title: '判研时间:',
             child: Text(
-              '${taskGuide['code'] ?? '/'}', style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+              taskGuide['analyzeDate'] == null ? '/' :
+              DateTime.fromMillisecondsSinceEpoch(taskGuide['analyzeDate']).toString().substring(0,19), style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
-            title: '取证主要要点:',
-            child: Text('${taskGuide['forensicsPoint'] ?? '/'}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
-          ),
-          FormCheck.rowItem(
-            title: '可能存在的违法行为:',
-            child: Text('${taskGuide['possibleIllegalConduct'] ?? '/'}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
-          ),
-          FormCheck.rowItem(
-            title: '任务附件:',
+            title: '判研分值:',
             alignStart: true,
-            child: UploadFile(
-              url: '/',
-              abutment: true,
-              amend: false,
-              fileList: taskGuide['fileList'],
-            ),
+            child: Text('${taskGuide['score'] ?? '/'}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
-          FormCheck.rowItem(
-            title: '法律文件:',
-            alignStart: true,
-            child: htmlCore(
-                htmlUrl: taskGuide['law'] ?? ''
-            ),
+        ],
+      ),
+    );
+  }
+
+  ///要点
+  Widget mainPoint({required int i}){
+    return Container(
+      margin: EdgeInsets.only(left: px(24),right: px(24),top: px(24)),
+      padding: EdgeInsets.all(px(12)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(px(8.0))),
+      ),
+      child: Column(
+        children: [
+          FormCheck.formTitle(
+              gist[i]['name'],
+              showUp: true,
+              tidy: gist[i]['tidy'],
+              onTaps: (){
+                gist[i]['tidy'] = !gist[i]['tidy'];
+                setState(() {});
+              }
           ),
-          FormCheck.rowItem(
-            title: '填写核查步骤:',
-            alignStart: true,
-            child: htmlCore(
-              htmlUrl: taskGuide['checkStep'] ?? ''
+          Visibility(
+            visible: gist[i]['tidy'],
+            child: GestureDetector(
+              child: Container(
+                width: Adapt.screenW(),
+                color: Colors.white,
+                child: HtmlWidget(analyze[gist[i]['url']] ?? '/'),
+              ),
+              onTap: (){
+                Navigator.pushNamed(context, '/fromHtmlCore',arguments: {'htmlUrl':analyze[gist[i]['url']] ?? '/','name':gist[i]['name']});
+              },
             ),
           ),
         ],
       ),
     );
   }
-  ///富文本
- Widget htmlCore({required String htmlUrl}){
-    return InkWell(
-      child: HtmlWidget(htmlUrl),
-      onTap: (){
-        Navigator.pushNamed(context, '/fromHtmlCore',arguments: {'htmlUrl':htmlUrl});
-      },
-    );
- }
 }

@@ -167,7 +167,7 @@ class _MessagePageState extends State<MessagePage> {
                 children: [
                   Container(
                     margin: EdgeInsets.only(left: px(12)),
-                    child: Text('关于推动xxx任务',
+                    child: Text('关于推动废气处理任务',
                       style: TextStyle(color: Color(0xff969799),fontSize: sp(26),),
                   ),
                   ),

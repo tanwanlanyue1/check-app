@@ -3,8 +3,9 @@ class Api {
 
   // static const baseUrlApp = 'http://10.10.1.217:8687/';
   static const baseUrlApp = 'https://dev.scet.com.cn/yhpc/';
-  static const baseUrlAppTwo = 'http://119.3.103.76:8119/';
-  static const baseUrlAppImage = 'http://119.3.103.76:8119/housekeeperPlatform/';
+
+  static const baseUrlAppTwo = 'http://gjpt.scet.com.cn:18002/';
+  static const baseUrlAppImage = 'http://gjpt.scet.com.cn:18002/housekeeperPlatform/';
 
   static final Map url = {
     'version': baseUrlApp + '/manualInsert/platFromXiaZai',//版本更新
@@ -58,6 +59,14 @@ class Api {
     'basis': baseUrlApp + 'basis',//排查依据
 
     'basisList': baseUrlApp + 'basis/list',//排查依据分页列表
+
+    'target': baseUrlApp + 'target',//指标详情查询
+
+    'targetList': baseUrlApp + 'target/list',//指标分页列表
+
+    'targetCompany': baseUrlApp + 'target_company',//保存指标企业
+
+    'targetCompanyList': baseUrlApp + 'target_company/list',//指标企业分页列表
 
     'reviewList': baseUrlApp + 'review/list',//复查分页列表
 

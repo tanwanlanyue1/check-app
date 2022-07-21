@@ -84,7 +84,7 @@ class _BasicInformationState extends State<BasicInformation > {
                     }
                 ),
                 EnterPriseCompon.surveyItem( '企业名称', '${companyList['name']}'),
-                EnterPriseCompon.surveyItem( '行业类型', '${companyList['industry']?['name']}'),
+                EnterPriseCompon.surveyItem( '行业类型', '${companyList['industryName']}'),
                 EnterPriseCompon.surveyItem( '企业地址', '${companyList['address']}'),
                 EnterPriseCompon.surveyItem( '环保负责人', '${companyList['environmentPrincipal']}'),
                 EnterPriseCompon.surveyItem( '联系电话', '${companyList['environmentPhone']}',color: true),

@@ -106,9 +106,11 @@ class RectifyComponents{
                    margin: EdgeInsets.only(left: px(12)),
                    child: Icon(Icons.widgets_outlined,color: Color(0xffC8C9CC),size: 18,),
                  ),
-                 Container(
-                   margin: EdgeInsets.only(left: px(30),right: px(50)),
-                   child: Text('${company["problemType"]?['name']}',style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),),
+                 Expanded(
+                   child: Container(
+                     margin: EdgeInsets.only(left: px(30),right: px(50)),
+                     child: Text('${company["problemType"]?['name']}',style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),overflow: TextOverflow.ellipsis,),
+                   ),
                  ),
                  SizedBox(
                    height: px(32),
@@ -124,11 +126,9 @@ class RectifyComponents{
                    width: px(32),
                    child: Image.asset('lib/assets/icons/check/sandClockEnd.png'),
                  ),
-                 Expanded(
-                   child: Container(
-                     margin: EdgeInsets.only(left: px(12)),
-                     child: Text(formatTime(company['updatedAt']),style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),overflow: TextOverflow.ellipsis,),
-                   ),
+                 Container(
+                   margin: EdgeInsets.only(left: px(12),right: px(12)),
+                   child: Text(formatTime(company['updatedAt']),style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),overflow: TextOverflow.ellipsis,),
                  ),
                ],
              ),
@@ -241,7 +241,7 @@ class RectifyComponents{
                    child: Image.asset('lib/assets/icons/check/sandClockEnd.png'),
                  ),
                  Container(
-                   margin: EdgeInsets.only(left: px(12)),
+                   margin: EdgeInsets.only(left: px(12),right: px(12)),
                    child: Text(formatTime(company['updatedAt']),style: TextStyle(color: Color(0xff969799),fontSize: sp(24)),),
                  ),
                ],

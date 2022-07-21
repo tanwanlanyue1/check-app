@@ -53,6 +53,7 @@ class _EssentialGistState extends State<EssentialGist> {
       return px(i * 75+60);
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -63,6 +64,7 @@ class _EssentialGistState extends State<EssentialGist> {
           height: px(88),
           color: Colors.white,
           alignment: Alignment.center,
+          margin: EdgeInsets.only(bottom: px(20)),
           child: LawComponents.search(
               textEditingController: textEditingController,
               callBack: (val){}
@@ -100,7 +102,7 @@ class _EssentialGistState extends State<EssentialGist> {
       firstChild: Container(
         height: calculateHeight(data?.length ?? 0),
         width: px(702),
-        margin: EdgeInsets.only(top: px(20),left: px(20),right: px(20)),
+        margin: EdgeInsets.only(bottom: px(20),left: px(20),right: px(20)),
         padding: EdgeInsets.all(px(24)),
         color: Colors.white,
         child: GestureDetector(
@@ -140,7 +142,7 @@ class _EssentialGistState extends State<EssentialGist> {
       secondChild: Container(
         height: px(80),
         width: px(702),
-        margin: EdgeInsets.only(top: px(20),left: px(20),right: px(20)),
+        margin: EdgeInsets.only(bottom: px(20),left: px(20),right: px(20)),
         padding: EdgeInsets.all(px(12)),
         color: Colors.white,
         child: Column(

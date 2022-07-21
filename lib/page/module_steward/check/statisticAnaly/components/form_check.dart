@@ -41,14 +41,14 @@ class FormCheck {
               borderRadius: BorderRadius.all(Radius.circular(px(1)))
           ),
         ),
-        Text(title,
+        Expanded(
+          child: Text(title,
             style: TextStyle(
               fontSize: sp(26),
               fontFamily: 'M',
               color: Color(0xff323233),
-            )
-        ),
-        Spacer(),
+            ),overflow: TextOverflow.ellipsis,
+        )),
         Visibility(
           visible: showUp,
           child: GestureDetector(

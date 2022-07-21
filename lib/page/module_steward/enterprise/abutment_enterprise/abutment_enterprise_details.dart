@@ -63,14 +63,12 @@ class _AbutmentEnterpriseDetailsState extends State<AbutmentEnterpriseDetails> {
                 Navigator.pop(context);
               }
           ),
-          companyData.isNotEmpty ?
           Expanded(
             child: ListView(
               padding: EdgeInsets.only(top: 0),
-              children: List.generate(companyData.length, (i) => info(companyLists: companyData[i])),
+              children: List.generate((companyData.isEmpty ? 1 : companyData.length), (i) => info(companyLists: companyData.isEmpty ? {} : companyData[i])),
             ),
-          ) :
-          Container(),
+          ),
         ],
       ),
     );
@@ -88,7 +86,7 @@ class _AbutmentEnterpriseDetailsState extends State<AbutmentEnterpriseDetails> {
             Column(
               children: List.generate(details.length, (i){
                 return surveyItem(
-                    '${details[i]['title']}:','${companyLists[details[i]['valuer']]}'
+                    '${details[i]['title']}:','${companyLists[details[i]['valuer']] ?? '/'}'
                 );
               }),
             ),

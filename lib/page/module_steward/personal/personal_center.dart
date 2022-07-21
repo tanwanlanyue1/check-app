@@ -28,7 +28,11 @@ class _PersonalCenterState extends State<PersonalCenter> {
   void initState() {
     // TODO: implement initState
     userName = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
-    manager = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'][1]['name'] == '项目经理' ? true : false;
+    List roles = [];
+    for(var i = 0; i < jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'].length; i++){
+      roles.add(jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'][i]['name']);
+    }
+    manager = roles.contains('项目经理');
     super.initState();
   }
 

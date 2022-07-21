@@ -6,8 +6,6 @@ import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/down_input.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
-import 'package:scet_check/main.dart';
-import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/components/generalduty/time_select.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
@@ -53,7 +51,8 @@ class _FillInFormState extends State<FillInForm> {
   String issueDetails = '';//问题详情
   String type = '';//问题类型 一级
   String secondType = '';//问题类型 二级
-  String typeId = '';//问题类型ID
+  String typeId = '';//问题类型二级ID
+  String secondTypeId = '';//问题类型一级ID
   String inventoryId = '';//清单ID
   String companyId = '';//企业ID
   String industryId = '';//产业ID
@@ -157,6 +156,8 @@ class _FillInFormState extends State<FillInForm> {
       ToastWidget.showToastMsg('请输入排查人员');
     }else if(typeId.isEmpty){
       ToastWidget.showToastMsg('请选择问题类型');
+    }else if(problemTitle.isEmpty){
+      ToastWidget.showToastMsg('请输入问题概述');
     }else if(issueDetails.isEmpty){
       ToastWidget.showToastMsg('请输入问题详情');
     }else if(imgDetails.isEmpty){
@@ -171,7 +172,8 @@ class _FillInFormState extends State<FillInForm> {
         // 'lawImages': lawImg,
         'status': 0,
         'inventoryId':inventoryId,
-        'problemTypeId': typeId,
+        'problemTypeId': typeId,//二级id
+        'problemTypeParentId': secondTypeId,//一级id
         'userId':userId,
         'isImportant':isImportant,
         'companyId': companyId,
@@ -311,7 +313,8 @@ class _FillInFormState extends State<FillInForm> {
                 hitStr: '请选择一级类型',
                 callback: (val){
                   type = val['name'];
-                  problemType = val['children'];
+                  secondTypeId = val['id'];
+                  problemType = val['children'] ?? [];
                   if(type == '无'){
                     secondType = '无';
                     typeId = val['children'][0]['id'];

@@ -80,7 +80,8 @@ class _HomeClassifyState extends State<HomeClassify> with RouteAware{
      // case 1: Navigator.pushNamed(context, '/abutmentList'); break;
      case 1: Navigator.pushNamed(context, '/backlogTask'); break;
      case 2: Navigator.pushNamed(context, '/haveDoneTask'); break;
-     case 3: Navigator.pushNamed(context, '/enterprisePage',arguments: {"history":true,"name":"台账记录"}); break;
+     case 3: Navigator.pushNamed(context, '/historyTask'); break;
+     // case 3: Navigator.pushNamed(context, '/enterprisePage',arguments: {"history":true,"name":"台账记录"}); break;
      case 4: Navigator.pushNamed(context, '/policyStand',arguments: true); break;
      case 5: Navigator.pushNamed(context, '/targetClassifyPage'); break;
      case 6: Navigator.pushNamed(context, '/messagePage',arguments: {'company':false}); break;

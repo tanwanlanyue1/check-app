@@ -187,7 +187,7 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
               Container(),
             ],
           ),
-          getLose != true && (solutionList.isEmpty || problemList['status'] == 4) && !abarbeitung ?
+          getLose != true && problemList['status'] != 3 && problemList['status'] != 2 && !abarbeitung?
           GestureDetector(
             behavior: HitTestBehavior.translucent,
             child: Container(

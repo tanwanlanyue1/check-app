@@ -54,6 +54,7 @@ class LawComponents{
  ///textChild : 右组件
  static Widget rowTwo({Widget? child,required Widget textChild}){
    return Row(
+     crossAxisAlignment: CrossAxisAlignment.start,
      children: [
        Container(
          width: px(30),
@@ -61,7 +62,9 @@ class LawComponents{
          margin: EdgeInsets.only(right: px(8)),
          child: child,
        ),
-       textChild
+       Expanded(
+         child: textChild,
+       )
      ],
    );
  }

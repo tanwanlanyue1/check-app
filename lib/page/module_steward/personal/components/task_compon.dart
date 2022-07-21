@@ -49,7 +49,7 @@ class TaskCompon{
               Expanded(
                 child: Container(
                   alignment: Alignment.center,
-                  margin: EdgeInsets.only(left: child !=null ? px(56) : 0),
+                  margin: EdgeInsets.only(left: child !=null ? px(56) : 0,),
                   child: Text(title,style: TextStyle(color: Color(0xff323233),fontSize: sp(font ?? 36),fontFamily: 'M'),),
                 ),
               ),
@@ -180,14 +180,16 @@ class TaskCompon{
     return checkList;
   }
 
-  //对接的任务状态 	任务状态（0：未处理，1：处理中，2：已完成 3: 驳回 4：审核完结）
+  //对接的任务状态 	任务状态（1：待派发，2：已派发，3：已驳回 4: 未提交 5：执行中）1-5：待整改 6-7:已完成
   static String firmTask(status){
     switch(status){
-      case 0 : return '待处理';
-      case 1 : return '处理中';
-      case 2 : return '待审核';
-      case 3 : return '驳回';
-      case 4 : return '已审核';
+      case 1 : return '待派发';
+      case 2 : return '已派发';
+      case 3 : return '已驳回';
+      case 4 : return '未提交';
+      case 5 : return '执行中';
+      case 6 : return '待审核';
+      case 7 : return '已完成';
       default: return '待处理';
     }
   }
@@ -195,11 +197,13 @@ class TaskCompon{
   //对接的任务颜色状态
   static Color firmTaskColor(status){
     switch(status){
-      case 0 : return Color(0xfffaaa5a);
-      case 1 : return Color(0xff7196F5);
-      case 2 : return Color(0xfffaaa5a);
+      case 1 : return Color(0xfffaaa5a);
+      case 2 : return Color(0xff7196F5);
       case 3 : return Colors.red;
-      case 4 : return Color(0xff95C758);
+      case 4 : return Color(0xfffaaa5a);
+      case 5 : return Color(0xff7196F5);
+      case 6 : return Color(0xfffaaa5a);
+      case 7 : return Color(0xff95C758);
       default: return Color(0xffFAAA5A);
     }
   }
@@ -208,7 +212,7 @@ class TaskCompon{
   static String fromStatus(status){
     switch(status){
       case 1 : return '待处理';
-      case 2 : return '处理中';
+      case 2 : return '已完成';
       default: return '待处理';
     }
   }

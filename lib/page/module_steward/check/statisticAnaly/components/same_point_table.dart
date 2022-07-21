@@ -31,7 +31,7 @@ class _SamePointTableState extends State<SamePointTable> {
   List areaHeader = ['序号','片区','隐患问题','已整改','未整改'];//片区表头
   List companyHeader = ['序号','片区','企业名称','隐患问题','已整改','未整改'];//企业表头
   List name =[]; //名称
-  List echartData =[]; //图表数据
+  // List echartData =[]; //图表数据
   List pieData =[]; //饼图数据
   String companyName = 'companyName';
   double percent = 0.0; //百分比
@@ -72,29 +72,29 @@ class _SamePointTableState extends State<SamePointTable> {
     int issueTotal = 0; //问题总数
     int notCorrectedTotal = 0; //未整改总数
     for(var i=0;i<item.length;i++){
-      name.add(item[i]['problemTypeName']);
+      name.add(item[i]['problemTypeParentName']);
       issueTotal = int.parse(item[i]['allCount']);
       issue.add(int.parse(item[i]['allCount']));
       notCorrected.add(int.parse(item[i]['unsolvedCount']));
       notCorrectedTotal = int.parse(item[i]['unsolvedCount'])+notCorrectedTotal;
       pieData.add({
-        'value':item[i]['allCount'],'name':item[i]['problemTypeName']
+        'value':item[i]['allCount'],'name':item[i]['problemTypeParentName']
       });
     }
-    echartData = [
-      {
-        'name':'问题:$issueTotal',
-        'type': 'bar',
-        'data': issue,
-        'color':'#D68184'
-      },
-      {
-        'name':'未整改:$notCorrectedTotal',
-        'type': 'bar',
-        'data': notCorrected,
-        'color':'#FAAF64'
-      }
-    ];
+    // echartData = [
+    //   {
+    //     'name':'问题:$issueTotal',
+    //     'type': 'bar',
+    //     'data': issue,
+    //     'color':'#D68184'
+    //   },
+    //   {
+    //     'name':'未整改:$notCorrectedTotal',
+    //     'type': 'bar',
+    //     'data': notCorrected,
+    //     'color':'#FAAF64'
+    //   }
+    // ];
     setState(() {});
   }
 
@@ -209,7 +209,7 @@ class _SamePointTableState extends State<SamePointTable> {
                   padding: EdgeInsets.symmetric(vertical: 8.0),
                   alignment: Alignment.topCenter,
                   child: Text(
-                      '${item[i][companyName]}',
+                      '${item[i][companyName] ?? '/'}',
                       style: TextStyle(
                           color: Color(0XFF969799),
                           fontSize: sp(24.0)
@@ -475,7 +475,7 @@ class _SamePointTableState extends State<SamePointTable> {
           height: px(720 + ((name.length/2)*20)),
           child: ColumnEcharts(
             erectName: name,
-            data: echartData,
+            // data: echartData,
             pieData: pieData,
             erect: true,
           ),),

@@ -12,9 +12,14 @@ import 'package:scet_check/components/generalduty/upload_image.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
-import 'package:scet_check/utils/storage/storage.dart';
 
-
+///任务表单
+/// 'formId':formDynamic[i]['id'], 表单id
+/// 'taskId':taskId, 任务id
+/// 'content':content, 提交过的数据
+/// 'backlog':backlog, 已办待办
+/// 'companyList':companyList, 企业信息
+/// 'formFillAuth':taskDetails['formFillAuth'], 判断是否有提交的权限
 class AbutmentFrom extends StatefulWidget {
   final Map? arguments;
   const AbutmentFrom({Key? key,this.arguments}) : super(key: key);
@@ -37,6 +42,7 @@ class _AbutmentFromState extends State<AbutmentFrom> {
   bool empty = true;
   bool backlog = true;//待办，已办
   bool problem = false;//问题分析类型
+  bool formFillAuth = true;//是否有修改的权限
   List problemBig = [];//问题大类类型
   List problemSmall = [];//问题小类类型
   Map companyList = {};//企业列表
@@ -328,6 +334,7 @@ class _AbutmentFromState extends State<AbutmentFrom> {
     super.initState();
     taskId = widget.arguments?['taskId'] ?? '';
     backlog = widget.arguments?['backlog'] ?? false;
+    formFillAuth = widget.arguments?['formFillAuth'] ?? false;
     companyList = widget.arguments?['companyList'] ?? {};
     _getKeeper(id: widget.arguments?['formId']);
     if(widget.arguments?['content'] != null && widget.arguments?['content'].length > 0){
@@ -359,6 +366,9 @@ class _AbutmentFromState extends State<AbutmentFrom> {
           TaskCompon.topTitle(
               title: '${allField['formTypeStr'] ?? '表单详情'}',
               left: true,
+              child: backlog == false ?
+              revocation() :
+              Container(),
               callBack: (){
                 Navigator.pop(context);
               }
@@ -380,9 +390,6 @@ class _AbutmentFromState extends State<AbutmentFrom> {
               ),
             ),
           ),
-          backlog == false ?
-          revocation() :
-          Container(),
         ],
       ),
     );
@@ -446,35 +453,27 @@ class _AbutmentFromState extends State<AbutmentFrom> {
 
   ///按钮
   Widget revocation(){
-    return Container(
-      height: px(88),
-      margin: EdgeInsets.only(top: px(24)),
-      color: Colors.transparent,
-      alignment: Alignment.center,
-      child: GestureDetector(
-        child: Container(
-          width: px(240),
-          height: px(56),
-          alignment: Alignment.center,
-          margin: EdgeInsets.only(left: px(40)),
-          child: Text(
-            '保存',
-            style: TextStyle(
-                fontSize: sp(24),
-                fontFamily: "M",
-                color: Color(0xff4D7FFF)),
-          ),
-          decoration: BoxDecoration(
-            border: Border.all(width: px(2),color: Color(0xff4D7FFF)),
-            borderRadius: BorderRadius.all(Radius.circular(px(28))),
-          ),
+    return GestureDetector(
+      child: Container(
+        height: px(56),
+        alignment: Alignment.centerRight,
+        margin: EdgeInsets.only(right: px(24)),
+        child: Text(
+          '提交',
+          style: TextStyle(
+              fontSize: sp(28),
+              color: Color(0xff19191A)),
         ),
-        onTap: () {
-          empty = true;
-          _getTask();
-          setState(() {});
-        },
       ),
+      onTap: () {
+        empty = true;
+        if(formFillAuth){
+          _getTask();
+        }else{
+          ToastWidget.showToastMsg('您没有提交该表单的权限!');
+        }
+        setState(() {});
+      },
     );
   }
 }

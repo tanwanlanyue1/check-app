@@ -157,7 +157,8 @@ class _EssentialDetailsState extends State<EssentialDetails> {
   Widget example(){
     return Container(
       color: Colors.white,
-      padding: EdgeInsets.only(left: px(30),top: px(26),bottom: px(12)),
+      padding: EdgeInsets.only(left: px(30),top: px(26),bottom: px(24)),
+      margin: EdgeInsets.only(bottom: px(24)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -100,9 +100,9 @@ class _ProblemPageState extends State<ProblemPage> {
   }
   /// 获取问题类型
   void _getProblemType() async {
-    var response = await Request().get(Api.url['problemType']);
+    var response = await Request().get(Api.url['problemTypeList'],data: {"level":1});
     if(response['statusCode'] == 200) {
-      typeList = response['data'];
+      typeList = response['data']['list'];
       setState(() {});
     }
   }
@@ -137,7 +137,7 @@ class _ProblemPageState extends State<ProblemPage> {
     var response = await Request().get(Api.url['company']+'/$companyId',);
     if(response['statusCode'] == 200) {
       companyName = response['data']['name'];
-      district = response['data']['district']['name'];
+      district = response['data']['district']?['name'] ?? '';
       region = response['data']['regionName'] ?? '';
       setState(() {});
     }

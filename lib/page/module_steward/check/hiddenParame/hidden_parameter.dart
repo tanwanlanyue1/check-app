@@ -54,13 +54,13 @@ class _HiddenParameterState extends State<HiddenParameter> with RouteAware{
     if(pageIndex != 0){
       data = {
         'districtId': districtId[pageIndex],
-        // "sort":["CAST(substring_index(number,'-',1) AS SIGNED)","CAST(substring_index(number,'-',-1) AS SIGNED)"],
-        // "order":["ASC","ASC"],
+        "sort":["CAST(substring_index(p.number,'-',1) AS SIGNED)","CAST(substring_index(p.number,'-',-1) AS SIGNED)"],
+        "order":["ASC","ASC"],
       };
     }else{
       data = {
-        // "sort":["CAST(substring_index(number,'-',1) AS SIGNED)","CAST(substring_index(number,'-',-1) AS SIGNED)"],
-        // "order":["ASC","ASC"],
+        "sort":["CAST(substring_index(p.number,'-',1) AS SIGNED)","CAST(substring_index(p.number,'-',-1) AS SIGNED)"],
+        "order":["ASC","ASC"],
       };
     }
     var response = await Request().get(

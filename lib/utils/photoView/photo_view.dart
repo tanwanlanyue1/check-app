@@ -80,8 +80,8 @@ class _PhotoViewGalleryScreenState extends State<PhotoViewGalleryScreen> {
         }
         setState(() {});
       }
-    }).catchError((er) {
-      debugPrint(er);
+    }).catchError((err) {
+      debugPrint(err);
     });
   }
 

@@ -118,10 +118,11 @@ class _HomePageState extends State<HomePage> {
     }
     return list;
   }
-///每一项菜单
-///index: 下标
-///commonImage: 未选中图片
-///activeImage: 选中图片
+
+  ///每一项菜单
+  ///index: 下标
+  ///commonImage: 未选中图片
+  ///activeImage: 选中图片
   Widget _buildItemMenu({required int index, required String commonImage, required String activeImage,Widget? childs}) {
     _roviderDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     _homeModel = Provider.of<HomeModel>(context, listen: true);

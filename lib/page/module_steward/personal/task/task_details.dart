@@ -237,7 +237,7 @@ class _TaskDetailsState extends State<TaskDetails> {
       taskDetails = response['data'];
       if(taskDetails.isNotEmpty){
         imgDetails = taskDetails['taskImages'] ?? [];
-        companyId = taskDetails['company']?['id'];
+        companyId = taskDetails['company']?['id'] ?? '';
         checkImages = taskDetails['checkImages'] ?? [];
         taskFiles = taskDetails['taskFiles'] ?? [];
         checkType = taskDetails['type'] == 1 ? 3 : taskDetails['type'] == 2 ? 4 : 2;
@@ -368,11 +368,11 @@ class _TaskDetailsState extends State<TaskDetails> {
           ),
           FormCheck.rowItem(
             title: '企业名称:',
-            child: Text('${taskDetails['company']['name']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+            child: Text('${taskDetails['company']?['name'] ?? '/'}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
             title: '所在片区:',
-            child: Text('${taskDetails['company']['district']['name']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+            child: Text('${taskDetails['company']?['district']['name'] ?? '/'}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
             alignStart: true,

@@ -203,8 +203,16 @@ class _CheckTaskState extends State<CheckTask> {
                 ),
               ],
             ),
-            onTap: (){
-              Navigator.pushNamed(context, '/abutmentTask',arguments: {'id':taskList[i]['id'],'backlog':true});
+            onTap: () async {
+             var res = await Navigator.pushNamed(context, '/abutmentTask',arguments: {'id':taskList[i]['id'],'backlog':true});
+             if(res == true){
+               _getTaskList(
+                   type: typeStatusEnum.onRefresh,
+                   data: {
+                     'finishStatus':2
+                   }
+               );
+             }
             },
           ),
         );

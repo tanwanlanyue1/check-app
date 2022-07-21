@@ -38,6 +38,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
   int taskSource = 0;//任务来源（1：临时任务，2：在线监理，3：问题汇总，4：计划主题）
   int taskStatus = 0;//任务状态 0 未执行，1 执行中，2 已提交 3 驳回 4 审核完结
   bool isImportant = false; //是否审批通过
+  Map taskGuide = {};//指引
 
   @override
   void initState() {
@@ -52,6 +53,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
     var response = await Request().get(Api.url['houseTaskById'],
       data: {
         'taskId':taskId,
+        'source':'app',
       });
     if(response?['errCode'] == '10000') {
       taskDetails = response['result'];
@@ -113,7 +115,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
   }
 
   /// 审核任务
-  /// taskStatus 4:通过 3：驳回
+  /// taskStatus 7:通过 3：驳回
   /// approvalOpinion：审核意见
   void _auditTask() async {
     if(review.isEmpty){
@@ -124,7 +126,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
         data: {
           'id':taskId,
           'approvalOpinion':review,
-          'taskStatus': isImportant ? 4 : 3
+          'taskStatus': isImportant ? 7 : 3
         },
       );
       if(response['errCode'] == '10000') {
@@ -143,6 +145,9 @@ class _AbutmentTaskState extends State<AbutmentTask> {
           TaskCompon.topTitle(
               title: '任务详情',
               left: true,
+              child: backlog && taskStatus == 7 ?
+              Container() :
+              revocation(),
               callBack: (){
                 Navigator.pop(context);
               }
@@ -154,16 +159,14 @@ class _AbutmentTaskState extends State<AbutmentTask> {
                 taskDetails.isNotEmpty ?
                 backLog() :
                 Container(),
-                relevanceFrom(),
                 taskSource == 2 ?
                 dataSource() :
                 Container(),
-                taskStatus == 2 ?
+                relevanceFrom(),
+                incorrectMessage(),
+                taskStatus == 6 ?
                 reviewDeclared() :
                 Container(),
-                backlog && taskStatus != 2 ?
-                Container() :
-                revocation(),
               ],
             ),
           ),
@@ -173,6 +176,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
   }
 
   ///任务详情
+  ///DateTime.fromMillisecondsSinceEpoch 时间轴转时间类型
   Widget backLog(){
     return Container(
       margin: EdgeInsets.only(left: px(24),right: px(24),top: px(24)),
@@ -191,6 +195,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
           ),
           FormCheck.rowItem(
             title: '任务名称:',
+
             child: Text('${taskDetails['taskItem']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
@@ -222,39 +227,12 @@ class _AbutmentTaskState extends State<AbutmentTask> {
               taskDetails['priority'] == 2 ? '中' :'低',
               style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
-          (taskStatus == 3 || taskStatus == 4) ?
+          (taskStatus == 3 || taskStatus == 7) ?
           FormCheck.rowItem(
             title: '审批意见:',
             alignStart: true,
             child: Text(review,style: TextStyle(color: taskStatus == 3 ? Color(0xff7196F5) : Color(0xff323233),fontSize: sp(28)),),
           ) : Container(),
-          FormCheck.rowItem(
-            alignStart: true,
-            title: "现场照片:",
-            child: UploadImage(
-              imgList: checkImages,
-              abutment: true,
-              closeIcon: !backlog,
-              callback: (List? data) {
-                checkImages = data ?? [];
-                setState(() {});
-              },
-            ),
-          ),
-          FormCheck.rowItem(
-            title: '任务附件:',
-            alignStart: true,
-            child: UploadFile(
-              url: '/',
-              abutment: true,
-              amend: !backlog,
-              fileList: taskFiles,
-              callback: (val){
-                taskFiles = val;
-                setState(() {});
-              },
-            ),
-          ),
         ],
       ),
     );
@@ -320,7 +298,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
     );
   }
 
-  ///数据来源卡片
+  ///检查信息卡片
   Widget dataSource(){
     return  Container(
       margin: EdgeInsets.only(left: px(24),right: px(24),top: px(24)),
@@ -332,10 +310,10 @@ class _AbutmentTaskState extends State<AbutmentTask> {
       child: Column(
         children: [
           FormCheck.formTitle(
-            '数据来源',
+            '检查信息',
           ),
           Column(
-            children: List.generate(formDynamic.length, (index) => taskSoureForm(
+            children: List.generate(taskDetails['dataList'].length, (index) => taskSoureForm(
                   i: index,
                   cycleList:taskDetails['dataList'][index],
               )),
@@ -385,6 +363,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
               'content':content,
               'backlog':backlog,
               'companyList':companyList,
+              'formFillAuth':taskDetails['formFillAuth'],
             });
             if(res != null){
               _getTasks();
@@ -411,38 +390,90 @@ class _AbutmentTaskState extends State<AbutmentTask> {
             'content':content,
             'backlog':backlog,
             'companyList':companyList,
+            'formFillAuth':taskDetails['formFillAuth'],
           });
         }
       },
     );
   }
-  ///任务数据来源列表
+
+  ///检查信息列表
   Widget taskSoureForm({required int i,Map? cycleList}){
     return InkWell(
       child: Container(
         padding: EdgeInsets.only(bottom: px(12)),
         decoration: BoxDecoration(
             color: Colors.white,
-            border: Border(bottom: BorderSide(width: px(2),color: Color(0xffF6F6F6)),)
+            border: Border(bottom: BorderSide(width: px(4),color: Color(0xffF6F6F6)),),//0xffF6F6F6 0xff19191A
         ),
-        child: FormCheck.rowItem(
-          title: '企业名称:',
-          child: Row(
-            children: [
-              Expanded(
-                child: Text('${cycleList?['companyName']}-${cycleList?['name']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28),overflow: TextOverflow.ellipsis),),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.only(top: px(12),bottom: px(12)),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text('${cycleList?['companyName']}—${cycleList?['name']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+                  ),
+                  Icon(Icons.keyboard_arrow_right)
+                ],
               ),
-              Icon(Icons.keyboard_arrow_right)
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       onTap: () async {
-        Navigator.pushNamed(context, '/taskGuide',arguments: {'analyzeId':cycleList?['analyzeId']});
+        Navigator.pushNamed(context, '/taskGuide',arguments: {'cycleList':cycleList,'id':cycleList?['analyzeId']});
       },
     );
   }
 
+  ///任务填报信息
+  Widget incorrectMessage(){
+    return  Container(
+      margin: EdgeInsets.only(left: px(24),right: px(24),top: px(24)),
+      padding: EdgeInsets.all(px(24)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(px(8.0))),
+      ),
+      child: Column(
+        children: [
+          FormCheck.formTitle(
+            '填报信息',
+          ),
+          FormCheck.rowItem(
+            alignStart: true,
+            title: "现场照片:",
+            child: UploadImage(
+              imgList: checkImages,
+              abutment: true,
+              closeIcon: !backlog,
+              callback: (List? data) {
+                checkImages = data ?? [];
+                setState(() {});
+              },
+            ),
+          ),
+          FormCheck.rowItem(
+            title: '任务附件:',
+            alignStart: true,
+            child: UploadFile(
+              url: '/',
+              abutment: true,
+              amend: !backlog,
+              fileList: taskFiles,
+              callback: (val){
+                taskFiles = val;
+                setState(() {});
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
   ///审核填报卡片
   Widget reviewDeclared(){
     return Container(
@@ -532,8 +563,37 @@ class _AbutmentTaskState extends State<AbutmentTask> {
       ],
     );
   }
+
   ///按钮
   Widget revocation(){
+    return GestureDetector(
+      child: Container(
+        height: px(56),
+        alignment: Alignment.centerRight,
+        margin: EdgeInsets.only(right: px(24)),
+        child: Text(
+          taskStatus != 6 ? '提交任务' : '完成审核',
+          style: TextStyle(
+              fontSize: sp(28),
+              fontFamily: "M",
+              color: Color(0xff19191A)),
+        ),
+      ),
+      onTap: () {
+        if(taskStatus == 6){
+          _auditTask();
+        }else{
+          if(taskDetails['commitAuth']){
+            _submiTask();
+          }else{
+            ToastWidget.showToastMsg('您没有提交该任务的权限!');
+          }
+        }
+      },
+    );
+  }
+  ///审核按钮
+  Widget rev(){
     return Container(
       height: px(88),
       margin: EdgeInsets.only(top: px(24)),
