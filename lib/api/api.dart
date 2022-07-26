@@ -44,6 +44,8 @@ class Api {
 
     'problemStatistics': baseUrlApp + 'problem/statistics',//问题统计数目
 
+    'statistics': baseUrlApp + 'industry/statistics/problem',//按照行业统计数目
+
     'problemCount': baseUrlApp + 'problem/count',//获取数据总数
 
     'problemType': baseUrlApp + 'problem_type',//问题类型

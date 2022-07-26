@@ -136,9 +136,9 @@ class _ProblemPageState extends State<ProblemPage> {
   void _getProblems() async {
     var response = await Request().get(Api.url['company']+'/$companyId',);
     if(response['statusCode'] == 200) {
-      companyName = response['data']['name'];
-      district = response['data']['district']?['name'] ?? '';
-      region = response['data']['regionName'] ?? '';
+      companyName = response['data']?['name'] ?? '/';
+      district = response['data']?['district']?['name'] ?? '';
+      region = response['data']?['regionName'] ?? '/';
       setState(() {});
     }
   }
@@ -617,7 +617,14 @@ class _ProblemPageState extends State<ProblemPage> {
                           i: i,
                           detail: true,
                           callBack:(){
-                            _getCompany(problemId:hiddenProblem[i]['id'],inventoryId: hiddenProblem[i]['inventory']['id']);
+                            Navigator.pushNamed(context, '/rectificationProblem',
+                                arguments: {
+                                  'check': true,
+                                  'problemId': hiddenProblem[i]['id'],
+                                  'inventoryStatus': 5
+                                }
+                            );
+                            // _getCompany(problemId:hiddenProblem[i]['id'],inventoryId: hiddenProblem[i]['inventory']['id']);
                           }
                       ),
                     );

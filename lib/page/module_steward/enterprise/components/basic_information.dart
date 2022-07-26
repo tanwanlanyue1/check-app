@@ -84,7 +84,7 @@ class _BasicInformationState extends State<BasicInformation > {
                     }
                 ),
                 EnterPriseCompon.surveyItem( '企业名称', '${companyList['name']}'),
-                EnterPriseCompon.surveyItem( '行业类型', '${companyList['industryName']}'),
+                EnterPriseCompon.surveyItem( '行业类型', industrysType(companyList['industrys'] ?? [])),
                 EnterPriseCompon.surveyItem( '企业地址', '${companyList['address']}'),
                 EnterPriseCompon.surveyItem( '环保负责人', '${companyList['environmentPrincipal']}'),
                 EnterPriseCompon.surveyItem( '联系电话', '${companyList['environmentPhone']}',color: true),
@@ -155,7 +155,6 @@ class _BasicInformationState extends State<BasicInformation > {
       );
   }
 
-
   //日期转换
   String formatTime(time) {
     if(time==null){
@@ -163,5 +162,18 @@ class _BasicInformationState extends State<BasicInformation > {
     }else{
       return utcToLocal(time.toString()).substring(0,10);
     }
+  }
+
+  //行业类型
+  String industrysType(List industrys){
+    String industrysName = '';
+    for(var i = 0; i < industrys.length; i++){
+      if(i > 0){
+        industrysName = industrysName + ', ' + industrys[i]['name'];
+      }else{
+        industrysName = industrys[i]['name'];
+      }
+    }
+    return industrysName;
   }
 }

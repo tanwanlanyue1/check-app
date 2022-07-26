@@ -8,6 +8,7 @@ import 'package:scet_check/page/module_steward/check/StatisticAnaly/statistics.d
 import 'package:scet_check/utils/screen/screen.dart';
 
 import 'components/check_compon.dart';
+import 'components/layout_page.dart';
 
 ///统计分析
 class StatisticAnalysis extends StatefulWidget {
@@ -35,11 +36,17 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
   ScrollController controller = ScrollController();
   ScrollController controllerTow = ScrollController();
   ProviderDetaild? _roviderDetaild;//全局数据
+  double off = 0.0;//偏移量
 
   @override
   void initState() {
     _getStatistics();
     dealWith();
+    controller.addListener(() {
+      off = controller.offset;
+      controllerTow.jumpTo(off);
+      _roviderDetaild!.setOffest(double.parse(_pageIndex.toString()));
+    });
     super.initState();
   }
 
@@ -111,10 +118,26 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
     }
   }
 
-  /// 问题统计数据
-  void _getProblemStatis({Map<String,dynamic>? data}) async {
+  /// 问题统计数据/ 问题类型统计数据
+  void _getProblemStatis({Map<String,dynamic>? data,bool type = false}) async {
     var response = await Request().get(
         Api.url['problemStatistics'],
+        data: data
+    );
+    if(response['statusCode'] == 200) {
+      setState(() {
+        if(type){
+          problemType = response['data']['list'];
+        }else{
+          _tableBody = response['data']['list'];
+        }
+      });
+    }
+  }
+  /// 按照行业统计数目
+  void _getIndustryStatistics({Map<String,dynamic>? data}) async {
+    var response = await Request().get(
+        Api.url['statistics'],
         data: data
     );
     if(response['statusCode'] == 200) {
@@ -124,18 +147,6 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
     }
   }
 
-  /// 问题类型统计数据
-  void _getProblemType({Map<String,dynamic>? data}) async {
-    var response = await Request().get(
-        Api.url['problemStatistics'],
-        data: data
-    );
-    if(response['statusCode'] == 200) {
-      setState(() {
-        problemType = response['data']['list'];
-      });
-    }
-  }
   ///处理数据
   ///判断是哪一个片区进来的，
   ///_pageIndex 0=统计片区
@@ -158,8 +169,9 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
     //问题类型，根据片区进行分开统计———扇形图表数据来源
     Map<String,dynamic> typeData = _pageIndex == 0 ? {'groupTable':'problemTypeParentId'} :
     { 'districtId': districtId[_pageIndex],'groupTable':'problemTypeParentId'};
-    _getProblemType(
-      data: typeData
+    _getProblemStatis(
+      data: typeData,
+      type: true
     );
   }
 
@@ -183,12 +195,11 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
       case 1: {
         type = '行业';
         data =  _pageIndex == 0 ?
-        {'groupTable':'industry',} :
+        {} :
         {
-          'districtId': districtId[_pageIndex],
-          'groupTable':'industry',
+          'problems.districtId': districtId[_pageIndex],
         };
-        _getProblemStatis(data: data);
+        _getIndustryStatistics(data:data);
         setState((){});
         return;
       }

@@ -87,6 +87,7 @@ class _TaskDetailsState extends State<TaskDetails> {
         data: _data
     );
     if(response['statusCode'] == 200) {
+      Navigator.pop(context,false);
       Navigator.pushNamed(context, '/stewardCheck',arguments: {
         'uuid': _uuid,
         'company':false,

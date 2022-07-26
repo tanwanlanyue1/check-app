@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
+import 'package:scet_check/components/generalduty/loading.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/enterprise_reform.dart';
@@ -25,6 +26,7 @@ class _RectificationProblemState extends State<RectificationProblem> {
   String problemTitle = '';//问题标题
   String problemId = '';//问题Id
   bool declare = false;//申报
+  bool delay = false;//延迟
   // bool review = false;//复查
   Map problemList = {};//问题详情列表
   List solutionList = [];//整改详情
@@ -60,6 +62,10 @@ class _RectificationProblemState extends State<RectificationProblem> {
         'industryId': problemList['industryId'],//行业ID
         'problemList': problemList,//问题详情
       };
+      delay = true;//请求失败
+      setState(() {});
+    }else{
+      delay = true;//请求失败
       setState(() {});
     }
   }
@@ -162,14 +168,21 @@ class _RectificationProblemState extends State<RectificationProblem> {
                       status: problemList['status'] ?? 1
                   ),
                 ),
-                //问题详情与申报
-                FillInForm(
-                  arguments:{
-                    'declare':false,//申报
-                    'key':_scaffoldKey,
-                    'problemList':problemList,
-                    "inventoryStatus":widget.arguments['inventoryStatus'],
-                  },
+                //问题详情与申报 delay
+                Visibility(
+                  visible: problemList.isNotEmpty && delay,
+                  child: FillInForm(
+                    arguments:{
+                      'declare':false,//申报
+                      'key':_scaffoldKey,
+                      'problemList':problemList,
+                      "inventoryStatus":widget.arguments['inventoryStatus'],
+                    },
+                  ),
+                  replacement:Container(
+                    margin: EdgeInsets.only(top: px(50)),
+                    child: Loading(),
+                  ),
                 ),
                 solutionList.isNotEmpty?
                 detaile() : Container(),

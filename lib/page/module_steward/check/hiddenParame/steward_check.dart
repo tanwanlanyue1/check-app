@@ -56,7 +56,7 @@ class _StewardCheckState extends State<StewardCheck>{
         _getProblem();
         repertoire = response['data'];
         stewardCheck = repertoire['checkPersonnel'];
-        location = repertoire['company']?['regionName'];
+        location = repertoire['company']?['regionName'] ?? '/';
         area = repertoire['company']?['district']['name'];
         checkDate = RectifyComponents.formatTime(repertoire['createdAt']);
         abarbeitungDates = repertoire['solvedAt'] != null ? RectifyComponents.formatTime(repertoire['solvedAt']) : '';
@@ -80,14 +80,15 @@ class _StewardCheckState extends State<StewardCheck>{
           'stewardCheck': stewardCheck,//签到人员
           'districtId': repertoire['company']['districtId'],//片区id
           'companyId': repertoire['company']['id'],//企业id
-          'industryId': repertoire['company']['industryId'],//行业ID
+          'industrys': repertoire['company']['industrys'],//行业ID
           'inventoryStatus': repertoire['status'],//清单状态
         };
         if(firstTask) {
           Navigator.pushNamed(context, '/fillInForm', arguments: argumentMap).then((value) => {
               if(value == null){
                   firstTask = false,
-                  _getProblem()
+                _getCompany()
+                  // _getProblem()
               }
           });
         }
@@ -148,12 +149,7 @@ class _StewardCheckState extends State<StewardCheck>{
   }
   /// 获取企业下的问题/问题搜索筛选
   ///companyId:公司id
-  ///page:第几页
-  ///size:每页多大
-  /// 'timeSearch':确认传递时间,
-  /// 'startTime':开始时间,
-  /// 'endTime':结束时间,
-  ///添加一个状态 check-提交到企业,environment-提交到环保局
+  ///status:问题状态
   _problemSearch({Map<String,dynamic>? data}) async {
     var response = await Request().get(Api.url['problemList'],data: data);
     if(response['statusCode'] == 200 && response['data'] != null){
@@ -162,16 +158,37 @@ class _StewardCheckState extends State<StewardCheck>{
     }
   }
 
+
   /// 删除清单
   void _deleteInventory() async {
-    var response = await Request().delete(Api.url['inventory']+'/$uuid',);
-    if(response['statusCode'] == 200) {
-      ToastWidget.showToastMsg('删除成功');
-      Navigator.pop(context);
-      setState(() {});
+    var res = true;
+    for(var i = 0; i < problemList.length; i++){
+      res = await _deleteProblem(problemList[i]['id']);
+      if(res == false){
+        ToastWidget.showToastMsg('删除清单下的问题失败,请重试!');
+        return;
+      }
+    }
+    if(res){
+      var response = await Request().delete(Api.url['inventory']+'/$uuid',);
+      if(response['statusCode'] == 200) {
+        ToastWidget.showToastMsg('删除成功');
+        Navigator.pop(context);
+        setState(() {});
+      }else{
+        ToastWidget.showToastMsg('删除失败');
+      }
     }
   }
-
+  ///删除问题
+  _deleteProblem(String problemId) async {
+    var response = await Request().delete(Api.url['problem']+'/$problemId',);
+    if(response['statusCode'] == 200) {
+      return true;
+    }else{
+      return false;
+    }
+  }
     @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -411,7 +428,7 @@ class _StewardCheckState extends State<StewardCheck>{
                   onTap: () async {
                     var res = await Navigator.pushNamed(context, '/fillInForm', arguments: argumentMap);
                     if(res == null){
-                      _getProblem();
+                      _getCompany();
                     }
                   },
               ) :

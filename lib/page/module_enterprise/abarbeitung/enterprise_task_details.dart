@@ -9,7 +9,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 
-///企业任务详情
+///企业详情
 /// 问题未整改列表/清单下的问题
 class EnterpriseTaskDetails extends StatefulWidget {
   const EnterpriseTaskDetails({Key? key}) : super(key: key);

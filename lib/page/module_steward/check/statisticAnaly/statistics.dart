@@ -120,6 +120,13 @@ class _StatisticsState extends State<Statistics> {
                   tabIndex = 0;
                 }
                 widget.callBack?.call(tabIndex);
+              }else{
+                if(tabIndex < 1){
+                  tabIndex++;
+                }else {
+                  tabIndex = 0;
+                }
+                widget.callBack?.call(tabIndex);
               }
             },
             callPrevious: (){
@@ -129,6 +136,13 @@ class _StatisticsState extends State<Statistics> {
                   tabIndex--;
                 }else{
                   tabIndex = 2;
+                }
+                widget.callBack?.call(tabIndex);
+              }else{
+                if(tabIndex > 0){
+                  tabIndex--;
+                }else{
+                  tabIndex = 1;
                 }
                 widget.callBack?.call(tabIndex);
               }

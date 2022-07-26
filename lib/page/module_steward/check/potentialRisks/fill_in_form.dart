@@ -25,7 +25,7 @@ import 'package:uuid/uuid.dart';
 ///           "stewardCheck":stewardCheck,//签到人
 ///           'district': repertoire['company']['districtId'],//片区id
 ///           'companyId': repertoire['company']['id'],//企业id
-///           'industryId': repertoire['company']['industryId'],//行业ID
+///           'industrys': repertoire['company']['industrys'],//行业ID
 ///           'problemList':problemList,//问题详情
 ///           'inventoryStatus':repertoire['status'],//清单状态
 ///         };
@@ -55,7 +55,8 @@ class _FillInFormState extends State<FillInForm> {
   String secondTypeId = '';//问题类型一级ID
   String inventoryId = '';//清单ID
   String companyId = '';//企业ID
-  String industryId = '';//产业ID
+  List industry = [];//行业数组
+  List industryId = [];//行业id数组
   int areaId = 1;//区域ID
   String problemId = '';//问题id
   String _uuid = '';//uuid
@@ -73,7 +74,7 @@ class _FillInFormState extends State<FillInForm> {
   // DateTime checkTime = DateTime.now();//填报排查日期
   DateTime rectifyTime = DateTime.now().add(Duration(days: 7));//整改期限
   List problemType = [];//二级问题类型数组
-
+//industryList:[id,id] 行业修改
   /// 获取问题类型
   void _getProblemType() async {
     var response = await Request().get(Api.url['problemTypeList'],data: {"level":1});
@@ -103,15 +104,24 @@ class _FillInFormState extends State<FillInForm> {
       inventoryId = problemList['inventoryId'];
       typeId = problemList['problemTypeId'];
       companyId = problemList['companyId'];
-      industryId = problemList['industryId'] ?? '';
+      industry = problemList['industrys'] ?? [];
       areaId = problemList['districtId'];
       isImportant = problemList['isImportant'];
       solvedAt = problemList['solvedAt'] != null ? formatTime(problemList['solvedAt']) : '';
       delete = (problemList['status'] == 0) ? true : false;
+      industrysType();
     }
     setState(() {});
   }
 
+  //行业id数组
+  void industrysType(){
+    industryId = [];
+    for(var i = 0; i < industry.length; i++){
+      industryId.add(industry[i]['id']);
+    }
+    setState(() {});
+  }
   @override
   void initState() {
     // TODO: implement initState
@@ -124,12 +134,13 @@ class _FillInFormState extends State<FillInForm> {
     if(declare){
       inventoryId = widget.arguments?['uuid'];
       companyId = widget.arguments?['companyId'];
-      industryId = widget.arguments?['industryId'] ?? '';
+      industry = widget.arguments?['industrys'] ?? [];
       areaId = widget.arguments?['districtId'] ?? 1;
       checkPersonnel = widget.arguments?['stewardCheck'] ?? '';
       checkDay = DateTime.now().toString().substring(0,16);
       _getProblemType();
       _getProblems();
+      industrysType();
     }else{
       _getProblems();
     }
@@ -152,6 +163,7 @@ class _FillInFormState extends State<FillInForm> {
   /// lawId	法律ID
   /// solvedAt	整改期限
   void _setProblem() async {
+    industrysType();
     if(checkPersonnel.isEmpty){
       ToastWidget.showToastMsg('请输入排查人员');
     }else if(typeId.isEmpty){
@@ -177,7 +189,7 @@ class _FillInFormState extends State<FillInForm> {
         'userId':userId,
         'isImportant':isImportant,
         'companyId': companyId,
-        'industryId': widget.arguments?['industryId'],
+        'industryList': jsonEncode(industryId),
         'districtId': widget.arguments?['districtId'],
         // 'lawId': lawId,
         // 'basisId': districtId,

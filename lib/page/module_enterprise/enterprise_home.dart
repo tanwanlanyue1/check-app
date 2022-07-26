@@ -61,7 +61,7 @@ class _EnterpriseHomeState extends State<EnterpriseHome> {
           ),
           bottomNavigationBar: BottomAppBar(
             shape: const CircularNotchedRectangle(),
-            child:  SizedBox(
+            child: SizedBox(
               height: px(Adapter.bottomBarHeight),
               child: Row(
                 mainAxisSize: MainAxisSize.max,

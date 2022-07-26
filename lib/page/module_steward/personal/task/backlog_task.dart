@@ -41,6 +41,7 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
     userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'].toString();
     _tabController.addListener(() {
       type = _tabController.index+1;
+      _controller.dispose();
       if(type != 4){
         _getTaskList(
             type: typeStatusEnum.onRefresh,
@@ -168,6 +169,7 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
                     indicatorWeight: px(4),
                     onTap: (val){
                       type = val;
+                      _controller.dispose();
                       _getTaskList(
                           type: typeStatusEnum.onRefresh,
                           data: {
