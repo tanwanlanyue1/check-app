@@ -35,7 +35,6 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
   int _types = 0; //排名类型
   ScrollController controller = ScrollController();
   ScrollController controllerTow = ScrollController();
-  ProviderDetaild? _roviderDetaild;//全局数据
   double off = 0.0;//偏移量
 
   @override
@@ -45,7 +44,6 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
     controller.addListener(() {
       off = controller.offset;
       controllerTow.jumpTo(off);
-      _roviderDetaild!.setOffest(double.parse(_pageIndex.toString()));
     });
     super.initState();
   }
@@ -218,86 +216,30 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
     }
   }
 
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-    ///监听路由
-    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
-  }
-
-  //清除偏移量
-  @override
-  void didPop() {
-    // TODO: implement didPop
-    _roviderDetaild!.initOffest();
-    super.didPop();
-  }
 
   @override
   Widget build(BuildContext context) {
-    _roviderDetaild = Provider.of<ProviderDetaild>(context, listen: true);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          width: px(730),
-          height: px(74),
-          margin: EdgeInsets.only(left:px(20),right: px(18)),
-          child: Stack(
-            children: [
-              ListView(
-                scrollDirection: Axis.horizontal,
-                controller: controllerTow,
-                children: [
-                  SizedBox(
-                    height: px(88),
-                    width: px(206 * tabBar.length),
-                    child: Row(
-                      children: [
-                        CheckCompon.bagColor(
-                          offestLeft: _roviderDetaild?.offestLeft,
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              ListView(
-                scrollDirection: Axis.horizontal,
-                controller: controller,
-                children: [
-                  CheckCompon.tabCut(
-                      index: _pageIndex,
-                      tabBar: tabBar,
-                      onTap: (i){
-                        _pageIndex = i;
-                        dealWith();
-                        type = '企业';
-                        _types = 0;
-                        _roviderDetaild!.setOffest(double.parse(_pageIndex.toString()));
-                        setState(() {});
-                      }
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: Statistics(
-            pageIndex: _pageIndex,
-            number:number,
-            type:type,
-            tableBody:_tableBody,
-            problemType:problemType,
-            callBack:(val){
-              _types = val;
-              judge();
-            },
-          ),
-        ),
-      ],
+    return LayoutPage(
+      tabBar: tabBar,
+      pageName: 'StatisticAnalysis',
+      pageBody: List.generate(tabBar.length, (index) => Statistics(
+        pageIndex: _pageIndex,
+        number:number,
+        type:type,
+        tableBody:_tableBody,
+        problemType:problemType,
+        callBack:(val){
+          _types = val;
+          judge();
+        },
+      )),
+      callBack: (val){
+        _pageIndex = val;
+        dealWith();
+        type = '企业';
+        _types = 0;
+        setState(() {});
+      },
     );
   }
 

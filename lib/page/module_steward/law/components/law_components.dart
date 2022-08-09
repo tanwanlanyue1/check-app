@@ -69,43 +69,4 @@ class LawComponents{
    );
  }
 
- ///单行输入框
- ///callBack: 回调
- ///hint: 默认值
- ///textEditingController: 控制器
- static Widget uniline({Function? callBack,String? hint,required TextEditingController textEditingController}){
-   return Container(
-     color: Colors.white,
-     padding: EdgeInsets.only(left: px(30),top: px(26),bottom: px(12)),
-     child: Column(
-       children: [
-         Container(
-           height: px(56),
-           margin: EdgeInsets.only(left: px(32),right: px(24)),
-           decoration: BoxDecoration(
-             border: Border(bottom: BorderSide(width: px(1.0),color: Color(0X99A1A6B3))),
-           ),
-           child: TextField(
-             autofocus: false,
-             onChanged: (value) {
-               callBack?.call(value);
-             },
-             controller: textEditingController,
-             decoration: InputDecoration(
-               border: InputBorder.none,
-               hintText: hint,
-               hintStyle: TextStyle(
-                   height: 0.8,
-                   fontSize: sp(24),
-                   color: Color(0xffC8C9CC),
-                   fontFamily: 'R',
-                   decorationStyle: TextDecorationStyle.dashed
-               ),
-             ),
-           ),
-         )
-       ],
-     ),
-   );
- }
 }

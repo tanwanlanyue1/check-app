@@ -48,7 +48,7 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
             data: {
               'page': 1,
               'size': 10,
-              "check_user_list": {"id":userId},
+              "checkUserList": {"id":userId},
               "status":1,
               "type":type
             }
@@ -60,7 +60,7 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
         data: {
           'page': 1,
           'size': 10,
-          "check_user_list": {"id":userId},
+          "checkUserList": {"id":userId},
           "status":1,
           "type":type
         }
@@ -127,7 +127,7 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
           data: {
             'page': 1,
             'size': 10,
-            "check_user_list": {"id":userId},
+            "checkUserList": {"id":userId},
             "status":1,
             "type":type
           }
@@ -175,7 +175,7 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
                           data: {
                             'page': 1,
                             'size': 10,
-                            "check_user_list": {"id":userId},
+                            "checkUserList": {"id":userId},
                             "status":1,
                             "type":type
                           }
@@ -220,7 +220,7 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
             data: {
               'page': _pageNo,
               'size': 10,
-              "check_user_list": {"id":userId},
+              "checkUserList": {"id":userId},
               "status":1,
               "type":type
             }
@@ -233,7 +233,7 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
             data: {
               'page': 1,
               'size': 10,
-              "check_user_list": {"id":userId},
+              "checkUserList": {"id":userId},
               "status":1,
               "type":type
             }

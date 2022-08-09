@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
@@ -45,7 +43,6 @@ class _FillInFormState extends State<FillInForm> {
   bool declare = false; //申报
   bool addProblem = false;//新增问题
   bool isImportant = false; //是否重点
-  bool checkGist = true; //排查依据
   String checkPersonnel = '';//排查人员
   String problemTitle = '';//问题标题
   String issueDetails = '';//问题详情
@@ -140,7 +137,6 @@ class _FillInFormState extends State<FillInForm> {
       checkDay = DateTime.now().toString().substring(0,16);
       _getProblemType();
       _getProblems();
-      industrysType();
     }else{
       _getProblems();
     }
@@ -163,7 +159,6 @@ class _FillInFormState extends State<FillInForm> {
   /// lawId	法律ID
   /// solvedAt	整改期限
   void _setProblem() async {
-    industrysType();
     if(checkPersonnel.isEmpty){
       ToastWidget.showToastMsg('请输入排查人员');
     }else if(typeId.isEmpty){
@@ -192,7 +187,7 @@ class _FillInFormState extends State<FillInForm> {
         'industryList': jsonEncode(industryId),
         'districtId': widget.arguments?['districtId'],
         // 'lawId': lawId,
-        // 'basisId': districtId,
+        // 'basisId': districtId,e
         'solvedAt': rectifyTime.toString(),
       };
       var response = await Request().post(
@@ -359,21 +354,19 @@ class _FillInFormState extends State<FillInForm> {
                   fontSize: sp(28),
                   fontFamily: 'Roboto-Condensed'),),
             ),
-
             FormCheck.rowItem(
                 alignStart: true,
                 title: "问题概述",
-                child:  !declare ? Text(problemTitle, style: TextStyle(
+                child: !declare ? Text(problemTitle, style: TextStyle(
                     color: Color(0xff323233), fontSize: sp(28)),)
                     : FormCheck.inputWidget(
-                    hintText: problemTitle.isEmpty ? '请输入问题概述':problemTitle,
+                    hintText: '请输入问题概述',
+                    hintVal: problemTitle,
                     lines: 1,
                     onChanged: (val){
                       problemTitle = val;
-                      setState(() {});
                     }
                 )),
-
             Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -404,7 +397,6 @@ class _FillInFormState extends State<FillInForm> {
                         ),
                         onTap: (){
                           Navigator.pushNamed(context, '/screeningBased',arguments: {'law':false,'search':true});
-                          // Navigator.pushNamed(context, '/screeningBased',arguments: {'law':checkGist,'search':true});
                         },
                       ) : Container(),
                     ],
@@ -415,11 +407,11 @@ class _FillInFormState extends State<FillInForm> {
                      child: !declare ? Text(issueDetails, style: TextStyle(
                          color: Color(0xff323233), fontSize: sp(28)),)
                          : FormCheck.inputWidget(
-                         hintText: issueDetails.isEmpty ? '请输入问题详情':issueDetails,
+                         hintText:  '请输入问题详情',
+                         hintVal: issueDetails,
                          lines: 4,
                          onChanged: (val){
                            issueDetails = val;
-                           setState(() {});
                          }
                      ),
                    ),)
@@ -441,57 +433,6 @@ class _FillInFormState extends State<FillInForm> {
                   setState(() {});
                 },
               )),
-
-            // FormCheck.rowItem(
-            //   title: "排查依据",
-            //   child: declare ?
-            //   _radios():
-            //   Text(law, style: TextStyle(color: Color(0xff323233),
-            //       fontSize: sp(28),
-            //       fontFamily: 'Roboto-Condensed'),),
-            // ),
-            //
-            // declare ?
-            // FormCheck.rowItem(
-            //   title: '',
-            //   child: InkWell(
-            //     child: Container(
-            //       color: Color(0xffF5F6FA),
-            //       height: px(87),
-            //       alignment: Alignment.centerLeft,
-            //       child: Text(
-            //         law.isEmpty ? (checkGist ? '请选择法律法规' : '请选择排查标准'): law,
-            //         style: TextStyle(color: Color(0xff323233),
-            //           fontSize: sp(28),
-            //           fontFamily: 'Roboto-Condensed'),),
-            //     ),
-            //     onTap: () async{
-            //       Navigator.pushNamed(context, '/screeningBased',arguments: {'law':checkGist});
-            //     },
-            //   ),
-            // ) :
-            // Container(),
-            //
-            // checkGist ?
-            // FormCheck.rowItem(
-            //     alignStart: true,
-            //     title: "法律法规截图",
-            //     child: (declare == false && lawImg.isEmpty) ?
-            //     Text('无',style: TextStyle(color: Color(0xff323233), fontSize: sp(28),),):
-            //     UploadImage(
-            //       imgList: lawImg,
-            //       uuid: _uuid,
-            //       closeIcon: declare,
-            //       url: Api.baseUrlApp + 'file/upload?savePath=问题/',
-            //       callback: (List? data) {
-            //         if (data != null) {
-            //           lawImg = data;
-            //         }
-            //         setState(() {});
-            //       },
-            //     ),
-            // )
-            // : Container(),
 
             FormCheck.rowItem(
               title: "整改期限",
@@ -528,36 +469,6 @@ class _FillInFormState extends State<FillInForm> {
                   fontFamily: 'Roboto-Condensed'),),
             ),
 
-            // FormCheck.rowItem(
-            //   title: "提醒企业",
-            //   expanded: false,
-            //   child: !declare ?
-            //   Text('$remind', style: TextStyle(color: Colors.red,
-            //       fontSize: sp(28),
-            //       fontFamily: 'Roboto-Condensed'),) :
-            //   GestureDetector(
-            //     child: Container(
-            //       width: px(240),
-            //       height: px(56),
-            //       alignment: Alignment.center,
-            //       child: Text(
-            //         '提醒企业',
-            //         style: TextStyle(
-            //             fontSize: sp(24),
-            //             fontFamily: "R",
-            //             color: Color(0xFF323233)),
-            //       ),
-            //       decoration: BoxDecoration(
-            //         border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
-            //         borderRadius: BorderRadius.all(Radius.circular(px(28))),
-            //       ),
-            //     ),
-            //     onTap: (){
-            //       print('提醒了一次');
-            //     },
-            //   ),
-            // ),
-
             Visibility(
               visible: declare,
               child: FormCheck.submit(
@@ -571,59 +482,6 @@ class _FillInFormState extends State<FillInForm> {
             )
           ]
       );
-  }
-
-  ///选择排查依据
-  Widget _radios() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: px(70),
-          child: Radio(
-            value: true,
-            groupValue: checkGist,
-            onChanged: (bool? val) {
-              setState(() {
-                checkGist = val!;
-              });
-            },
-          ),
-        ),
-        InkWell(
-          child: Text(
-            "法律法规",
-            style: TextStyle(fontSize: sp(28)),
-          ),
-          onTap: (){
-            checkGist = !checkGist;
-            setState(() {});
-          },
-        ),
-        SizedBox(
-          width: px(70),
-          child: Radio(
-            value: false,
-            groupValue: checkGist,
-            onChanged: (bool? val) {
-              setState(() {
-                checkGist = val!;
-              });
-            },
-          ),
-        ),
-        InkWell(
-          child: Text(
-            "排查标准",
-            style: TextStyle(fontSize: sp(28)),
-          ),
-          onTap: (){
-            checkGist = !checkGist;
-            setState(() {});
-          },
-        )
-      ],
-    );
   }
 
   ///单选

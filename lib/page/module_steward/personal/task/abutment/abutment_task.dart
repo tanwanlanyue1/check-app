@@ -195,7 +195,6 @@ class _AbutmentTaskState extends State<AbutmentTask> {
           ),
           FormCheck.rowItem(
             title: '任务名称:',
-
             child: Text('${taskDetails['taskItem']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
@@ -493,10 +492,10 @@ class _AbutmentTaskState extends State<AbutmentTask> {
             alignStart: true,
             child: FormCheck.inputWidget(
                 hintText:  '请输入审批意见',
+                hintVal: review,
                 lines: 3,
                 onChanged: (val){
                   review = val;
-                  setState(() {});
                 }
             ),
           ),

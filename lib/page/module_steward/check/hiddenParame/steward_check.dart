@@ -226,7 +226,10 @@ class _StewardCheckState extends State<StewardCheck>{
                 Container(),
                 concerns(),
                 notReview(),
-                pigeonhole(),
+                Visibility(
+                  visible: repertoire['status'] != 2,
+                  child: pigeonhole(),
+                ),
               ],
             ),
           ),

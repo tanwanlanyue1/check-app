@@ -149,10 +149,10 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
             alignStart: true,
             child: FormCheck.inputWidget(
                 hintText: '请输入任务内容',
+                hintVal: taskDetail,
                 lines: 3,
                 onChanged: (val){
                   taskDetail = val;
-                  setState(() {});
                 }
             ),
           ),
@@ -244,6 +244,9 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
       ),
       onTap: () async {
         for(var i = 0; i < company.length; i++){
+          for(var j =0; j < company[i]['user'].length; j++){
+            company[i]['user'][j]['id'] = company[i]['user'][j]['id'].toString();
+          }
           var res = await _getTask(companyId: company[i]['id'],checkUser: company[i]['user']);
           if(res == true && i == company.length-1){
             Navigator.pop(context);

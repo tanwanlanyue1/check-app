@@ -3,20 +3,57 @@ import 'package:scet_check/utils/screen/screen.dart';
 
 class ProviderDetaild with ChangeNotifier {
 
-  double _offestLeft = 0.0; // 偏移量
+  List _cache = [];
 
-  get offestLeft => _offestLeft;
+  get getCacheOffest => pageOffestLeft;
+  get getCachePageindex => cachePageindex;
 
-  //改变
-  setOffest(double off){
-    _offestLeft = px(206*off);
+  //改变缓存中某一項的值
+  setOffest(String pageName,{double? off,int? pageIndex}){
+    int index = _cache.indexWhere((item) => item['name'] == pageName);
+    if(index != -1){
+      if(off != null){
+        _cache[index]['offestLeft'] = off;
+      }else{
+        _cache[index]['pageIndex'] = pageIndex;
+      }
+    } else {
+      if(off != null){
+        _cache.add({'name': pageName, 'offestLeft': off, pageIndex: 0});
+      }else{
+        _cache.add({'name': pageName, 'offestLeft': 0.0, pageIndex: pageIndex});
+      }
+
+    }
     notifyListeners();
   }
 
-  //初始化
-  initOffest(){
-    _offestLeft = 0;
-    notifyListeners();
+  //  获取缓存的偏移量
+  double pageOffestLeft(String pageName){
+    int index = _cache.indexWhere((item) => item['name'] == pageName);
+    if(index != -1){
+      return _cache[index]['offestLeft'];
+    }else{
+      return 0.0;
+    }
+  }
+
+  //  获取缓存的下标
+  int cachePageindex(String pageName){
+    int index = _cache.indexWhere((item) => item['name'] == pageName);
+    if(index != -1){
+      return _cache[index]['pageIndex'];
+    }else{
+      return 0;
+    }
+  }
+
+  // 移除某一项缓存
+  removeCache(String pageName){
+    int index = _cache.indexWhere((item) => item['name'] == pageName);
+    if(index != -1){
+      return _cache.removeAt(index);
+    }
   }
 
 }

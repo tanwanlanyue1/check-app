@@ -170,7 +170,7 @@ class _RectificationProblemState extends State<RectificationProblem> {
                 ),
                 //问题详情与申报 delay
                 Visibility(
-                  visible: problemList.isNotEmpty && delay,
+                  visible: problemList.isNotEmpty || delay,
                   child: FillInForm(
                     arguments:{
                       'declare':false,//申报
@@ -179,7 +179,7 @@ class _RectificationProblemState extends State<RectificationProblem> {
                       "inventoryStatus":widget.arguments['inventoryStatus'],
                     },
                   ),
-                  replacement:Container(
+                  replacement: Container(
                     margin: EdgeInsets.only(top: px(50)),
                     child: Loading(),
                   ),

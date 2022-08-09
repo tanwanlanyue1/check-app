@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
-import 'package:scet_check/main.dart';
-import 'package:scet_check/model/provider/provider_details.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/Components/client_list_page.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/layout_page.dart';
 import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
@@ -26,7 +23,6 @@ class _EnterprisePageState extends State<EnterprisePage> with RouteAware{
   List districtId = [];//片区id
   List districtList = [];//片区统计数据
   Map<String,dynamic> data = {};//获取企业数据传递的参数
-  ProviderDetaild? _roviderDetaild;//全局数据
   String name = "一企一档";
 
   /// 获取企业统计
@@ -78,24 +74,9 @@ class _EnterprisePageState extends State<EnterprisePage> with RouteAware{
     _getStatistics();// 获取片区
     name = widget.arguments?['name'] ?? name;
   }
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-    ///监听路由
-    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
-  }
 
-  //清除偏移量
-  @override
-  void didPop() {
-    // TODO: implement didPop
-    _roviderDetaild!.initOffest();
-    super.didPop();
-  }
   @override
   Widget build(BuildContext context) {
-    _roviderDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     return Scaffold(
       body: Column(
         children: [
@@ -129,6 +110,7 @@ class _EnterprisePageState extends State<EnterprisePage> with RouteAware{
           Expanded(
             child: LayoutPage(
               tabBar: tabBar,
+              pageName: 'EnterprisePage',
               callBack: (val){
                 pageIndex = val;
                 _getCompany();

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
@@ -60,6 +61,7 @@ class _PersonalCenterState extends State<PersonalCenter> {
 
   @override
   Widget build(BuildContext context) {
+    log("roles===${jsonDecode(StorageUtil().getString(StorageKey.PersonalData))}");
     return Column(
       children: [
         TaskCompon.topTitle(title: '个人中心'),

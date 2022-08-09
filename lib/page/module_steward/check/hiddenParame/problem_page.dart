@@ -63,6 +63,7 @@ class _ProblemPageState extends State<ProblemPage> {
   String companyId = '';//企业id
   String companyName = '';//企业名称
   String district = '';//企业归属片区
+  String districtId = '';//企业片区id
   String region = '';//企业归属区域 东区，西区
   String userName = ''; //用户名
   String userId = ''; //用户id
@@ -83,7 +84,6 @@ class _ProblemPageState extends State<ProblemPage> {
     firm = widget.firm;
     userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'].toString();
     userName= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
-    checkNameList.add({'name':userName});
     _problemSearch(
         type: typeStatusEnum.onRefresh,
         data: {
@@ -138,7 +138,9 @@ class _ProblemPageState extends State<ProblemPage> {
     if(response['statusCode'] == 200) {
       companyName = response['data']?['name'] ?? '/';
       district = response['data']?['district']?['name'] ?? '';
+      districtId = response['data']?['district']?['id'].toString() ?? '';
       region = response['data']?['regionName'] ?? '/';
+      _getUserList();
       setState(() {});
     }
   }
@@ -164,6 +166,21 @@ class _ProblemPageState extends State<ProblemPage> {
           );
         }
       });
+    }
+  }
+
+  //查询片区管理人
+  void _getUserList() async {
+    var response = await Request().post(
+      Api.url['teamFindList'],
+      data: {}
+    );
+    if(response['errCode'] == '10000') {
+      checkNameList = response['result'];
+      for(var i = 0; i < checkNameList.length; i++){
+        checkNameList[i]['id'] = i;
+      }
+      setState(() {});
     }
   }
 
@@ -279,20 +296,23 @@ class _ProblemPageState extends State<ProblemPage> {
   ///position,imgDetails清空每次的坐标和图片
   void singIn(){
     _uuid = uuid.v4();
+    checkName = '';
     position = null;
     imgDetails = [];
     showModalBottomSheet(
         context: context,
+        isScrollControlled:true,
         builder: (BuildContext context) {
-          return StatefulBuilder(builder: (context,state){
-            return ListView(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: px(32)),
-                  child: FormCheck.dataCard(
+          return Container(
+            height: px(750),
+            padding: EdgeInsets.only(left: px(32)),
+            child: StatefulBuilder(builder: (context,state){
+              return ListView(
+                children: [
+                  FormCheck.dataCard(
                       children: [
                         FormCheck.formTitle(
-                            '签到',
+                          '签到',
                         ),
                         FormCheck.rowItem(
                           title: '企业名称',
@@ -364,59 +384,59 @@ class _ProblemPageState extends State<ProblemPage> {
                           ),
                         ),
                         FormCheck.rowItem(
-                            title: '排查人员',
-                            titleColor: Color(0xff323233),
-                            child:  Container(
-                              margin: EdgeInsets.only(right: px(20)),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: DownInput(
-                                      value: checkName,
-                                      data: checkNameList,
-                                      more: true,
-                                      hitStr: '请选择排查人员',
-                                      callback: (val){
-                                        checkName = '';
-                                        for(var i = 0; i < val.length;i++){
-                                          if(i > 0){
-                                            checkName = checkName + ',' + val[i]['name'];
-                                          }else{
-                                            checkName = val[i]['name'];
-                                          }
+                          title: '排查人员',
+                          titleColor: Color(0xff323233),
+                          child:  Container(
+                            margin: EdgeInsets.only(right: px(20)),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: DownInput(
+                                    value: checkName,
+                                    data: checkNameList,
+                                    more: true,
+                                    dataKey: 'opName',
+                                    hitStr: '请选择排查人员',
+                                    callback: (val){
+                                      for(var i = 0; i < val.length;i++){
+                                        if(i > 0){
+                                          checkName = checkName + ',' + val[i]['opName'];
+                                        }else{
+                                          checkName = val[i]['opName'];
                                         }
-                                        state(() {});
-                                      },
+                                      }
+                                      state(() {});
+                                    },
+                                  ),
+                                ),
+                                GestureDetector(
+                                  behavior: HitTestBehavior.translucent,
+                                  child: Container(
+                                    margin: EdgeInsets.only(left: px(24),right: px(24),bottom: px(4)),
+                                    padding: EdgeInsets.only(left: px(12),right: px(12),bottom: px(4),top: px(4)),
+                                    child: Text('添加人员',style: TextStyle(
+                                        fontSize: sp(26),
+                                        color: Colors.white
+                                    )),
+                                    decoration: BoxDecoration(
+                                      color: Color(0xff4D7FFF),
+                                      border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
+                                      borderRadius: BorderRadius.all(Radius.circular(px(12))),
                                     ),
                                   ),
-                                  GestureDetector(
-                                    behavior: HitTestBehavior.translucent,
-                                    child: Container(
-                                      margin: EdgeInsets.only(left: px(24),right: px(24),bottom: px(4)),
-                                      padding: EdgeInsets.only(left: px(12),right: px(12),bottom: px(4),top: px(4)),
-                                      child: Text('添加人员',style: TextStyle(
-                                          fontSize: sp(26),
-                                          color: Colors.white
-                                      )),
-                                      decoration: BoxDecoration(
-                                        color: Color(0xff4D7FFF),
-                                        border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
-                                        borderRadius: BorderRadius.all(Radius.circular(px(12))),
-                                      ),
-                                    ),
-                                    onTap: () async{
-                                      showDialog(
-                                        context: context,
-                                        barrierDismissible: false,
-                                        builder: (BuildContext context) {
-                                          return GestureDetector(
-                                              onTap: () {
-                                                Navigator.of(context).pop(); //退出弹出框
-                                              },
-                                              child: Material(
-                                                color: Color.fromRGBO(0, 0, 0, 0.5),
-                                                child: Center(
-                                                  child: Container(
+                                  onTap: () async{
+                                    showDialog(
+                                      context: context,
+                                      barrierDismissible: false,
+                                      builder: (BuildContext context) {
+                                        return GestureDetector(
+                                            onTap: () {
+                                              Navigator.of(context).pop(); //退出弹出框
+                                            },
+                                            child: Material(
+                                              color: Color.fromRGBO(0, 0, 0, 0.5),
+                                              child: Center(
+                                                child: Container(
                                                     width: px(540),
                                                     height: px(140),
                                                     padding: EdgeInsets.only(left: px(24),top: px(12)),
@@ -429,9 +449,9 @@ class _ProblemPageState extends State<ProblemPage> {
                                                         Expanded(
                                                           child: FormCheck.inputWidget(
                                                               hintText: '请输入排查人员',
+                                                              hintVal: inputCheckName,
                                                               onChanged: (val){
                                                                 inputCheckName = val;
-                                                                state(() {});
                                                               }
                                                           ),
                                                         ),
@@ -451,7 +471,7 @@ class _ProblemPageState extends State<ProblemPage> {
                                                           ),
                                                           onTap: (){
                                                             setState(() {
-                                                              checkNameList.add({'name':inputCheckName});
+                                                              checkNameList.add({'opName':inputCheckName});
                                                               // checkName = checkName + '，' +inputCheckName;
                                                               inputCheckName = '';
                                                               Navigator.pop(context);
@@ -460,17 +480,17 @@ class _ProblemPageState extends State<ProblemPage> {
                                                         )
                                                       ],
                                                     )
-                                                  ),
                                                 ),
-                                              )
-                                          );
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
+                                              ),
+                                            )
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
+                          ),
                         ),
                         FormCheck.rowItem(
                           title: '排查日期',
@@ -506,10 +526,10 @@ class _ProblemPageState extends State<ProblemPage> {
                         ),
                       ]
                   ),
-                )
-              ],
-            );
-          });
+                ],
+              );
+            }),
+          );
         }
     );
   }
@@ -617,14 +637,7 @@ class _ProblemPageState extends State<ProblemPage> {
                           i: i,
                           detail: true,
                           callBack:(){
-                            Navigator.pushNamed(context, '/rectificationProblem',
-                                arguments: {
-                                  'check': true,
-                                  'problemId': hiddenProblem[i]['id'],
-                                  'inventoryStatus': 5
-                                }
-                            );
-                            // _getCompany(problemId:hiddenProblem[i]['id'],inventoryId: hiddenProblem[i]['inventory']['id']);
+                            _getCompany(problemId:hiddenProblem[i]['id'],inventoryId: hiddenProblem[i]['inventory']['id']);
                           }
                       ),
                     );

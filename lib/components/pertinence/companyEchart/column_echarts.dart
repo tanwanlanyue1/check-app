@@ -31,11 +31,13 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
   String erectImage = ''' ''';//竖状图
   String pie =  ''' ''';//饼图
   Color backgroundColor = Colors.white;//背景色
+  bool show = false;
 
   @override
   void initState() {
     // TODO: implement initState
     alterData();
+    delay();
     super.initState();
   }
 
@@ -43,8 +45,18 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
   void didUpdateWidget(ColumnEcharts oldWidget) {
     super.didUpdateWidget(oldWidget);
     alterData();
+    delay();
   }
-
+  //延迟
+  delay(){
+    show = false;
+    Future.delayed(Duration(milliseconds: 1200)).then((onValue) {
+      if(mounted){
+        show = true;
+        setState(() {});
+      }
+    });
+  }
   ///赋值数据
   void alterData(){
     columntitle = widget.title ?? '';
@@ -230,6 +242,7 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
          series: {
              'type': 'bar',
              'data': ${jsonEncode(series)},
+             barWidth : 20,
              itemStyle: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 { offset: 0, color: '#8AB1FF' },
@@ -243,7 +256,8 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return show ?
+    Scaffold(
       body: SizedBox(
           height: px(720+((erectName.length/2)*20)),
           child: widget.erect ?
@@ -254,11 +268,9 @@ class _ColumnEchartsState extends State<ColumnEcharts> {
           Echarts(
             option: erectImage,
           )
-          //   :Echarts(
-          //   reloadAfterInit: true,
-          //   option: columnImage,
-          // )
       ),
-    );
+    ) : Container();
   }
+//           //   :Echarts(
+//           //   option: columnImage,
 }

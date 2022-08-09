@@ -39,21 +39,23 @@ class _LoginPageState extends State<LoginPage> {
       };
       var response = await Request().post(Api.url['login'], data: _data);
       if (response['statusCode'] == 200) {
-        saveInfo(response['data']['token'], _data['username']!, _data['password']!, response['data']);
-        List roles = [];
         for(var i = 0; i < response['data']['roles'].length; i++){
-          roles.add(response['data']['roles'][i]['name']);
-        }
-        if(roles.contains('环保管家')){
-          Navigator.of(context).pushAndRemoveUntil(CustomRoute(HomePage()), (router) => router == null);
-        }else if(roles.contains('项目经理')){
-          Navigator.of(context).pushAndRemoveUntil(CustomRoute(HomePage()), (router) => router == null);
-        }else if(roles.contains('企业')){
-          Navigator.of(context).pushAndRemoveUntil(CustomRoute(EnterpriseHome()), (router) => router == null);
-        }else if(roles.contains('环保局')){
-          Navigator.pushNamedAndRemoveUntil(context,'/protectionAgencyHome', (Route route)=>false);
-        }else{
-          ToastWidget.showToastMsg('该账号无权限！');
+          if(response['data']['roles'][i]['name'] == '环保管家' || response['data']['roles'][i]['name'] == '项目经理'){
+            saveInfo(response['data']['token'], _data['username']!, _data['password']!, response['data']);
+            Navigator.of(context).pushAndRemoveUntil(CustomRoute(HomePage()), (router) => router == null);return;
+          }else if(response['data']['roles'][i]['name'] == '企业'){
+            if(response['data']['company'] != null){
+              saveInfo(response['data']['token'], _data['username']!, _data['password']!, response['data']);
+              Navigator.of(context).pushAndRemoveUntil(CustomRoute(EnterpriseHome()), (router) => router == null);return;
+            }
+          }else if(response['data']['roles'][i]['name'] == '环保局'){
+            saveInfo(response['data']['token'], _data['username']!, _data['password']!, response['data']);
+            Navigator.pushNamedAndRemoveUntil(context,'/protectionAgencyHome', (Route route)=>false);return;
+          }else{
+            if(response['data']['roles'].length == i){
+              ToastWidget.showToastMsg('该账号无权限！');
+            }
+          }
         }
       } else if (response['statusCode'] == 500) {
         if (response['message'] == null) {

@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
 
   ///全局变量
   /// initOffest : 初始化tab偏移量
-  ProviderDetaild? _roviderDetaild;
+  // ProviderDetaild? _roviderDetaild;
   HomeModel? _homeModel; //全局的焦点
 
   final List _pageList = [
@@ -87,7 +87,6 @@ class _HomePageState extends State<HomePage> {
 
   ///底部菜单
   List<Widget> getBottomNavigationBarItem() {
-    _roviderDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     _homeModel = Provider.of<HomeModel>(context, listen: true);
     List<Widget> list = [];
     for (int i = 0; i < tabTitles.length; i++) {
@@ -107,7 +106,6 @@ class _HomePageState extends State<HomePage> {
             ),
             onTap: (){
               _pageController.jumpToPage(i);
-              _roviderDetaild!.initOffest();
               _homeModel!.onVerifyNodes();
               setState(() {
                 _tabIndex = i;
@@ -124,12 +122,10 @@ class _HomePageState extends State<HomePage> {
   ///commonImage: 未选中图片
   ///activeImage: 选中图片
   Widget _buildItemMenu({required int index, required String commonImage, required String activeImage,Widget? childs}) {
-    _roviderDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     _homeModel = Provider.of<HomeModel>(context, listen: true);
     Widget menuItem = GestureDetector(
         onTap: () {
           _pageController.jumpToPage(index);
-          _roviderDetaild!.initOffest();
           _homeModel!.onVerifyNodes();
           setState(() {
             _tabIndex = index;

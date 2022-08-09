@@ -44,20 +44,20 @@ class _FillDetailsState extends State<FillDetails> {
                         fontFamily: 'M',),maxLines: 1,overflow: TextOverflow.ellipsis,),
                   ),
                 ),
-                Visibility(
-                  visible: widget.arguments?['sub'],
-                  child: InkWell(
-                    child: Container(
-                      padding: EdgeInsets.only(right: px(20),left: px(20)),
-                      color: Colors.transparent,
-                      child: Text('提交',style: TextStyle(fontSize: sp(24)),),
-                    ),
-                    onTap: (){
-                      StorageUtil().setJSON('law',widget.arguments?['law']);
-                      Navigator.of(context).popUntil(ModalRoute.withName('/fillInForm'));
-                    },
-                  ),
-                ),
+                // Visibility(
+                //   visible: widget.arguments?['sub'],
+                //   child: InkWell(
+                //     child: Container(
+                //       padding: EdgeInsets.only(right: px(20),left: px(20)),
+                //       color: Colors.transparent,
+                //       child: Text('提交',style: TextStyle(fontSize: sp(24)),),
+                //     ),
+                //     onTap: (){
+                //       StorageUtil().setJSON('law',widget.arguments?['law']);
+                //       Navigator.of(context).popUntil(ModalRoute.withName('/fillInForm'));
+                //     },
+                //   ),
+                // ),
               ],
             ),
           )

@@ -112,7 +112,7 @@ class _AuditProblemState extends State<AuditProblem> {
                 company: problemList[i],
                 i: i,
                 callBack:() async {
-                  Navigator.pushNamed(context, '/abarbeitungFrom',arguments: {'id':problemList[i]['id'],'audit':true,"inventoryStatus":3});
+                  Navigator.pushNamed(context, '/abarbeitungFrom',arguments: {'id':problemList[i]['id'],'audit':false,"inventoryStatus":3});
                 }
             )),
           ),

@@ -25,7 +25,6 @@ class _EssentialDetailsState extends State<EssentialDetails> {
   List subTitle = ['排查要点','标准规范','排查依据','违法依据'];//副标题
   Map gistDetails = {};//要点详情
   List imageDatile = [];//示例图片
-  late ProviderDetaild _providerDetaild;
 
   /// 获取排查详情
   void _getBasis() async {
@@ -46,7 +45,6 @@ class _EssentialDetailsState extends State<EssentialDetails> {
   }
   @override
   Widget build(BuildContext context) {
-    _providerDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     return Scaffold(
       body: Column(
         children: [
@@ -109,20 +107,20 @@ class _EssentialDetailsState extends State<EssentialDetails> {
               child: Text("排查要点详情",style: TextStyle(color: Color(0xff323233),fontSize: sp(32),fontFamily: 'M'),),
             ),
           ),
-          widget.arguments?['gist'] ?
-          InkWell(
-            child: Container(
-                width: px(80),
-                height: px(50),
-                margin: EdgeInsets.only(right: px(20)),
-                alignment: Alignment.center,
-                child: Text('提交',style: TextStyle(fontSize: sp(24)),)
-            ),
-            onTap: (){
-              StorageUtil().setJSON('gist',gistDetails);
-              Navigator.of(context).popUntil(ModalRoute.withName('/fillInForm'));
-            },
-          ) : Container(),
+          // widget.arguments?['gist'] ?
+          // InkWell(
+          //   child: Container(
+          //       width: px(80),
+          //       height: px(50),
+          //       margin: EdgeInsets.only(right: px(20)),
+          //       alignment: Alignment.center,
+          //       child: Text('提交',style: TextStyle(fontSize: sp(24)),)
+          //   ),
+          //   onTap: (){
+          //     StorageUtil().setJSON('gist',gistDetails);
+          //     Navigator.of(context).popUntil(ModalRoute.withName('/fillInForm'));
+          //   },
+          // ) : Container(),
         ],
       ),
     );

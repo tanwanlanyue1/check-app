@@ -124,11 +124,14 @@ class FormCheck {
   ///输入框
   ///disabled:启用
   ///filled:填充的背景色
-  ///hintText:默认
+  ///hintText:提示的值
+  ///hintVal:默认值
   ///onChanged:回调
   ///unit:单位
   ///TextInputType 键盘类型
-  static Widget inputWidget({bool? disabled, bool filled = true, String? hintText = '请输入', Function? onChanged,int lines = 1, String? unit,TextInputType? keyboardType}) {
+  static Widget inputWidget({bool? disabled, bool filled = true, String? hintText = '请输入', String hintVal = '',Function? onChanged,int lines = 1, String? unit,TextInputType? keyboardType}) {
+    TextEditingController _controller = TextEditingController();
+    _controller.text = hintVal;
     return Row(
       children: [
         Expanded(
@@ -147,6 +150,7 @@ class FormCheck {
                 border: InputBorder.none,
               ),
               maxLines: lines,
+              controller: _controller,
               onChanged: (val){
                 onChanged?.call(val);
               },

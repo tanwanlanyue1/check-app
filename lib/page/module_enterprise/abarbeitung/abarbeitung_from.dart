@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
+import 'package:scet_check/components/generalduty/loading.dart';
 import 'package:scet_check/page/module_enterprise/abarbeitung/problem_details.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/enterprise_reform.dart';
 import 'package:scet_check/page/module_steward/check/potentialRisks/review_situation.dart';
@@ -30,7 +31,8 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
   bool declare = false; //申报
   bool getLose = false; //请求失败
   bool abarbeitung = false; //是否可以修改
-  bool audit = false; //是否从审查页进入
+  bool audit = true; //是否从审查页进入
+  bool delay = false; //网络延迟
   String userName = '';//用户名
   String userId = '';//用户id
   List solutionList = [];//整改详情
@@ -40,7 +42,7 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
   void initState() {
     // TODO: implement initState
     problemId = widget.arguments?['id'];
-    audit = widget.arguments?['audit'] ?? false;
+    audit = widget.arguments?['audit'] ?? true;
     userName= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
     userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'].toString();
     _getProblems();
@@ -54,6 +56,10 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
     var response = await Request().get(Api.url['problem']+'/$problemId',);
     if(response['statusCode'] == 200) {
       problemList = response['data'];
+      delay = true;
+      setState(() {});
+    }else{
+      delay = true;
       setState(() {});
     }
   }
@@ -69,7 +75,7 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
     if(response['statusCode'] == 200 && response['data'] != null) {
       solutionList = response['data']['list'];
       abarbeitung = false;
-      for(var i=0; i < solutionList.length; i++){
+      for(var i = 0; i < solutionList.length; i++){
         if(solutionList[i]['status'] == 4){//4未提交
           abarbeitung = true;
         }
@@ -113,12 +119,19 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
               padding: EdgeInsets.only(top: 0),
               children: [
                 //问题详情
-                ProblemDetails(
-                  problemList: problemList,
-                  inventoryStatus: widget.arguments?['inventoryStatus'],
+                Visibility(
+                  visible: problemList.isNotEmpty || delay,
+                  child: ProblemDetails(
+                    problemList: problemList,
+                    inventoryStatus: widget.arguments?['inventoryStatus'],
+                  ),
+                  replacement: Container(
+                    margin: EdgeInsets.only(top: px(50),bottom: px(50)),
+                    child: Loading(),
+                  ),
                 ),
                 //企业整改详情
-                !audit ? addAbarbeitung() : Container(),
+                audit ? addAbarbeitung() : Container(),
                 solutionList.isNotEmpty?
                 EnterpriseReform(
                   problemId: problemId,
@@ -187,7 +200,7 @@ class _AbarbeitungFromState extends State<AbarbeitungFrom> {
               Container(),
             ],
           ),
-          getLose != true && problemList['status'] != 3 && problemList['status'] != 2 && !abarbeitung?
+          getLose != true && problemList['status'] != 3 && problemList['status'] != 2 && !abarbeitung && problemList.isNotEmpty?
           GestureDetector(
             behavior: HitTestBehavior.translucent,
             child: Container(

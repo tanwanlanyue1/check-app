@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scet_check/model/provider/provider_details.dart';
+import 'package:scet_check/utils/screen/adapter.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 import 'check_compon.dart';
@@ -8,19 +9,33 @@ import 'check_compon.dart';
 ///tab布局页面
 ///tabBar: 头部切换
 ///pageBody: 页面内容
+///pageName: 页面偏移量key
 ///callBack: 回调
+///itemWidth: 每一项宽度 默认206
+///center: 是否居中平分 默认false为从左往右
 class LayoutPage extends StatefulWidget {
   List tabBar;
   List pageBody;//
   Function? callBack;
-  LayoutPage({Key? key,required this.tabBar,this.callBack,required this.pageBody}) : super(key: key);
+  String pageName;
+  double itemWidth;
+  bool center;
+
+  LayoutPage({Key? key,
+    required this.tabBar,
+    this.callBack,
+    required this.pageBody,
+    required this.pageName,
+    this.itemWidth = 206,
+    this.center = false
+  }) : super(key: key);
 
   @override
   _LayoutPageState createState() => _LayoutPageState();
 }
 
 class _LayoutPageState extends State<LayoutPage> {
-  final PageController pagesController = PageController(); //page控制器
+  PageController? pagesController; //page控制器
   ScrollController controller = ScrollController();//头部ListView
   ScrollController controllerTow = ScrollController();
   ///全局变量 控制偏移量
@@ -29,6 +44,8 @@ class _LayoutPageState extends State<LayoutPage> {
   List _pageBody = [];//页面内容
   int _pageIndex = 0;//下标
   double off = 0.0;//偏移量
+
+  double _itemWidth = 206; // 默认每一项的宽度
   ///监听滑动
   ///页面与头部一起滑动
   @override
@@ -36,11 +53,20 @@ class _LayoutPageState extends State<LayoutPage> {
     super.initState();
     _tabBar = widget.tabBar;
     _pageBody = widget.pageBody;
-    pagesController.addListener(() {
-      if(pagesController.page != null){
-        _roviderDetaild!.setOffest(pagesController.page!);
+    _pageIndex = context.read<ProviderDetaild>().getCachePageindex(widget.pageName);
+    _itemWidth = widget.itemWidth;
+
+    if(widget.center){
+      _itemWidth =  Adapter.designWidth / widget.tabBar.length;
+    }
+
+    pagesController= PageController(initialPage: _pageIndex);
+    pagesController!.addListener(() {
+      if(pagesController!.page != null){
+        _roviderDetaild!.setOffest(widget.pageName, off: px(_itemWidth * pagesController!.page!));
       }
     });
+
     controller.addListener(() {
       off = controller.offset;
       controllerTow.jumpTo(off);
@@ -49,24 +75,32 @@ class _LayoutPageState extends State<LayoutPage> {
 
   @override
   void didUpdateWidget(covariant LayoutPage oldWidget) {
-    // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
     if(oldWidget.pageBody != widget.pageBody){
       _tabBar = widget.tabBar;
       _pageBody = widget.pageBody;
     }
+    _pageIndex = context.read<ProviderDetaild>().getCachePageindex(widget.pageName);
+    _itemWidth = widget.itemWidth;
+    if(widget.center){
+      _itemWidth =  Adapter.designWidth / widget.tabBar.length;
+    }
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _roviderDetaild!.removeCache(widget.pageName);
+  }
   @override
   Widget build(BuildContext context) {
     _roviderDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Container(
-          width: px(730),
+        SizedBox(
+          width: px(750),
           height: px(74),
-          margin: EdgeInsets.only(left:px(20),right: px(18)),
           child: Stack(
             children: [
               ListView(
@@ -75,11 +109,12 @@ class _LayoutPageState extends State<LayoutPage> {
                 children: [
                   SizedBox(
                     height: px(88),
-                    width: px(206 * _tabBar.length),
+                    width: px(_itemWidth * _tabBar.length),
                     child: Row(
                       children: [
                         CheckCompon.bagColor(
-                          offestLeft: _roviderDetaild?.offestLeft,
+                          itemWidth: _itemWidth,
+                          offestLeft: _roviderDetaild?.getCacheOffest(widget.pageName),
                         )
                       ],
                     ),
@@ -93,10 +128,11 @@ class _LayoutPageState extends State<LayoutPage> {
                   CheckCompon.tabCut(
                       index: _pageIndex,
                       tabBar: _tabBar,
+                      itemWidth: _itemWidth,
                       onTap: (i){
+                        // widget.callBack?.call(i);
                         _pageIndex = i;
-                        pagesController.jumpToPage(i);
-                        widget.callBack?.call(i);
+                        pagesController!.jumpToPage(i);
                         setState(() {});
                       }
                   ),
@@ -109,11 +145,23 @@ class _LayoutPageState extends State<LayoutPage> {
             child: PageView.builder(
               controller: pagesController,
               itemCount: _pageBody.length,
-              itemBuilder: (context, i) =>
-              _pageBody[i],
-              onPageChanged: (val){
-                _pageIndex = val;
+              itemBuilder: (context, i) => _pageBody[i],
+              onPageChanged: (val) {
                 widget.callBack?.call(val);
+                _pageIndex = val;
+                _roviderDetaild!.setOffest(widget.pageName, pageIndex: val);
+                if((val + 1) * px(_itemWidth) > Adapt.screenW() + controllerTow.offset){
+                  double offset = (val + 1) * px(_itemWidth) - Adapt.screenW();
+                  controllerTow.animateTo(offset,duration: Duration(milliseconds: 400), curve: Curves.easeOut);
+                  controller.animateTo(offset,duration: Duration(milliseconds: 400), curve: Curves.easeOut);
+                }
+
+                if(((val + 1) * px(_itemWidth)) -px(_itemWidth) <= controllerTow.offset ){
+                  double offset = (val) * px(_itemWidth);
+                  controllerTow.animateTo(offset,duration: Duration(milliseconds: 400), curve: Curves.easeOut);
+                  controller.animateTo(offset,duration: Duration(milliseconds: 400), curve: Curves.easeOut);
+                }
+
               },
             )
         ),

@@ -87,7 +87,7 @@ class _TaskDetailsState extends State<TaskDetails> {
         data: _data
     );
     if(response['statusCode'] == 200) {
-      Navigator.pop(context,false);
+      Navigator.pop(context,true);
       Navigator.pushNamed(context, '/stewardCheck',arguments: {
         'uuid': _uuid,
         'company':false,
@@ -466,10 +466,10 @@ class _TaskDetailsState extends State<TaskDetails> {
                 Expanded(
                   child: FormCheck.inputWidget(
                       hintText: '添加描述....',
+                      hintVal: checkDetail,
                       lines: 3,
                       onChanged: (val){
                         checkDetail = val;
-                        setState(() {});
                       }
                   ),
                 )

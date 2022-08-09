@@ -18,7 +18,7 @@ class HiddenParameter extends StatefulWidget {
   _HiddenParameterState createState() => _HiddenParameterState();
 }
 
-class _HiddenParameterState extends State<HiddenParameter> with RouteAware{
+class _HiddenParameterState extends State<HiddenParameter> {
 
   List tabBar = [];//头部
   String _companyId = '';//公司id
@@ -28,7 +28,7 @@ class _HiddenParameterState extends State<HiddenParameter> with RouteAware{
   List districtList = [];//片区统计数据
   List districtId = [""];//片区id
   Map<String,dynamic> data = {};//获取企业数据传递的参数
-  ProviderDetaild? _roviderDetaild;//全局数据
+  // ProviderDetaild? _roviderDetaild;//全局数据
 
   /// 获取片区统计
   /// 获取tabbar表头，不在写死,
@@ -80,24 +80,9 @@ class _HiddenParameterState extends State<HiddenParameter> with RouteAware{
   super.initState();
   }
 
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-    ///监听路由
-    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
-  }
 
-  //清除偏移量
-  @override
-  void didPop() {
-    // TODO: implement didPop
-    _roviderDetaild!.initOffest();
-    super.didPop();
-  }
   @override
   Widget build(BuildContext context) {
-    _roviderDetaild = Provider.of<ProviderDetaild>(context, listen: true);
     return Scaffold(
       body: Column(
         children: [
@@ -107,35 +92,25 @@ class _HiddenParameterState extends State<HiddenParameter> with RouteAware{
           Expanded(
             child: LayoutPage(
               tabBar: tabBar,
-              pageBody: List.generate(tabBar.length, (index) => Column(
-                children: [
-                  Container(
-                    height: px(24),
-                    margin: EdgeInsets.only(left:px(20),right: px(20)),
-                    color: Colors.white,
-                  ),
-                  Visibility(
-                    visible: companyList.isNotEmpty,
-                    child: Expanded(
-                      child: ClientListPage(
-                        companyList: companyList,
-                        sort: true,
-                        callBack: (id,name,user){
-                          _companyId = id;
-                          _companyName = name;
-                          Navigator.pushNamed(context, '/hiddenDetails',arguments: {'companyId': _companyId,'companyName': _companyName,});
-                          setState(() {});
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              )),
+              pageName: 'HiddenParameter',
               callBack: (val){
                 pageIndex = val;
                 _getCompany();
                 setState(() {});
               },
+              pageBody: List.generate(tabBar.length, (index) => Visibility(
+                visible: companyList.isNotEmpty,
+                child: ClientListPage(
+                  companyList: companyList,
+                  sort: true,
+                  callBack: (id,name,user){
+                    _companyId = id;
+                  _companyName = name;
+                  Navigator.pushNamed(context, '/hiddenDetails',arguments: {'companyId': _companyId,'companyName': _companyName,});
+                  setState(() {});
+                  },
+                ),
+              ),),
             ),
           ),
         ],

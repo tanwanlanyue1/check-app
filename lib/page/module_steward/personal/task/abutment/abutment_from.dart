@@ -65,6 +65,7 @@ class _AbutmentFromState extends State<AbutmentFrom> {
                 hintText: data.isEmpty ?
                 '请输入${fieldList[i]['fieldName']}' :
                 (data[fieldList[i]['fieldValue']] ?? '请输入${fieldList[i]['fieldName']}'),
+                hintVal: data.isEmpty ? '' : (data[fieldList[i]['fieldValue']] ?? ''),
                 lines: 1,
                 onChanged: (val){
                   if(data.isEmpty){
@@ -72,7 +73,6 @@ class _AbutmentFromState extends State<AbutmentFrom> {
                   }else{
                     data[fieldList[i]['fieldValue']] = val;
                   }
-                  setState(() {});
                 }
             ));
       case 2:
@@ -88,6 +88,7 @@ class _AbutmentFromState extends State<AbutmentFrom> {
                 hintText: data.isEmpty ?
                 '请输入${fieldList[i]['fieldName']}' :
                 (data[fieldList[i]['fieldValue']] ?? '请输入${fieldList[i]['fieldName']}'),
+                hintVal: data.isEmpty ? '' : (data[fieldList[i]['fieldValue']] ?? ''),
                 lines: 4,
                 onChanged: (val){
                   if(data.isEmpty){
@@ -95,7 +96,6 @@ class _AbutmentFromState extends State<AbutmentFrom> {
                   }else{
                     data[fieldList[i]['fieldValue']] = val;
                   }
-                  setState(() {});
                 }
             ));
       case 3:
@@ -110,6 +110,7 @@ class _AbutmentFromState extends State<AbutmentFrom> {
                 hintText: data.isEmpty ?
                 '请输入${fieldList[i]['fieldName']}' :
                 (data[fieldList[i]['fieldValue']] ?? '请输入${fieldList[i]['fieldName']}'),
+                hintVal: data.isEmpty ? '' : (data[fieldList[i]['fieldValue']] ?? ''),
                 keyboardType: TextInputType.number,
                 onChanged: (val){
                   if(data.isEmpty){
@@ -117,7 +118,6 @@ class _AbutmentFromState extends State<AbutmentFrom> {
                   }else{
                     data[fieldList[i]['fieldValue']] = val;
                   }
-                  setState(() {});
                 }
             ));
       case 4:

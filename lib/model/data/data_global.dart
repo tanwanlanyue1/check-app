@@ -60,20 +60,20 @@ class Global {
         isOfflineLogin = true;
         Map? _personalData = StorageUtil().getJSON(StorageKey.PersonalData);
         if (_personalData != null) {
-          switch(_personalData['roles'][1]['name']){
-            case '环保管家' :
-              router = '/steward';
-              break;
-            case '项目经理' :
-              router = '/steward';
-              break;
-            case '企业' :
-              router = '/enterpriseHome';
-              break;
-            case '环保局' :
-              router = '/protectionAgencyHome';
-              break;
-            default: router = '/';break;
+          for(var i = 0; i < _personalData['roles'].length; i++){
+            if(_personalData['roles'][i]['name'] == '环保管家' || _personalData['roles'][i]['name'] == '项目经理'){
+              router = '/steward';return;
+            }else if(_personalData['roles'][i]['name'] == '企业'){
+              if(_personalData['company'] != null){
+                router = '/enterpriseHome';return;
+              }
+            }else if(_personalData['roles'][i]['name'] == '环保局'){
+              router = '/protectionAgencyHome';return;
+            }else{
+              if(_personalData['roles'].length == i){
+                router = '/';
+              }
+            }
           }
         }
       }else{

@@ -12,6 +12,8 @@ class Api {
 
     'user': baseUrlApp + 'user',//获取用户数据
 
+    'userList': baseUrlApp + 'user/list',//获取片区用户
+
     'login': baseUrlApp + 'auth/login',//登录
 
     'district': baseUrlApp + 'district',//片区统计
@@ -84,6 +86,8 @@ class Api {
 
     ///对接的借口
     'houseTask':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/findPageByApp',//任务工单管理
+
+    'teamFindList':baseUrlAppTwo + 'housekeeperPlatform/d-admin/team/findMemberList',//条件查询所有团队
 
     'housekeeper':baseUrlAppTwo + 'housekeeperPlatform/d-admin/dynamic-form/getDynamicFormById',//表单管理
 

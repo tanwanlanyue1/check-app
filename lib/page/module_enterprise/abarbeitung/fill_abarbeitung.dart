@@ -197,10 +197,10 @@ class _FillAbarbeitungState extends State<FillAbarbeitung> {
           FormCheck.rowItem(
             title: "整改措施",
             child: FormCheck.inputWidget(
-                hintText: descript.isEmpty ? '请输入整改措施' : descript,
+                hintText: '请输入整改措施',
+                hintVal: descript,
                 onChanged: (val){
                   descript = val;
-                  setState(() {});
                 }
             ),
           ),
@@ -384,9 +384,9 @@ class _FillAbarbeitungState extends State<FillAbarbeitung> {
                                           Expanded(
                                             child: FormCheck.inputWidget(
                                                 hintText: '请输入排查人员',
+                                                hintVal: inputCheckName,
                                                 onChanged: (val){
                                                   inputCheckName = val;
-                                                  setState(() {});
                                                 }
                                             ),
                                           ),
@@ -438,9 +438,9 @@ class _FillAbarbeitungState extends State<FillAbarbeitung> {
               title: "复查详情",
               child: FormCheck.inputWidget(
                   hintText: '请输入复查详情',
+                  hintVal: descript,
                   onChanged: (val){
                     descript = val;
-                    setState(() {});
                   }
               ),
             ),
@@ -467,9 +467,9 @@ class _FillAbarbeitungState extends State<FillAbarbeitung> {
               title: "其他说明",
               child: FormCheck.inputWidget(
                   hintText: '请输入其他说明',
+                  hintVal: remark,
                   onChanged: (val){
                     remark = val;
-                    setState(() {});
                   }
               ),
             ),

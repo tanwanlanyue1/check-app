@@ -141,7 +141,7 @@ class _SamePointTableState extends State<SamePointTable> {
               ),
             ),
           )
-      ) ;
+      );
     }
     return bodyRow;
   }
@@ -224,8 +224,7 @@ class _SamePointTableState extends State<SamePointTable> {
                     height: px(71),
                     alignment: Alignment.topCenter,
                     padding: EdgeInsets.symmetric(vertical: 8.0),
-                    child:
-                    i < item.length-1 ?
+                    child: i < item.length-1 ?
                     Text(
                         '${((int.parse(item[i]['allCount'])/questionTotal)*100).toStringAsFixed(2)}%',
                         style: TextStyle(
@@ -475,7 +474,6 @@ class _SamePointTableState extends State<SamePointTable> {
           height: px(720 + ((name.length/2)*20)),
           child: ColumnEcharts(
             erectName: name,
-            // data: echartData,
             pieData: pieData,
             erect: true,
           ),),

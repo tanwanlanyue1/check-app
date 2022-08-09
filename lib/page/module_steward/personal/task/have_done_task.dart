@@ -33,7 +33,7 @@ class _HaveDoneTaskState extends State<HaveDoneTask> with SingleTickerProviderSt
   void _getTaskList() async {
     var response = await Request().get(
       Api.url['taskList'],data: {
-      "check_user_list": {"id":userId},
+      "checkUserList": {"id":userId},
       "status":2
     },
     );
