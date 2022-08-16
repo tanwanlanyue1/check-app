@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
@@ -75,12 +77,14 @@ class _LoginPageState extends State<LoginPage> {
   void saveInfo(String token,String userName,String passWord, Map personalData) {
     StorageUtil().setString(StorageKey.Token, token.toString());
     StorageUtil().setJSON(StorageKey.PersonalData, personalData);
-    StorageUtil().setString('userName', userName.toString());
-    StorageUtil().setString('password', passWord.toString());
+    StorageUtil().setString(StorageKey.userName, userName.toString());
+    StorageUtil().setString(StorageKey.password, passWord.toString());
   }
 
   @override
   void initState() {
+    _userName= StorageUtil().getString(StorageKey.userName) ?? '';
+    _password= StorageUtil().getString(StorageKey.password) ?? '';
     super.initState();
   }
 
@@ -160,17 +164,17 @@ class _LoginPageState extends State<LoginPage> {
             LoginComponents.loginInput(
                 icon: 'lib/assets/icons/login/people.png',
                 hitStr: '请输入账号',
+                hintVal: _userName,
                 onChange: (val) {
                   _userName = val;
-                  setState(() {});
                 }),
             LoginComponents.loginInput(
                 icon: 'lib/assets/icons/login/password.png',
                 hitStr: '请输入密码',
+                hintVal: _password,
                 isPassWord: true,
                 onChange: (val) {
                   _password = val;
-                  setState(() {});
                 }),
             LoginComponents.loginBtn(
               onTap: () {

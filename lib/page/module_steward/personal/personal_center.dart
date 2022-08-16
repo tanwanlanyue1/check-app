@@ -21,8 +21,8 @@ class PersonalCenter extends StatefulWidget {
 
 class _PersonalCenterState extends State<PersonalCenter> {
   String userName = ''; //用户名
-  List classify = ['历史台账','发布任务','待办任务','已办任务','审核问题'];//分类
-  List commonClassify = ['历史台账','待办任务','已办任务'];//普通用户分类分类
+  List classify = ['历史台账','发布任务','待办任务','已办任务','审核问题',"修改密码","登录统计"];//分类
+  List commonClassify = ['历史台账','待办任务','已办任务',"修改密码","登录统计"];//普通用户分类分类
   bool manager = false;//当前账号是否为项目经理
 
   @override
@@ -45,6 +45,8 @@ class _PersonalCenterState extends State<PersonalCenter> {
       case 2: Navigator.pushNamed(context, '/backlogTask'); break;
       case 3: Navigator.pushNamed(context, '/haveDoneTask'); break;
       case 4: Navigator.pushNamed(context, '/auditList'); break;
+      case 5: Navigator.pushNamed(context, '/changePassword'); break;
+      case 6: Navigator.pushNamed(context, '/registerStatistics'); break;
       default: ToastWidget.showToastMsg('暂无更多页面');
     }
   }
@@ -55,13 +57,14 @@ class _PersonalCenterState extends State<PersonalCenter> {
       case 0: Navigator.pushNamed(context, '/historyTask'); break;
       case 1: Navigator.pushNamed(context, '/backlogTask'); break;
       case 2: Navigator.pushNamed(context, '/haveDoneTask'); break;
+      case 3: Navigator.pushNamed(context, '/changePassword'); break;
+      case 4: Navigator.pushNamed(context, '/registerStatistics'); break;
       default: ToastWidget.showToastMsg('暂无更多页面');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    log("roles===${jsonDecode(StorageUtil().getString(StorageKey.PersonalData))}");
     return Column(
       children: [
         TaskCompon.topTitle(title: '个人中心'),

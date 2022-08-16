@@ -37,6 +37,8 @@ import 'package:scet_check/page/module_steward/message/message_details.dart';
 import 'package:scet_check/page/module_steward/message/message_page.dart';
 import 'package:scet_check/page/module_steward/personal/audit_list.dart';
 import 'package:scet_check/page/module_steward/personal/audit_problem.dart';
+import 'package:scet_check/page/module_steward/personal/change_password.dart';
+import 'package:scet_check/page/module_steward/personal/register_statistics.dart';
 import 'package:scet_check/page/module_steward/personal/task/abutment/abutment_from.dart';
 import 'package:scet_check/page/module_steward/personal/task/abutment/abutment_list.dart';
 import 'package:scet_check/page/module_steward/personal/task/abutment/abutment_task.dart';
@@ -91,6 +93,8 @@ final routes = {
   '/auditList': (context,{arguments}) =>  AuditList(), //清单审核列表
   '/auditProblem': (context,{arguments}) =>  AuditProblem(arguments:arguments), //清单问题审核
   '/fromHtmlCore': (context,{arguments}) =>  FromHtmlCore(arguments:arguments), //富文本页面
+  '/changePassword': (context) =>  ChangePassword(), //修改密码页面
+  '/registerStatistics': (context) =>  RegisterStatistics(), //修改密码页面
 
   '/abutmentList': (context,{arguments}) =>  AbutmentList(arguments:arguments), //对接任务列表页面
   '/fromSelect': (context,{arguments}) =>  FromSelect(arguments:arguments), //对接任务关联表单选择页面

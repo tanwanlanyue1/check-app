@@ -71,8 +71,8 @@ class _FillInFormState extends State<FillInForm> {
   // DateTime checkTime = DateTime.now();//填报排查日期
   DateTime rectifyTime = DateTime.now().add(Duration(days: 7));//整改期限
   List problemType = [];//二级问题类型数组
-//industryList:[id,id] 行业修改
   /// 获取问题类型
+  /// level：第一级问题的类型
   void _getProblemType() async {
     var response = await Request().get(Api.url['problemTypeList'],data: {"level":1});
     if(response['statusCode'] == 200) {
@@ -187,7 +187,7 @@ class _FillInFormState extends State<FillInForm> {
         'industryList': jsonEncode(industryId),
         'districtId': widget.arguments?['districtId'],
         // 'lawId': lawId,
-        // 'basisId': districtId,e
+        // 'basisId': districtId,
         'solvedAt': rectifyTime.toString(),
       };
       var response = await Request().post(

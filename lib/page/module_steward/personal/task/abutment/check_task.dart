@@ -31,7 +31,7 @@ class _CheckTaskState extends State<CheckTask> {
   ///size:每页多大
   /// status 1：待办 2：已办
   _getTaskList({typeStatusEnum? type,Map<String,dynamic>? data}) async {
-    var response = await Request().post(Api.url['houseTaskList']+'?page$_pageNo&size=10',data: data);
+    var response = await Request().post(Api.url['houseTaskList']+'?page=$_pageNo&size=10',data: data);
     if(response['errCode'] == '10000'){
       Map _data = response['result'];
       _pageNo++;

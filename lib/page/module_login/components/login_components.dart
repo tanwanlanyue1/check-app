@@ -12,9 +12,12 @@ class LoginComponents{
   static Widget loginInput({
     String? icon,
     String? hitStr,
+    String? hintVal,
     bool isPassWord = false,
     Function? onChange,
   }) {
+    TextEditingController _controller = TextEditingController();
+    _controller.text = hintVal ?? '';
     return Container(
       width: px(550),
       height: px(113),
@@ -40,6 +43,7 @@ class LoginComponents{
                 textBaseline: TextBaseline.ideographic
               ),
               obscureText: isPassWord,
+              controller: _controller,
               onChanged: (val){
                 onChange?.call(val);
               },

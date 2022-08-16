@@ -660,33 +660,6 @@ class _ProblemPageState extends State<ProblemPage> {
                   },
                       childCount: hiddenProblem.length),
                 ),
-                // hiddenProblem.isNotEmpty ?
-                // SliverList(
-                //   delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
-                //     return Container(
-                //       margin: EdgeInsets.only(top: px(20),left: px(24),right: px(24)),
-                //       padding: EdgeInsets.only(left: px(12)),
-                //       height: px(55),width: double.maxFinite,
-                //       color: Color(0xffC5D0FE),
-                //       child: FormCheck.formTitle(
-                //         '复查问题',
-                //         showUp: true,
-                //         tidy: reviewTidy,
-                //         onTaps: (){
-                //           reviewTidy = !reviewTidy;
-                //           setState(() {});
-                //         }
-                //       ),
-                //     );
-                //   },
-                //     childCount: 1,),
-                // ) :
-                // SliverList(
-                //   delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
-                //     return Container();
-                //   },
-                //     childCount: 1,),
-                // ),
                 SliverPersistentHeader(
                   floating: false,//floating 与pinned 不能同时为true
                   pinned: true,
@@ -759,6 +732,7 @@ class _ProblemPageState extends State<ProblemPage> {
                 }
               }
             }
+            print("typeStatus===$typeStatus");
             setState(() {});
           },
           callPop: (){ //重置
@@ -814,7 +788,7 @@ class _ProblemPageState extends State<ProblemPage> {
                   data: {
                     'status': searchStatus,
                     'companyId':companyId,
-                    "problemTypeId":typeId,
+                    "problemTypeParentId":typeId,
                     'sort':"status",
                     "order":"ASC",
                   }
@@ -825,7 +799,7 @@ class _ProblemPageState extends State<ProblemPage> {
                   data: {
                     'status': searchStatus,
                     'companyId':companyId,
-                    "problemTypeId":typeId,
+                    "problemTypeParentId":typeId,
                     'timeSearch':'createdAt',
                     'startTime':startTime,
                     'endTime':endTime,

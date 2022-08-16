@@ -17,6 +17,10 @@ class StorageKey {
 
   static const String law = 'law'; // 缓存法律法规
 
+  static const String userName = 'userName'; // 缓存账号
+
+  static const String password = 'password'; // 缓存密码
+
   static const String FontBold = 'Alibaba-PuHuiTi-Bold.ttf'; // 阿里巴巴 Alibaba-PuHuiTi-Bold.ttf字体缓存
 
   static const String FontMedium = 'Alibaba-PuHuiTi-Medium.ttf'; // 阿里巴巴 Alibaba-PuHuiTi-Medium.ttf字体缓存

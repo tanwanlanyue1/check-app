@@ -143,7 +143,7 @@ class _UploadFileState extends State<UploadFile> {
                 ),
                 Expanded(
                   child: amend && showFileList.isEmpty ?
-                  Text('添加附件',style: TextStyle(color: Color(0xff323233),fontSize: sp(26)),):
+                  Text('选择附件',style: TextStyle(color: Color(0xff323233),fontSize: sp(26)),):
                   Text(showFileList.isNotEmpty ?
                   '${showFileList[i]['fileName']}' :
                   (fileList.isNotEmpty ? fileList[i] : '/'),style: TextStyle(color: Color(0xff323233),fontSize: sp(26),overflow: TextOverflow.ellipsis),),

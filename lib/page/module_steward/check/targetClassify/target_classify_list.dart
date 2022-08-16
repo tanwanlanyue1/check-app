@@ -25,9 +25,6 @@ class _TargetClassifyListState extends State<TargetClassifyList>
     with SingleTickerProviderStateMixin {
   List tabBar = ["差异性指标","原则性指标",'加分项指标','扣分项指标']; //tab列表
   final EasyRefreshController _controller = EasyRefreshController(); // 上拉组件控制器
-  // final EasyRefreshController _controller1 = EasyRefreshController(); // 上拉组件控制器
-  // final EasyRefreshController _controller2 = EasyRefreshController(); // 上拉组件控制器
-  // final EasyRefreshController _controller3 = EasyRefreshController(); // 上拉组件控制器
   late TabController _tabController; //TabBar控制器
   String companyName = '';
   int typeStatus = 1;
@@ -114,13 +111,6 @@ class _TargetClassifyListState extends State<TargetClassifyList>
     _controller.finishLoadCallBack!();
     setState(() {});
   }
-  // //选择控制器
-  // selectController(){
-  //   return typeStatus == 1 ?
-  //   _controller : typeStatus == 2 ?
-  //   _controller1 : typeStatus == 3 ?
-  //   _controller2 : _controller3;
-  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -165,7 +155,7 @@ class _TargetClassifyListState extends State<TargetClassifyList>
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: List.generate(4, (index) => EasyRefresh(
+              children: List.generate(tabBar.length, (index) => EasyRefresh(
                 enableControlFinishRefresh: true,
                 enableControlFinishLoad: true,
                 topBouncing: true,

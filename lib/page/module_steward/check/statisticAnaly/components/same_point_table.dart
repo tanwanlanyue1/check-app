@@ -192,7 +192,7 @@ class _SamePointTableState extends State<SamePointTable> {
                   child: Container(
                     height: px(71),
                     padding: EdgeInsets.symmetric(vertical: 8.0),
-                    alignment: Alignment.topCenter,
+                    alignment: Alignment.center,
                     child: Text(
                         '${item[i]['districtName']}',
                         style: TextStyle(
@@ -206,14 +206,14 @@ class _SamePointTableState extends State<SamePointTable> {
               Expanded(
                 child: Container(
                   height: px(71),
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  alignment: Alignment.topCenter,
+                  // padding: EdgeInsets.symmetric(vertical: 8.0),
+                  alignment: Alignment.center,
                   child: Text(
                       '${item[i][companyName] ?? '/'}',
                       style: TextStyle(
                           color: Color(0XFF969799),
                           fontSize: sp(24.0)
-                      )
+                      ),maxLines: 2,
                   ),
                 ),
               ),

@@ -4,6 +4,8 @@ class Api {
   // static const baseUrlApp = 'http://10.10.1.217:8687/';
   static const baseUrlApp = 'https://dev.scet.com.cn/yhpc/';
 
+  // static const baseUrlAppTwo = 'http://119.3.103.76:8119/';
+  // static const baseUrlAppImage = 'http://119.3.103.76:8119/housekeeperPlatform/';
   static const baseUrlAppTwo = 'http://gjpt.scet.com.cn:18002/';
   static const baseUrlAppImage = 'http://gjpt.scet.com.cn:18002/housekeeperPlatform/';
 
@@ -12,7 +14,7 @@ class Api {
 
     'user': baseUrlApp + 'user',//获取用户数据
 
-    'userList': baseUrlApp + 'user/list',//获取片区用户
+    'synchronize': baseUrlApp + 'schedule/synchronize',//修改密码后同步用户数据
 
     'login': baseUrlApp + 'auth/login',//登录
 
@@ -85,6 +87,10 @@ class Api {
     'versions':baseUrlApp + 'version/list',//检测App更新
 
     ///对接的借口
+    'modifyPassword':baseUrlAppTwo + 'housekeeperPlatform/d-admin/operator/modifyPassword',//修改密码
+
+    'loginCount':baseUrlAppTwo + 'housekeeperPlatform/d-admin/login-log/loginCount',//登录统计
+
     'houseTask':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/findPageByApp',//任务工单管理
 
     'teamFindList':baseUrlAppTwo + 'housekeeperPlatform/d-admin/team/findMemberList',//条件查询所有团队

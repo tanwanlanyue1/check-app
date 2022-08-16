@@ -16,7 +16,21 @@ class _ProtectionAgencyHomeState extends State<ProtectionAgencyHome> {
   final _pageController = PageController();//PageView控制器
 
   int _tabIndex = 0;  // 默认索引第一个tab
-
+  List tabTitles = ['隐患排查','一企一档', '通知中心'];   // 菜单文案
+  List tabIcons = [
+    {
+      'default':'lib/assets/icons/bottom-bar/not_select_check.png',
+      'select':'lib/assets/icons/bottom-bar/select_check.png',
+    },
+    {
+      'default':'lib/assets/icons/bottom-bar/not_select_firm.png',
+      'select':'lib/assets/icons/bottom-bar/select_firm.png',
+    },
+    {
+      'default':'lib/assets/icons/bottom-bar/not_select_message.png',
+      'select':'lib/assets/icons/bottom-bar/select_message.png',
+    },
+  ];
 
   final List _pageList = [
     Container(),//
@@ -41,19 +55,8 @@ class _ProtectionAgencyHomeState extends State<ProtectionAgencyHome> {
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  _buildItemMenu(
-                      index: 0,
-                      commonImage: 'lib/assets/icons/bottom-bar/A.png',
-                      activeImage: 'lib/assets/icons/bottom-bar/A1.png'
-                  ),
-                  _buildItemMenu(
-                      index: 1,
-                      commonImage: 'lib/assets/icons/bottom-bar/D.png',
-                      activeImage: 'lib/assets/icons/bottom-bar/D1.png'
-                  ),
-                ],
+                // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: getBottomNavigationBarItem(),
               ),
             ),
           )
@@ -61,25 +64,35 @@ class _ProtectionAgencyHomeState extends State<ProtectionAgencyHome> {
     );
   }
 
-  ///每一项菜单
-  ///index: 下标
-  ///commonImage: 未选中图片
-  ///activeImage: 选中图片
-  Widget _buildItemMenu({required int index, required String commonImage, required String activeImage}) {
-    Widget menuItem = GestureDetector(
-        onTap: () {
-          _pageController.jumpToPage(index);
-          setState(() {
-            _tabIndex = index;
-          });
-        },
-        child: Image.asset(
-            _tabIndex == index ? activeImage : commonImage,
-            width: px(80.0),
-            height: px(74.0),
-            fit: BoxFit.cover
-        )
-    );
-    return menuItem;
+  ///底部菜单
+  List<Widget> getBottomNavigationBarItem() {
+    List<Widget> list = [];
+    for (int i = 0; i < tabTitles.length; i++) {
+      list.add(
+        Expanded(
+          child: GestureDetector(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: px(40),
+                  width: px(41),
+                  child: Image.asset( _tabIndex != i ?
+                  tabIcons[i]['default'] : tabIcons[i]['select']),
+                ),
+                Text("${tabTitles[i]}",style: TextStyle(color: _tabIndex == i ? Color(0xff4D7FFF):Color(0xff8FA0CC),fontSize: sp(20)),),
+              ],
+            ),
+            onTap: (){
+              _pageController.jumpToPage(i);
+              setState(() {
+                _tabIndex = i;
+              });
+            },
+          ),
+        ),
+      );
+    }
+    return list;
   }
 }

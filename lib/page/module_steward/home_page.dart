@@ -42,11 +42,26 @@ class _HomePageState extends State<HomePage> {
   List tabTitles = ['首页', '一企一档', '隐患排查', '工具箱','个人中心'];   // 菜单文案
 
   List tabIcons = [
-    'lib/assets/icons/home/home.png',
-    'lib/assets/icons/bottom-bar/select_firm.png',
-    'lib/assets/icons/bottom-bar/select_check.png',
-    'lib/assets/icons/home/instrument.png',
-    'lib/assets/icons/home/personage.png',
+    {
+      'default':'lib/assets/icons/bottom-bar/home.png',
+      'select':'lib/assets/icons/bottom-bar/select-home.png',
+    },
+    {
+      'default':'lib/assets/icons/bottom-bar/not_select_firm.png',
+      'select':'lib/assets/icons/bottom-bar/select_firm.png',
+    },
+    {
+      'default':'lib/assets/icons/bottom-bar/not_select_check.png',
+      'select':'lib/assets/icons/bottom-bar/select_check.png',
+    },
+    {
+      'default':'lib/assets/icons/bottom-bar/instrument.png',
+      'select':'lib/assets/icons/bottom-bar/select_instrument.png',
+    },
+    {
+      'default':'lib/assets/icons/bottom-bar/personage.png',
+      'select':'lib/assets/icons/bottom-bar/select_personage.png',
+    },
   ];
 
   @override
@@ -75,8 +90,7 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                // children: getBottomNavigationBarItem(),
+                // mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: getBottomNavigationBarItem(),
               ),
             ),
@@ -91,54 +105,31 @@ class _HomePageState extends State<HomePage> {
     List<Widget> list = [];
     for (int i = 0; i < tabTitles.length; i++) {
       list.add(
-          GestureDetector(
-            // behavior: HitTestBehavior.translucent,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: px(40),
-                  width: px(41),
-                  child: Image.asset(tabIcons[i],color: _tabIndex == i ? Color(0xff4D7FFF):Color(0xff8FA0CC),),
-                ),
-                Text("${tabTitles[i]}",style: TextStyle(color: _tabIndex == i ? Color(0xff4D7FFF):Color(0xff8FA0CC),fontSize: sp(20)),),
-              ],
+          Expanded(
+            child: GestureDetector(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: px(40),
+                    width: px(41),
+                    child: Image.asset( _tabIndex != i ?
+                    tabIcons[i]['default'] : tabIcons[i]['select']),
+                  ),
+                  Text("${tabTitles[i]}",style: TextStyle(color: _tabIndex == i ? Color(0xff4D7FFF):Color(0xff8FA0CC),fontSize: sp(20)),),
+                ],
+              ),
+              onTap: (){
+                _pageController.jumpToPage(i);
+                _homeModel!.onVerifyNodes();
+                setState(() {
+                  _tabIndex = i;
+                });
+              },
             ),
-            onTap: (){
-              _pageController.jumpToPage(i);
-              _homeModel!.onVerifyNodes();
-              setState(() {
-                _tabIndex = i;
-              });
-            },
           ),
       );
     }
     return list;
-  }
-
-  ///每一项菜单
-  ///index: 下标
-  ///commonImage: 未选中图片
-  ///activeImage: 选中图片
-  Widget _buildItemMenu({required int index, required String commonImage, required String activeImage,Widget? childs}) {
-    _homeModel = Provider.of<HomeModel>(context, listen: true);
-    Widget menuItem = GestureDetector(
-        onTap: () {
-          _pageController.jumpToPage(index);
-          _homeModel!.onVerifyNodes();
-          setState(() {
-            _tabIndex = index;
-          });
-        },
-        // child: Image.asset(
-        //     _tabIndex == index ? activeImage : commonImage,
-        //     width: px(80.0),
-        //     height: px(74.0),
-        //     fit: BoxFit.cover
-        // )
-      child: childs,
-    );
-    return menuItem;
   }
 }

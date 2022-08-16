@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/utils/screen/screen.dart';
-import 'package:scet_check/utils/storage/storage.dart';
 
 ///文件详情
 ///  sub:true//展示提交
