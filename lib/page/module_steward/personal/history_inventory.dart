@@ -14,13 +14,13 @@ import 'package:scet_check/utils/storage/data_storage_key.dart';
 import 'package:scet_check/utils/storage/storage.dart';
 import 'package:scet_check/utils/time/utc_tolocal.dart';
 
-
 ///排查清单页
 ///hiddenInventory:隐患清单数据
+///user:是否个人
 class HistoryInventory extends StatefulWidget {
   final String? companyId;
-  const HistoryInventory({Key? key, this.companyId,}) : super(key: key);
-
+  final bool user;
+  const HistoryInventory({Key? key, this.companyId,this.user = false}) : super(key: key);
 
   @override
   _HistoryInventoryState createState() => _HistoryInventoryState();
@@ -116,11 +116,18 @@ class _HistoryInventoryState extends State<HistoryInventory> {
     // TODO: implement initState
     companyId = widget.companyId ?? "";
     userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'].toString();
-    data = {
-      'page': _pageNo,
-      'size': 10,
-      "userId":userId,
-    };
+    if(widget.user){
+      data = {
+        'page': _pageNo,
+        'size': 10,
+        "userId":userId,
+      };
+    }else{
+      data = {
+        'page': _pageNo,
+        'size': 10,
+      };
+    }
     _inventorySearch(
         type: typeStatusEnum.onRefresh,
     );

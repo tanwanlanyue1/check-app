@@ -140,7 +140,9 @@ class _ProblemPageState extends State<ProblemPage> {
       district = response['data']?['district']?['name'] ?? '';
       districtId = response['data']?['district']?['id'].toString() ?? '';
       region = response['data']?['regionName'] ?? '/';
-      _getUserList();
+      if(!firm){
+        _getUserList();
+      }
       setState(() {});
     }
   }
@@ -262,14 +264,12 @@ class _ProblemPageState extends State<ProblemPage> {
       ToastWidget.showToastMsg('请获取坐标！');
     } else if (checkName.isEmpty) {
       ToastWidget.showToastMsg('请输入排查人员！');
-    } else if (imgDetails.isEmpty) {
-      ToastWidget.showToastMsg('请上传签到图片！');
     }else{
       Map<String, dynamic> _data = {
         'id':_uuid,
         'checkPersonnel': checkName,
         'checkType': 1,
-        'images': imgDetails,
+        // 'images': imgDetails,
         'longitude':position?.longitude,
         'latitude':position?.latitude,
         'userId': userId,
@@ -304,10 +304,10 @@ class _ProblemPageState extends State<ProblemPage> {
         isScrollControlled:true,
         builder: (BuildContext context) {
           return Container(
-            height: px(750),
+            height: px(850),
             padding: EdgeInsets.only(left: px(32)),
             child: StatefulBuilder(builder: (context,state){
-              return ListView(
+              return Column(
                 children: [
                   FormCheck.dataCard(
                       children: [
@@ -502,29 +502,30 @@ class _ProblemPageState extends State<ProblemPage> {
                           titleColor: Color(0xff323233),
                           child: Text(userName,style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
                         ),
-                        FormCheck.rowItem(
-                          alignStart: true,
-                          titleColor: Color(0xff323233),
-                          title: "签到照片",
-                          child: UploadImage(
-                            imgList: imgDetails,
-                            uuid: _uuid,
-                            closeIcon: true,
-                            callback: (List? data) {
-                              imgDetails = data ?? [];
-                              setState(() {});
-                            },
-                          ),
-                        ),
-                        FormCheck.submit(
-                            cancel: (){
-                              Navigator.pop(context);
-                            },
-                            submit: (){
-                              _setInventory();
-                            }
-                        ),
-                      ]
+                        // FormCheck.rowItem(
+                        //   alignStart: true,
+                        //   titleColor: Color(0xff323233),
+                        //   title: "签到照片",
+                        //   child: UploadImage(
+                        //     imgList: imgDetails,
+                        //     uuid: _uuid,
+                        //     closeIcon: true,
+                        //     callback: (List? data) {
+                        //       imgDetails = data ?? [];
+                        //       setState(() {});
+                        //     },
+                        //   ),
+                        // ),
+                      ],
+                  ),
+                  Spacer(),
+                  FormCheck.submit(
+                      cancel: (){
+                        Navigator.pop(context);
+                      },
+                      submit: (){
+                        _setInventory();
+                      }
                   ),
                 ],
               );

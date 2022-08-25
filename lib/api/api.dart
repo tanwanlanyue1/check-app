@@ -5,7 +5,8 @@ class Api {
   static const baseUrlApp = 'https://dev.scet.com.cn/yhpc/';
 
   // static const baseUrlAppTwo = 'http://119.3.103.76:8119/';
-  // static const baseUrlAppImage = 'http://119.3.103.76:8119/housekeeperPlatform/';
+  // static const baseUrlAppTwo = 'http://10.10.1.236:18002/';
+  // static const baseUrlAppImage = 'http://10.10.1.236:18002/housekeeperPlatform/';
   static const baseUrlAppTwo = 'http://gjpt.scet.com.cn:18002/';
   static const baseUrlAppImage = 'http://gjpt.scet.com.cn:18002/housekeeperPlatform/';
 
@@ -89,11 +90,27 @@ class Api {
     ///对接的借口
     'modifyPassword':baseUrlAppTwo + 'housekeeperPlatform/d-admin/operator/modifyPassword',//修改密码
 
+    'notify':baseUrlAppTwo + 'housekeeperPlatform/d-admin/issue/notify',//问题状态修改通知
+
     'loginCount':baseUrlAppTwo + 'housekeeperPlatform/d-admin/login-log/loginCount',//登录统计
+
+    'groupList':baseUrlAppTwo + 'housekeeperPlatform/d-admin/group/list',//选择分组
+
+    'byOp':baseUrlAppTwo + 'housekeeperPlatform/d-admin/statistic/workLoad/byOp',//个人工作量
+
+    'summaryFindPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/data-exception-summary/findPage',//在线监理，数据来源
+
+    'problemIssue':baseUrlAppTwo + 'housekeeperPlatform/d-admin/issue/page',//问题汇总，数据来源
+
+    'addBatchTask':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/addBatchTask',//批量新增任务工单
+
+    'findDicByTypeCode':baseUrlAppTwo + 'housekeeperPlatform/d-admin/dictionary/findDicByTypeCode',//发布任务任务来源
 
     'houseTask':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/findPageByApp',//任务工单管理
 
-    'teamFindList':baseUrlAppTwo + 'housekeeperPlatform/d-admin/team/findMemberList',//条件查询所有团队
+    'teamFindList':baseUrlAppTwo + 'housekeeperPlatform/d-admin/team/findMemberList',//查询所有团队
+
+    'findMemberList':baseUrlAppTwo + 'housekeeperPlatform/d-admin/team/findList',//条件查询所有团队
 
     'housekeeper':baseUrlAppTwo + 'housekeeperPlatform/d-admin/dynamic-form/getDynamicFormById',//表单管理
 
@@ -103,7 +120,7 @@ class Api {
 
     'findList':baseUrlAppTwo + 'housekeeperPlatform/d-admin/dynamic-form/findList',//条件查询所有动态表单
 
-    'addTaskForm':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/addTaskForm',//条件查询所有动态表单
+    'addTaskForm':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/addTaskForm',//绑定动态表单
 
     'mainType':baseUrlAppTwo + 'housekeeperPlatform/d-admin/issue-type/mainType',//动态表单问题大类列表
 

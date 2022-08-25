@@ -204,14 +204,14 @@ class _EnterprisInventoryState extends State<EnterprisInventory> {
               surveyItem('排查人员',stewardCheck),
               surveyItem('企业名',repertoire['company']['name']),
               surveyItem('排查日期',checkDate.substring(0,10)),
-              FormCheck.rowItem(
-                alignStart: true,
-                title: "签到照片",
-                child: UploadImage(
-                  imgList: repertoire['images'],
-                  closeIcon: false,
-                ),
-              ),
+              // FormCheck.rowItem(
+              //   alignStart: true,
+              //   title: "签到照片",
+              //   child: UploadImage(
+              //     imgList: repertoire['images'],
+              //     closeIcon: false,
+              //   ),
+              // ),
             ]
         ),
         replacement: SizedBox(

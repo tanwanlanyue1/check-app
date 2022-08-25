@@ -45,7 +45,9 @@ class _ChangePasswordState extends State<ChangePassword> {
           Api.url['modifyPassword'],data: _data
       );
       if(response['errCode'] == '10000') {
-        StorageUtil().setString(StorageKey.password, newPassWord.toString());
+        if(StorageUtil().getString(StorageKey.password).length != 0){
+          StorageUtil().setString(StorageKey.password, newPassWord.toString());
+        }
         ToastWidget.showToastMsg('修改成功');
         Navigator.pop(context);
         synchronization();
@@ -67,7 +69,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         children: [
           TaskCompon.topTitle(
               title: '修改密码',
-              left: true,
+              home: true,
               callBack: (){
                   Navigator.pop(context);
               }

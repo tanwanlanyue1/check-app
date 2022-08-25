@@ -26,6 +26,7 @@ import 'package:uuid/uuid.dart';
 ///           'industrys': repertoire['company']['industrys'],//行业ID
 ///           'problemList':problemList,//问题详情
 ///           'inventoryStatus':repertoire['status'],//清单状态
+///           'audit':true,//审核人员进来修改
 ///         };
 class FillInForm extends StatefulWidget {
   final Map? arguments;
@@ -94,8 +95,10 @@ class _FillInFormState extends State<FillInForm> {
         type = problemList['problemType']['parent']['name'];
         secondType = problemList['problemType']['name'];
       }
+      userName = problemList['user']['nickname'];
+      userId = problemList['user']['id'].toString();
       issueDetails = problemList['detail'] ?? '';
-      imgDetails = problemList['images'];
+      imgDetails = problemList['images'] ?? [];
       problemTitle = problemList['name'];
       problemId = problemList['id'];
       inventoryId = problemList['inventoryId'];
@@ -194,6 +197,7 @@ class _FillInFormState extends State<FillInForm> {
         Api.url['problem'],data: _data,
       );
       if(response['statusCode'] == 200) {
+        _notifyProblem(1);
         if(addProblem){
           Navigator.of(context).pushReplacementNamed('/rectificationProblem',
               arguments: {'check':true,'problemId': problemId.isEmpty ? _uuid : problemId,'inventoryStatus': 6,}
@@ -207,16 +211,26 @@ class _FillInFormState extends State<FillInForm> {
   }
 
   /// 删除问题
-  void _deleteProblem() async {
+  void _deleteProblem({required int type}) async {
     var response = await Request().delete(Api.url['problem']+'/$problemId',);
     if(response['statusCode'] == 200) {
+      _notifyProblem(type);
       ToastWidget.showToastMsg('删除成功');
       Navigator.pop(context);
       Navigator.pop(context);
       setState(() {});
     }
   }
-
+  /// 问题状态通知平台
+  /// type	同步类型：1-状态更改；2-删除
+  void _notifyProblem(int type) {
+    Request().post(Api.url['notify'],
+      data: {
+        "problemId":problemId,
+        "type":type
+      }
+    );
+  }
   @override
   void didUpdateWidget(covariant FillInForm oldWidget) {
     // TODO: implement didUpdateWidget
@@ -237,18 +251,19 @@ class _FillInFormState extends State<FillInForm> {
           TaskCompon.topTitle(
               title: '隐患排查问题填报',
               left: true,
-              child: delete ?
-              InkWell(
+              child: (widget.arguments?['audit'] ?? false) ?
+              Container() :
+              (delete ? InkWell(
                 child: Text('删除问题'),
                 onTap: (){
                   ToastWidget.showDialog(
                       msg: '是否确定删除当前问题',
                       ok: (){
-                        _deleteProblem();
+                        _deleteProblem(type: 2);
                       }
                   );
                 },
-              ) : Container(),
+              ) : Container()),
               callBack: (){
                 Navigator.pop(context);
               }

@@ -24,8 +24,8 @@ class BacklogTask extends StatefulWidget {
 
 class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStateMixin{
   final EasyRefreshController _controller = EasyRefreshController(); // 上拉组件控制器
-  List tabBar = ["现场检查","表格填报",'其他专项','管家平台'];//tab列表
-  late TabController _tabController; //TabBar控制器
+  // List tabBar = ["现场检查","表格填报",'其他专项','管家平台'];//tab列表
+  // late TabController _tabController; //TabBar控制器
   String userId = ''; //用户id
   String checkPeople = '';//排查人员
   List taskList = [];//任务列表
@@ -33,40 +33,6 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
   bool _enableLoad = true; // 是否开启加载
   int _pageNo = 1; // 当前页码
   int _total = 10; // 总条数
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    _tabController = TabController(vsync: this,length: tabBar.length);
-    userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'].toString();
-    _tabController.addListener(() {
-      type = _tabController.index+1;
-      _controller.dispose();
-      if(type != 4){
-        _getTaskList(
-            type: typeStatusEnum.onRefresh,
-            data: {
-              'page': 1,
-              'size': 10,
-              "checkUserList": {"id":userId},
-              "status":1,
-              "type":type
-            }
-        );
-      }
-    });
-    _getTaskList(
-        type: typeStatusEnum.onRefresh,
-        data: {
-          'page': 1,
-          'size': 10,
-          "checkUserList": {"id":userId},
-          "status":1,
-          "type":type
-        }
-    );
-    super.initState();
-  }
 
   /// 查询任务列表
   ///page:第几页
@@ -119,24 +85,6 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
   }
 
   @override
-  void didUpdateWidget(covariant BacklogTask oldWidget) {
-    // TODO: implement didUpdateWidget
-    if(type != 4){
-      _getTaskList(
-          type: typeStatusEnum.onRefresh,
-          data: {
-            'page': 1,
-            'size': 10,
-            "checkUserList": {"id":userId},
-            "status":1,
-            "type":type
-          }
-      );
-    }
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
@@ -149,56 +97,58 @@ class _BacklogTaskState extends State<BacklogTask> with SingleTickerProviderStat
                 Navigator.pop(context);
               },
           ),
-          SizedBox(
-            height: px(96),
-            child: DefaultTabController(
-              length: tabBar.length,
-              child: Container(
-                color: Colors.white,
-                margin: EdgeInsets.only(left: px(20),right: px(20)),
-                child: TabBar(
-                    controller: _tabController,
-                    indicatorSize: TabBarIndicatorSize.label,
-                    indicatorPadding: EdgeInsets.only(bottom: px(16)),
-                    isScrollable: true,
-                    labelColor: Color(0xff4D7FFF),
-                    labelStyle: TextStyle(fontSize: sp(32.0),fontFamily: 'M'),
-                    unselectedLabelColor: Color(0xff646566),
-                    unselectedLabelStyle: TextStyle(fontSize: sp(30.0),fontFamily: 'R'),
-                    indicatorColor:Color(0xff4D7FFF),
-                    indicatorWeight: px(4),
-                    onTap: (val){
-                      type = val;
-                      _controller.dispose();
-                      _getTaskList(
-                          type: typeStatusEnum.onRefresh,
-                          data: {
-                            'page': 1,
-                            'size': 10,
-                            "checkUserList": {"id":userId},
-                            "status":1,
-                            "type":type
-                          }
-                      );
-                    },
-                    tabs: tabBar.map((item) {
-                      return Tab(text: '$item');
-                    }).toList()
-                ),
-              ),
-            ),
-          ),
           Expanded(
-            child: TabBarView(
-                controller: _tabController,
-                children: <Widget>[
-                  itemTask(),
-                  itemTask(),
-                  itemTask(),
-                  AbutmentList(),
-                ]
-            ),
-          ),
+            child: AbutmentList(),
+          )
+          // SizedBox(
+          //   height: px(96),
+          //   child: DefaultTabController(
+          //     length: tabBar.length,
+          //     child: Container(
+          //       color: Colors.white,
+          //       margin: EdgeInsets.only(left: px(20),right: px(20)),
+          //       child: TabBar(
+          //           controller: _tabController,
+          //           indicatorSize: TabBarIndicatorSize.label,
+          //           indicatorPadding: EdgeInsets.only(bottom: px(16)),
+          //           isScrollable: true,
+          //           labelColor: Color(0xff4D7FFF),
+          //           labelStyle: TextStyle(fontSize: sp(32.0),fontFamily: 'M'),
+          //           unselectedLabelColor: Color(0xff646566),
+          //           unselectedLabelStyle: TextStyle(fontSize: sp(30.0),fontFamily: 'R'),
+          //           indicatorColor:Color(0xff4D7FFF),
+          //           indicatorWeight: px(4),
+          //           onTap: (val){
+          //             type = val;
+          //             _controller.dispose();
+          //             _getTaskList(
+          //                 type: typeStatusEnum.onRefresh,
+          //                 data: {
+          //                   'page': 1,
+          //                   'size': 10,
+          //                   "checkUserList": {"id":userId},
+          //                   "status":1,
+          //                   "type":type
+          //                 }
+          //             );
+          //           },
+          //           tabs: tabBar.map((item) {
+          //             return Tab(text: '$item');
+          //           }).toList()
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          // Expanded(
+          //   child: TabBarView(
+          //       controller: _tabController,
+          //       children: <Widget>[
+          //         itemTask(),
+          //         itemTask(),
+          //         itemTask(),
+          //       ]
+          //   ),
+          // ),
         ],
       ),
     );

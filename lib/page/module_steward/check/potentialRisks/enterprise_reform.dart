@@ -96,7 +96,7 @@ class _EnterpriseReformState extends State<EnterpriseReform> {
           FormCheck.rowItem(
               title: "整改图片",
               child: UploadImage(
-                imgList: solutionList[i]['images'],
+                imgList: solutionList[i]['images'] ?? [],
                 closeIcon: false,
               )
           ),

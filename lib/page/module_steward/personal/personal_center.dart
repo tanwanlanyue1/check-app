@@ -41,7 +41,8 @@ class _PersonalCenterState extends State<PersonalCenter> {
   void selectClass(int index){
     switch(index) {
       case 0: Navigator.pushNamed(context, '/historyTask'); break;
-      case 1: Navigator.pushNamed(context, '/backTaskDetails'); break;
+      // case 1: Navigator.pushNamed(context, '/backTaskDetails'); break;
+      case 1: Navigator.pushNamed(context, '/releaseTask'); break;
       case 2: Navigator.pushNamed(context, '/backlogTask'); break;
       case 3: Navigator.pushNamed(context, '/haveDoneTask'); break;
       case 4: Navigator.pushNamed(context, '/auditList'); break;
@@ -69,13 +70,16 @@ class _PersonalCenterState extends State<PersonalCenter> {
       children: [
         TaskCompon.topTitle(title: '个人中心'),
         _header(),
-        Column(
-          children: List.generate(manager ? classify.length : commonClassify.length, (i){
-            return taskList(
-              i: i,
-              classify: manager ? classify : commonClassify
-            );
-          }),
+        Expanded(
+          child: ListView(
+            padding: EdgeInsets.only(top: 0),
+            children: List.generate(manager ? classify.length : commonClassify.length, (i){
+              return taskList(
+                  i: i,
+                  classify: manager ? classify : commonClassify
+              );
+            }),
+          ),
         ),
       ],
     );

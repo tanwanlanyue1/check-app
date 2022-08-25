@@ -184,10 +184,21 @@ class _StewardCheckState extends State<StewardCheck>{
   _deleteProblem(String problemId) async {
     var response = await Request().delete(Api.url['problem']+'/$problemId',);
     if(response['statusCode'] == 200) {
+      _notifyProblem(problemId);
       return true;
     }else{
       return false;
     }
+  }
+  /// 问题状态通知平台
+  /// type	同步类型：1-状态更改；2-删除
+  void _notifyProblem(String problemId) {
+    Request().delete(Api.url['notify'],
+        data: {
+          "problemId":problemId,
+          "type":2
+        }
+    );
   }
     @override
   Widget build(BuildContext context) {
@@ -263,14 +274,14 @@ class _StewardCheckState extends State<StewardCheck>{
               surveyItem('排查人员',stewardCheck),
               // surveyItem('企业名',repertoire['company']['name']),
               surveyItem('排查日期',checkDate.substring(0,10)),
-              FormCheck.rowItem(
-                alignStart: true,
-                title: "签到照片",
-                child: UploadImage(
-                  imgList: repertoire['images'],
-                  closeIcon: false,
-                ),
-              ),
+              // FormCheck.rowItem(
+              //   alignStart: true,
+              //   title: "签到照片",
+              //   child: UploadImage(
+              //     imgList: repertoire['images'],
+              //     closeIcon: false,
+              //   ),
+              // ),
             ]
         ),
         replacement: SizedBox(
@@ -485,7 +496,7 @@ class _StewardCheckState extends State<StewardCheck>{
                   i: i,
                   callBack:() async {
                     var res = await Navigator.pushNamed(context, '/rectificationProblem',
-                        arguments: {'check':true,'problemId':problemList[i]['id'],'inventoryStatus': repertoire['status'],}
+                        arguments: {'check':true,'problemId':review[i]['id'],'inventoryStatus': repertoire['status'],}
                     );
                     if(res == null){
                       _getCompany();

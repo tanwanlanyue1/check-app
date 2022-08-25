@@ -55,7 +55,7 @@ class _TargetClassifyPageState extends State<TargetClassifyPage> {
             child: ClientListPage(
               companyList: companyList,
               sort: true,
-              callBack: (id,name,user){
+              callBack: (id,name){
                 Navigator.pushNamed(context, '/targetClassifyList',arguments: {'name':name,'id':id});
               },
             ),

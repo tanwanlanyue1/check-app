@@ -42,7 +42,9 @@ import 'package:scet_check/page/module_steward/personal/register_statistics.dart
 import 'package:scet_check/page/module_steward/personal/task/abutment/abutment_from.dart';
 import 'package:scet_check/page/module_steward/personal/task/abutment/abutment_list.dart';
 import 'package:scet_check/page/module_steward/personal/task/abutment/abutment_task.dart';
+import 'package:scet_check/page/module_steward/personal/task/abutment/data_source.dart';
 import 'package:scet_check/page/module_steward/personal/task/abutment/from_select.dart';
+import 'package:scet_check/page/module_steward/personal/task/abutment/release_task.dart';
 import 'package:scet_check/page/module_steward/personal/task/abutment/task_guide.dart';
 import 'package:scet_check/page/module_steward/personal/task/back_task_details.dart';
 import 'package:scet_check/page/module_steward/personal/task/backlog_task.dart';
@@ -96,7 +98,9 @@ final routes = {
   '/changePassword': (context) =>  ChangePassword(), //修改密码页面
   '/registerStatistics': (context) =>  RegisterStatistics(), //修改密码页面
 
+  '/releaseTask': (context) =>  ReleaseTask(), //对接发布任务列表
   '/abutmentList': (context,{arguments}) =>  AbutmentList(arguments:arguments), //对接任务列表页面
+  '/dataSource': (context,{arguments}) =>  DataSource(arguments:arguments), //对接发布任务来源页面
   '/fromSelect': (context,{arguments}) =>  FromSelect(arguments:arguments), //对接任务关联表单选择页面
   '/abutmentTask': (context,{arguments}) =>  AbutmentTask(arguments:arguments), //对接任务详情页面
   '/abutmentFrom': (context,{arguments}) =>  AbutmentFrom(arguments:arguments), //对接任务动态表单详情

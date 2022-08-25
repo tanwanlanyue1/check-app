@@ -133,23 +133,28 @@ class _UploadImageState extends State<UploadImage> {
           return Container(
             height: px(250),
             color: Colors.transparent,
+            margin: EdgeInsets.only(left: px(24),right: px(24)),
             child: Column(
               children: [
                 InkWell(
                   child: Container(
                     height: px(75),
-                    width: Adapt.screenW(),
-                    padding: EdgeInsets.only(top: px(15)),
-                    child: Text('图片',style: TextStyle(fontSize: sp(32),color: Color(0xff323233)),textAlign: TextAlign.center,),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.image),
+                        Container(
+                          padding: EdgeInsets.only(left: px(24)),
+                          child: Text('图片',style: TextStyle(fontSize: sp(32),color: Color(0xff323233)),textAlign: TextAlign.center,),
+                        ),
+                      ],
+                    ),
                     decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(px(15)),
-                          topRight: Radius.circular(px(15)),
-                        )
+                      color: Colors.white,
+                      border: Border(top: BorderSide(width: px(1.0),color: Color(0X99A1A6B3))),
                     ),
                   ),
-                  onTap: ()async{
+                  onTap: () async{
                     if (await Permission.camera.request().isGranted) {
                       if (await Permission.photos.request().isGranted) {
                         Navigator.pop(context);
@@ -165,9 +170,16 @@ class _UploadImageState extends State<UploadImage> {
                 InkWell(
                   child: Container(
                     height: px(75),
-                    width: Adapt.screenW(),
-                    padding: EdgeInsets.only(top: px(15)),
-                    child: Text('相机',style: TextStyle(fontSize: sp(32),color: Color(0xff323233)),textAlign: TextAlign.center,),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.camera),
+                        Container(
+                          padding: EdgeInsets.only(left: px(24)),
+                          child: Text('相机',style: TextStyle(fontSize: sp(32),color: Color(0xff323233)),textAlign: TextAlign.center,),
+                        ),
+                      ],
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border(top: BorderSide(width: px(1.0),color: Color(0X99A1A6B3))),

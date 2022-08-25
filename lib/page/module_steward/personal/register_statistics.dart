@@ -42,7 +42,7 @@ class _RegisterStatisticsState extends State<RegisterStatistics>{
         children: [
           TaskCompon.topTitle(
               title: '登录统计',
-              left: true,
+              home: true,
               callBack: (){
                 Navigator.pop(context);
               }

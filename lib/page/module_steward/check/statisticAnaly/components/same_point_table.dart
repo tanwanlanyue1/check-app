@@ -63,20 +63,19 @@ class _SamePointTableState extends State<SamePointTable> {
 
   ///处理
   ///item:表单数据
-  ///获取横状图树状图的数据，讲name，date，分别e存放
+  ///获取横状图树状图的数据，将name，date，分别存放
   void manage(List item){
     name = [];
     pieData = [];
     List issue =[]; //问题
     List notCorrected =[]; //未整改
-    int issueTotal = 0; //问题总数
     int notCorrectedTotal = 0; //未整改总数
     for(var i=0;i<item.length;i++){
       name.add(item[i]['problemTypeParentName']);
-      issueTotal = int.parse(item[i]['allCount']);
-      issue.add(int.parse(item[i]['allCount']));
-      notCorrected.add(int.parse(item[i]['unsolvedCount']));
-      notCorrectedTotal = int.parse(item[i]['unsolvedCount'])+notCorrectedTotal;
+      // issueTotal = int.parse(item[i]['allCount']);
+      // issue.add(int.parse(item[i]['allCount']));
+      // notCorrected.add(int.parse(item[i]['unsolvedCount']));
+      // notCorrectedTotal = int.parse(item[i]['unsolvedCount'])+notCorrectedTotal;
       pieData.add({
         'value':item[i]['allCount'],'name':item[i]['problemTypeParentName']
       });

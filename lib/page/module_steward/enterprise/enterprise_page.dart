@@ -84,7 +84,7 @@ class _EnterprisePageState extends State<EnterprisePage> with RouteAware{
               title: name,
               left: widget.arguments?['task'] ?? false,
               home: widget.arguments?['history'] ?? false,
-              colors: widget.arguments?['history'] ?? false ? Colors.transparent : Colors.white,
+              colors: widget.arguments?['history'] ?? true ? Colors.transparent : Colors.white,
               child: (widget.arguments?['task'] ?? false) ?
               GestureDetector(
                 child: Container(
@@ -122,11 +122,11 @@ class _EnterprisePageState extends State<EnterprisePage> with RouteAware{
                   companyList: companyList,
                   sort: true,
                   select: widget.arguments?['task'] ?? false,
-                  callBack: (id,name,user){
+                  callBack: (id,name){
                     if(widget.arguments?['history'] ?? false){
                       Navigator.pushNamed(context, '/historyTask',arguments: {'name':name,"id":id});
                     }else if(widget.arguments?['task'] ?? false){
-                      Navigator.pop(context,{'name':name,"id":id,"user":user});
+                      Navigator.pop(context,{'name':name,"id":id});
                     }else{
                       Navigator.pushNamed(context, '/enterpriseDetails',arguments: {'name':name,"id":id});
                     }

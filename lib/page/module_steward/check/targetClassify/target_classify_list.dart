@@ -226,15 +226,23 @@ class _TargetClassifyListState extends State<TargetClassifyList>
                 childTitle(childData: data),
               ],
             ),
+            onTap: (){
+              onTaps?.call();
+            },
           ),
         ]),
         replacement: SizedBox(
           height: px(64),
-          child: FormCheck.formTitle(
-            '$title',
-            showUp: true,
-            tidy: packup,
-            onTaps: onTaps,
+          child: GestureDetector(
+            child: FormCheck.formTitle(
+              '$title',
+              showUp: true,
+              tidy: packup,
+              onTaps: onTaps,
+            ),
+            onTap: (){
+              onTaps?.call();
+            },
           ),
         ),
       ),

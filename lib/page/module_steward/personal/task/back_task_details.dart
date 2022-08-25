@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
+import 'package:scet_check/components/generalduty/date_range.dart';
 import 'package:scet_check/components/generalduty/down_input.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/components/generalduty/upload_file.dart';
@@ -33,6 +34,9 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
   String companyName = ''; //企业名
   List imgDetails = []; //现场照片
   List taskFiles = []; //附件文件
+  List charge = []; //协助人员/督导人/统计人
+  List assist = []; //负责人
+  String assistName = ''; //协助人员
   String checkName = ''; //检查人员
   String typeName = ''; //任务类型
   String taskDetail = ''; //任务详情
@@ -45,6 +49,8 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
   ];//问题类型列表
   int taskType = 1;//任务类型
   HomeModel? _homeModel; //全局的选择企业
+  DateTime startTime = DateTime.now();//选择开始时间
+  DateTime endTime = DateTime.now().add(Duration(days: 7));//选择结束时间
 
   /// 发布任务
   /// type: 1,现场检查;2,表格填报;3,专项检查
@@ -92,7 +98,7 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
         children: [
           TaskCompon.topTitle(
               title: '发布任务',
-              left: true,
+              home: true,
               font: 32,
               callBack: (){
                 Navigator.pop(context);
@@ -144,6 +150,43 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
             ),
           ),
           FormCheck.rowItem(
+            title: '负责人:',
+            titleColor: Color(0XFF323232),
+            child: DownInput(
+              value: checkName,
+              data: assist,
+              hitStr: '选择负责人',
+              dataKey: 'managerOpName',
+              callback: (val){
+                checkName = val['managerOpName'];
+                // managerOpId = val['id'];
+                setState(() {});
+              },
+            ),
+          ),
+          FormCheck.rowItem(
+            title: '协助人员:',
+            titleColor: Color(0XFF323232),
+            child: DownInput(
+              value: assistName,
+              data: charge,
+              more: true,
+              hitStr: '选择协助人员',
+              dataKey: 'opName',
+              callback: (val){
+                for(var i = 0; i < val.length;i++){
+                  // assistOpList.add({"opId":val[i]['opId']});
+                  if(i > 0){
+                    assistName = assistName + ',' + val[i]['opName'];
+                  }else{
+                    assistName = val[i]['opName'];
+                  }
+                }
+                setState(() {});
+              },
+            ),
+          ),
+          FormCheck.rowItem(
             title: '任务内容:',
             titleColor: Color(0XFF323232),
             alignStart: true,
@@ -181,21 +224,21 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
               },
             ),
           ),
-          FormCheck.rowItem(
-            alignStart: true,
-            title: "现场照片:",
-            titleColor: Color(0XFF323232),
-            child: UploadImage(
-              imgList: imgDetails,
-              closeIcon: true,
-              uuid: uuid.v4(),
-              url: Api.url['uploadImg'] + '任务/',
-              callback: (List? data) {
-                imgDetails = data ?? [];
-                setState(() {});
-              },
-            ),
-          ),
+          // FormCheck.rowItem(
+          //   alignStart: true,
+          //   title: "现场照片:",
+          //   titleColor: Color(0XFF323232),
+          //   child: UploadImage(
+          //     imgList: imgDetails,
+          //     closeIcon: true,
+          //     uuid: uuid.v4(),
+          //     url: Api.url['uploadImg'] + '任务/',
+          //     callback: (List? data) {
+          //       imgDetails = data ?? [];
+          //       setState(() {});
+          //     },
+          //   ),
+          // ),
           FormCheck.rowItem(
             title: '附件:',
             alignStart: true,
@@ -209,6 +252,33 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
                 setState(() {});
               },
             ),
+          ),
+          Row(
+            children: [
+              Container(
+                height: px(72),
+                width: px(140),
+                alignment: Alignment.bottomCenter,
+                child: Text('任务起止时间：',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+              ),
+              Expanded(
+                child: Container(
+                  height: px(72),
+                  width: px(580),
+                  color: Colors.white,
+                  margin: EdgeInsets.only(top: px(24),left: px(24),right: px(24)),
+                  child: DateRange(
+                    start: startTime,
+                    end: endTime,
+                    showTime: false,
+                    callBack: (val) {
+                      startTime = val[0];
+                      endTime = val[1];
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
           // FormCheck.rowItem(
           //   title: '附件:',

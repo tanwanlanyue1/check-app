@@ -13,6 +13,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 
 ///企业台账详情
 /// arguments = {check:是否申报,'problemId':问题id,"inventoryStatus":清单状态}
+/// audit:审核问题页面进入
 class RectificationProblem extends StatefulWidget {
   final arguments;
   const RectificationProblem({Key? key,this.arguments}) : super(key: key);
@@ -118,6 +119,7 @@ class _RectificationProblemState extends State<RectificationProblem> {
       }
     }else{
       if(argumentMap.isNotEmpty){
+        argumentMap.addAll({"audit":widget.arguments['audit'] ?? false});
         var res = await Navigator.pushNamed(context, '/fillInForm', arguments: argumentMap);
         if(res == true){
           _getProblems();

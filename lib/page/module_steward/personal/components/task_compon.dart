@@ -49,7 +49,7 @@ class TaskCompon{
               Expanded(
                 child: Container(
                   alignment: Alignment.center,
-                  margin: EdgeInsets.only(left: child !=null ? px(56) : 0,),
+                  margin: EdgeInsets.only(left: child !=null ? px(56) : 0),
                   child: Text(title,style: TextStyle(color: Color(0xff323233),fontSize: sp(font ?? 36),fontFamily: 'M'),),
                 ),
               ),

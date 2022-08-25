@@ -203,16 +203,16 @@ class _AbutmentListState extends State<AbutmentList> {
               ],
             ),
             onTap: () async {
-              var res = await Navigator.pushNamed(context, '/abutmentTask',arguments: {'id':taskList[i]['id']});
-              if(res != null){
-                _pageNo = 1;
-                _getTaskList(
-                    type: typeStatusEnum.onRefresh,
-                    data: {
-                      'finishStatus':1
-                    }
-                );
-              }
+              Navigator.pushNamed(context, '/abutmentTask',arguments: {'id':taskList[i]['id']}).then((value) => _controller.callRefresh());
+              // if(res != null){
+              //   _pageNo = 1;
+              //   _getTaskList(
+              //       type: typeStatusEnum.onRefresh,
+              //       data: {
+              //         'finishStatus':1
+              //       }
+              //   );
+              // }
             },
           ),
         );

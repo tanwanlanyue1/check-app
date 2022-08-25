@@ -66,7 +66,7 @@ class LoginComponents{
   /// onTap: 回调事件
   static Widget loginBtn({Function? onTap}){
     return Padding(
-      padding: EdgeInsets.only(top: px(120)),
+      padding: EdgeInsets.only(top: px(20)),
       child: InkWell(
         child: Container(
           width: px(550),

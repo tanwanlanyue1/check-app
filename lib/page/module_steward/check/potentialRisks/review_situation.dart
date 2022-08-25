@@ -77,7 +77,7 @@ class _ReviewSituationState extends State<ReviewSituation> {
               alignStart: true,
               title: "复查图片记录",
               child: ImageWidget(
-                imageList: reviewList[i]['images'],
+                imageList: reviewList[i]['images'] ?? [],
               )
           ),
           FormCheck.rowItem(

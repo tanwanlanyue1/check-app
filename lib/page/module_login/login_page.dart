@@ -24,7 +24,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String _userName = ''; // 账号
   String _password = ''; // 密码
-
+  bool cache  = true;//缓存
 
   ///登录事件
   ///userName 用户名
@@ -78,7 +78,11 @@ class _LoginPageState extends State<LoginPage> {
     StorageUtil().setString(StorageKey.Token, token.toString());
     StorageUtil().setJSON(StorageKey.PersonalData, personalData);
     StorageUtil().setString(StorageKey.userName, userName.toString());
-    StorageUtil().setString(StorageKey.password, passWord.toString());
+    if(cache){
+      StorageUtil().setString(StorageKey.password, passWord.toString());
+    }else{
+      StorageUtil().setString(StorageKey.password, '');
+    }
   }
 
   @override
@@ -176,6 +180,26 @@ class _LoginPageState extends State<LoginPage> {
                 onChange: (val) {
                   _password = val;
                 }),
+            Container(
+              margin: EdgeInsets.only(left: px(100)),
+              child: Row(
+                children: [
+                  Checkbox(value: cache,
+                      onChanged: (val){
+                        cache = !cache;
+                        setState(() {});
+                      }
+                  ),
+                  GestureDetector(
+                    child: Text("记住密码",style: TextStyle(fontSize: sp(28),),),
+                    onTap: (){
+                      cache = !cache;
+                      setState(() {});
+                    },
+                  )
+                ],
+              ),
+            ),
             LoginComponents.loginBtn(
               onTap: () {
                 _postLogin(_userName, _password);

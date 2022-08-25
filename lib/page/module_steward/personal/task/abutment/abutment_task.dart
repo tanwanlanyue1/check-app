@@ -11,6 +11,8 @@ import 'package:scet_check/components/generalduty/upload_image.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/storage/data_storage_key.dart';
+import 'package:scet_check/utils/storage/storage.dart';
 
 
 ///对接任务详情页面
@@ -27,7 +29,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
   Map taskDetails = {};//任务详情
   List checkImages = [];//检查图片列表
   bool backlog = true;//完成
-  String userId = ''; //用户id
+  String userName = ''; //用户id
   String review = ''; //审批意见
   List taskFiles = [];//任务附件名称
   Map companyList = {};//任务企业列表
@@ -46,6 +48,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
     super.initState();
     backlog = widget.arguments?['backlog'] ?? false;
     taskId = widget.arguments?['id'] ?? '';
+    userName= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
     _getTasks();
   }
   /// 获取任务详情
@@ -163,8 +166,9 @@ class _AbutmentTaskState extends State<AbutmentTask> {
                 dataSource() :
                 Container(),
                 relevanceFrom(),
-                incorrectMessage(),
-                taskStatus == 6 ?
+                (taskDetails['managerOpName'] != userName && !backlog)
+                ? Container() : incorrectMessage(),
+                taskStatus == 6 && taskDetails['managerOpName'] == userName ?
                 reviewDeclared() :
                 Container(),
               ],
@@ -274,7 +278,8 @@ class _AbutmentTaskState extends State<AbutmentTask> {
           ),
           FormCheck.rowItem(
             title: '企业名称:',
-            child: !backlog ?
+            child:
+            // !backlog ?
             DownInput(
               data: taskDetails['companyList'],
               value: companyList['name'],
@@ -283,8 +288,8 @@ class _AbutmentTaskState extends State<AbutmentTask> {
                 companyList = val;
                 setState(() {});
               },
-            ) :
-            Text(checkPeople(company: taskDetails['companyList'] ?? []),style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+            )
+        // :Text(checkPeople(company: taskDetails['companyList'] ?? []),style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           Column(
             children: List.generate(formDynamic.length, (i) => taskDynamicForm(
@@ -344,9 +349,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
         ),
       ),
       onTap: () async {
-        //判断是已办还是待办进入的
         //根据企业id和任务id查询表单详情
-        if(!backlog){
           if(companyList.isNotEmpty){
             List formContentList = taskDetails['formContentList'] ?? [];
             Map content = {};
@@ -370,28 +373,6 @@ class _AbutmentTaskState extends State<AbutmentTask> {
           }else{
             ToastWidget.showToastMsg('请先选择企业！');
           }
-        }else{
-          //查找选择的id企业
-          List formContentList = taskDetails['formContentList'] ?? [];
-          List company = taskDetails['companyList'] ?? [];
-          Map content = {};
-          for (var item in company) {
-            for (var ele in formContentList) {
-              if(ele['companyId'] ==item['id'] && ele['formId'] == formDynamic[i]['id']){
-                content = jsonDecode(ele['content']) ?? {};
-                content = ele ?? {};
-              }
-            }
-          }
-          Navigator.pushNamed(context, '/abutmentFrom',arguments: {
-            'formId':formDynamic[i]['id'],
-            'taskId':taskId,
-            'content':content,
-            'backlog':backlog,
-            'companyList':companyList,
-            'formFillAuth':taskDetails['formFillAuth'],
-          });
-        }
       },
     );
   }
@@ -571,7 +552,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
         alignment: Alignment.centerRight,
         margin: EdgeInsets.only(right: px(24)),
         child: Text(
-          taskStatus != 6 ? '提交任务' : '完成审核',
+          taskDetails['managerOpName'] == userName ? (taskStatus != 6 ? '提交任务' : '完成审核') : '',
           style: TextStyle(
               fontSize: sp(28),
               fontFamily: "M",

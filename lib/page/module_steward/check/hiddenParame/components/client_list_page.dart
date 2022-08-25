@@ -344,10 +344,12 @@ class _ClientListPageState extends State<ClientListPage> {
                 }
               }else{
                 _homeModel?.select.add(model.id);
-                _homeModel?.selectCompany.add({'id':model.id!,"user":model.toJson()['user'],"name":model.name});
+                _homeModel?.selectCompany.add({'id':model.id!,"name":model.name});
+                // _homeModel?.selectCompany.add({'id':model.id!,"user":model.toJson()['user'],"name":model.name});
               }
             }else{
-              widget.callBack?.call(model.id,model.name,model.toJson()['user']);
+              widget.callBack?.call(model.id,model.name);
+              // widget.callBack?.call(model.id,model.name,model.toJson()['user']);
             }
             setState(() {});
           },

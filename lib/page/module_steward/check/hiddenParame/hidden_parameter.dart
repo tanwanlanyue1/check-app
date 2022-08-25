@@ -88,6 +88,7 @@ class _HiddenParameterState extends State<HiddenParameter> {
         children: [
         TaskCompon.topTitle(
           title: '隐患排查',
+          colors: Colors.transparent
         ),
           Expanded(
             child: LayoutPage(
@@ -103,7 +104,7 @@ class _HiddenParameterState extends State<HiddenParameter> {
                 child: ClientListPage(
                   companyList: companyList,
                   sort: true,
-                  callBack: (id,name,user){
+                  callBack: (id,name){
                     _companyId = id;
                   _companyName = name;
                   Navigator.pushNamed(context, '/hiddenDetails',arguments: {'companyId': _companyId,'companyName': _companyName,});
