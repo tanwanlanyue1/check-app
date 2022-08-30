@@ -19,7 +19,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 /// 'content':content, 提交过的数据
 /// 'backlog':backlog, 已办待办
 /// 'companyList':companyList, 企业信息
-/// 'formFillAuth':taskDetails['formFillAuth'], 判断是否有提交的权限
+/// id:编辑id
 class AbutmentFrom extends StatefulWidget {
   final Map? arguments;
   const AbutmentFrom({Key? key,this.arguments}) : super(key: key);
@@ -42,7 +42,6 @@ class _AbutmentFromState extends State<AbutmentFrom> {
   bool empty = true;
   bool backlog = true;//待办，已办
   bool problem = false;//问题分析类型
-  bool formFillAuth = true;//是否有修改的权限
   List problemBig = [];//问题大类类型
   List problemSmall = [];//问题小类类型
   Map companyList = {};//企业列表
@@ -334,12 +333,11 @@ class _AbutmentFromState extends State<AbutmentFrom> {
     super.initState();
     taskId = widget.arguments?['taskId'] ?? '';
     backlog = widget.arguments?['backlog'] ?? false;
-    formFillAuth = widget.arguments?['formFillAuth'] ?? false;
     companyList = widget.arguments?['companyList'] ?? {};
     _getKeeper(id: widget.arguments?['formId']);
     if(widget.arguments?['content'] != null && widget.arguments?['content'].length > 0){
-      data = jsonDecode(widget.arguments?['content']['content']);
-      uuid = widget.arguments?['content']['id'].toString();
+      data = widget.arguments?['content'] ?? {};
+      uuid = widget.arguments?['id'].toString();
     }
   }
 
@@ -467,11 +465,7 @@ class _AbutmentFromState extends State<AbutmentFrom> {
       ),
       onTap: () {
         empty = true;
-        if(formFillAuth){
-          _getTask();
-        }else{
-          ToastWidget.showToastMsg('您没有提交该表单的权限!');
-        }
+        _getTask();
         setState(() {});
       },
     );

@@ -143,6 +143,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawer: Container(),
       body: Column(
         children: [
           TaskCompon.topTitle(
@@ -317,7 +318,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
             '检查信息',
           ),
           Column(
-            children: List.generate(taskDetails['dataList'].length, (index) => taskSoureForm(
+            children: List.generate(taskDetails['dataList'].length, (index) => taskSourceForm(
                   i: index,
                   cycleList:taskDetails['dataList'][index],
               )),
@@ -349,36 +350,19 @@ class _AbutmentTaskState extends State<AbutmentTask> {
         ),
       ),
       onTap: () async {
-        //根据企业id和任务id查询表单详情
-          if(companyList.isNotEmpty){
-            List formContentList = taskDetails['formContentList'] ?? [];
-            Map content = {};
-            for(var j =0; j < formContentList.length; j++){
-              if(formContentList[j]['companyId'] == companyList['id'] && formContentList[j]['formId'] == formDynamic[i]['id']){
-                content = jsonDecode(formContentList[j]['content']) ?? {};
-                content = formContentList[j] ?? {};
-              }
-            }
-            var res = await Navigator.pushNamed(context, '/abutmentFrom',arguments: {
-              'formId':formDynamic[i]['id'],
-              'taskId':taskId,
-              'content':content,
-              'backlog':backlog,
-              'companyList':companyList,
-              'formFillAuth':taskDetails['formFillAuth'],
-            });
-            if(res != null){
-              _getTasks();
-            }
-          }else{
-            ToastWidget.showToastMsg('请先选择企业！');
-          }
+        Navigator.pushNamed(context, '/relevanceList',arguments: {
+          'taskId':taskId,
+          'backlog':backlog,
+          'companyList':companyList,
+          'formId':formDynamic[i]['id'],
+          'name':cycleList?['formName'],
+        });
       },
     );
   }
 
   ///检查信息列表
-  Widget taskSoureForm({required int i,Map? cycleList}){
+  Widget taskSourceForm({required int i,Map? cycleList}){
     return InkWell(
       child: Container(
         padding: EdgeInsets.only(bottom: px(12)),
@@ -404,7 +388,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
         ),
       ),
       onTap: () async {
-        Navigator.pushNamed(context, '/taskGuide',arguments: {'cycleList':cycleList,'id':cycleList?['analyzeId']});
+        Navigator.pushNamed(context, '/taskGuide',arguments: {'cycleList':cycleList,'id':cycleList?['id']});
       },
     );
   }

@@ -24,21 +24,25 @@ class FormCheck {
 
   ///标签头部
   ///title : 标题
+  ///left:图标是否显示
   ///showUp : 是否展示
   ///onTaps : 回调
   ///tidy : 图标样式
   ///showUp ：是否显示图标
   ///tidy：显示上图标/下图标
-  static Widget formTitle(String title,{bool showUp = false,Function? onTaps,bool tidy = true}){
+  static Widget formTitle(String title,{bool left = true,bool showUp = false,Function? onTaps,bool tidy = true}){
     return Row(
       children: [
-        Container(
-          margin: EdgeInsets.only(right: px(8)),
-          width: px(4),
-          height: px(24),
-          decoration: BoxDecoration(
-              color: Color(0xFF4D7FFF),
-              borderRadius: BorderRadius.all(Radius.circular(px(1)))
+        Visibility(
+          visible: left,
+          child: Container(
+            margin: EdgeInsets.only(right: px(8)),
+            width: px(4),
+            height: px(24),
+            decoration: BoxDecoration(
+                color: Color(0xFF4D7FFF),
+                borderRadius: BorderRadius.all(Radius.circular(px(1)))
+            ),
           ),
         ),
         Expanded(

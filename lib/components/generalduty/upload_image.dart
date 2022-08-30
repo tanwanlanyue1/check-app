@@ -229,46 +229,53 @@ class _UploadImageState extends State<UploadImage> {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap:true,
-      physics: NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.all(0),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 2,
-        mainAxisSpacing: 2,
-      ),
-      itemCount: widget.closeIcon ? _imagesList.length + 1 : _imagesList.length,
-      itemBuilder: (BuildContext context, int index) {
-        if(index == _imagesList.length && widget.closeIcon) {
-          return GestureDetector(
-            onTap: () {
-              selectCamera();
-            },
-            child: Container(
-              width: px(169),
-              height: px(169),
-              color: Color(0XFFF5F6FA),
-              child: Image.asset('lib/assets/icons/form/camera.png'),
-            ),
-          );
-        }
-        if(_imagesList.isNotEmpty) {
-          return _createGridViewItem(
-            SizedBox(
-              width: 300, height: 300,
-              child: CachedNetwork(
-                url:abutment ?
-                Api.baseUrlAppImage + _imagesList[index] :
-                Api.baseUrlApp + _imagesList[index],
-                  fits: BoxFit.cover,
+    return !widget.closeIcon && _imagesList.isEmpty?
+      Text('暂无图片',
+        style: TextStyle(
+          fontSize: sp(26),
+          color: Color(0xff323233),
+        ),
+      ):
+      GridView.builder(
+        shrinkWrap:true,
+        physics: NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.all(0),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          crossAxisSpacing: 2,
+          mainAxisSpacing: 2,
+        ),
+        itemCount: widget.closeIcon ? _imagesList.length + 1 : _imagesList.length,
+        itemBuilder: (BuildContext context, int index) {
+          if(index == _imagesList.length && widget.closeIcon) {
+            return GestureDetector(
+              onTap: () {
+                selectCamera();
+              },
+              child: Container(
+                width: px(169),
+                height: px(169),
+                color: Color(0XFFF5F6FA),
+                child: Image.asset('lib/assets/icons/form/camera.png'),
               ),
-            ),
-            index
-        );
-        }
-        return Container();
-      },
+            );
+          }
+          if(_imagesList.isNotEmpty) {
+            return _createGridViewItem(
+              SizedBox(
+                width: 300, height: 300,
+                child: CachedNetwork(
+                  url:abutment ?
+                  Api.baseUrlAppImage + _imagesList[index] :
+                  Api.baseUrlApp + _imagesList[index],
+                    fits: BoxFit.cover,
+                ),
+              ),
+              index
+          );
+          }
+          return Container();
+        },
     );
   }
   ///创建GridView

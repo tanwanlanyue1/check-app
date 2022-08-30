@@ -16,25 +16,21 @@ class TaskGuide extends StatefulWidget {
 }
 
 class _TaskGuideState extends State<TaskGuide> {
-  Map taskGuide = {};//检查的基本西南西
+  Map taskGuide = {};//检查的基本数据
   Map analyze = {};//核查数据
-  List gist = [
-    {'name':'检查要点','url':'checkStep','tidy':false},
-    {'name':'取证要点','url':'forensicsPoint','tidy':false},
-    {'name':'法律依据','url':'law','tidy':false},
-  ];//要点
+
   @override
   void initState() {
     // TODO: implement initState
     taskGuide = widget.arguments?['cycleList'];
-    _getCycle();
+    _getSummaryById();
     super.initState();
   }
-  /// 获取核查详情
-  /// id:核查id，name，标题 url：获取的字段
-  void _getCycle() async {
+  /// 查询研判汇总详情-查询单次研判所有异常
+  /// id:
+  void _getSummaryById() async {
     var response = await Request().get(
-      Api.url['modelAnalyzeById'],
+      Api.url['getSummaryById'],
       data: {
         'id':widget.arguments?['id'],
       },
@@ -44,7 +40,6 @@ class _TaskGuideState extends State<TaskGuide> {
       setState(() {});
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,9 +57,6 @@ class _TaskGuideState extends State<TaskGuide> {
               padding: EdgeInsets.only(top: 0),
               children: [
                 basicInfo(),
-                Column(
-                  children: List.generate(gist.length, (i) => mainPoint(i: i)),
-                ),
               ],
             ),
           ),
@@ -101,7 +93,10 @@ class _TaskGuideState extends State<TaskGuide> {
           FormCheck.rowItem(
             title: '判研结果:',
             alignStart: true,
-            child: Text('${taskGuide['analyzeResult'].replaceAll('\n','') ?? '/'}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+            child: analyze['recordList']?.length != null ?
+            Column(
+              children: List.generate(analyze['recordList'].length, (index) => record(recordList: analyze['recordList'][index])),
+            ) : Container(),
           ),
           FormCheck.rowItem(
             title: '判研时间:',
@@ -119,41 +114,35 @@ class _TaskGuideState extends State<TaskGuide> {
     );
   }
 
-  ///要点
-  Widget mainPoint({required int i}){
-    return Container(
-      margin: EdgeInsets.only(left: px(24),right: px(24),top: px(24)),
-      padding: EdgeInsets.all(px(12)),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(px(8.0))),
-      ),
-      child: Column(
-        children: [
-          FormCheck.formTitle(
-              gist[i]['name'],
-              showUp: true,
-              tidy: gist[i]['tidy'],
-              onTaps: (){
-                gist[i]['tidy'] = !gist[i]['tidy'];
-                setState(() {});
-              }
-          ),
-          Visibility(
-            visible: gist[i]['tidy'],
-            child: GestureDetector(
-              child: Container(
-                width: Adapt.screenW(),
-                color: Colors.white,
-                child: HtmlWidget(analyze[gist[i]['url']] ?? '/'),
+  ///记录列表
+  Widget record({required Map recordList}){
+    return InkWell(
+      child: Container(
+        padding: EdgeInsets.only(bottom: px(12)),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(bottom: BorderSide(width: px(4),color: Color(0xffF6F6F6)),),//0xffF6F6F6 0xff19191A
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.only(top: px(12),bottom: px(12)),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text('(${recordList['recordCount']}次)  ${recordList['analyzeResult']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+                  ),
+                  Icon(Icons.keyboard_arrow_right)
+                ],
               ),
-              onTap: (){
-                Navigator.pushNamed(context, '/fromHtmlCore',arguments: {'htmlUrl':analyze[gist[i]['url']] ?? '/','name':gist[i]['name']});
-              },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+      onTap: () async {
+        Navigator.pushNamed(context, '/guideDetail',arguments: {"recordList":recordList,'factorBelong':analyze['factorBelong']});
+      },
     );
   }
 }

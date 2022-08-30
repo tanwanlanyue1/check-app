@@ -26,11 +26,9 @@ class _DataSourceState extends State<DataSource> {
   int _total = 10; // 总条数
   bool _enableLoad = true; // 是否开启加载
   List _dataSource = []; //隐患清单数据
-  String companyId = '';//企业id
   DateTime startTime = DateTime.now().add(Duration(days: -1));//选择开始时间
   DateTime endTime = DateTime.now();//选择结束时间
   Map<String,dynamic> data = {};
-  bool createdAt = false;
   HomeModel? _homeModel; //全局的焦点
   int taskType = 0;
   /// 在线监理-数据来源
@@ -41,7 +39,7 @@ class _DataSourceState extends State<DataSource> {
     if(taskType == 2){
       response = await Request().post(Api.url['summaryFindPage']+'?page=$_pageNo&size=10',data:{});
     }else{
-    response = await Request().post(Api.url['problemIssue']+'?page=$_pageNo&size=10',data:{"status":5});
+      response = await Request().post(Api.url['problemIssue']+'?page=$_pageNo&size=10',data:{"status":5});
     }
     if(response['errCode'] == '10000'){
       Map _data = response['result'];
@@ -94,6 +92,20 @@ class _DataSourceState extends State<DataSource> {
     }
   }
 
+  ///判断是否选中方法
+  pitchOn(int i){
+    if(_homeModel?.select.contains(_dataSource[i]['id'])){
+      _homeModel?.select.remove(_dataSource[i]['id']);
+      int index =  _homeModel?.selectCompany.indexWhere((item) =>  item['id'] == _dataSource[i]['id']);
+      if(index != -1) {
+        _homeModel?.selectCompany.removeAt(index);
+      }
+    }else{
+      _homeModel?.select.add(_dataSource[i]['id']);
+      _homeModel?.selectCompany.add({'id':_dataSource[i]['id'],"name":_dataSource[i]['companyName']});
+    }
+    setState(() {});
+  }
   @override
   void initState() {
     // TODO: implement initState
@@ -110,7 +122,7 @@ class _DataSourceState extends State<DataSource> {
   @override
   Widget build(BuildContext context) {
     _homeModel = Provider.of<HomeModel>(context, listen: true);
-    return  Scaffold(
+    return Scaffold(
       body: Column(
         children: [
           TaskCompon.topTitle(
@@ -216,21 +228,38 @@ class _DataSourceState extends State<DataSource> {
           color: _homeModel?.select.contains(_dataSource[i]['id']) ? Color(0xffCCD6FF) : Colors.white,
           child: Column(
             children: [
-              InkWell(
-                  child: FormCheck.formTitle(
-                      taskType == 2 ?
-                      '${_dataSource[i]['companyName']}——${_dataSource[i]['name']}':
-                      '${_dataSource[i]['companyName']}——已整改待复核',
-                      showUp: true,
-                      tidy: _dataSource[i]['tidy'],
-                      onTaps: (){
-                        _dataSource[i]['tidy'] = !_dataSource[i]['tidy'];
-                        setState(() {});
-                      }
-                  ), onTap: (){
-                _dataSource[i]['tidy'] = !_dataSource[i]['tidy'];
-                setState(() {});
-              }
+              Row(
+                children: [
+                  Container(
+                      width: px(40),
+                      height: px(40),
+                      margin: EdgeInsets.only(right: px(2)),
+                      child: Checkbox(
+                          value: _homeModel?.select.contains(_dataSource[i]['id']),
+                          onChanged: (bool? onTops){
+                            pitchOn(i);
+                          })
+                  ),
+                  Expanded(
+                    child: InkWell(
+                        child: FormCheck.formTitle(
+                            taskType == 2 ?
+                            '${_dataSource[i]['companyName']}——${_dataSource[i]['name']}':
+                            '${_dataSource[i]['companyName']}——已整改待复核',
+                            showUp: true,
+                            left: false,
+                            tidy: _dataSource[i]['tidy'],
+                            onTaps: (){
+                              _dataSource[i]['tidy'] = !_dataSource[i]['tidy'];
+                              setState(() {});
+                            }
+                        ), onTap: (){
+                      _dataSource[i]['tidy'] = !_dataSource[i]['tidy'];
+                      setState(() {});
+                    }
+                    ),
+                  )
+                ],
               ),
               taskType == 2 ?
               Visibility(
@@ -270,17 +299,7 @@ class _DataSourceState extends State<DataSource> {
           ),
         ),
         onTap: (){
-          if(_homeModel?.select.contains(_dataSource[i]['id'])){
-            _homeModel?.select.remove(_dataSource[i]['id']);
-            int index =  _homeModel?.selectCompany.indexWhere((item) =>  item['id'] == _dataSource[i]['id']);
-            if(index != -1) {
-              _homeModel?.selectCompany.removeAt(index);
-            }
-          }else{
-            _homeModel?.select.add(_dataSource[i]['id']);
-            _homeModel?.selectCompany.add({'id':_dataSource[i]['id'],"name":_dataSource[i]['companyName']});
-          }
-          setState(() {});
+          pitchOn(i);
         },
       ),
     );

@@ -2,13 +2,13 @@
 class Api {
 
   // static const baseUrlApp = 'http://10.10.1.217:8687/';
-  static const baseUrlApp = 'https://dev.scet.com.cn/yhpc/';
+  // static const baseUrlApp = 'https://dev.scet.com.cn/yhpc/';
+  static const baseUrlApp = 'http://121.199.24.82:8350/';
 
-  // static const baseUrlAppTwo = 'http://119.3.103.76:8119/';
+  static const baseUrlAppTwo = 'http://121.199.24.82:18002/';
+  static const baseUrlAppImage = 'http://121.199.24.82:18002/housekeeperPlatform';
   // static const baseUrlAppTwo = 'http://10.10.1.236:18002/';
   // static const baseUrlAppImage = 'http://10.10.1.236:18002/housekeeperPlatform/';
-  static const baseUrlAppTwo = 'http://gjpt.scet.com.cn:18002/';
-  static const baseUrlAppImage = 'http://gjpt.scet.com.cn:18002/housekeeperPlatform/';
 
   static final Map url = {
     'version': baseUrlApp + '/manualInsert/platFromXiaZai',//版本更新
@@ -102,6 +102,8 @@ class Api {
 
     'problemIssue':baseUrlAppTwo + 'housekeeperPlatform/d-admin/issue/page',//问题汇总，数据来源
 
+    'problemDetail':baseUrlAppTwo + 'housekeeperPlatform/d-admin/issue',//问题汇总
+
     'addBatchTask':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/addBatchTask',//批量新增任务工单
 
     'findDicByTypeCode':baseUrlAppTwo + 'housekeeperPlatform/d-admin/dictionary/findDicByTypeCode',//发布任务任务来源
@@ -113,6 +115,8 @@ class Api {
     'findMemberList':baseUrlAppTwo + 'housekeeperPlatform/d-admin/team/findList',//条件查询所有团队
 
     'housekeeper':baseUrlAppTwo + 'housekeeperPlatform/d-admin/dynamic-form/getDynamicFormById',//表单管理
+
+    'relevanceIssue':baseUrlAppTwo + 'housekeeperPlatform/d-admin/issue/list',//获取记录列表
 
     'issueSave':baseUrlAppTwo + 'housekeeperPlatform/d-admin/issue/save',//表单问题提交
 
@@ -127,6 +131,10 @@ class Api {
     'subType':baseUrlAppTwo + 'housekeeperPlatform/d-admin/issue-type/',//动态表单问题小类列表
 
     'modelAnalyzeById':baseUrlAppTwo + 'housekeeperPlatform/d-admin/model-analyze/getModelAnalyzeById',//根据id获取核查操作
+
+    'getSummaryById':baseUrlAppTwo + 'housekeeperPlatform/d-admin/data-exception-summary/getSummaryById',//查询研判汇总详情（查询单次研判所有异常）
+
+    'findExceptionPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/data-exception-record/findExceptionPage',//分页查询研判记录的异常数据
 
     'houseTaskList':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/findPageByApp',//对接任务列表
 

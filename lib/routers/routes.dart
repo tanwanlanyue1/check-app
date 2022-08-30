@@ -22,6 +22,7 @@ import 'package:scet_check/page/module_steward/check/targetClassify/target_class
 import 'package:scet_check/page/module_steward/check/targetClassify/target_classify_list.dart';
 import 'package:scet_check/page/module_steward/check/targetClassify/target_details.dart';
 import 'package:scet_check/page/module_steward/enterprise/abutment_enterprise/abutment_enterprise_details.dart';
+import 'package:scet_check/page/module_steward/enterprise/abutment_enterprise/abutment_problem.dart';
 import 'package:scet_check/page/module_steward/enterprise/enterprise_details.dart';
 import 'package:scet_check/page/module_steward/enterprise/enterprise_page.dart';
 import 'package:scet_check/page/module_steward/home_page.dart';
@@ -44,7 +45,9 @@ import 'package:scet_check/page/module_steward/personal/task/abutment/abutment_l
 import 'package:scet_check/page/module_steward/personal/task/abutment/abutment_task.dart';
 import 'package:scet_check/page/module_steward/personal/task/abutment/data_source.dart';
 import 'package:scet_check/page/module_steward/personal/task/abutment/from_select.dart';
+import 'package:scet_check/page/module_steward/personal/task/abutment/guide_detail.dart';
 import 'package:scet_check/page/module_steward/personal/task/abutment/release_task.dart';
+import 'package:scet_check/page/module_steward/personal/task/abutment/relevance_list.dart';
 import 'package:scet_check/page/module_steward/personal/task/abutment/task_guide.dart';
 import 'package:scet_check/page/module_steward/personal/task/back_task_details.dart';
 import 'package:scet_check/page/module_steward/personal/task/backlog_task.dart';
@@ -99,12 +102,15 @@ final routes = {
   '/registerStatistics': (context) =>  RegisterStatistics(), //修改密码页面
 
   '/releaseTask': (context) =>  ReleaseTask(), //对接发布任务列表
+  '/abutmentProblem': (context,{arguments}) =>  AbutmentProblem(arguments:arguments), //问题管理列表
   '/abutmentList': (context,{arguments}) =>  AbutmentList(arguments:arguments), //对接任务列表页面
   '/dataSource': (context,{arguments}) =>  DataSource(arguments:arguments), //对接发布任务来源页面
   '/fromSelect': (context,{arguments}) =>  FromSelect(arguments:arguments), //对接任务关联表单选择页面
   '/abutmentTask': (context,{arguments}) =>  AbutmentTask(arguments:arguments), //对接任务详情页面
   '/abutmentFrom': (context,{arguments}) =>  AbutmentFrom(arguments:arguments), //对接任务动态表单详情
   '/taskGuide': (context,{arguments}) =>  TaskGuide(arguments:arguments), //对接任务指引页面
+  '/relevanceList': (context,{arguments}) =>  RelevanceList(arguments:arguments), //关联表单列表
+  '/guideDetail': (context,{arguments}) =>  GuideDetail(arguments:arguments), //指引详情页面
   '/abutmentEnterpriseDetails': (context,{arguments}) =>  AbutmentEnterpriseDetails(arguments:arguments), //对接一企一档信息
 
 ///企业端

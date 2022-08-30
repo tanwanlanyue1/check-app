@@ -141,7 +141,7 @@ class _ReleaseTaskState extends State<ReleaseTask> {
     }else if(taskDetail.isEmpty){
       ToastWidget.showToastMsg('请输入任务项！');
     }else if(formId.isEmpty){
-      ToastWidget.showToastMsg('请选择任务项表单！');
+      ToastWidget.showToastMsg('请选择填报表单！');
     }else if(taskType == 1 && groupId == null){
       ToastWidget.showToastMsg('请选择分组！');
     }else if((taskType == 2 || taskType == 3) && dataIds.isEmpty){
@@ -280,6 +280,127 @@ class _ReleaseTaskState extends State<ReleaseTask> {
             child: FormCheck.formTitle('任务内容'),
           ),
           FormCheck.rowItem(
+            title: '任务项:',
+            titleColor: Color(0XFF323232),
+            alignStart: true,
+            child: FormCheck.inputWidget(
+                hintText: '请输入任务内容',
+                hintVal: taskDetail,
+                lines: 3,
+                onChanged: (val){
+                  taskDetail = val;
+                }
+            ),
+          ),
+          FormCheck.rowItem(
+            title: '任务来源:',
+            titleColor: Color(0XFF323232),
+            child: DownInput(
+              value: sourceName,
+              data: sourceList,
+              hitStr: '选择任务来源',
+              dataKey: 'dicName',
+              callback: (val){
+                sourceName = val['dicName'];
+                typeId = val['dicCode'];
+                setState(() {});
+              },
+            ),
+          ),
+          FormCheck.rowItem(
+            title: '数据来源:',
+            titleColor: Color(0XFF323232),
+            child: DownInput(
+              value: typeName,
+              data: typeList,
+              hitStr: '选择数据来源',
+              callback: (val){
+                ///清空掉企业选择/来源
+                _homeModel?.setSelectCompany([]);
+                _homeModel?.setSelect([]);
+                company = [];//企业/溯源
+                companyName = '';
+                groupName = '';//分组
+                groupId = null;
+                typeName = val['name'];
+                taskType = val['id'];
+                setState(() {});
+              },
+            ),
+          ),
+          FormCheck.rowItem(
+            title: taskType == 1 ?
+            '选择分组:': (taskType == 2 || taskType == 3) ? '数据来源' : '选择企业',
+            titleColor: Color(0XFF323232),
+            child: taskType == 1 ?
+            DownInput(
+              value: groupName,
+              data: groupList,
+              hitStr: '请选择分组',
+              callback: (val){
+                groupName = val['name'];
+                groupId = val['id'];
+                setState(() {});
+              },
+            ):
+            GestureDetector(
+              child: Text(
+                (taskType != 2 || taskType != 3) ?
+              (companyName.isNotEmpty ? companyName : '请选择') : (companyName.isNotEmpty ? companyName : '请选择'),style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+              onTap: () {
+                source();
+              },
+            ),
+          ),
+          FormCheck.rowItem(
+            title: '选择填报表单:',
+            titleColor: Color(0XFF323232),
+            child: DownInput(
+              value: findName,
+              data: findList,
+              more: true,
+              hitStr: '选择任务管理表单',
+              dataKey: 'formName',
+              callback: (val){
+                formId = [];
+                for(var i = 0; i < val.length;i++){
+                  formId.add({'id':val[i]['id']});
+                  if(i > 0){
+                    findName = findName + ',' + val[i]['formName'];
+                  }else{
+                    findName = val[i]['formName'];
+                  }
+                }
+                setState(() {});
+              },
+            ),
+          ),
+          Row(
+            children: [
+              Container(
+                height: px(72),
+                width: px(140),
+                alignment: Alignment.bottomCenter,
+                child: Text('任务起止时间：',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+              ),
+              Expanded(
+                child: Container(
+                  height: px(72),
+                  width: px(580),
+                  color: Colors.white,
+                  margin: EdgeInsets.only(top: px(24),left: px(24),right: px(24)),
+                  child: DateRange(
+                    start: startTime,
+                    end: endTime,
+                    showTime: false,
+                    callBack: (val) {
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+          FormCheck.rowItem(
             title: '负责人:',
             titleColor: Color(0XFF323232),
             child: DownInput(
@@ -348,102 +469,6 @@ class _ReleaseTaskState extends State<ReleaseTask> {
             ),
           ),
           FormCheck.rowItem(
-            title: '数据来源:',
-            titleColor: Color(0XFF323232),
-            child: DownInput(
-              value: typeName,
-              data: typeList,
-              hitStr: '选择数据来源',
-              callback: (val){
-                ///清空掉企业选择/来源
-                _homeModel?.setSelectCompany([]);
-                _homeModel?.setSelect([]);
-                company = [];//企业/溯源
-                companyName = '';
-                groupName = '';//分组
-                groupId = null;
-                typeName = val['name'];
-                taskType = val['id'];
-                setState(() {});
-              },
-            ),
-          ),
-          FormCheck.rowItem(
-            title: taskType == 1 ?
-            '选择分组:': (taskType == 2 || taskType == 3) ? '数据来源' : '选择企业',
-            titleColor: Color(0XFF323232),
-            child: taskType == 1 ?
-            DownInput(
-              value: groupName,
-              data: groupList,
-              hitStr: '请选择分组',
-              callback: (val){
-                groupName = val['name'];
-                groupId = val['id'];
-                setState(() {});
-              },
-            ):
-            GestureDetector(
-              child: Text(
-                (taskType != 2 || taskType != 3) ?
-              (companyName.isNotEmpty ? companyName : '请选择') : (companyName.isNotEmpty ? companyName : '请选择'),style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
-              onTap: () {
-                source();
-              },
-            ),
-          ),
-          FormCheck.rowItem(
-            title: '任务来源:',
-            titleColor: Color(0XFF323232),
-            child: DownInput(
-              value: sourceName,
-              data: sourceList,
-              hitStr: '选择任务来源',
-              dataKey: 'dicName',
-              callback: (val){
-                sourceName = val['dicName'];
-                typeId = val['dicCode'];
-                setState(() {});
-              },
-            ),
-          ),
-          FormCheck.rowItem(
-            title: '任务项:',
-            titleColor: Color(0XFF323232),
-            alignStart: true,
-            child: FormCheck.inputWidget(
-                hintText: '请输入任务内容',
-                hintVal: taskDetail,
-                lines: 3,
-                onChanged: (val){
-                  taskDetail = val;
-                }
-            ),
-          ),
-          FormCheck.rowItem(
-            title: '任务项管理表单:',
-            titleColor: Color(0XFF323232),
-            child: DownInput(
-              value: findName,
-              data: findList,
-              more: true,
-              hitStr: '选择任务管理表单',
-              dataKey: 'formName',
-              callback: (val){
-                formId = [];
-                for(var i = 0; i < val.length;i++){
-                  formId.add({'id':val[i]['id']});
-                  if(i > 0){
-                    findName = findName + ',' + val[i]['formName'];
-                  }else{
-                    findName = val[i]['formName'];
-                  }
-                }
-                setState(() {});
-              },
-            ),
-          ),
-          FormCheck.rowItem(
             title: '紧急程度:',
             titleColor: Color(0XFF323232),
             child: DownInput(
@@ -456,31 +481,6 @@ class _ReleaseTaskState extends State<ReleaseTask> {
                 setState(() {});
               },
             ),
-          ),
-          Row(
-            children: [
-              Container(
-                height: px(72),
-                width: px(140),
-                alignment: Alignment.bottomCenter,
-                child: Text('任务起止时间：',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
-              ),
-              Expanded(
-                child: Container(
-                  height: px(72),
-                  width: px(580),
-                  color: Colors.white,
-                  margin: EdgeInsets.only(top: px(24),left: px(24),right: px(24)),
-                  child: DateRange(
-                    start: startTime,
-                    end: endTime,
-                    showTime: false,
-                    callBack: (val) {
-                    },
-                  ),
-                ),
-              ),
-            ],
           ),
         ],
       ),

@@ -733,7 +733,6 @@ class _ProblemPageState extends State<ProblemPage> {
                 }
               }
             }
-            print("typeStatus===$typeStatus");
             setState(() {});
           },
           callPop: (){ //重置

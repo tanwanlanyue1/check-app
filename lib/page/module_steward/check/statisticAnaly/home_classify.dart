@@ -193,18 +193,14 @@ class _HomeClassifyState extends State<HomeClassify> with RouteAware{
              Column(
                crossAxisAlignment: CrossAxisAlignment.start,
                children: [
-                 Text('发现问题数量',style: TextStyle(color: Color(0xff323233),fontSize: sp(26)),),
+                 Text('发现问题数量  ',style: TextStyle(color: Color(0xff323233),fontSize: sp(26)),),
                  Text('${taskDay['problemTotalNum'] ?? 0}',style: TextStyle(color: Color(0xff323233),fontSize: sp(32),fontFamily: "M"),),
                ],
              ),
-           ],
-         ),
-         Row(
-           children: [
              Container(
                width: px(88),
                height: px(130),
-               margin: EdgeInsets.only(right: px(24),left: px(24)),
+               margin: EdgeInsets.only(right: px(24),left: px(32)),
                child: Image.asset('lib/assets/icons/home/review.png',fit: BoxFit.fitHeight,),
              ),
              Column(

@@ -27,7 +27,7 @@ class _UpdateAppState extends State<UpdateApp> {
   String? _version, appUrl;
   double _progress = 0.0;
   int? id;
-
+  DownloadStatus? status = DownloadStatus.STATUS_PAUSED;//下载状态 3完成
   // 获取平台信息
   Future<String?> _getAppInfo() async {
     setState(() {
@@ -57,12 +57,19 @@ class _UpdateAppState extends State<UpdateApp> {
       RUpgrade.cancel(id!);
     }
   }
+  //安装apk
+  void install() async {
+    RUpgrade.install(id!);
+  }
   @override
   void initState() {
     super.initState();
     _getAppInfo();
-    RUpgrade.stream.listen((DownloadInfo info){
+    RUpgrade.stream.listen((DownloadInfo info) async {
       _progress =  info.percent ?? 0.0;
+      if(id != null)  {
+        status = await RUpgrade.getDownloadStatus(id!);
+      }
       setState(() {});
     });
   }
@@ -140,13 +147,17 @@ class _UpdateAppState extends State<UpdateApp> {
                                 },
                               ),
                               succeedDialogBtn(
-                                str: updating ? '正在更新':'更新APP',
+                                str: (status == DownloadStatus.STATUS_SUCCESSFUL) ? '安装APK' : (updating ? '正在更新':'更新APP'),
                                 bgColor:  Color(0xFF4D7CFF),
-                                onTap: () {
-                                  if(!updating){
-                                    upgrade(appUrl!);
+                                onTap: () async{
+                                  if(status == DownloadStatus.STATUS_SUCCESSFUL){
+                                    install();
                                   }else{
-                                    ToastWidget.showToastMsg('正在更新');
+                                    if(!updating){
+                                      upgrade(appUrl!);
+                                    }else{
+                                      ToastWidget.showToastMsg('正在更新');
+                                    }
                                   }
                                 },
                               )
