@@ -11,7 +11,7 @@ class OtherType extends StatefulWidget {
 }
 
 class _OtherTypeState extends State<OtherType> {
-  String companyId = '4d7e400047754fb0fc9251b8e8aa8b24';//企业id
+  String companyId = '';//企业id
   final List _typeList = [
     {
       "name":"环保扩展信息",
@@ -243,30 +243,9 @@ class _OtherTypeState extends State<OtherType> {
       "name":"问题信息管理",
       "path":'/abutmentProblem',
       'arguments':{
-        'url': 'problemDetail',
+        'url': 'problemIssue',
         'id': '',
         "name":"问题信息管理",
-        "problem":true,
-        'details':[
-          {'title':'发现日期','valuer':'checkDate',"time":true},
-          {'title':'选择表单','valuer':'companyName'},
-          {'title':'区域位置','valuer':'areaName'},
-          {'title':'环保局检查人','valuer':'lon'},
-          {'title':'管家检查人','valuer':'lat'},
-          {'title':'检查类型','valuer':'problemType'},
-          {'title':'问题大类','valuer':'content'},
-          {'title':'问题小类','valuer':'correctiveMeasures'},
-          {'title':'问题描述','valuer':'correctivePrincipal'},
-        ],
-        "rectify":[
-          {'title':'整改描述','valuer':'companyName'},
-          {'title':'整改照片','valuer':'location'},
-          {'title':'整改报告','valuer':'lon'},
-        ],
-        "audit":[
-          {'title':'审批结果','valuer':'companyName'},
-          {'title':'审批意见','valuer':'location'},
-        ]
       }
     },
     {

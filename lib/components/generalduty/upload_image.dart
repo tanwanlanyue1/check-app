@@ -84,7 +84,6 @@ class _UploadImageState extends State<UploadImage> {
       for(int i = 0; i < files.length; i++){
         String path = files[i].path;
         String filename = files[i].path.split("/").last;
-
         FormData formdata = FormData.fromMap({
           "file": await MultipartFile.fromFile(
             path, // 路径
@@ -188,7 +187,7 @@ class _UploadImageState extends State<UploadImage> {
                   onTap: () async{
                     ///拍照获取文件
                     XFile? photo = await _picker.pickImage(source: ImageSource.camera);
-                    if(photo != null){
+                    if(photo != null && !abutment){
                       File image = File(photo.path);
                       String url = _url + utcTransition() +_uuid;
                       var isUp = await FileSystem.upload(null, url,filePath: [image]);
@@ -203,6 +202,22 @@ class _UploadImageState extends State<UploadImage> {
                         widget.callback?.call(_imagesList);
                       }
                       setState(() {});
+                    }else if(photo != null && abutment){
+                      File files = File(photo.path);
+                      String path = files.path;
+                      String filename = files.path.split("/").last;
+                      FormData formdata = FormData.fromMap({
+                        "file": await MultipartFile.fromFile(
+                          path, // 路径
+                          filename: filename, // 名称
+                        ),
+                      });
+                       var response = await Request().post(Api.url['addFile'], data:formdata);
+                       if(response['success'] == true){
+                          _imagesList.add(response['result']);
+                       }
+                      Navigator.pop(context);
+                       widget.callback?.call(_imagesList);setState(() {});
                     }
                   },
                 ),
@@ -266,9 +281,9 @@ class _UploadImageState extends State<UploadImage> {
                 width: 300, height: 300,
                 child: CachedNetwork(
                   url:abutment ?
-                  Api.baseUrlAppImage + _imagesList[index] :
-                  Api.baseUrlApp + _imagesList[index],
-                    fits: BoxFit.cover,
+                  (_imagesList[index] is Map ? Api.baseUrlAppImage + _imagesList[index]['filePath'] : Api.baseUrlAppImage + _imagesList[index] ):
+                  (_imagesList[index] is Map ? Api.baseUrlApp + _imagesList[index]['filePath'] : Api.baseUrlApp + _imagesList[index] ),
+                  fits: BoxFit.cover,
                 ),
               ),
               index

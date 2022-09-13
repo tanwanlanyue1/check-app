@@ -80,7 +80,7 @@ class _EnterpriseDetailsState extends State<EnterpriseDetails> {
               ],
               onPageChanged: (i) async{
                 pageIndex = i;
-                _tabScrController.jumpTo(px(100)*(pageIndex+1));
+                // _tabScrController.jumpTo(px(100)*(pageIndex+1));
                 setState(() {});
               },
             ),

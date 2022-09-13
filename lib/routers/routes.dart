@@ -21,6 +21,7 @@ import 'package:scet_check/page/module_steward/check/statisticAnaly/home_classif
 import 'package:scet_check/page/module_steward/check/targetClassify/target_classify.dart';
 import 'package:scet_check/page/module_steward/check/targetClassify/target_classify_list.dart';
 import 'package:scet_check/page/module_steward/check/targetClassify/target_details.dart';
+import 'package:scet_check/page/module_steward/enterprise/abutment_enterprise/abutment_detail.dart';
 import 'package:scet_check/page/module_steward/enterprise/abutment_enterprise/abutment_enterprise_details.dart';
 import 'package:scet_check/page/module_steward/enterprise/abutment_enterprise/abutment_problem.dart';
 import 'package:scet_check/page/module_steward/enterprise/enterprise_details.dart';
@@ -103,6 +104,7 @@ final routes = {
 
   '/releaseTask': (context) =>  ReleaseTask(), //对接发布任务列表
   '/abutmentProblem': (context,{arguments}) =>  AbutmentProblem(arguments:arguments), //问题管理列表
+  '/abutmentDetails': (context,{arguments}) =>  AbutmentDetails(arguments:arguments), //问题管理详情
   '/abutmentList': (context,{arguments}) =>  AbutmentList(arguments:arguments), //对接任务列表页面
   '/dataSource': (context,{arguments}) =>  DataSource(arguments:arguments), //对接发布任务来源页面
   '/fromSelect': (context,{arguments}) =>  FromSelect(arguments:arguments), //对接任务关联表单选择页面

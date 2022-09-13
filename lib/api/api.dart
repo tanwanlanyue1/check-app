@@ -100,9 +100,9 @@ class Api {
 
     'summaryFindPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/data-exception-summary/findPage',//在线监理，数据来源
 
-    'problemIssue':baseUrlAppTwo + 'housekeeperPlatform/d-admin/issue/page',//问题汇总，数据来源
+    'problemIssue':baseUrlAppTwo + 'housekeeperPlatform/d-admin/issue/page',//问题复查，数据来源
 
-    'problemDetail':baseUrlAppTwo + 'housekeeperPlatform/d-admin/issue',//问题汇总
+    'problemDetail':baseUrlAppTwo + 'housekeeperPlatform/d-admin/issue',//问题复查
 
     'addBatchTask':baseUrlAppTwo + 'housekeeperPlatform/d-admin/task/addBatchTask',//批量新增任务工单
 

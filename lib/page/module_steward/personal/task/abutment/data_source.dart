@@ -11,7 +11,7 @@ import 'package:scet_check/page/module_steward/personal/components/task_compon.d
 import 'package:scet_check/utils/easyRefresh/easy_refreshs.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
-///数据来源，在线监理，问题汇总
+///数据来源，在线监理，问题复查
 class DataSource extends StatefulWidget {
   Map? arguments;
   DataSource({Key? key,this.arguments}) : super(key: key);

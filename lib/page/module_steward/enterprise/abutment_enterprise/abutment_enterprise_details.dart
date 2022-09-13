@@ -9,13 +9,11 @@ import 'package:scet_check/page/module_steward/personal/components/task_compon.d
 import 'package:scet_check/utils/easyRefresh/easy_refreshs.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
-
 /// 对接的企业信息详情
 /// url ：地址
 /// title: 标题
 /// companyId :企业id
 /// details：详情
-/// problem；问题管理
 class AbutmentEnterpriseDetails extends StatefulWidget {
   final Map? arguments;
   const AbutmentEnterpriseDetails({Key? key,this.arguments}) : super(key: key);
@@ -29,24 +27,18 @@ class _AbutmentEnterpriseDetailsState extends State<AbutmentEnterpriseDetails> {
   final EasyRefreshController _controller = EasyRefreshController(); // 上拉组件控制器
   String companyId = '';//企业id
   String title = '';//企业分类标题
-  String url = '';//企业分类标题
+  String url = '';//企业分类网址
   List companyData = [];//企业信息
   List details = [];//详情信息
   int _pageNo = 1;//页码
   bool _enableLoad = true; // 是否开启加载
-  bool problem = false; // 问题信息管理
   int _total = 10; // 总条数
 
   /// 获取企业分类
   void _getProblems({typeStatusEnum? type}) async {
-    Map response;
-    if(problem){
-      response = await Request().get(Api.url[url]+'/579f4b37bf1bfe9f61b0059243f5e1b6'+'?page=$_pageNo&size=10',);
-    }else{
-      response = await Request().get(Api.url[url]+'?page=$_pageNo&size=10',
-          data: {'companyId':companyId}
-      );
-    }
+    var response = await Request().get(Api.url[url]+'?page=$_pageNo&size=10',
+        data: {'companyId':companyId}
+    );
     if(response['success'] == true) {
       _pageNo++;
       Map _data = response['result'];
@@ -111,7 +103,6 @@ class _AbutmentEnterpriseDetailsState extends State<AbutmentEnterpriseDetails> {
     title = widget.arguments?['name'] ?? '';
     companyId = widget.arguments?['id'] ?? '';
     details = widget.arguments?['data'] ?? [];
-    problem = widget.arguments?['problem'] ?? false;
     if(details.isNotEmpty){
       _getProblems(
         type: typeStatusEnum.onRefresh,

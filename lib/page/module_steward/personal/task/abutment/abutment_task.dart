@@ -37,7 +37,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
   String taskId = ''; //任务id
   List formDynamic = [];//动态表单id数组
   List getform = [];//缓存的动态表单
-  int taskSource = 0;//任务来源（1：临时任务，2：在线监理，3：问题汇总，4：计划主题）
+  int taskSource = 0;//任务来源（1：临时任务，2：在线监理，3：问题复查，4：计划主题）
   int taskStatus = 0;//任务状态 0 未执行，1 执行中，2 已提交 3 驳回 4 审核完结
   bool isImportant = false; //是否审批通过
   Map taskGuide = {};//指引
@@ -279,9 +279,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
           ),
           FormCheck.rowItem(
             title: '企业名称:',
-            child:
-            // !backlog ?
-            DownInput(
+            child: DownInput(
               data: taskDetails['companyList'],
               value: companyList['name'],
               hitStr: '请选择企业',
@@ -289,9 +287,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
                 companyList = val;
                 setState(() {});
               },
-            )
-        // :Text(checkPeople(company: taskDetails['companyList'] ?? []),style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
-          ),
+            ) ),
           Column(
             children: List.generate(formDynamic.length, (i) => taskDynamicForm(
               i: i,

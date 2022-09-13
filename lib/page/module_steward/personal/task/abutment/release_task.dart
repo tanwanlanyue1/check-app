@@ -32,7 +32,7 @@ class _ReleaseTaskState extends State<ReleaseTask> {
   List typeList = [
     {'name':'临时任务','id':1},
     {'name':'在线监理','id':2},
-    {'name':'问题汇总','id':3},
+    {'name':'问题复查','id':3},
     {'name':'预警响应','id':5},
     {'name':'运维任务','id':6},
     {'name':'其他任务','id':7},
@@ -44,6 +44,7 @@ class _ReleaseTaskState extends State<ReleaseTask> {
   ];//紧急程度
   List sourceList = [];//任务来源
   List dataIds = [];//数据来源id
+  List companyIds = [];//企业id
   List formId = [];//动态表单id
   String checkName = ''; //负责人
   String assistName = ''; //协助人员
@@ -151,7 +152,7 @@ class _ReleaseTaskState extends State<ReleaseTask> {
     }else{
       _data = {
         'assistOpList': assistOpList,//协助参与人员集合
-        'companyList': (taskType == 2 || taskType == 3) ? [] : company,//企业
+        'companyList': (taskType == 2 || taskType == 3) ? [] : companyIds,//企业
         'countOpId': countOpId,//统计人员id
         'dataIds': dataIds,//数据来源id集合
         'endDate': endTime.millisecondsSinceEpoch,//计划结束时间
@@ -162,7 +163,7 @@ class _ReleaseTaskState extends State<ReleaseTask> {
         'startDate': startTime.millisecondsSinceEpoch,//计划开始时间 13毫秒时间戳
         'superviseOpId': superviseOpId,//督导人员id
         'taskItem': taskDetail,//任务详情
-        'taskSource': taskType,//任务来源（1：临时任务，2：在线监理，3：问题汇总，）
+        'taskSource': taskType,//任务来源（1：临时任务，2：在线监理，3：问题复查，）
         'taskSourceType': typeId,//	任务来源类型（字典 TASK_SOURCE_TYPE）
       };
       var response = await Request().post(
@@ -185,6 +186,7 @@ class _ReleaseTaskState extends State<ReleaseTask> {
     }
     company = [];
     dataIds = [];
+    companyIds = [];
     if(taskType == 5 || taskType == 6 || taskType == 7){
       var res = await Navigator.pushNamed(context, '/enterprisePage',arguments: {"task":true,'name':"发布任务"});
       if(res == true){
@@ -193,7 +195,7 @@ class _ReleaseTaskState extends State<ReleaseTask> {
           companyName = '';
         }else{
           for(var i = 0; i < company.length; i++){
-            dataIds.add(company[i]['id']);
+            companyIds.add({"id":company[i]['id']});
             if(i > 0){
               companyName = companyName + ',' + company[i]['name'];
             }else{
@@ -319,6 +321,8 @@ class _ReleaseTaskState extends State<ReleaseTask> {
                 _homeModel?.setSelectCompany([]);
                 _homeModel?.setSelect([]);
                 company = [];//企业/溯源
+                dataIds = [];
+                companyIds = [];
                 companyName = '';
                 groupName = '';//分组
                 groupId = null;
@@ -338,6 +342,9 @@ class _ReleaseTaskState extends State<ReleaseTask> {
               data: groupList,
               hitStr: '请选择分组',
               callback: (val){
+                company = [];
+                dataIds = [];
+                companyIds = [];
                 groupName = val['name'];
                 groupId = val['id'];
                 setState(() {});
@@ -375,30 +382,19 @@ class _ReleaseTaskState extends State<ReleaseTask> {
               },
             ),
           ),
-          Row(
-            children: [
-              Container(
-                height: px(72),
-                width: px(140),
-                alignment: Alignment.bottomCenter,
-                child: Text('任务起止时间：',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
-              ),
-              Expanded(
-                child: Container(
-                  height: px(72),
-                  width: px(580),
-                  color: Colors.white,
-                  margin: EdgeInsets.only(top: px(24),left: px(24),right: px(24)),
-                  child: DateRange(
-                    start: startTime,
-                    end: endTime,
-                    showTime: false,
-                    callBack: (val) {
-                    },
-                  ),
-                ),
-              ),
-            ],
+          FormCheck.rowItem(
+            title: '任务起止时间:',
+            titleColor: Color(0XFF323232),
+            child: DateRange(
+              start: startTime,
+              end: endTime,
+              showTime: false,
+              callBack: (val) {
+                startTime = val[0];
+                endTime = val[1];
+                setState(() {});
+              },
+            ),
           ),
           FormCheck.rowItem(
             title: '负责人:',

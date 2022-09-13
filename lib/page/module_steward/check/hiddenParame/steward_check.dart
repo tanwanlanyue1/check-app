@@ -87,8 +87,7 @@ class _StewardCheckState extends State<StewardCheck>{
           Navigator.pushNamed(context, '/fillInForm', arguments: argumentMap).then((value) => {
               if(value == null){
                   firstTask = false,
-                _getCompany()
-                  // _getProblem()
+                  _getCompany()
               }
           });
         }
@@ -193,7 +192,7 @@ class _StewardCheckState extends State<StewardCheck>{
   /// 问题状态通知平台
   /// type	同步类型：1-状态更改；2-删除
   void _notifyProblem(String problemId) {
-    Request().delete(Api.url['notify'],
+    Request().post(Api.url['notify'],
         data: {
           "problemId":problemId,
           "type":2

@@ -115,6 +115,26 @@ class _UploadFileState extends State<UploadFile> {
   }
 
   @override
+  void didUpdateWidget(covariant UploadFile oldWidget) {
+    // TODO: implement didUpdateWidget
+    if(oldWidget.fileList != widget.fileList){
+      _url = widget.url;
+      abutment = widget.abutment;
+      amend = widget.amend;
+      if(abutment){
+        showFileList = widget.fileList ?? [];
+        fileList = [];
+        for(var i = 0; i < showFileList.length; i++){
+          fileList.add(showFileList[i]['filePath']);
+        }
+      }else{
+        fileList = widget.fileList ?? [];
+      }
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: List.generate(fileList.isEmpty ? 1 : fileList.length, (i) => report(i)),
