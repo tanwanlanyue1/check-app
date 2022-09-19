@@ -61,9 +61,9 @@ class Global {
         Map? _personalData = StorageUtil().getJSON(StorageKey.PersonalData);
         if (_personalData != null) {
           for(var i = 0; i < _personalData['roles'].length; i++){
-            if(_personalData['roles'][i]['name'] == '环保管家' || _personalData['roles'][i]['name'] == '项目经理'){
+            if(_personalData['roles'][i]['id'] == 9 || _personalData['roles'][i]['id'] == 8){
               router = '/steward';return;
-            }else if(_personalData['roles'][i]['name'] == '企业'){
+            }else if(_personalData['roles'][i]['id'] == 7){
               if(_personalData['company'] != null){
                 router = '/enterpriseHome';return;
               }

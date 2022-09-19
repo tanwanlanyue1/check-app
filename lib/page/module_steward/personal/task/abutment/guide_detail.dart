@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/down_input.dart';
 import 'package:scet_check/components/generalduty/no_data.dart';
+import 'package:scet_check/components/generalduty/sliver_app_bar.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
+import 'package:scet_check/utils/easyRefresh/easy_refreshs.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
 ///引导详情
@@ -20,6 +23,10 @@ class GuideDetail extends StatefulWidget {
 }
 
 class _GuideDetailState extends State<GuideDetail> {
+  final EasyRefreshController _controller = EasyRefreshController(); // 上拉组件控制器
+  bool _enableLoad = true; // 是否开启加载
+  int _pageNo = 1; // 当前页码
+  int _total = 10; // 总条数
   int type = 1; //类型 1:废水分钟值，2：废水小时值，3：废气分钟值，4：废气小时值
   List recordList = []; //判研次数列表
   List relExceptionFactorList = []; //异常数据列表
@@ -81,19 +88,59 @@ class _GuideDetailState extends State<GuideDetail> {
   ];//要点
   /// 分页查询研判记录的异常数据
   /// type:
-  void _findExceptionPage() async {
+  void _findExceptionPage({typeStatusEnum? types}) async {
     var response = await Request().post(
-      Api.url['findExceptionPage']+'?page=1&size=100',
+      Api.url['findExceptionPage']+'?page=$_pageNo&size=10',
       data: {
         'id': id,
         "type": type,
       },
     );
     if (response['errCode'] == '10000') {
-      allList = response['result']['page']['list'];
-      relExceptionFactorList = response['result']['relExceptionFactorList'];
+      _pageNo++;
+      if (mounted) {
+        if(types == typeStatusEnum.onRefresh) {
+          // 下拉刷新
+          _onRefresh(data: response['result'], total: response['result']['page']['total']);
+        }else if(types == typeStatusEnum.onLoad) {
+          // 上拉加载
+          _onLoad(data: response['result'], total: response['result']['page']['total']);
+        }
+      }
+      // allList = response['result']['page']['list'];
+      // relExceptionFactorList = response['result']['relExceptionFactorList'];
       setState(() {});
     }
+  }
+  /// 下拉刷新
+  /// 判断是否是企业端,剔除掉非企业端看的问题
+  _onRefresh({required Map data,required int total}) {
+    _total = total;
+    allList = data['page']['list'];
+    relExceptionFactorList = data['relExceptionFactorList'];
+    _enableLoad = true;
+    _pageNo = 2;
+    _controller.resetLoadState();
+    _controller.finishRefresh();
+    if(allList.length >= total){
+      _controller.finishLoad(noMore: true);
+      _enableLoad = false;
+    }
+    setState(() {});
+  }
+
+  /// 上拉加载
+  /// 当前数据等于总数据，关闭上拉加载
+  _onLoad({required Map data,required int total}) {
+    _total = total;
+    allList.addAll(data['page']['list']);
+    relExceptionFactorList.addAll(data['relExceptionFactorList']);
+    if(allList.length >= total){
+      _controller.finishLoad(noMore: true);
+      _enableLoad = false;
+    }
+    _controller.finishLoadCallBack!();
+    setState(() {});
   }
 
   ///表头
@@ -126,7 +173,7 @@ class _GuideDetailState extends State<GuideDetail> {
     }
     id = recordList[0]['id'];
     type = widget.arguments?['factorBelong'] == 1 ? 1 : 3;
-    _findExceptionPage();
+    _findExceptionPage(types: typeStatusEnum.onRefresh,);
     super.initState();
   }
 
@@ -143,8 +190,26 @@ class _GuideDetailState extends State<GuideDetail> {
             },
           ),
           Expanded(
-            child: detail(),
-          )
+            child: EasyRefresh(
+              enableControlFinishRefresh: true,
+              enableControlFinishLoad: true,
+              topBouncing: true,
+              controller: _controller,
+              taskIndependence: false,
+              footer: footers(),
+              header: headers(),
+              onLoad: _enableLoad
+                  ? () async {
+                _findExceptionPage(types: typeStatusEnum.onLoad,);
+              }
+                  : null,
+              onRefresh: () async {
+                _pageNo = 1;
+                _findExceptionPage(types: typeStatusEnum.onRefresh,);
+              },
+              child: detail(),
+            ),
+          ),
         ],
       ),
     );
@@ -154,7 +219,7 @@ class _GuideDetailState extends State<GuideDetail> {
   Widget detail() {
     return Container(
       padding: EdgeInsets.only(left: px(24), right: px(24)),
-      child: ListView(
+      child: Column(
         children: [
           Column(
             children: List.generate(gist.length, (i) => mainPoint(i: i)),
@@ -178,7 +243,7 @@ class _GuideDetailState extends State<GuideDetail> {
                     } else {
                       type = widget.arguments?['factorBelong'] == 1 ? 2 : 4;
                     }
-                    _findExceptionPage();
+                    _findExceptionPage(types: typeStatusEnum.onRefresh,);
                     setState(() {});
                   },
                 )),
@@ -200,7 +265,7 @@ class _GuideDetailState extends State<GuideDetail> {
                   onTap: () {
                     minute = 1;
                     type = widget.arguments?['factorBelong'] == 1 ? 1 : 3;
-                    _findExceptionPage();
+                    _findExceptionPage(types: typeStatusEnum.onRefresh,);
                     setState(() {});
                   },
                 ),
@@ -216,7 +281,7 @@ class _GuideDetailState extends State<GuideDetail> {
                   onTap: () {
                     minute = 2;
                     type = widget.arguments?['factorBelong'] == 1 ? 2 : 4;
-                    _findExceptionPage();
+                    _findExceptionPage(types: typeStatusEnum.onRefresh,);
                     setState(() {});
                   },
                 ),
@@ -294,28 +359,49 @@ class _GuideDetailState extends State<GuideDetail> {
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(px(8.0))),
       ),
-      child: Column(
-        children: [
-          FormCheck.formTitle(
-              gist[i]['name'],
-              showUp: true,
-              tidy: gist[i]['tidy'],
-              onTaps: (){
-                gist[i]['tidy'] = !gist[i]['tidy'];
-                setState(() {});
-              }
-          ),
-          Visibility(
-            visible: gist[i]['tidy'],
-            child: GestureDetector(
-              child: Container(
-                width: Adapt.screenW(),
-                color: Colors.white,
-                child: HtmlWidget(widget.arguments?['recordList'][gist[i]['url']] ?? '/'),
+      child: InkWell(
+        child: Column(
+          children: [
+            FormCheck.formTitle(
+                gist[i]['name'],
+                showUp: true,
+                tidy: gist[i]['tidy'],
+                onTaps: (){
+                  gist[i]['tidy'] = !gist[i]['tidy'];
+                  setState(() {});
+                }
+            ),
+            Visibility(
+              visible: gist[i]['tidy'],
+              child: GestureDetector(
+                child: Container(
+                  width: Adapt.screenW(),
+                  color: Colors.white,
+                  child: HtmlWidget(
+                    widget.arguments?['recordList'][gist[i]['url']] ?? '/',
+                    // customWidgetBuilder: (element) {
+                    //         if(element.innerHtml.contains('img')){
+                    //           String url = '';
+                    //           int first = element.innerHtml.indexOf('src="');
+                    //           url = element.innerHtml.substring(first+5);
+                    //           int two = url.indexOf('"');
+                    //           url = url.substring(0,two);
+                    //           if(url.contains('http:') == false){
+                    //             url = Api.baseUrlApp + url;
+                    //           }
+                    //           return Image.network(url);
+                    //         }
+                    // },
+                  ),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
+        onTap: (){
+          gist[i]['tidy'] = !gist[i]['tidy'];
+          setState(() {});
+        },
       ),
     );
   }

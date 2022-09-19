@@ -43,7 +43,7 @@ class _ProblemPageState extends State<ProblemPage> {
   bool firm = false; // 是否为企业
   bool tidy = false; // 隐患问题收起展示
   List hiddenProblem = []; //隐患问题数组
-  List imgDetails = []; //签到图片
+  // List imgDetails = []; //签到图片
   Uuid uuid = Uuid(); //uuid
   String _uuid = ''; //uuid
   Position? position; //定位
@@ -294,11 +294,11 @@ class _ProblemPageState extends State<ProblemPage> {
   ///签到
   ///获取uuid,用来上传
   ///position,imgDetails清空每次的坐标和图片
+  ///清空掉上次选择的坐标和排查人员
   void singIn(){
     _uuid = uuid.v4();
     checkName = '';
     position = null;
-    imgDetails = [];
     showModalBottomSheet(
         context: context,
         isScrollControlled:true,
@@ -362,7 +362,6 @@ class _ProblemPageState extends State<ProblemPage> {
                                     bool isLocationServiceEnabled  = await Geolocator.isLocationServiceEnabled();
                                     if(isLocationServiceEnabled){
                                       position = await Geolocator.getCurrentPosition(forceAndroidLocationManager: true,desiredAccuracy: LocationAccuracy.medium);
-                                      // position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium);
                                       if(position != null){
                                         BotToast.cleanAll();
                                       }

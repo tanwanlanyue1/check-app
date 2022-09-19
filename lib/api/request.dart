@@ -55,6 +55,8 @@ class Request {
         onResponse: (Response response,ResponseInterceptorHandler handler) {
         if ((response.data is Map && response.data['statusCode'] == 401) || (response.data is String && jsonDecode(response.data)['errCode'] == '30002')) {
           ToastWidget.showToastMsg('用户信息过时，请重新登录！');
+          StorageUtil().remove(StorageKey.Token);
+          StorageUtil().remove(StorageKey.PersonalData);
           BuildContext context = navigatorKey.currentState!.overlay!.context;
           Future.delayed(const Duration(seconds: 0)).then((onValue) {
             Navigator.pushNamedAndRemoveUntil(context, '/logIn', (route) => false);
@@ -66,6 +68,8 @@ class Request {
       onError: (DioError e,ErrorInterceptorHandler  handler) {
         if (e.response?.statusCode == 401) {
           ToastWidget.showToastMsg('用户信息过时，请重新登录！');
+          StorageUtil().remove(StorageKey.Token);
+          StorageUtil().remove(StorageKey.PersonalData);
           BuildContext context = navigatorKey.currentState!.overlay!.context;
           Future.delayed(const Duration(seconds: 0)).then((onValue) {
             Navigator.pushNamedAndRemoveUntil(context, '/logIn', (route) => false);

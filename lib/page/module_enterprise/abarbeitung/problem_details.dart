@@ -35,7 +35,7 @@ class _ProblemDetailsState extends State<ProblemDetails> {
   void _evaluation() async {
     checkTime = formatTime(problemList['createdAt']);
     solvedAt = problemList['solvedAt'] != null ? formatTime(problemList['solvedAt']) : '';
-    imgDetails = problemList['images'];
+    imgDetails = problemList['images'] ?? [];
     isImportant = problemList['isImportant'];
     checkPersonnel = problemList['inventory']['checkPersonnel'];
     fillPerson = problemList['user'] != null ? (problemList['user']?['nickname']) : '';

@@ -145,7 +145,7 @@ class _HomeClassifyState extends State<HomeClassify> with RouteAware{
                flex: 1,
                child: Container(
                  alignment: Alignment.centerLeft,
-                 child: Text('隐患排查平台',style: TextStyle(color: Color(0xff323233),fontSize: sp(38),fontFamily: 'M'),),
+                 child: Text('现场排查工具',style: TextStyle(color: Color(0xff323233),fontSize: sp(38),fontFamily: 'M'),),
                ),
              ),
            ],

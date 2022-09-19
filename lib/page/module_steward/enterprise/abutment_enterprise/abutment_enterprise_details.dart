@@ -32,7 +32,6 @@ class _AbutmentEnterpriseDetailsState extends State<AbutmentEnterpriseDetails> {
   List details = [];//详情信息
   int _pageNo = 1;//页码
   bool _enableLoad = true; // 是否开启加载
-  int _total = 10; // 总条数
 
   /// 获取企业分类
   void _getProblems({typeStatusEnum? type}) async {
@@ -68,7 +67,6 @@ class _AbutmentEnterpriseDetailsState extends State<AbutmentEnterpriseDetails> {
   }
   // 下拉刷新
   _onRefresh({required List data,required int total}) {
-    _total = total;
     companyData = data;
     _enableLoad = true;
     _pageNo = 2;
@@ -85,7 +83,6 @@ class _AbutmentEnterpriseDetailsState extends State<AbutmentEnterpriseDetails> {
   /// 当前数据等于总数据，关闭上拉加载
   _onLoad({required List data, required int total}) {
     if(mounted){
-      _total = total;
       if(companyData.length >= total){
         _enableLoad = false;
         _controller.finishLoad(noMore: true);

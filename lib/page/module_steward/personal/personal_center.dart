@@ -24,16 +24,21 @@ class _PersonalCenterState extends State<PersonalCenter> {
   List classify = ['历史台账','发布任务','待办任务','已办任务','审核问题',"修改密码","登录统计"];//分类
   List commonClassify = ['历史台账','待办任务','已办任务',"修改密码","登录统计"];//普通用户分类分类
   bool manager = false;//当前账号是否为项目经理
-
+  String roleName = '';//权限名称
   @override
   void initState() {
     // TODO: implement initState
     userName = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
     List roles = [];
     for(var i = 0; i < jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'].length; i++){
-      roles.add(jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'][i]['name']);
+      roles.add(jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'][i]['id']);
+      if(jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'][i]['id'] == 8){
+        roleName = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'][i]['name'];
+      }else if(jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'][i]['id'] == 9 && jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'][i]['id'] != 8){
+        roleName = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'][i]['name'];
+      }
     }
-    manager = roles.contains('项目经理');
+    manager = roles.contains(8);
     super.initState();
   }
 
@@ -125,7 +130,7 @@ class _PersonalCenterState extends State<PersonalCenter> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: px(8.0)),
-                      child: Text('环保管家',style: TextStyle(fontSize: sp(22),color: Color(0XFF2E2F33))),
+                      child: Text(roleName,style: TextStyle(fontSize: sp(22),color: Color(0XFF2E2F33))),
                     )
                   ],
                 ),
