@@ -1,10 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
-import 'package:scet_check/components/generalduty/upload_image.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/utils/screen/screen.dart';
@@ -15,15 +12,15 @@ import 'abarbeitung_pdf.dart';
 
 ///企业清单详情
 /// arguments:{'uuid':清单id，或者问题id,'company':true}
-class EnterprisInventory extends StatefulWidget {
+class EnterpriseInventory extends StatefulWidget {
   Map arguments;
-  EnterprisInventory({Key? key,required this.arguments,}) : super(key: key);
+  EnterpriseInventory({Key? key,required this.arguments,}) : super(key: key);
 
   @override
-  _EnterprisInventoryState createState() => _EnterprisInventoryState();
+  _EnterpriseInventoryState createState() => _EnterpriseInventoryState();
 }
 
-class _EnterprisInventoryState extends State<EnterprisInventory> {
+class _EnterpriseInventoryState extends State<EnterpriseInventory> {
   /// 状态；-1：未处理;0:处理完；1：处理中
   int type = 1;
   bool tidy = true; //展开/收起

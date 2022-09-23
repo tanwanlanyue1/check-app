@@ -28,6 +28,7 @@ class LawComponents{
             offstage: textEditingController.text.isEmpty,
             child: InkWell(
               onTap: () {
+                callBack?.call('');
                 textEditingController.clear();
               },
               child: Icon(

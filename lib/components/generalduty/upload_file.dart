@@ -103,6 +103,7 @@ class _UploadFileState extends State<UploadFile> {
     _url = widget.url;
     abutment = widget.abutment;
     amend = widget.amend;
+    icon = widget.icon;
     if(abutment){
       showFileList = widget.fileList ?? [];
       for(var i = 0; i < showFileList.length; i++){
@@ -121,6 +122,7 @@ class _UploadFileState extends State<UploadFile> {
       _url = widget.url;
       abutment = widget.abutment;
       amend = widget.amend;
+      icon = widget.icon;
       if(abutment){
         showFileList = widget.fileList ?? [];
         fileList = [];
@@ -158,7 +160,7 @@ class _UploadFileState extends State<UploadFile> {
                     width: px(30),
                     height: px(30),
                     margin: EdgeInsets.only(right: px(8)),
-                    child: Image.asset('lib/assets/icons/check/PDF.png'),
+                    child: Icon(Icons.file_copy,color: Colors.blue,size: 12,),
                   ),
                 ),
                 Expanded(

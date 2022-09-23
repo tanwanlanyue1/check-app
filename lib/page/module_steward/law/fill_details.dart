@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scet_check/components/generalduty/from_html_core.dart';
 import 'package:scet_check/page/module_steward/check/hiddenParame/components/rectify_components.dart';
 import 'package:scet_check/utils/screen/screen.dart';
 
@@ -17,50 +18,12 @@ class _FillDetailsState extends State<FillDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          RectifyComponents.appBarBac(),
-          Container(
-            color: Colors.white,
-            height: px(88),
-            child: Row(
-              children: [
-                InkWell(
-                  child: Container(
-                    height: px(40),
-                    width: px(41),
-                    margin: EdgeInsets.only(left: px(20)),
-                    child: Image.asset('lib/assets/icons/other/chevronLeft.png',fit: BoxFit.fill,)
-                  ),
-                  onTap: (){
-                    Navigator.pop(context);
-                  },
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Center(
-                    child: Text("${widget.arguments?['law']['title']}",style: TextStyle(color: Color(0xff323233),fontSize: sp(32),
-                        fontFamily: 'M',),maxLines: 1,overflow: TextOverflow.ellipsis,),
-                  ),
-                ),
-                // Visibility(
-                //   visible: widget.arguments?['sub'],
-                //   child: InkWell(
-                //     child: Container(
-                //       padding: EdgeInsets.only(right: px(20),left: px(20)),
-                //       color: Colors.transparent,
-                //       child: Text('提交',style: TextStyle(fontSize: sp(24)),),
-                //     ),
-                //     onTap: (){
-                //       StorageUtil().setJSON('law',widget.arguments?['law']);
-                //       Navigator.of(context).popUntil(ModalRoute.withName('/fillInForm'));
-                //     },
-                //   ),
-                // ),
-              ],
-            ),
-          )
-        ],
+      body: FromHtmlCore(
+        arguments: {
+          "name":widget.arguments?['title'],
+          "htmlUrl":widget.arguments?['law'],
+          "fileList":widget.arguments?['fileList'] ?? [],
+        },
       ),
     );
   }

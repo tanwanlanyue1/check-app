@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/down_input.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/components/generalduty/upload_file.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
+import 'package:scet_check/model/provider/provider_home.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
@@ -39,8 +41,9 @@ class _AbutmentTaskState extends State<AbutmentTask> {
   List getform = [];//缓存的动态表单
   int taskSource = 0;//任务来源（1：临时任务，2：在线监理，3：问题复查，4：计划主题）
   int taskStatus = 0;//任务状态 0 未执行，1 执行中，2 已提交 3 驳回 4 审核完结
-  bool isImportant = false; //是否审批通过
+  bool isImportant = true; //是否审批通过
   Map taskGuide = {};//指引
+  HomeModel? _homeModel; //全局的选择企业
 
   @override
   void initState() {
@@ -92,28 +95,22 @@ class _AbutmentTaskState extends State<AbutmentTask> {
 
   /// 提交对接任务
   void _submiTask() async {
-    List imgList = [];
-    for(var i = 0; i < checkImages.length; i++){
-      imgList.add({'filePath':checkImages[i]});
-    }
-    if(imgList.isEmpty){
-      ToastWidget.showToastMsg('图片不能为空');
-    }else if(taskFiles.isEmpty){
-      ToastWidget.showToastMsg('文件不能为空');
-    }else{
-      var response = await Request().post(
-        Api.url['submitTask'],
-        data: {
-          'id':taskId,
-          'fileList':taskFiles,
-          'imgList':imgList,
-        },
-      );
-      if(response['errCode'] == '10000') {
-        ToastWidget.showToastMsg('提交成功');
-        Navigator.pop(context,true);
-        setState(() {});
-      }
+    // List imgList = [];
+    // for(var i = 0; i < checkImages.length; i++){
+    //   imgList.add({'filePath':checkImages[i]});
+    // }
+    var response = await Request().post(
+      Api.url['submitTask'],
+      data: {
+        'id':taskId,
+        'fileList':taskFiles,
+        // 'imgList':imgList,
+      },
+    );
+    if(response['errCode'] == '10000') {
+      ToastWidget.showToastMsg('提交成功');
+      Navigator.pop(context,true);
+      setState(() {});
     }
   }
 
@@ -142,6 +139,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
 
   @override
   Widget build(BuildContext context) {
+    _homeModel = Provider.of<HomeModel>(context, listen: true);
     return Scaffold(
       endDrawer: Container(),
       body: Column(
@@ -260,7 +258,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
                   '表单列表',
                 ),
               ),
-              Visibility(
+              Visibility(//添加表单——填报表单
                 visible: !backlog,
                 child: GestureDetector(
                   child: SizedBox(
@@ -275,19 +273,56 @@ class _AbutmentTaskState extends State<AbutmentTask> {
                   },
                 ),
               ),
+              Visibility(
+                visible: !backlog,
+                child: GestureDetector(
+                  child: SizedBox(
+                      child: Text(' 添加表单',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)))),
+                  onTap: () async {
+                    var res = await Navigator.pushNamed(context, '/fromSelect',arguments: {'taskId':taskId,'formList':formDynamic});
+                    if(res != null){
+                      _getTasks();
+                    }
+                  },
+                ),
+              ),
             ],
           ),
           FormCheck.rowItem(
             title: '企业名称:',
-            child: DownInput(
-              data: taskDetails['companyList'],
-              value: companyList['name'],
-              hitStr: '请选择企业',
-              callback: (val){
-                companyList = val;
-                setState(() {});
-              },
-            ) ),
+            child: Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      child: Text(companyList.isEmpty ? '请选择企业' : companyList['name'],style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+                      onTap: () async{
+                        if(companyList.isEmpty){
+                          _homeModel?.setSelectCompany([]);
+                          _homeModel?.setSelect([]);
+                        }
+                        var res = await Navigator.pushNamed(context, '/abutmentEnterprise',arguments: {"companyList":taskDetails['companyList'],});
+                        if(res == true){
+                          if(_homeModel?.selectCompany.length != 0){
+                            companyList = _homeModel?.selectCompany[0];
+                          }
+                          setState(() {});
+                        }
+                      },
+                    ),
+                  ),
+                     Icon(Icons.keyboard_arrow_right)
+                ],
+                )
+                // child: DownInput(
+                //   data: taskDetails['companyList'],
+                //   value: companyList['name'],
+                //   hitStr: '请选择企业',
+                //   callback: (val){
+                //     companyList = val;
+                //     setState(() {});
+                //   },
+                // )
+          ),
           Column(
             children: List.generate(formDynamic.length, (i) => taskDynamicForm(
               i: i,
@@ -403,19 +438,19 @@ class _AbutmentTaskState extends State<AbutmentTask> {
           FormCheck.formTitle(
             '填报信息',
           ),
-          FormCheck.rowItem(
-            alignStart: true,
-            title: "现场照片:",
-            child: UploadImage(
-              imgList: checkImages,
-              abutment: true,
-              closeIcon: !backlog,
-              callback: (List? data) {
-                checkImages = data ?? [];
-                setState(() {});
-              },
-            ),
-          ),
+          // FormCheck.rowItem(
+          //   alignStart: true,
+          //   title: "现场照片:",
+          //   child: UploadImage(
+          //     imgList: checkImages,
+          //     abutment: true,
+          //     closeIcon: !backlog,
+          //     callback: (List? data) {
+          //       checkImages = data ?? [];
+          //       setState(() {});
+          //     },
+          //   ),
+          // ),
           FormCheck.rowItem(
             title: '任务附件:',
             alignStart: true,

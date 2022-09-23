@@ -41,6 +41,7 @@ import 'package:scet_check/page/module_steward/personal/audit_list.dart';
 import 'package:scet_check/page/module_steward/personal/audit_problem.dart';
 import 'package:scet_check/page/module_steward/personal/change_password.dart';
 import 'package:scet_check/page/module_steward/personal/register_statistics.dart';
+import 'package:scet_check/page/module_steward/personal/task/abutment/abutment_enterprise.dart';
 import 'package:scet_check/page/module_steward/personal/task/abutment/abutment_from.dart';
 import 'package:scet_check/page/module_steward/personal/task/abutment/abutment_list.dart';
 import 'package:scet_check/page/module_steward/personal/task/abutment/abutment_task.dart';
@@ -78,7 +79,7 @@ final routes = {
   '/stewardCheck': (context,{arguments}) =>  StewardCheck(arguments:arguments), //管家排查
   '/PDFView': (context,{arguments}) =>  PDFView(pathPDF:arguments), //PDF页面
   '/companyFile': (context,{arguments}) =>  CompanyFile(arguments:arguments), //一企一档
-  '/messageDetailsPage': (context) =>  MessageDetailsPage(), //通知消息详情
+  '/messageDetailsPage': (context,{arguments}) =>  MessageDetailsPage(arguments:arguments), //通知消息详情
   '/homeClassify': (context) =>  HomeClassify(), //首页分类
   '/historyTask': (context,{arguments}) =>  HistoryTask(arguments:arguments), //历史台账
   '/backlogTask': (context,{arguments}) =>  BacklogTask(arguments:arguments), //待办任务
@@ -104,6 +105,7 @@ final routes = {
 
   '/releaseTask': (context) =>  ReleaseTask(), //对接发布任务列表
   '/abutmentProblem': (context,{arguments}) =>  AbutmentProblem(arguments:arguments), //问题管理列表
+  '/abutmentEnterprise': (context,{arguments}) =>  AbutmentEnterprise(arguments:arguments), //填报任务的选择企业
   '/abutmentDetails': (context,{arguments}) =>  AbutmentDetails(arguments:arguments), //问题管理详情
   '/abutmentList': (context,{arguments}) =>  AbutmentList(arguments:arguments), //对接任务列表页面
   '/dataSource': (context,{arguments}) =>  DataSource(arguments:arguments), //对接发布任务来源页面
@@ -116,7 +118,7 @@ final routes = {
   '/abutmentEnterpriseDetails': (context,{arguments}) =>  AbutmentEnterpriseDetails(arguments:arguments), //对接一企一档信息
 
 ///企业端
-  '/enterprisInventory': (context,{arguments}) =>  EnterprisInventory(arguments:arguments), //企业清单详情
+  '/enterpriseInventory': (context,{arguments}) =>  EnterpriseInventory(arguments:arguments), //企业清单详情
   '/abarbeitungFrom': (context,{arguments}) =>  AbarbeitungFrom(arguments:arguments), //企业清单详情
   '/fillAbarbeitung': (context,{arguments}) =>  FillAbarbeitung(arguments:arguments), //填报整改问题 / 复查填报
 };

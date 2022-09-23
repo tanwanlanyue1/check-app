@@ -203,7 +203,7 @@ class _InventoryPageState extends State<InventoryPage> {
                         callBack:()async{
                           if(firm){
                             //企业端跳转到企业清单详情
-                            Navigator.pushNamed(context, '/enterprisInventory',
+                            Navigator.pushNamed(context, '/enterpriseInventory',
                                 arguments: {'uuid':hiddenInventory[i]['id'],'company':false});
                           }else{
                             //管家端

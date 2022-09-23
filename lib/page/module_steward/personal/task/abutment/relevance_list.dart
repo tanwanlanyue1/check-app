@@ -91,15 +91,29 @@ class _RelevanceListState extends State<RelevanceList> {
               },
               child: backlog ?
               Container() :
-              GestureDetector(
-                child: Container(
-                    width: px(40),
-                    height: px(41),
-                    margin: EdgeInsets.only(right: px(20)),
-                    child: Image.asset('lib/assets/icons/form/add.png')),
+              Row(
+                children: [
+                  GestureDetector(
+                    child: Container(
+                        width: px(40),
+                        height: px(41),
+                        margin: EdgeInsets.only(right: px(20)),
+                        child: Image.asset('lib/assets/icons/form/add.png')),
                     onTap: () async {
                       addRelevance();
                     },
+                  ),
+                  Visibility(
+                    visible: !backlog,
+                    child: GestureDetector(
+                      child: SizedBox(
+                          child: Text(' 填报表单',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)))),
+                      onTap: () async {
+                        addRelevance();
+                      },
+                    ),
+                  ),
+                ],
               )
           ),
           Expanded(

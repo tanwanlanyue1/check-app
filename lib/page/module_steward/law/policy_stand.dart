@@ -24,29 +24,46 @@ class PolicyStand extends StatefulWidget {
 class _PolicyStandState extends State<PolicyStand> {
   late TextEditingController textEditingController;//输入框控制器
   List lawList = []; //全部法律文件
-  List nationList = [];//分类文件
-  ///分类的图标
-  List icons = [
-    {'name':'国家标准文件','icon':'lib/assets/icons/other/country.png'},
-    {'name':'地方标准文件','icon':'lib/assets/icons/other/place.png'},
-    {'name':'行业标准文件','icon':'lib/assets/icons/other/industry.png'},
-    // {'name':'通知文件','icon':'lib/assets/icons/other/inform.png'},
-    // {'name':'其他文件','icon':'lib/assets/icons/other/acronym.png'},
-  ];
+  List typeList = [];//分类文件
+  List? searchCompany;//搜索的法律文件
 
-  /// 获取法律文件
-  ///type 1,国家标准文件;2,地方标准文件;3,行业标准文件
-  void _getProfile() async {
-    var response = await Request().get(Api.url['lawFile']);
-    if(response['statusCode'] == 200) {
-      lawList = response['data'];
+  /// 获取知识类型
+  void _getFindKnowledgeSelector() async {
+    var response = await Request().get(Api.url['findKnowledgeSelector'],);
+    if(response['errCode'] == '10000') {
+      typeList = response['result'];
       setState(() {});
     }
+  }
+  //选择图标
+  String hierarchySelect(String? title) {
+    switch(title) {
+      case '国家标准文件':
+        return 'lib/assets/icons/other/country.png';
+      case '地方标准文件':
+        return 'lib/assets/icons/other/place.png';
+      case '行业标准文件':
+        return 'lib/assets/icons/other/industry.png';
+      default:
+        return 'lib/assets/icons/other/acronym.png';
+    }
+  }
+  ///搜索方法
+  void _search(String text) {
+    if(text.isNotEmpty){
+      List list = typeList.where((v) {
+        return v['typeName']!.toLowerCase().contains(text.toLowerCase());
+      }).toList();
+      searchCompany = list;
+    }else{
+      searchCompany = typeList;
+    }
+    setState(() {});
   }
   @override
   void initState() {
     super.initState();
-    _getProfile();
+    _getFindKnowledgeSelector();
     textEditingController = TextEditingController();
   }
 
@@ -72,12 +89,15 @@ class _PolicyStandState extends State<PolicyStand> {
             alignment: Alignment.center,
             child: LawComponents.search(
                 textEditingController: textEditingController,
-                callBack: (val){}
+                callBack: (val){
+                  _search(val);
+                }
             ),
           ):
           Container(),
           Column(
-            children: List.generate(icons.length, (i) => rowFile(i)),
+            children: List.generate(
+                searchCompany == null ? typeList.length : searchCompany!.length,(i) => rowFile(i)),
           ),
         ],
       ),
@@ -102,11 +122,11 @@ class _PolicyStandState extends State<PolicyStand> {
                 width: px(64),
                 height: px(64),
                 margin: EdgeInsets.only(right: px(24),left: px(20)),
-                child: Image.asset('${icons[i]['icon']}')
+                child: Image.asset(hierarchySelect(typeList[i]['typeName']))
             ),
             Container(
                 margin: EdgeInsets.only(right: px(24),left: px(20)),
-                child: Text('${icons[i]['name']}',style: TextStyle(fontSize: sp(28),color: Color(0xff323233),fontFamily: 'R'),)
+                child: Text('${typeList[i]['typeName']}',style: TextStyle(fontSize: sp(28),color: Color(0xff323233),fontFamily: 'R'),)
             ),
             Spacer(),
             Container(
@@ -119,13 +139,7 @@ class _PolicyStandState extends State<PolicyStand> {
         ),
       ),
       onTap: (){
-        nationList = [];//清空分类文件
-        for(var j=0; j<lawList.length; j++){
-          if(lawList[j]['type'] == i+1){
-            nationList.add(lawList[j]);
-          }
-        }
-        Navigator.pushNamed(context, '/fileLists',arguments: {'type':i,'file':nationList,'law': !widget.search});
+        Navigator.pushNamed(context, '/fileLists',arguments: {'name':typeList[i]['typeName'],'id':typeList[i]['id'],'law': !widget.search});
       },
     );
   }

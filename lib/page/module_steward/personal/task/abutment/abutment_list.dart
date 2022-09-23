@@ -196,7 +196,7 @@ class _AbutmentListState extends State<AbutmentList> {
                       width: px(32),
                       child: Image.asset('lib/assets/icons/check/sandClock.png'),
                     ),
-                    Text(DateTime.fromMillisecondsSinceEpoch(taskList[i]['createDate']).toString().substring(0,19),
+                    Text(DateTime.fromMillisecondsSinceEpoch(taskList[i]['createDate']).toString().substring(0,16),
                       style: TextStyle(color: Color(0xff969799),fontSize: sp(26)),),
                   ],
                 ),

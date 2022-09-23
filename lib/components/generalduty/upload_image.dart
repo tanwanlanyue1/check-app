@@ -309,8 +309,8 @@ class _UploadImageState extends State<UploadImage> {
                   List _img = [];
                   for (var item in _imagesList) {
                     abutment ?
-                    _img.add(Api.baseUrlAppImage + item):
-                    _img.add(Api.baseUrlApp + item);
+                    _img.add(item is Map ? Api.baseUrlAppImage + item['filePath'] : Api.baseUrlAppImage + item ):
+                    _img.add((item is Map ? Api.baseUrlApp + item['filePath'] : Api.baseUrlApp + item ));
                   }
                   var res = await Navigator.of(context).push(FadeRoute(page: PhotoViewGalleryScreen(
                     images:_img,//传入图片list

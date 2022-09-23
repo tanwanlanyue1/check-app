@@ -145,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
               width: px(160),
               height: px(160),
               margin: EdgeInsets.only(top: px(130)),
-              child: Image.asset('lib/assets/images/login/logo.png',),
+              child: Image.asset('lib/assets/icons/home/iconLogo.png',),
             )
           ],
         ),

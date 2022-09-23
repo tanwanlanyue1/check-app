@@ -271,7 +271,7 @@ class _StewardCheckState extends State<StewardCheck>{
               surveyItem('签到坐标','${(double.parse(repertoire['longitude'])).toStringAsFixed(2)}, '
                   '${((double.parse(repertoire['latitude'])).toStringAsFixed(2))}',),
               surveyItem('排查人员',stewardCheck),
-              // surveyItem('企业名',repertoire['company']['name']),
+              surveyItem('企业名',repertoire['company']['name']),
               surveyItem('排查日期',checkDate.substring(0,10)),
               // FormCheck.rowItem(
               //   alignStart: true,

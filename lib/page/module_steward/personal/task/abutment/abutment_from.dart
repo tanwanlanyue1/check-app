@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
@@ -149,9 +150,9 @@ class _AbutmentFromState extends State<AbutmentFrom> {
                 }
               }else{
                 if(data.isEmpty){
-                  data.addAll({"${fieldList[i]['fieldValue']}":fieldMap});
+                  data.addAll({"${fieldList[i]['fieldValue']}":fieldMap['fieldContent']});
                 }else{
-                  data[fieldList[i]['fieldValue']] = val;
+                  data[fieldList[i]['fieldValue']] = val['fieldContent'];
                 }
               }
               //请求问题小类列表 并清空之前的小类选项
@@ -239,7 +240,9 @@ class _AbutmentFromState extends State<AbutmentFrom> {
       if(data[fieldList[i]['fieldValue']] != null){
         return fieldList[i]['fieldValue'] == 'issueMainType' || fieldList[i]['fieldValue'] == 'issueSubType'?
         (data[fieldList[i]['fieldValue']]?['typeName'] ?? ''):
-        data[fieldList[i]['fieldValue']]?['fieldContent'];
+        (data[fieldList[i]['fieldValue']] is Map ? (data[fieldList[i]['fieldValue']]?['fieldContent'] ):
+        data[fieldList[i]['fieldValue']]
+        );
       }else{
         return '请选择${fieldList[i]['fieldName']}';
       }
@@ -312,7 +315,7 @@ class _AbutmentFromState extends State<AbutmentFrom> {
         'companyId':companyList['id'],
         'companyName':companyList['name'],
         'issueFormJsonStr': jsonEncode(data),
-      };
+      };print("dataForm===$dataForm");
       var response = await Request().post(
         Api.url['saveForm'],
         data:dataForm,

@@ -48,6 +48,8 @@ class _AbarbeitungPdfState extends State<AbarbeitungPdf> {
   /// 上传pdf文件
   /// result: 文件数组
   /// 处理上传图片返回回来的格式，将\转化为/
+  /// allowMultiple: 是否可以多选
+  /// allowedExtensions: 筛选打开的文件格式 pdf
   void _upload() async {
     String url = _url + utcTransition() + _uuid;
     FilePickerResult? result = await FilePicker.platform.pickFiles(

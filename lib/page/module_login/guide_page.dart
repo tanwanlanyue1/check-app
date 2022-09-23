@@ -14,6 +14,8 @@ import 'components/update_app.dart';
 
 ///引导页
 class GuidePage extends StatefulWidget {
+  const GuidePage({Key? key}) : super(key: key);
+
   @override
   _GuidePageState createState() => _GuidePageState();
 }
@@ -38,7 +40,7 @@ class _GuidePageState extends State<GuidePage> {
                   width: px(200),
                   height: px(200),
                   margin: EdgeInsets.only(top: px(252),bottom: px(24)),
-                  child: Image.asset('lib/assets/images/login/logo.png',),
+                  child: Image.asset('lib/assets/icons/home/iconLogo.png',),
                 ),
                 ShaderMask(
                   shaderCallback: (bounds) {
@@ -48,7 +50,7 @@ class _GuidePageState extends State<GuidePage> {
                     ).createShader(Offset.zero & bounds.size);
                   },
                   child: Text(
-                    '排查工具',
+                    '现场排查',
                     textAlign: TextAlign.left,
                     style: TextStyle(color: Colors.white,fontSize: sp(48),fontFamily: 'M'),
                   ),

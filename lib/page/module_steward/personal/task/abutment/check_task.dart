@@ -197,7 +197,8 @@ class _CheckTaskState extends State<CheckTask> {
                       width: px(32),
                       child: Image.asset('lib/assets/icons/check/sandClock.png'),
                     ),
-                    Text('${taskList[i]['createDate']}',
+                    Text(
+                      DateTime.fromMillisecondsSinceEpoch(taskList[i]['startDate']).toString().substring(0,16),
                       style: TextStyle(color: Color(0xff969799),fontSize: sp(26)),),
                   ],
                 ),

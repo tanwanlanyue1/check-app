@@ -35,7 +35,6 @@ class _SamePointTableState extends State<SamePointTable> {
   List pieData =[]; //饼图数据
   String companyName = 'companyName';
   double percent = 0.0; //百分比
-  bool cutPie = true;
   int questionTotal = 0;//问题总数
   double allPercent = 0;//百分比总数
 

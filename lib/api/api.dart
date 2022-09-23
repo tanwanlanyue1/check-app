@@ -90,7 +90,13 @@ class Api {
     ///对接的借口
     'modifyPassword':baseUrlAppTwo + 'housekeeperPlatform/d-admin/operator/modifyPassword',//修改密码
 
+    'findNoticeManagePage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/notice-manage/findNoticeManagePage',//分页查询通知公告
+
     'notify':baseUrlAppTwo + 'housekeeperPlatform/d-admin/issue/notify',//问题状态修改通知
+
+    'knowledge':baseUrlAppTwo + 'housekeeperPlatform/d-admin/knowledge/findList',//知识库/法律文件
+
+    'findKnowledgeSelector':baseUrlAppTwo + 'housekeeperPlatform/d-admin/knowledge/findKnowledgeSelector',//获取知识类型（小类）下拉列表
 
     'loginCount':baseUrlAppTwo + 'housekeeperPlatform/d-admin/login-log/loginCount',//登录统计
 

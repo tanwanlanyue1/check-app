@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
@@ -30,12 +29,14 @@ class _PersonalCenterState extends State<PersonalCenter> {
     // TODO: implement initState
     userName = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
     List roles = [];
-    for(var i = 0; i < jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'].length; i++){
-      roles.add(jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'][i]['id']);
-      if(jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'][i]['id'] == 8){
-        roleName = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'][i]['name'];
-      }else if(jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'][i]['id'] == 9 && jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'][i]['id'] != 8){
-        roleName = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'][i]['name'];
+    List rolesCache = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'];
+    for(var i = 0; i < rolesCache.length; i++){
+      roles.add(rolesCache[i]['id']);
+      if(rolesCache[i]['id'] == 9){
+        roleName = rolesCache[i]['name'];
+      }else if(rolesCache[i]['id'] == 8){
+        roleName = rolesCache[i]['name'];
+        break;
       }
     }
     manager = roles.contains(8);
