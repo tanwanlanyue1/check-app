@@ -108,4 +108,5 @@ double sp(number) {
 /// px单位转换
 extension AdaptExtension on num {
   double get px => Adapt.px(this);
+  double get sp => ScreenUtil().setSp(this);
 }
