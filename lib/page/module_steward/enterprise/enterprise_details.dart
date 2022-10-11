@@ -36,7 +36,7 @@ class _EnterpriseDetailsState extends State<EnterpriseDetails> {
   void _getProblems() async {
     var response = await Request().get(Api.url['company']+'/$companyId',);
     if(response['statusCode'] == 200) {
-      companyList = response['data'];
+      companyList = response['data'] ?? {};
       setState(() {});
     }
   }

@@ -41,6 +41,11 @@ class _FillInFormState extends State<FillInForm> {
   // List lawImg = [];//法律法规截图
   List typeList = [];//问题类型列表
   Map problemList = {};//问题详情列表
+  List requireList = [
+    {'id':0,'name':'立行立改'},
+    {'id':1,'name':'限期整改'},
+    {'id':2,'name':'立案执法'},
+  ];//整改要求
   bool declare = false; //申报
   bool addProblem = false;//新增问题
   bool isImportant = false; //是否重点
@@ -57,6 +62,7 @@ class _FillInFormState extends State<FillInForm> {
   List industryId = [];//行业id数组
   int areaId = 1;//区域ID
   String problemId = '';//问题id
+  String require = '立行立改';//整改要求
   String _uuid = '';//uuid
   Uuid uuid = Uuid();//uuid
   String userName = '';//用户名
@@ -70,7 +76,7 @@ class _FillInFormState extends State<FillInForm> {
   int remind = 0;//提醒次数
   late GlobalKey<ScaffoldState> _scaffoldKey; //时间选择key
   // DateTime checkTime = DateTime.now();//填报排查日期
-  DateTime rectifyTime = DateTime.now().add(Duration(days: 7));//整改期限
+  DateTime? rectifyTime;//整改期限
   List problemType = [];//二级问题类型数组
   /// 获取问题类型
   /// level：第一级问题的类型
@@ -107,7 +113,9 @@ class _FillInFormState extends State<FillInForm> {
       industry = problemList['industrys'] ?? [];
       areaId = problemList['districtId'];
       isImportant = problemList['isImportant'];
-      solvedAt = problemList['solvedAt'] != null ? formatTime(problemList['solvedAt']) : '';
+      require = problemList['requirement'] ?? '/';
+      solvedAt = problemList['solvedAt'] != null ? formatTime(problemList['solvedAt']) : '/';
+      rectifyTime = problemList['solvedAt'] != null ? DateTime.parse(problemList['solvedAt']) : null;
       delete = (problemList['status'] == 0) ? true : false;
       industrysType();
     }
@@ -161,6 +169,7 @@ class _FillInFormState extends State<FillInForm> {
   /// isImportant	是否重点
   /// lawId	法律ID
   /// solvedAt	整改期限
+  /// requirement	整改要求
   void _setProblem() async {
     if(checkPersonnel.isEmpty){
       ToastWidget.showToastMsg('请输入排查人员');
@@ -189,10 +198,12 @@ class _FillInFormState extends State<FillInForm> {
         'companyId': companyId,
         'industryList': jsonEncode(industryId),
         'districtId': widget.arguments?['districtId'],
-        // 'lawId': lawId,
-        // 'basisId': districtId,
-        'solvedAt': rectifyTime.toString(),
+        'requirement': require,
+        // 'solvedAt': rectifyTime.toString(),
       };
+      if(rectifyTime != null){
+        _data['solvedAt'] = rectifyTime.toString();
+      }
       var response = await Request().post(
         Api.url['problem'],data: _data,
       );
@@ -462,8 +473,11 @@ class _FillInFormState extends State<FillInForm> {
                     time: rectifyTime,
                     // type: 7,
                     callBack: (time) {
-                      // rectifyTime = DateTime.parse(formatTimes(time));
                       rectifyTime = time;
+                      setState(() {});
+                    },
+                    cancelBack: (){
+                      rectifyTime = null;
                       setState(() {});
                     },
                   ),
@@ -474,6 +488,24 @@ class _FillInFormState extends State<FillInForm> {
               child: Text(userName, style: TextStyle(color: Color(0xff323233),
                   fontSize: sp(28),
                   fontFamily: 'Roboto-Condensed'),),
+            ),
+
+            FormCheck.rowItem(
+              title: "整改要求",
+              child: !declare ?
+              Text(require, style: TextStyle(
+                  color: Color(0xff323233),
+                  fontSize: sp(28),
+                  fontFamily: 'Roboto-Condensed'),) :
+              DownInput(
+                value: require,
+                data: requireList,
+                hitStr: '请选择整改要求',
+                callback: (val){
+                  require = val['name'];
+                  setState(() {});
+                },
+              ),
             ),
 
             FormCheck.rowItem(

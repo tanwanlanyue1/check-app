@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
@@ -55,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
             saveInfo(response['data']['token'], _data['username']!, _data['password']!, response['data']);
             Navigator.pushNamedAndRemoveUntil(context,'/protectionAgencyHome', (Route route)=>false);return;
           }else{
-            if(response['data']['roles'].length == i){
+            if(response['data']['roles'].length == i+1){
               ToastWidget.showToastMsg('该账号无权限！');
             }
           }
@@ -103,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                 FocusScope.of(context).requestFocus(FocusNode());
               },
               child: SingleChildScrollView(
-                child: Container(
+                child: SizedBox(
                   height: Adapt.screenH(),
                   child: Stack(
                     children: [
@@ -160,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
         margin: EdgeInsets.only(top: Adapt.screenH()*0.12+px(380)),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(px(46),),
+            topLeft: Radius.circular(46.px,),
             topRight: Radius.circular(px(46),),
           ),
         ),

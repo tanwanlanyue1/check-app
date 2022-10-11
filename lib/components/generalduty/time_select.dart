@@ -10,7 +10,8 @@ class TimeSelect extends StatefulWidget {
   final String? hintText;
   final int? type;
   final callBack;
-  const TimeSelect({Key? key, required this.scaffoldKey, this.time, this.hintText, this.type,this.callBack}):super(key: key);
+  final Function? cancelBack;
+  const TimeSelect({Key? key, required this.scaffoldKey, this.time, this.hintText, this.type,this.callBack,this.cancelBack}):super(key: key);
 
   @override
   _TimeSelectState createState() => _TimeSelectState();
@@ -132,6 +133,9 @@ class _TimeSelectState extends State<TimeSelect> {
             color: Colors.white,
           )),
         ],
+        onCancel: (){
+          widget.cancelBack?.call();
+        },
         onConfirm: (Picker picker, List value) {
           DateTime time = DateTime.parse((picker.adapter as DateTimePickerAdapter).value.toString());
           widget.callBack(time);

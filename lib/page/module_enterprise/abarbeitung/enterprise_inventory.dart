@@ -320,7 +320,7 @@ class _EnterpriseInventoryState extends State<EnterpriseInventory> {
                 children: List.generate(problemList.length, (i) => RectifyComponents.rectifyRow(
                     company: problemList[i],
                     i: i,
-                    callBack:()async{
+                    callBack:() async {
                      var res = await Navigator.pushNamed(context, '/abarbeitungFrom',arguments: {'id':problemList[i]['id'],'inventoryStatus': repertoire['status']});
                      if(res == null ){
                        _getProblem();

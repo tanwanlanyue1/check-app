@@ -7,6 +7,7 @@ import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/date_range.dart';
 import 'package:scet_check/components/generalduty/down_input.dart';
 import 'package:scet_check/components/generalduty/toast_widget.dart';
+import 'package:scet_check/components/generalduty/upload_file.dart';
 import 'package:scet_check/model/provider/provider_home.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
@@ -46,6 +47,7 @@ class _ReleaseTaskState extends State<ReleaseTask> {
   List dataIds = [];//数据来源id
   List companyIds = [];//企业id
   List formId = [];//动态表单id
+  List taskFiles = [];//发布的任务附件
   String checkName = ''; //负责人
   String assistName = ''; //协助人员
   String councilorName = ''; //督导人
@@ -57,6 +59,7 @@ class _ReleaseTaskState extends State<ReleaseTask> {
   String taskDetail = ''; //任务详情/任务项
   String emergencyName = '中'; //紧急程度
   String findName = ''; //动态表单
+  String remark = ''; //备注
   String userId = ''; //用户id
   int taskType = 1;//数据来源
   String typeId = ''; //任务来源id
@@ -135,11 +138,13 @@ class _ReleaseTaskState extends State<ReleaseTask> {
       ToastWidget.showToastMsg('请选择负责人！');
     }else if(assistOpList.isEmpty){
       ToastWidget.showToastMsg('请选择协助人员！');
-    }else if(superviseOpId == null){
+    }
+    else if(superviseOpId == null){
       ToastWidget.showToastMsg('请选择督导人员！');
     }else if(countOpId == null){
       ToastWidget.showToastMsg('请选择统计人员！');
-    }else if(taskDetail.isEmpty){
+    }
+    else if(taskDetail.isEmpty){
       ToastWidget.showToastMsg('请输入任务项！');
     }else if(formId.isEmpty){
       ToastWidget.showToastMsg('请选择填报表单！');
@@ -165,6 +170,7 @@ class _ReleaseTaskState extends State<ReleaseTask> {
         'taskItem': taskDetail,//任务详情
         'taskSource': taskType,//任务来源（1：临时任务，2：在线监理，3：问题复查，）
         'taskSourceType': typeId,//	任务来源类型（字典 TASK_SOURCE_TYPE）
+        "taskFileList":taskFiles,//任务附件
       };
       var response = await Request().post(
         Api.url['addBatchTask'],data: [_data],
@@ -434,36 +440,36 @@ class _ReleaseTaskState extends State<ReleaseTask> {
               },
             ),
           ),
-          FormCheck.rowItem(
-            title: '督导人:',
-            titleColor: Color(0XFF323232),
-            child: DownInput(
-              value: councilorName,
-              data: charge,
-              hitStr: '选择督导人',
-              dataKey: 'opName',
-              callback: (val){
-                councilorName = val['opName'];
-                superviseOpId = val['opId'];
-                setState(() {});
-              },
-            ),
-          ),
-          FormCheck.rowItem(
-            title: '统计人:',
-            titleColor: Color(0XFF323232),
-            child: DownInput(
-              value: statisticsName,
-              data: charge,
-              hitStr: '选择统计人',
-              dataKey: 'opName',
-              callback: (val){
-                statisticsName = val['opName'];
-                countOpId = val['opId'];
-                setState(() {});
-              },
-            ),
-          ),
+          // FormCheck.rowItem(
+          //   title: '督导人:',
+          //   titleColor: Color(0XFF323232),
+          //   child: DownInput(
+          //     value: councilorName,
+          //     data: charge,
+          //     hitStr: '选择督导人',
+          //     dataKey: 'opName',
+          //     callback: (val){
+          //       councilorName = val['opName'];
+          //       superviseOpId = val['opId'];
+          //       setState(() {});
+          //     },
+          //   ),
+          // ),
+          // FormCheck.rowItem(
+          //   title: '统计人:',
+          //   titleColor: Color(0XFF323232),
+          //   child: DownInput(
+          //     value: statisticsName,
+          //     data: charge,
+          //     hitStr: '选择统计人',
+          //     dataKey: 'opName',
+          //     callback: (val){
+          //       statisticsName = val['opName'];
+          //       countOpId = val['opId'];
+          //       setState(() {});
+          //     },
+          //   ),
+          // ),
           FormCheck.rowItem(
             title: '紧急程度:',
             titleColor: Color(0XFF323232),
@@ -476,6 +482,34 @@ class _ReleaseTaskState extends State<ReleaseTask> {
                 priority = val['id'];
                 setState(() {});
               },
+            ),
+          ),
+          // FormCheck.rowItem(
+          //   title: '任务附件:',
+          //   titleColor: Color(0XFF323232),
+          //   alignStart: true,
+          //   child: UploadFile(
+          //     url: '/',
+          //     abutment: true,
+          //     amend: true,
+          //     fileList: taskFiles,
+          //     callback: (val){
+          //       taskFiles = val;
+          //       setState(() {});
+          //     },
+          //   ),
+          // ),
+          FormCheck.rowItem(
+            title: '备注:',
+            titleColor: Color(0XFF323232),
+            alignStart: true,
+            child: FormCheck.inputWidget(
+                hintText: '请输入备注',
+                hintVal: taskDetail,
+                lines: 3,
+                onChanged: (val){
+                  taskDetail = val;
+                }
             ),
           ),
         ],

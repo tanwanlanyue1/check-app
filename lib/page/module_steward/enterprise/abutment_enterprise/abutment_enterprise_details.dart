@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:scet_check/api/api.dart';
@@ -41,7 +43,7 @@ class _AbutmentEnterpriseDetailsState extends State<AbutmentEnterpriseDetails> {
     if(response['success'] == true) {
       _pageNo++;
       Map _data = response['result'];
-      if(response['result']['list'] != null && response['result']['list'].length > 0){
+      if(_data['list'] != null && _data['list'].length > 0){
         if (mounted) {
           if(type == typeStatusEnum.onRefresh) {
             // 下拉刷新
@@ -55,10 +57,10 @@ class _AbutmentEnterpriseDetailsState extends State<AbutmentEnterpriseDetails> {
         if (mounted) {
           if(type == typeStatusEnum.onRefresh) {
             // 下拉刷新
-            _onRefresh(data: [_data], total: _data['total']);
+            _onRefresh(data: [_data], total: 1);
           }else if(type == typeStatusEnum.onLoad) {
             // 上拉加载
-            _onLoad(data: [_data], total: _data['total']);
+            _onLoad(data: [_data], total: 1);
           }
         }
       }
@@ -221,7 +223,7 @@ class _AbutmentEnterpriseDetailsState extends State<AbutmentEnterpriseDetails> {
         child: Text((data == 'null' || data == null) ? "" :
         (data == '0' || data == 'false') ? '否' :
         (data == '1' || data == 'true') ? '是' :
-        ((time && data != '/') ? DateTime.fromMillisecondsSinceEpoch(int.parse(data)).toString().substring(0,16) : '$data' ),style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,),
+        ((time && data != '/') ? DateTime.fromMillisecondsSinceEpoch(int.parse(data)).toString().substring(0,16) : data ),style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),textAlign: TextAlign.right,),
       ),
     );
   }

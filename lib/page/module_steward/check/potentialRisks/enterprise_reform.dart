@@ -36,7 +36,7 @@ class _EnterpriseReformState extends State<EnterpriseReform> {
     switch(status){
       case 1 : return Color(0xffFAAA5A);
       case 2 : return Color(0xff7196F5);
-      default: return Color(0xffFAAA5A);
+      default: return Color(0xfffaaa5a);
     }
   }
 

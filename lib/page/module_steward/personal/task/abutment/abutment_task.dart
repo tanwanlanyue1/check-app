@@ -34,6 +34,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
   String userName = ''; //用户id
   String review = ''; //审批意见
   List taskFiles = [];//任务附件名称
+  List taskFileList = [];//任务附件名称
   Map companyList = {};//任务企业列表
   List imgDetails = [];//任务图片列表
   String taskId = ''; //任务id
@@ -68,6 +69,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
       review = taskDetails['approvalOpinion'] ?? '';
       List imgList = taskDetails['imgList'] ?? [];
       List fileList = taskDetails['fileList'] ?? [];
+      taskFileList = taskDetails['taskFileList'] ?? [];
       for(var i = 0; i < imgList.length; i++){
         checkImages.add(imgList[i]['filePath']);
       }
@@ -204,14 +206,14 @@ class _AbutmentTaskState extends State<AbutmentTask> {
             title: '开始时间:',
             child: Text(
                 taskDetails['startDate'] == null ? '/' :
-              DateTime.fromMillisecondsSinceEpoch(taskDetails['startDate']).toString().substring(0,19),
+              DateTime.fromMillisecondsSinceEpoch(taskDetails['startDate']).toString().substring(0,16),
               style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
             title: '结束时间:',
             child: Text(
               taskDetails['startDate'] == null ? '/' :
-              DateTime.fromMillisecondsSinceEpoch(taskDetails['endDate']).toString().substring(0,19),
+              DateTime.fromMillisecondsSinceEpoch(taskDetails['endDate']).toString().substring(0,16),
               style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
@@ -229,6 +231,17 @@ class _AbutmentTaskState extends State<AbutmentTask> {
               taskDetails['priority'] == 2 ? '中' :'低',
               style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
+          // 新增的任务附件
+          // FormCheck.rowItem(
+          //   title: '任务附件:',
+          //   alignStart: true,
+          //   child: UploadFile(
+          //     url: '/',
+          //     abutment: true,
+          //     amend: false,
+          //     fileList: taskFileList,
+          //   ),
+          // ),
           (taskStatus == 3 || taskStatus == 7) ?
           FormCheck.rowItem(
             title: '审批意见:',

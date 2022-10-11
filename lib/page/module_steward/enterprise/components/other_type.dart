@@ -498,7 +498,7 @@ class _OtherTypeState extends State<OtherType> {
           {'title':'预案编写单位','valuer':'planWriteUnit'},
           {'title':'编制时间','valuer':'composeDate',"time":true},
           {'title':'是否已合规备案','valuer':'filing'},
-          {'title':'应急预案备案时间','valuer':'planDate'},
+          {'title':'应急预案备案时间','valuer':'planDate',"time":true},
           {'title':'应急预案有效期','valuer':'planEffectiveDate',"time":true},
           {'title':'应急预案备案部门','valuer':'planDept'},
           {'title':'应急预案备案编号','valuer':'planCode'},

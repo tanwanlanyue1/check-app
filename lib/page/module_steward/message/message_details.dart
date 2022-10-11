@@ -7,7 +7,7 @@ import 'package:scet_check/utils/screen/screen.dart';
 
 
 ///通知详情
-///arguments:{通知的详情}
+///arguments:{(notification)通知的详情}
 class MessageDetailsPage extends StatefulWidget {
   final Map? arguments;
   const MessageDetailsPage({this.arguments, Key? key}) : super(key: key);
