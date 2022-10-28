@@ -24,10 +24,13 @@ class _PersonalCenterState extends State<PersonalCenter> {
   List commonClassify = ['历史台账','待办任务','已办任务',"修改密码","登录统计"];//普通用户分类分类
   bool manager = false;//当前账号是否为项目经理
   String roleName = '';//权限名称
+  String lesseeId = '';//租户id
+
   @override
   void initState() {
     // TODO: implement initState
     userName = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['nickname'];
+    // lesseeId = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['tenantId'];
     List roles = [];
     List rolesCache = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['roles'];
     for(var i = 0; i < rolesCache.length; i++){

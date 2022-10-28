@@ -48,7 +48,7 @@ class RectifyComponents{
                ),
                ConstrainedBox(
                  constraints: BoxConstraints(
-                   maxWidth: Adapt.screenW()-px(250),
+                   maxWidth: Adapt.screenW()-px(280),
                  ),
                  child: Container(
                    margin: EdgeInsets.only(left: px(16),right: px(12)),

@@ -139,11 +139,11 @@ class _ReleaseTaskState extends State<ReleaseTask> {
     }else if(assistOpList.isEmpty){
       ToastWidget.showToastMsg('请选择协助人员！');
     }
-    else if(superviseOpId == null){
-      ToastWidget.showToastMsg('请选择督导人员！');
-    }else if(countOpId == null){
-      ToastWidget.showToastMsg('请选择统计人员！');
-    }
+    // else if(superviseOpId == null){
+    //   ToastWidget.showToastMsg('请选择督导人员！');
+    // }else if(countOpId == null){
+    //   ToastWidget.showToastMsg('请选择统计人员！');
+    // }
     else if(taskDetail.isEmpty){
       ToastWidget.showToastMsg('请输入任务项！');
     }else if(formId.isEmpty){
@@ -158,7 +158,7 @@ class _ReleaseTaskState extends State<ReleaseTask> {
       _data = {
         'assistOpList': assistOpList,//协助参与人员集合
         'companyList': (taskType == 2 || taskType == 3) ? [] : companyIds,//企业
-        'countOpId': countOpId,//统计人员id
+        // 'countOpId': countOpId,//统计人员id
         'dataIds': dataIds,//数据来源id集合
         'endDate': endTime.millisecondsSinceEpoch,//计划结束时间
         'formList': formId,//关联动态表单id
@@ -166,7 +166,7 @@ class _ReleaseTaskState extends State<ReleaseTask> {
         'managerOpId': managerOpId,//负责人id
         'priority': priority,//优先级（1：高，2：中，3：低）
         'startDate': startTime.millisecondsSinceEpoch,//计划开始时间 13毫秒时间戳
-        'superviseOpId': superviseOpId,//督导人员id
+        // 'superviseOpId': superviseOpId,//督导人员id
         'taskItem': taskDetail,//任务详情
         'taskSource': taskType,//任务来源（1：临时任务，2：在线监理，3：问题复查，）
         'taskSourceType': typeId,//	任务来源类型（字典 TASK_SOURCE_TYPE）
@@ -484,34 +484,34 @@ class _ReleaseTaskState extends State<ReleaseTask> {
               },
             ),
           ),
-          // FormCheck.rowItem(
-          //   title: '任务附件:',
-          //   titleColor: Color(0XFF323232),
-          //   alignStart: true,
-          //   child: UploadFile(
-          //     url: '/',
-          //     abutment: true,
-          //     amend: true,
-          //     fileList: taskFiles,
-          //     callback: (val){
-          //       taskFiles = val;
-          //       setState(() {});
-          //     },
-          //   ),
-          // ),
           FormCheck.rowItem(
-            title: '备注:',
+            title: '任务附件:',
             titleColor: Color(0XFF323232),
             alignStart: true,
-            child: FormCheck.inputWidget(
-                hintText: '请输入备注',
-                hintVal: taskDetail,
-                lines: 3,
-                onChanged: (val){
-                  taskDetail = val;
-                }
+            child: UploadFile(
+              url: '/',
+              abutment: true,
+              amend: true,
+              fileList: taskFiles,
+              callback: (val){
+                taskFiles = val;
+                setState(() {});
+              },
             ),
           ),
+          // FormCheck.rowItem(
+          //   title: '备注:',
+          //   titleColor: Color(0XFF323232),
+          //   alignStart: true,
+          //   child: FormCheck.inputWidget(
+          //       hintText: '请输入备注',
+          //       hintVal: taskDetail,
+          //       lines: 3,
+          //       onChanged: (val){
+          //         taskDetail = val;
+          //       }
+          //   ),
+          // ),
         ],
       ),
     );

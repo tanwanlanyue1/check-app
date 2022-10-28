@@ -139,5 +139,4 @@ class _EnterprisePageState extends State<EnterprisePage> with RouteAware{
       ),
     );
   }
-
 }

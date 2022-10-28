@@ -19,23 +19,6 @@ class _BasicInformationState extends State<BasicInformation > {
   bool prou = true; //生产情况 收起/展示
   List colunms = ['主要产品名称','生产线','批复产能'];//表头
   Map companyList = {};
-  ///表单数据
-  List bodyList = [
-    {
-      'data':[
-        {'name':'分散蓝291：1'},
-        {'name':'分散蓝291：1'},
-        {'name':'750吨/每年'},
-      ]
-    },
-    {
-      'data':[
-        {'name':'分散蓝291：1'},
-        {'name':'分散蓝291：1'},
-        {'name':'750吨/每年'},
-      ]
-    },
-  ];
 
   @override
   void initState() {
@@ -111,49 +94,6 @@ class _BasicInformationState extends State<BasicInformation > {
       );
   }
 
-  ///生产情况
-  Widget production(){
-    return Container(
-      margin: EdgeInsets.only(top: px(2)),
-        padding: EdgeInsets.only(left: px(24),right: px(24)),
-        color: Colors.white,
-        child: Visibility(
-          visible: prou,
-          child: FormCheck.dataCard(
-            padding: false,
-              children: [
-                FormCheck.formTitle(
-                    '生产情况',
-                    showUp: true,
-                    tidy: prou,
-                    onTaps: (){
-                      prou = !prou;
-                      setState(() {});
-                    }
-                ),
-                Row(
-                  children: EnterPriseCompon.topRow(colunms),
-                ),
-                Column(
-                  children: EnterPriseCompon.bodyRow(bodyList),
-                ),
-              ]
-          ),
-          replacement: SizedBox(
-            height: px(88),
-            child: FormCheck.formTitle(
-                '生产情况',
-                showUp: true,
-                tidy: prou,
-                onTaps: (){
-                  prou = !prou;
-                  setState(() {});
-                }
-            ),
-          ),
-        ),
-      );
-  }
 
   //日期转换
   String formatTime(time) {

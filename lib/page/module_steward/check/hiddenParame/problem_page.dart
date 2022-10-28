@@ -397,13 +397,7 @@ class _ProblemPageState extends State<ProblemPage> {
                                     dataKey: 'opName',
                                     hitStr: '请选择排查人员',
                                     callback: (val){
-                                      for(var i = 0; i < val.length;i++){
-                                        if(i > 0){
-                                          checkName = checkName + ',' + val[i]['opName'];
-                                        }else{
-                                          checkName = val[i]['opName'];
-                                        }
-                                      }
+                                      checkName = val.map((e) => e['opName']).toList().join(',');
                                       state(() {});
                                     },
                                   ),

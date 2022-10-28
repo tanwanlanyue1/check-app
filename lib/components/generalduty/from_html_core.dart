@@ -84,7 +84,7 @@ class _FromHtmlCoreState extends State<FromHtmlCore> with SingleTickerProviderSt
                         width: Adapt.screenW(),
                         color: Colors.white,
                         padding: EdgeInsets.only(left: px(12),right: px(12),bottom: px(12)),
-                        child: HtmlWidget(htmlUrl),
+                        child: HtmlWidget( htmlUrl ),
                       )
                     ],
                   ),

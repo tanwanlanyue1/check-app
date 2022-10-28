@@ -37,11 +37,16 @@ class _MessagePageState extends State<MessagePage> {
 
   /// 获取企业分类
   void _findNoticeManagePage({typeStatusEnum? type}) async {
-    var response = await Request().post(Api.url['findNoticeManagePage']+'?current=$_pageNo&size=10',
-        data: {
-          'objId':companyId,
-        }
-    );
+    var response;
+    if(company){
+      response = await Request().post(Api.url['findMyNoticeManagePage']+'?current=$_pageNo&size=10');
+    }else{
+      response = await Request().post(Api.url['findNoticeManagePage']+'?current=$_pageNo&size=10',
+          // data: {
+          //   'objId':companyId,
+          // }
+      );
+    }
     if(response['success'] == true) {
       _pageNo++;
       Map _data = response['result'];
@@ -59,6 +64,7 @@ class _MessagePageState extends State<MessagePage> {
       setState(() {});
     }
   }
+
   // 下拉刷新
   _onRefresh({required List data,required int total}) {
     _pageNo = 2;
@@ -248,20 +254,28 @@ class _MessagePageState extends State<MessagePage> {
                 ),
               ],
             ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Container(
-                    margin: EdgeInsets.only(left: px(52),top: px(16)),
+            Container(
+              margin: EdgeInsets.only(left: px(52),top: px(16),right: px(12)),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Expanded(
                     child: Text('${notification['objName']}',
+                    // child: Text('${notification['noticeTypeStr'] ?? '/'}',//通告类型
                       style: TextStyle(color: Color(0xff969799),fontSize: sp(26),),
                       maxLines: 1,overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                ),
-              ],
+                  Visibility(
+                    visible: !company,
+                    child: Text('${notification['readCount']}/${notification['sendCount']}',//readCount 查阅数量 sendCount 发送数量
+                      style: TextStyle(color: Color(0xff969799),fontSize: sp(26),),
+                      maxLines: 1,overflow: TextOverflow.ellipsis,
+                    ),
+                  )
+                ],
+              ),
             ),
           ],
         ),

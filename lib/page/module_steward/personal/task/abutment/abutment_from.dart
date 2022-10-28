@@ -315,7 +315,7 @@ class _AbutmentFromState extends State<AbutmentFrom> {
         'companyId':companyList['id'],
         'companyName':companyList['name'],
         'issueFormJsonStr': jsonEncode(data),
-      };print("dataForm===$dataForm");
+      };
       var response = await Request().post(
         Api.url['saveForm'],
         data:dataForm,
@@ -375,20 +375,20 @@ class _AbutmentFromState extends State<AbutmentFrom> {
               }
           ),
           Expanded(
-            child: Container(
-              margin: EdgeInsets.only(left: px(24),right: px(24)),
-              padding: EdgeInsets.only(left: px(12),right: px(12),bottom: px(24)),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(px(8.0))),
-              ),
-              child: ListView(
-                padding: EdgeInsets.only(top: 0),
-                children: List.generate(fieldList.length, (i) => dynamicForm(
+            child:  ListView(
+              padding: EdgeInsets.only(top: 24.px),
+              children: List.generate(fieldList.length, (i) => Container(
+                margin: EdgeInsets.only(left: px(24),right: px(24)),
+                padding: EdgeInsets.only(left: px(12),right: px(12),bottom: px(24)),
+                child: dynamicForm(
                     i:i,
                     type: int.parse(fieldList[i]['fieldType'])
-                )),
-              ),
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(px(8.0))),
+                ),
+              )),
             ),
           ),
         ],

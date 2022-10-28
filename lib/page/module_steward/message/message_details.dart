@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:scet_check/api/api.dart';
+import 'package:scet_check/api/request.dart';
 import 'package:scet_check/components/generalduty/upload_file.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
@@ -18,6 +20,9 @@ class MessageDetailsPage extends StatefulWidget {
 
 class _MessageDetailsPageState extends State<MessageDetailsPage> {
   Map messageDetail = {};//通告详情
+  String feedback = ''; //消息反馈
+  bool execute = false; //是否是执行人
+  List messageFiles = []; //附件文件
 
   @override
   void initState() {
@@ -25,20 +30,50 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
     messageDetail = widget.arguments ?? {};
     super.initState();
   }
+
+  /// 回复通知公告
+  /// noticeId：通知公告id
+  /// feedback:回复内容
+  /// fileList：附件
+  void _feedbackNoticePage() async {
+    var response = await Request().post(Api.url['feedbackNotice'],
+        data: {
+          "noticeId":messageDetail['id'],
+          "feedback": feedback,
+          "fileList": messageFiles
+            // "noticeReadDTO":{
+            // }
+        }
+    );
+    if(response['success'] == true) {
+      Map _data = response['result'];
+      if(response['result']['records'] != null && response['result']['records'].length > 0){
+
+      }
+      setState(() {});
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
           TaskCompon.topTitle(
-              title: '关于推送任务的通知',
+              title: '${messageDetail['title']}',
               left: true,
               callBack: (){
                 Navigator.pop(context);
               }
           ),
           Expanded(
-            child: detail(),
+            child: ListView(
+              padding: EdgeInsets.only(top: 0),
+              children: [
+                detail(),
+                subFeedback(),
+                submit(),
+              ],
+            ),
           )
         ],
       ),
@@ -79,7 +114,7 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
             child: Text('${messageDetail['content'] ?? '/'}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
-            title: '上传文档:',
+            title: '通知文档:',
             alignStart: true,
             child: UploadFile(
               url: '/',
@@ -90,15 +125,88 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
           ),
           FormCheck.rowItem(
             alignStart: true,
-            title: "上传图片:",
+            title: "通知图片:",
             child: UploadImage(
               imgList: messageDetail['imgList'] ?? [],
               abutment: true,
               closeIcon: false,
             ),
           ),
+          FormCheck.rowItem(
+            title: '反馈列表:',
+            child: InkWell(
+              child: Text('查看反馈信息',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+              onTap: (){
+                Navigator.pushNamed(context, '/messageFeedback',arguments: {});
+              },
+            ),
+          ),
         ],
       ),
+    );
+  }
+
+  ///企业提交反馈
+  Widget subFeedback(){
+    return Container(
+      margin: EdgeInsets.only(left: px(24),right: px(24),top: px(24)),
+      padding: EdgeInsets.only(left: px(24),right: px(24),bottom: px(24)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(px(8.0))),
+      ),
+      child: Column(
+        children: [
+          FormCheck.rowItem(
+            title: '消息反馈:',
+            child: FormCheck.inputWidget(
+                hintText: '请输入消息反馈',
+                hintVal: feedback,
+                lines: 1,
+                onChanged: (val){
+                  feedback = val;
+                }
+            ),
+          ),
+          FormCheck.rowItem(
+            title: '反馈附件:',
+            alignStart: true,
+            child: UploadFile(
+              url: '/',
+              amend: true,
+              abutment: true,
+              fileList: messageFiles,
+              callback: (val){
+                messageFiles = val;
+                setState(() {});
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+
+  ///提交按钮
+  Widget submit(){
+    return InkWell(
+      child: Container(
+        height: px(60),
+        margin: EdgeInsets.all(24.px),
+        alignment: Alignment.center,
+        child: Text('提交反馈', style: TextStyle(
+            fontSize: sp(32),
+            fontFamily: "R",
+            color: Colors.white),),
+        decoration: BoxDecoration(
+          color: Color(0xff4D7FFF),
+          border: Border.all(width: px(2),color: Color(0XffE8E8E8)),
+          borderRadius: BorderRadius.all(Radius.circular(px(12))),),
+      ),
+      onTap: () async {
+      },
     );
   }
 }

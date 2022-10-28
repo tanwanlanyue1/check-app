@@ -36,6 +36,7 @@ import 'package:scet_check/page/module_steward/law/fill_details.dart';
 import 'package:scet_check/page/module_steward/law/law_page.dart';
 import 'package:scet_check/page/module_steward/law/policy_stand.dart';
 import 'package:scet_check/page/module_steward/message/message_details.dart';
+import 'package:scet_check/page/module_steward/message/message_feedback.dart';
 import 'package:scet_check/page/module_steward/message/message_page.dart';
 import 'package:scet_check/page/module_steward/personal/audit_list.dart';
 import 'package:scet_check/page/module_steward/personal/audit_problem.dart';
@@ -104,6 +105,7 @@ final routes = {
   '/registerStatistics': (context) =>  RegisterStatistics(), //修改密码页面
 
   '/releaseTask': (context) =>  ReleaseTask(), //对接发布任务列表
+  '/messageFeedback': (context,{arguments}) =>  MessageFeedback(arguments:arguments), //通知中心反馈列表
   '/abutmentProblem': (context,{arguments}) =>  AbutmentProblem(arguments:arguments), //问题管理列表
   '/abutmentEnterprise': (context,{arguments}) =>  AbutmentEnterprise(arguments:arguments), //填报任务的选择企业
   '/abutmentDetails': (context,{arguments}) =>  AbutmentDetails(arguments:arguments), //问题管理详情

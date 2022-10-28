@@ -7,8 +7,8 @@ class Api {
 
   static const baseUrlAppTwo = 'http://121.199.24.82:18002/';
   static const baseUrlAppImage = 'http://121.199.24.82:18002/housekeeperPlatform';
-  // static const baseUrlAppTwo = 'http://10.10.1.236:18002/';
-  // static const baseUrlAppImage = 'http://10.10.1.236:18002/housekeeperPlatform/';
+  // static const baseUrlAppTwo = 'http://119.3.103.76:8119/';
+  // static const baseUrlAppImage = 'http://119.3.103.76:8119/housekeeperPlatform/';
 
   static final Map url = {
     'version': baseUrlApp + '/manualInsert/platFromXiaZai',//版本更新
@@ -91,6 +91,12 @@ class Api {
     'modifyPassword':baseUrlAppTwo + 'housekeeperPlatform/d-admin/operator/modifyPassword',//修改密码
 
     'findNoticeManagePage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/notice-manage/findNoticeManagePage',//分页查询通知公告
+
+    'findMyNoticeManagePage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/notice-manage/findMyNoticeManagePage',//分页查询我的通知公告
+
+    'findNoticeReadPage':baseUrlAppTwo + 'housekeeperPlatform/d-admin/notice-read/findNoticeReadPage',//分页查询通知公告查阅记录表/查询反馈列表
+
+    'feedbackNotice':baseUrlAppTwo + 'housekeeperPlatform/d-admin/notice-read/feedbackNotice',//回复通知公告
 
     'notify':baseUrlAppTwo + 'housekeeperPlatform/d-admin/issue/notify',//问题状态修改通知
 

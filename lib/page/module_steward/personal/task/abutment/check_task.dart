@@ -44,6 +44,7 @@ class _CheckTaskState extends State<CheckTask> {
           _onLoad(data: _data['list'], total: _data['total']);
         }
       }
+      setState(() {});
     }
   }
 
@@ -67,7 +68,7 @@ class _CheckTaskState extends State<CheckTask> {
   /// 当前数据等于总数据，关闭上拉加载
   _onLoad({required List data,required int total}) {
     _total = total;
-    taskList.add(data);
+    taskList.addAll(data);
     if(data.length >= total){
       _controller.finishLoad(noMore: true);
       _enableLoad = false;
@@ -207,6 +208,7 @@ class _CheckTaskState extends State<CheckTask> {
             onTap: () async {
              var res = await Navigator.pushNamed(context, '/abutmentTask',arguments: {'id':taskList[i]['id'],'backlog':true});
              if(res == true){
+               _pageNo = 1;
                _getTaskList(
                    type: typeStatusEnum.onRefresh,
                    data: {

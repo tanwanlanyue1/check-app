@@ -90,6 +90,8 @@ class _UploadImageState extends State<UploadImage> {
             filename: filename, // 名称
           ),
         });
+        // print("path===${path}");
+        // print("filename===${filename}");
         var response = await Request().post(Api.url['addFile'],
           data:formdata
         );

@@ -212,13 +212,7 @@ class _BackTaskDetailsState extends State<BackTaskDetails> {
                  var res = await Navigator.pushNamed(context, '/enterprisePage',arguments: {"task":true,'name':"发布任务"});
                  if(res == true){
                    company = _homeModel?.selectCompany;
-                   for(var i = 0; i < company.length; i++){
-                     if(i > 0){
-                       companyName = companyName + ',' + company[i]['name'];
-                     }else{
-                       companyName = company[i]['name'];
-                     }
-                   }
+                   companyName = company.map((e) => e['name']).toList().join(',');
                    setState(() {});
                  }
               },
