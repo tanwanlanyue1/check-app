@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
+import 'package:scet_check/components/generalduty/toast_widget.dart';
 import 'package:scet_check/components/generalduty/upload_file.dart';
 import 'package:scet_check/components/generalduty/upload_image.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
@@ -27,7 +30,8 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
   @override
   void initState() {
     // TODO: implement initState
-    messageDetail = widget.arguments ?? {};
+    messageDetail = widget.arguments?['data'] ?? {};
+    execute = widget.arguments?['company'];
     super.initState();
   }
 
@@ -36,21 +40,20 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
   /// feedback:回复内容
   /// fileList：附件
   void _feedbackNoticePage() async {
-    var response = await Request().post(Api.url['feedbackNotice'],
-        data: {
-          "noticeId":messageDetail['id'],
-          "feedback": feedback,
-          "fileList": messageFiles
-            // "noticeReadDTO":{
-            // }
-        }
-    );
-    if(response['success'] == true) {
-      Map _data = response['result'];
-      if(response['result']['records'] != null && response['result']['records'].length > 0){
-
+    if (feedback.isEmpty) {
+      ToastWidget.showToastMsg('请输入反馈内容！');
+    }else{
+      var response = await Request().post(Api.url['feedbackNotice'],
+          data: {
+            "noticeId":messageDetail['id'],
+            "feedback": feedback,
+            "fileList": messageFiles
+          }
+      );
+      if(response['success'] == true) {
+        Navigator.pop(context);
+        setState(() {});
       }
-      setState(() {});
     }
   }
   @override
@@ -70,8 +73,14 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
               padding: EdgeInsets.only(top: 0),
               children: [
                 detail(),
-                subFeedback(),
-                submit(),
+                Visibility(
+                  visible: execute && messageDetail['noticeRead']['feedbackStatus'] == false,
+                  child: subFeedback(),
+                ),
+                Visibility(
+                  visible: execute && messageDetail['noticeRead']['feedbackStatus'] == false,
+                  child: submit(),
+                ),
               ],
             ),
           )
@@ -131,14 +140,17 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
               abutment: true,
               closeIcon: false,
             ),
-          ),
-          FormCheck.rowItem(
-            title: '反馈列表:',
-            child: InkWell(
-              child: Text('查看反馈信息',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
-              onTap: (){
-                Navigator.pushNamed(context, '/messageFeedback',arguments: {});
-              },
+          ),//execute
+          Visibility(
+            visible: !execute,
+            child: FormCheck.rowItem(
+              title: '反馈列表:',
+              child: InkWell(
+                child: Text('查看反馈信息',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+                onTap: (){
+                  Navigator.pushNamed(context, '/messageFeedback',arguments: messageDetail);
+                },
+              ),
             ),
           ),
         ],
@@ -206,6 +218,7 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
           borderRadius: BorderRadius.all(Radius.circular(px(12))),),
       ),
       onTap: () async {
+        _feedbackNoticePage();
       },
     );
   }

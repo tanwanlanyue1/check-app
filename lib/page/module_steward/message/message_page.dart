@@ -39,12 +39,10 @@ class _MessagePageState extends State<MessagePage> {
   void _findNoticeManagePage({typeStatusEnum? type}) async {
     var response;
     if(company){
-      response = await Request().post(Api.url['findMyNoticeManagePage']+'?current=$_pageNo&size=10');
+      response = await Request().post(Api.url['findMyNoticeManagePage']+'?current=$_pageNo&size=10',data: {});
     }else{
       response = await Request().post(Api.url['findNoticeManagePage']+'?current=$_pageNo&size=10',
-          // data: {
-          //   'objId':companyId,
-          // }
+          data: {}
       );
     }
     if(response['success'] == true) {
@@ -280,7 +278,7 @@ class _MessagePageState extends State<MessagePage> {
           ],
         ),
         onTap: (){
-          Navigator.pushNamed(context, '/messageDetailsPage',arguments: notification);
+          Navigator.pushNamed(context, '/messageDetailsPage',arguments: {"data":notification,"company":company});
         },
       ),
     );

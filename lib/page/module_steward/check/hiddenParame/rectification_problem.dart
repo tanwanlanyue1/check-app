@@ -54,7 +54,7 @@ class _RectificationProblemState extends State<RectificationProblem> {
   void _getProblems() async {
     var response = await Request().get(Api.url['problem']+'/$problemId',);
     if(response['statusCode'] == 200) {
-      problemList = response['data'];
+      problemList = response['data'] ?? {};
       argumentMap = {
         'declare':true,//申报
         'uuid': problemList['inventoryId'],//清单ID

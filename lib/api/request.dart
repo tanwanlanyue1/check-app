@@ -48,7 +48,6 @@ class Request {
         }).then((value) {
           // options.headers["Authorization"] = 'Bearer '+value;
           options.headers["token"] = value;
-          // options.headers["token"] = 'UUID_371b7af8-c7fe-489a-9725-a6168986871c';
           return options;
         }).whenComplete(() => dio.unlock());
         return handler.next(options);

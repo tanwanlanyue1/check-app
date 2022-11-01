@@ -31,7 +31,7 @@ class _MessageFeedbackState extends State<MessageFeedback> {
   /// noticeId 公告id
   _getFeedback({typeStatusEnum? type}) async {
     var response = await Request().post(Api.url['findNoticeReadPage']+'?page=$_pageNo&size=10',data: {
-      "noticeId":103
+      "noticeId":widget.arguments?['id']
     });
     if(response['errCode'] == '10000'){
       Map _data = response['result'];
@@ -79,6 +79,12 @@ class _MessageFeedbackState extends State<MessageFeedback> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    _getFeedback();
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
@@ -120,6 +126,7 @@ class _MessageFeedbackState extends State<MessageFeedback> {
 
   ///管理员查看反馈列表
   Widget feedback({required Map feed}){
+    print("feed===$feed");
     return Container(
       margin: EdgeInsets.only(left: px(24),right: px(24),top: px(24)),
       padding: EdgeInsets.only(left: px(24),right: px(24),bottom: px(24)),
@@ -157,7 +164,7 @@ class _MessageFeedbackState extends State<MessageFeedback> {
     return !feedbackList.isNotEmpty ?
     ListView(
       padding: EdgeInsets.only(top: 0),
-      children: List.generate(3, (i){
+      children: List.generate(feedbackList.length, (i){
         return feedback(feed: feedbackList[i] ?? {});
       }),
     ) :
