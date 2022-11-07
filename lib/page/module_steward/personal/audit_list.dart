@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:scet_check/api/api.dart';
@@ -8,6 +10,8 @@ import 'package:scet_check/page/module_steward/check/hiddenParame/components/rec
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/form_check.dart';
 import 'package:scet_check/utils/easyRefresh/easy_refreshs.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/storage/data_storage_key.dart';
+import 'package:scet_check/utils/storage/storage.dart';
 
 import 'components/task_compon.dart';
 
@@ -26,6 +30,7 @@ class _AuditListState extends State<AuditList> {
   int _total = 10; // 总条数
   bool _enableLoad = true; // 是否开启加载
   List hiddenInventory = []; //隐患清单数据
+  String orgId = '';
 
   /// 获取企业下的问题/问题搜索筛选
   /// companyId:公司id
@@ -87,12 +92,14 @@ class _AuditListState extends State<AuditList> {
   @override
   void initState() {
     // TODO: implement initState
+    orgId = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['orgId'].toString();
     _inventorySearch(
         type: typeStatusEnum.onRefresh,
         data: {
           'page': 1,
           'size': 10,
           'status':3,
+          "company.parentOrgId":orgId
         }
     );
     super.initState();
@@ -135,6 +142,7 @@ class _AuditListState extends State<AuditList> {
                       'page': _pageNo,
                       'size': 10,
                       'status':3,
+                      "company.parentOrgId":orgId
                     }
                 );
               } : null,
@@ -146,6 +154,7 @@ class _AuditListState extends State<AuditList> {
                       'page': 1,
                       'size': 10,
                       'status':3,
+                      "company.parentOrgId":orgId
                     }
                 );
               },
@@ -171,6 +180,7 @@ class _AuditListState extends State<AuditList> {
                                   'page': 1,
                                   'size': 10,
                                   'status':3,
+                                  "company.parentOrgId":orgId
                                 }
                             );
                           }

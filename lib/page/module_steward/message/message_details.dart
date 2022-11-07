@@ -51,7 +51,7 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
           }
       );
       if(response['success'] == true) {
-        Navigator.pop(context);
+        Navigator.pop(context,true);
         setState(() {});
       }
     }
@@ -114,10 +114,10 @@ class _MessageDetailsPageState extends State<MessageDetailsPage> {
             title: '通告类型:',
             child: Text('${messageDetail['noticeTypeStr'] ?? '/'}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
-          FormCheck.rowItem(
-            title: '通知对象:',
-            child: Text('${messageDetail['objName']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
-          ),
+//          FormCheck.rowItem(
+//            title: '通知对象:',
+//            child: Text('${messageDetail['objName']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+//          ),
           FormCheck.rowItem(
             title: '通知内容:',
             child: Text('${messageDetail['content'] ?? '/'}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),

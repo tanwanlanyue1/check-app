@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scet_check/api/api.dart';
@@ -6,6 +8,8 @@ import 'package:scet_check/main.dart';
 import 'package:scet_check/model/provider/provider_details.dart';
 import 'package:scet_check/page/module_steward/check/StatisticAnaly/statistics.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/storage/data_storage_key.dart';
+import 'package:scet_check/utils/storage/storage.dart';
 
 import 'components/check_compon.dart';
 import 'components/layout_page.dart';
@@ -36,9 +40,11 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
   ScrollController controller = ScrollController();
   ScrollController controllerTow = ScrollController();
   double off = 0.0;//偏移量
+  String orgId = '';
 
   @override
   void initState() {
+    orgId = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['orgId'].toString();
     _getStatistics();
     dealWith();
     controller.addListener(() {
@@ -152,21 +158,29 @@ class _StatisticAnalysisState extends State<StatisticAnalysis> with RouteAware{
   ///默认第一次查询企业类型-company
   void dealWith (){
     // 获取问题数据总数,查询全部问题的数量，不分状态
-    _data = _pageIndex == 0 ? {} :
-    { 'districtId': districtId[_pageIndex] };
+    _data = _pageIndex == 0 ? {
+      "parentOrgId":orgId
+    } :
+    { 'districtId': districtId[_pageIndex],
+      "parentOrgId":orgId};
     //查询全部片区下的企业问题信息统计
-    groupTable = _pageIndex == 0 ? {'groupTable':'company'} :
+    groupTable = _pageIndex == 0 ? {
+      'groupTable':'company',
+    "company.parentOrgId":orgId} :
     {
       'districtId': districtId[_pageIndex],
-      'groupTable':'company'
+      'groupTable':'company',
+      "company.parentOrgId":orgId
     };
     _getProblem();
     _getProblemStatis(
         data: groupTable
     );
     //问题类型，根据片区进行分开统计———扇形图表数据来源
-    Map<String,dynamic> typeData = _pageIndex == 0 ? {'groupTable':'problemTypeParentId'} :
-    { 'districtId': districtId[_pageIndex],'groupTable':'problemTypeParentId'};
+    Map<String,dynamic> typeData = _pageIndex == 0 ? {'groupTable':'problemTypeParentId',
+    "company.parentOrgId":orgId} :
+    { 'districtId': districtId[_pageIndex],'groupTable':'problemTypeParentId',
+      "company.parentOrgId":orgId};
     _getProblemStatis(
       data: typeData,
       type: true

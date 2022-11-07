@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
@@ -5,6 +7,8 @@ import 'package:scet_check/page/module_steward/check/hiddenParame/Components/cli
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/layout_page.dart';
 import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/storage/data_storage_key.dart';
+import 'package:scet_check/utils/storage/storage.dart';
 
 ///企业管理
 ///arguments:{'history':true,"task":任务，“name”:发布任务}历史台账进入
@@ -24,6 +28,7 @@ class _EnterprisePageState extends State<EnterprisePage> with RouteAware{
   List districtList = [];//片区统计数据
   Map<String,dynamic> data = {};//获取企业数据传递的参数
   String name = "一企一档";
+  String orgId = '';
 
   /// 获取企业统计
   /// district.id:片区id
@@ -33,11 +38,13 @@ class _EnterprisePageState extends State<EnterprisePage> with RouteAware{
         "districtId": districtId[pageIndex-1],
         "sort":["CAST(substring_index(p.number,'-',1) AS SIGNED)","CAST(substring_index(p.number,'-',-1) AS SIGNED)"],
         "order":["ASC","ASC"],
+        "parentOrgId":orgId
       };
     }else{
       data = {
         "sort":["CAST(substring_index(p.number,'-',1) AS SIGNED)","CAST(substring_index(p.number,'-',-1) AS SIGNED)"],
         "order":["ASC","ASC"],
+        "parentOrgId":orgId
       };
     }
     var response = await Request().get(
@@ -71,6 +78,7 @@ class _EnterprisePageState extends State<EnterprisePage> with RouteAware{
   @override
   void initState() {
     super.initState();
+    orgId = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['orgId'].toString();
     _getStatistics();// 获取片区
     name = widget.arguments?['name'] ?? name;
   }

@@ -57,7 +57,7 @@ class _StewardCheckState extends State<StewardCheck>{
         repertoire = response['data'];
         stewardCheck = repertoire['checkPersonnel'];
         location = repertoire['company']?['regionName'] ?? '/';
-        area = repertoire['company']?['district']['name'];
+        area = repertoire['company']?['district']?['name'] ?? '';
         checkDate = RectifyComponents.formatTime(repertoire['createdAt']);
         abarbeitungDates = repertoire['solvedAt'] != null ? RectifyComponents.formatTime(repertoire['solvedAt']) : '';
         sceneReviewDate = repertoire['reviewedAt'] != null ? RectifyComponents.formatTime(repertoire['reviewedAt']) : '';

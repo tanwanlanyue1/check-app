@@ -138,13 +138,7 @@ class _ReleaseTaskState extends State<ReleaseTask> {
       ToastWidget.showToastMsg('请选择负责人！');
     }else if(assistOpList.isEmpty){
       ToastWidget.showToastMsg('请选择协助人员！');
-    }
-    // else if(superviseOpId == null){
-    //   ToastWidget.showToastMsg('请选择督导人员！');
-    // }else if(countOpId == null){
-    //   ToastWidget.showToastMsg('请选择统计人员！');
-    // }
-    else if(taskDetail.isEmpty){
+    } else if(taskDetail.isEmpty){
       ToastWidget.showToastMsg('请输入任务项！');
     }else if(formId.isEmpty){
       ToastWidget.showToastMsg('请选择填报表单！');
@@ -171,6 +165,7 @@ class _ReleaseTaskState extends State<ReleaseTask> {
         'taskSource': taskType,//任务来源（1：临时任务，2：在线监理，3：问题复查，）
         'taskSourceType': typeId,//	任务来源类型（字典 TASK_SOURCE_TYPE）
         "taskFileList":taskFiles,//任务附件
+        "description":remark,//任务备注
       };
       var response = await Request().post(
         Api.url['addBatchTask'],data: [_data],
@@ -499,19 +494,19 @@ class _ReleaseTaskState extends State<ReleaseTask> {
               },
             ),
           ),
-          // FormCheck.rowItem(
-          //   title: '备注:',
-          //   titleColor: Color(0XFF323232),
-          //   alignStart: true,
-          //   child: FormCheck.inputWidget(
-          //       hintText: '请输入备注',
-          //       hintVal: taskDetail,
-          //       lines: 3,
-          //       onChanged: (val){
-          //         taskDetail = val;
-          //       }
-          //   ),
-          // ),
+           FormCheck.rowItem(
+             title: '备注:',
+             titleColor: Color(0XFF323232),
+             alignStart: true,
+             child: FormCheck.inputWidget(
+                 hintText: '请输入备注',
+                 hintVal: remark,
+                 lines: 3,
+                 onChanged: (val){
+                   remark = val;
+                 }
+             ),
+           ),
         ],
       ),
     );

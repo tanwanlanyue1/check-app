@@ -38,6 +38,7 @@ class _HistoryInventoryState extends State<HistoryInventory> {
   DateTime endTime = DateTime.now();//选择结束时间
   Map<String,dynamic> data = {};
   bool createdAt = false;
+  String orgId = '';
 
   /// 获取企业下的问题/问题搜索筛选
   /// companyId:公司id
@@ -50,7 +51,9 @@ class _HistoryInventoryState extends State<HistoryInventory> {
   _inventorySearch({typeStatusEnum? type,}) async {
     if(companyId.isNotEmpty){
       data.addAll(
-          {'companyId':companyId,}
+          {
+            'companyId':companyId,
+          }
       );
     }
     if(createdAt){
@@ -63,7 +66,6 @@ class _HistoryInventoryState extends State<HistoryInventory> {
       );
     }
     var response = await Request().get(Api.url['inventoryList'],data: data,);
-    // print("data===$data");
     if(response['statusCode'] == 200 && response['data'] != null){
       Map _data = response['data'];
       _pageNo++;
@@ -116,6 +118,7 @@ class _HistoryInventoryState extends State<HistoryInventory> {
     // TODO: implement initState
     companyId = widget.companyId ?? "";
     userId= jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['id'].toString();
+    orgId = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['orgId'].toString();
     if(widget.user){
       data = {
         'page': _pageNo,
@@ -126,6 +129,7 @@ class _HistoryInventoryState extends State<HistoryInventory> {
       data = {
         'page': _pageNo,
         'size': 10,
+        "company.parentOrgId":orgId
       };
     }
     _inventorySearch(

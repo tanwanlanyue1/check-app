@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scet_check/api/api.dart';
@@ -6,6 +8,8 @@ import 'package:scet_check/model/provider/provider_details.dart';
 import 'package:scet_check/page/module_steward/check/statisticAnaly/components/layout_page.dart';
 import 'package:scet_check/page/module_steward/personal/components/task_compon.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/storage/data_storage_key.dart';
+import 'package:scet_check/utils/storage/storage.dart';
 
 import '../../../../main.dart';
 import 'Components/client_list_page.dart';
@@ -28,6 +32,7 @@ class _HiddenParameterState extends State<HiddenParameter> {
   List districtList = [];//片区统计数据
   List districtId = [""];//片区id
   Map<String,dynamic> data = {};//获取企业数据传递的参数
+  String orgId = '';
   // ProviderDetaild? _roviderDetaild;//全局数据
 
   /// 获取片区统计
@@ -56,11 +61,13 @@ class _HiddenParameterState extends State<HiddenParameter> {
         'districtId': districtId[pageIndex],
         "sort":["CAST(substring_index(p.number,'-',1) AS SIGNED)","CAST(substring_index(p.number,'-',-1) AS SIGNED)"],
         "order":["ASC","ASC"],
+        "parentOrgId":orgId
       };
     }else{
       data = {
         "sort":["CAST(substring_index(p.number,'-',1) AS SIGNED)","CAST(substring_index(p.number,'-',-1) AS SIGNED)"],
         "order":["ASC","ASC"],
+        "parentOrgId":orgId
       };
     }
     var response = await Request().get(
@@ -77,6 +84,7 @@ class _HiddenParameterState extends State<HiddenParameter> {
   void initState() {
     // TODO: implement initState
   _getStatistics();//获取片区统计
+  orgId = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['orgId'].toString();
   super.initState();
   }
 

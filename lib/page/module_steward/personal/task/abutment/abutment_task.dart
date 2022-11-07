@@ -38,6 +38,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
   Map companyList = {};//任务企业列表
   List imgDetails = [];//任务图片列表
   String taskId = ''; //任务id
+  String remark = ''; //备注
   List formDynamic = [];//动态表单id数组
   List getform = [];//缓存的动态表单
   int taskSource = 0;//任务来源（1：临时任务，2：在线监理，3：问题复查，4：计划主题）
@@ -67,6 +68,7 @@ class _AbutmentTaskState extends State<AbutmentTask> {
       taskSource = taskDetails['taskSource'];
       taskStatus = taskDetails['taskStatus'];
       review = taskDetails['approvalOpinion'] ?? '';
+      remark = taskDetails['description'] ?? '/';
       List imgList = taskDetails['imgList'] ?? [];
       List fileList = taskDetails['fileList'] ?? [];
       taskFileList = taskDetails['taskFileList'] ?? [];
@@ -223,6 +225,10 @@ class _AbutmentTaskState extends State<AbutmentTask> {
           FormCheck.rowItem(
             title: '协助人员:',
             child: Text('${taskDetails['assistOpNames']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+          ),
+          FormCheck.rowItem(
+            title: '任务描述:',
+            child: Text('$remark',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
             title: '优先级:',

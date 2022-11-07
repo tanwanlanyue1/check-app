@@ -259,8 +259,8 @@ class _MessagePageState extends State<MessagePage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: Text('${notification['objName']}',
-                    // child: Text('${notification['noticeTypeStr'] ?? '/'}',//通告类型
+//                    child: Text('${notification['objName']}',
+                     child: Text('${notification['noticeTypeStr'] ?? '/'}',//通告类型
                       style: TextStyle(color: Color(0xff969799),fontSize: sp(26),),
                       maxLines: 1,overflow: TextOverflow.ellipsis,
                     ),
@@ -277,9 +277,13 @@ class _MessagePageState extends State<MessagePage> {
             ),
           ],
         ),
-        onTap: (){
-          Navigator.pushNamed(context, '/messageDetailsPage',arguments: {"data":notification,"company":company});
-        },
+        onTap: ()async{
+          var res = await Navigator.pushNamed(context, '/messageDetailsPage',arguments: {"data":notification,"company":company});
+          if(res == true){
+            _pageNo = 1;
+            _findNoticeManagePage(type: typeStatusEnum.onRefresh,);
+          }
+         },
       ),
     );
   }

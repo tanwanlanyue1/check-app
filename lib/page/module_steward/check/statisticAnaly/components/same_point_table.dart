@@ -192,7 +192,7 @@ class _SamePointTableState extends State<SamePointTable> {
                     padding: EdgeInsets.symmetric(vertical: 8.0),
                     alignment: Alignment.center,
                     child: Text(
-                        '${item[i]['districtName']}',
+                        '${item[i]['districtName'] ?? '/'}',
                         style: TextStyle(
                             color: Color(0XFF969799),
                             fontSize: sp(24.0)
@@ -373,7 +373,7 @@ class _SamePointTableState extends State<SamePointTable> {
                       padding: EdgeInsets.symmetric(vertical: 8.0),
                       alignment: Alignment.topCenter,
                       child: Text(
-                          '${item[i]['districtName']}',
+                          '${item[i]['districtName'] ?? '/'}',
                           style: TextStyle(
                               color: Color(0XFF969799),
                               fontSize: sp(24.0)

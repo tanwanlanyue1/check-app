@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:scet_check/api/api.dart';
 import 'package:scet_check/api/request.dart';
 import 'package:scet_check/utils/screen/screen.dart';
+import 'package:scet_check/utils/storage/data_storage_key.dart';
+import 'package:scet_check/utils/storage/storage.dart';
 
 import 'Components/same_point_table.dart';
 
@@ -37,10 +41,12 @@ class _StatisticsState extends State<Statistics> {
   List problemStatist = [];//问题统计分析
   List allStatist = []; //全园区的统计
   List problemType = []; //园区问题类型统计
+  String orgId = '';
 
   @override
   void initState() {
     super.initState();
+    orgId = jsonDecode(StorageUtil().getString(StorageKey.PersonalData))['orgId'].toString();
     dealWith();
     _getProblemStatis();
   }
@@ -49,7 +55,8 @@ class _StatisticsState extends State<Statistics> {
     var response = await Request().get(
         Api.url['problemStatistics'],
         data: {
-          "groupTable":"district"
+          "groupTable":"district",
+          "company.parentOrgId":orgId
         }
     );
     if(response['statusCode'] == 200) {

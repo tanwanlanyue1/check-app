@@ -81,7 +81,7 @@ class _MessageFeedbackState extends State<MessageFeedback> {
   @override
   void initState() {
     // TODO: implement initState
-    _getFeedback();
+    _getFeedback(type: typeStatusEnum.onRefresh,);
     super.initState();
   }
   @override
@@ -126,7 +126,6 @@ class _MessageFeedbackState extends State<MessageFeedback> {
 
   ///管理员查看反馈列表
   Widget feedback({required Map feed}){
-    print("feed===$feed");
     return Container(
       margin: EdgeInsets.only(left: px(24),right: px(24),top: px(24)),
       padding: EdgeInsets.only(left: px(24),right: px(24),bottom: px(24)),
@@ -137,12 +136,16 @@ class _MessageFeedbackState extends State<MessageFeedback> {
       child: Column(
         children: [
           FormCheck.rowItem(
+            title: '回复对象:',
+            child: Text('${feed['objName'] ?? '/'}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+          ),
+          FormCheck.rowItem(
             title: '反馈人:',
-            child: Text('${feed['objName']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+            child: Text('${feed['modifyName'] ?? '/'}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
             title: '反馈内容:',
-            child: Text('${feed['feedback']}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
+            child: Text('${feed['feedback'] ?? '/'}',style: TextStyle(color: Color(0xff323233),fontSize: sp(28)),),
           ),
           FormCheck.rowItem(
             title: '反馈附件:',
@@ -161,7 +164,7 @@ class _MessageFeedbackState extends State<MessageFeedback> {
 
   ///任务列表
   Widget itemTask(){
-    return !feedbackList.isNotEmpty ?
+    return feedbackList.isNotEmpty ?
     ListView(
       padding: EdgeInsets.only(top: 0),
       children: List.generate(feedbackList.length, (i){
