@@ -18,6 +18,11 @@ class TaskGuide extends StatefulWidget {
 class _TaskGuideState extends State<TaskGuide> {
   Map taskGuide = {};//检查的基本数据
   Map analyze = {};//核查数据
+  List gist = [
+    {'name':'检查要点','url':'checkStep','tidy':false},
+    {'name':'取证要点','url':'forensicsPoint','tidy':false},
+    {'name':'法律依据','url':'law','tidy':false},
+  ];//要点
 
   @override
   void initState() {
@@ -57,6 +62,9 @@ class _TaskGuideState extends State<TaskGuide> {
               padding: EdgeInsets.only(top: 0),
               children: [
                 basicInfo(),
+                Column(
+                  children: List.generate(gist.length, (i) => mainPoint(i: i)),
+                ),
               ],
             ),
           ),
@@ -143,6 +151,49 @@ class _TaskGuideState extends State<TaskGuide> {
       onTap: () async {
         Navigator.pushNamed(context, '/guideDetail',arguments: {"recordList":recordList,'factorBelong':analyze['factorBelong']});
       },
+    );
+  }
+
+  ///要点
+  Widget mainPoint({required int i}){
+    return Container(
+      margin: EdgeInsets.all(24.px),
+      padding: EdgeInsets.all(px(12)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(px(8.0))),
+      ),
+      child: InkWell(
+        child: Column(
+          children: [
+            FormCheck.formTitle(
+                gist[i]['name'],
+                showUp: true,
+                tidy: gist[i]['tidy'],
+                onTaps: (){
+                  gist[i]['tidy'] = !gist[i]['tidy'];
+                  setState(() {});
+                }
+            ),
+            Visibility(
+              visible: gist[i]['tidy'],
+              child: GestureDetector(
+                child: Container(
+                  width: Adapt.screenW(),
+                  color: Colors.white,
+                  child: HtmlWidget(
+                    analyze[gist[i]['url']] ?? '/',
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        onTap: (){
+          gist[i]['tidy'] = !gist[i]['tidy'];
+          setState(() {});
+        },
+      ),
     );
   }
 }

@@ -221,11 +221,12 @@ class _GuideDetailState extends State<GuideDetail> {
       padding: EdgeInsets.only(left: px(24), right: px(24)),
       child: Column(
         children: [
-          Column(
-            children: List.generate(gist.length, (i) => mainPoint(i: i)),
-          ),
+//          Column(
+//            children: List.generate(gist.length, (i) => mainPoint(i: i)),
+//          ),
           Container(
             color: Colors.white,
+            margin: EdgeInsets.only(top: 24.px),
             padding: EdgeInsets.only(
               left: px(8),right: px(12)
             ),
